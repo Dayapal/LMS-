@@ -115,11 +115,11 @@ All models have `timestamps: true`. `ref` means an ObjectId reference.
 
 **Session**: one refresh token. `user`, `family`, `tokenHash` (unique), `expiresAt` (TTL), `revokedAt`, `replacedAt`, `userAgent`, `ip`. See §11a.
 
-**Course**: `title`, `slug` (unique), `summary`, `description` (md), `thumbnail` (ref FileAsset or URL), `level` (`beginner` | `intermediate` | `advanced`), `estimatedHours`, `status` (`draft` | `published` | `archived`), `tags[]`, `createdBy`. Index: `{status, createdAt}`.
+**Course**: `title`, `slug` (unique), `summary`, `description` (md), `thumbnailUrl` (https URL; an uploaded FileAsset option arrives in Phase 3), `level` (`beginner` | `intermediate` | `advanced`), `estimatedHours`, `status` (`draft` | `published` | `archived`), `tags[]`, `createdBy`. Index: `{status, createdAt}`.
 
 **Module**: `course`, `title`, `description`, `order`, `status` (`draft` | `published` | `archived`). Index: `{course, order}`.
 
-**Lesson**: `course`, `module`, `title`, `slug`, `objectives[]`, `prerequisites[]`, `estimatedMinutes`, `order`, `status`. Index: `{module, order}`, `{course, status}`.
+**Lesson**: `course`, `module`, `title`, `slug` (unique per course), `summary` (short roadmap blurb, ≤ 300 chars), `objectives[]`, `prerequisites[]`, `estimatedMinutes`, `order`, `status`. Index: `{module, order}`, `{course, status}`.
 
 **Material**: one ordered content block inside a lesson. `lesson`, `course` (denormalized for access checks), `type` (`note` | `code` | `file` | `link`), `title`, `order`, `status`, plus a type-specific payload:
 
@@ -170,7 +170,13 @@ Rules:
 
 Ownership always comes from `req.user.id`. Any `student`, `role`, `reviewedBy`, `marks` or `status` fields in a student's request body are dropped by the zod schemas.
 
-**Deleting content:** a course, module or lesson can't be hard-deleted if it has submissions or progress. Archive it instead. Hard delete is only allowed on empty drafts.
+**Deleting content:** a course, module or lesson can't be hard-deleted if it has submissions or progress. Archive it instead. The rules as implemented in Phase 2 (Phases 4–5 add the submission and progress checks):
+
+- **Course:** only when it isn't published and has no active or pending enrollments. Deleting it also deletes its modules, lessons and removed enrollments.
+- **Module:** only when neither the module nor any of its lessons is published. Deleting it also deletes its lessons.
+- **Lesson:** only when it isn't published.
+
+Anything else returns `409 CONFLICT` with a message telling the trainer to unpublish or archive first.
 
 ## 7. API plan (by phase)
 
@@ -227,7 +233,12 @@ The seed creates:
 - **Assignments**: 1–2 per course in the first modules, with mixed submission types and late policies.
 - **Demo students**: 3, with varied progress and submissions (one reviewed, one resubmit-requested, one overdue) so the dashboards show realistic data.
 
-The seed content is written in Phase 2 (course, module and lesson structure plus notes) and Phase 3 (code, PDF and link materials), then extended in Phase 4 (assignments) and Phase 5 (demo progress).
+The seed content was built up in stages:
+
+- **Phase 2:** course, module and lesson structure, with each lesson's summary, objectives, prerequisites and estimated time. Demo students are created only when `SEED_DEMO_STUDENT_PASSWORD` is set. `--reset` also recreates them.
+- **Phase 3:** lesson notes, code, PDF and link materials. Notes are Material documents, so they wait for the Material model.
+- **Phase 4:** assignments.
+- **Phase 5:** demo progress.
 
 ## 10. Phases and acceptance criteria
 

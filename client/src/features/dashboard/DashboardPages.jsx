@@ -24,17 +24,17 @@ function EmptyPanel({ title, children }) {
   );
 }
 
-// Dashboards are filled with real data in Phases 5 and 6; for now they confirm role routing.
+// Dashboards are filled with real data in Phases 5 and 6; for now they point to the course pages.
 export function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       <Welcome subtitle="Trainer workspace" />
-      <EmptyPanel title="Course management is coming next">
-        Courses, roadmaps and student activity will appear here. Meanwhile you can update your{' '}
-        <Link to="/admin/profile" className="font-medium text-brand-700 hover:text-brand-800">
-          profile
-        </Link>
-        .
+      <EmptyPanel title="Manage your courses">
+        Build roadmaps, publish modules and lessons, and approve enrollment requests from the{' '}
+        <Link to="/admin/courses" className="font-medium text-brand-700 hover:text-brand-800">
+          Courses
+        </Link>{' '}
+        page. Dashboard statistics arrive in a later phase.
       </EmptyPanel>
     </div>
   );
@@ -44,13 +44,13 @@ export function StudentDashboardPage() {
   return (
     <div className="space-y-6">
       <Welcome subtitle="Your learning dashboard" />
-      <EmptyPanel title="No courses yet">
-        Once your trainer enrolls you in a course, your roadmap and assignments will show up here.
-        Meanwhile you can complete your{' '}
-        <Link to="/app/profile" className="font-medium text-brand-700 hover:text-brand-800">
-          profile
-        </Link>
-        .
+      <EmptyPanel title="Find your next course">
+        Browse the{' '}
+        <Link to="/app/courses" className="font-medium text-brand-700 hover:text-brand-800">
+          course catalogue
+        </Link>{' '}
+        and request to join a course. Once your trainer approves it, your progress will show up
+        here.
       </EmptyPanel>
     </div>
   );

@@ -2,6 +2,8 @@ import { Router } from 'express';
 import mongoose from 'mongoose';
 import { authRoutes } from './auth.routes.js';
 import { userRoutes } from './user.routes.js';
+import { courseRoutes, lessonRoutes, moduleRoutes } from './course.routes.js';
+import { adminRoutes } from './admin.routes.js';
 
 export function apiRoutes(limiters) {
   const router = Router();
@@ -17,5 +19,9 @@ export function apiRoutes(limiters) {
   router.use(limiters.general);
   router.use('/auth', authRoutes(limiters));
   router.use('/users', userRoutes(limiters));
+  router.use('/courses', courseRoutes());
+  router.use('/modules', moduleRoutes());
+  router.use('/lessons', lessonRoutes());
+  router.use('/admin', adminRoutes());
   return router;
 }

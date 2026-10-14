@@ -79,3 +79,25 @@ export const TextAreaField = forwardRef(function TextAreaField(
     </Field>
   );
 });
+
+export const SelectField = forwardRef(function SelectField(
+  { label, hint, error, required, id: idProp, children, ...props },
+  ref,
+) {
+  const generated = useId();
+  const id = idProp ?? generated;
+  return (
+    <Field id={id} label={label} hint={hint} error={error} required={required}>
+      <select
+        ref={ref}
+        id={id}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy(id, error, hint)}
+        className={controlClasses(Boolean(error))}
+        {...props}
+      >
+        {children}
+      </select>
+    </Field>
+  );
+});

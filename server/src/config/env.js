@@ -33,6 +33,7 @@ const envSchema = z.object({
   SEED_ADMIN_NAME: z.string().default('Trainer'),
   SEED_ADMIN_EMAIL: z.email().optional(),
   SEED_ADMIN_PASSWORD: z.string().optional(),
+  SEED_DEMO_STUDENT_PASSWORD: z.string().optional(),
 });
 
 function loadConfig() {
@@ -83,6 +84,7 @@ function loadConfig() {
       adminName: env.SEED_ADMIN_NAME,
       adminEmail: env.SEED_ADMIN_EMAIL,
       adminPassword: env.SEED_ADMIN_PASSWORD,
+      demoStudentPassword: env.SEED_DEMO_STUDENT_PASSWORD,
     },
   };
 }

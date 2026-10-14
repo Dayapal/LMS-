@@ -21,7 +21,8 @@ npm test -w client -- src/routes/guards.test.jsx
 npm run lint           # ESLint for both workspaces (root eslint.config.js)
 npm run format:check   # Prettier
 npm run build          # client production build
-npm run seed           # idempotent seed (trainer account for now)
+npm run seed           # idempotent: trainer, 3 starter courses, optional demo students
+npm run seed -- --reset  # dev only: wipe course data + demo students, then reseed
 ```
 
 - The server tests need a MongoDB at `127.0.0.1:27017`, or one set in `TEST_MONGODB_URI`. `server/tests/setup.js` gives each test file its own throwaway database and empties every collection before each test.
@@ -42,6 +43,15 @@ npm run seed           # idempotent seed (trainer account for now)
   - The refresh token is the `lms_rt` httpOnly cookie, scoped to `Path=/api/v1/auth`. It's stored hashed in `Session` and rotated on each `/auth/refresh`. Reusing a rotated token outside a 10 s grace window revokes the whole family.
   - `authenticate` reloads the user on every request. Use `req.user.role`, never the role in the token. A password change bumps `tokenVersion`, which kills every existing access token.
   - Cookie endpoints use `verifyOrigin` (the `CLIENT_ORIGINS` allowlist) as CSRF protection.
+- **Course content:**
+  - The hierarchy is Course → Module → Lesson, and each level has its own `status` (`draft`, `published` or `archived`).
+  - `services/access.service.js` is the only place that decides visibility. Use `getCourseForViewer`, `getModuleForViewer`, `getLessonForViewer` and `visibleTo(user)` instead of writing status checks in other services.
+  - Students get 404 for anything unpublished. Lesson detail also requires an active enrollment. The roadmap (titles and summaries) of a published course is visible without enrolling.
+  - Writes are admin-only through `requireRole`.
+  - Ordering uses an integer `order`. `services/ordering.js` (`nextOrder`, `applyOrder`) appends new items and rewrites the order from a full id list.
+  - The deletion guards are in `course.service.js` and `roadmap.service.js`. They reject deleting published content.
+- **Enrollment (D5):** a student `POST /courses/:id/enroll` creates a `pending` request. The trainer approves it or sets it to `removed` through `/admin/enrollments`, or enrolls a student directly by email.
+- **Seeds:** the course roadmaps are data files in `server/src/seeds/data/{mern,java,dsa}.js`. A course is created only when its slug is absent, so reseeding never overwrites trainer edits.
 - **Same-origin API:** the client always calls the relative `/api/v1`. The Vite proxy (dev) and `client/vercel.json` rewrites (prod) forward to the API. Don't hard-code an API host in the client, and don't switch the cookie to `SameSite=None`.
 - **Client auth flow:**
   - `AuthProvider` does a silent refresh on load. Its `status` is `loading`, `authenticated` or `anonymous`.
@@ -54,4 +64,7 @@ npm run seed           # idempotent seed (trainer account for now)
 
 - `mongoose.set('sanitizeFilter', true)` is global. Query operators you write in a filter (`$gt`, `$in`, `$exists`, …) are neutralized unless you wrap them: `{ expiresAt: mongoose.trusted({ $gt: now }) }`. Prefer `field: null` over `{ $exists: false }`. Update operators (`$set`) aren't affected.
 - Vitest 5 depends on Vite 8, so the client stays on Vite 8 and `@vitejs/plugin-react` 6. Mixing Vite majors breaks the dev server ("Missing field `moduleType`").
+- Bash heredocs on this Windows machine can mangle backslashes in regex literals. Write such files with the editor tools instead.
+- TanStack Query passes a context object as the second argument to `mutationFn`. In tests, assert on `mock.calls[0][0]` rather than using `toHaveBeenCalledWith(arg)`.
+- Client tests stub the API with `vi.spyOn(coursesApi, 'list')` and so on. Hooks call `coursesApi.*` at run time, so spies work without module mocks. `src/test/renderWithProviders.jsx` provides the query client, router, auth and toast context.
 - `bcrypt` uses only the first 72 bytes of a password, so password validators cap passwords at 72 bytes on both client and server.

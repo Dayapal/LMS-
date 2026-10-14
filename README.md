@@ -9,8 +9,8 @@ The design and the phase plan are in [docs/superpowers/specs/2026-10-14-training
 | Phase | Scope                                                                     | Status                                                                       |
 | ----- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | 0     | Planning                                                                  | ✅ Approved                                                                  |
-| 1     | Foundation and authentication                                             | ✅ Implemented, waiting for review ([report](docs/phase-reports/phase-1.md)) |
-| 2     | Courses and roadmaps                                                      | ⏳ Not started                                                               |
+| 1     | Foundation and authentication                                             | ✅ Approved ([report](docs/phase-reports/phase-1.md))                        |
+| 2     | Courses and roadmaps                                                      | ✅ Implemented, waiting for review ([report](docs/phase-reports/phase-2.md)) |
 | 3–8   | Materials, assignments, student portal, review, notifications, deployment | ⏳ Not started                                                               |
 
 ## Requirements
@@ -23,7 +23,7 @@ The design and the phase plan are in [docs/superpowers/specs/2026-10-14-training
 ```bash
 npm install                                  # installs root, server and client workspaces
 cp server/.env.example server/.env           # then fill in the values below
-npm run seed                                 # creates the trainer account (safe to run again)
+npm run seed                                 # trainer account + 3 starter courses (safe to run again)
 npm run dev                                  # API on :5000, client on :5173
 ```
 
@@ -37,20 +37,21 @@ The values you must set in `server/.env`:
 | `JWT_ACCESS_SECRET`                       | 32+ random characters. Generate one with `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"` |
 | `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` | The trainer login created by `npm run seed`. The password needs 8+ characters with a letter and a number                  |
 
-Every other variable has a working default; [server/.env.example](server/.env.example) documents each one.
+Every other variable has a working default; [server/.env.example](server/.env.example) documents each one. Set `SEED_DEMO_STUDENT_PASSWORD` if you also want three demo students (`aarav.demo`, `neha.demo` and `kabir.demo` `@example.com`) with sample enrollments.
 
 Students create their own accounts at `/register`. There is no public sign-up for trainers: the trainer account comes only from the seed.
 
 ## Scripts (run from the repository root)
 
-| Command                                   | What it does                                                          |
-| ----------------------------------------- | --------------------------------------------------------------------- |
-| `npm run dev`                             | Starts the API (with `node --watch`) and the Vite dev server together |
-| `npm test`                                | Runs the server tests, then the client tests                          |
-| `npm run lint`                            | Runs ESLint across both workspaces                                    |
-| `npm run format` / `npm run format:check` | Runs Prettier (write / check)                                         |
-| `npm run build`                           | Builds the client for production into `client/dist`                   |
-| `npm run seed`                            | Creates the trainer account if it doesn't exist yet                   |
+| Command                                   | What it does                                                                                                          |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                             | Starts the API (with `node --watch`) and the Vite dev server together                                                 |
+| `npm test`                                | Runs the server tests, then the client tests                                                                          |
+| `npm run lint`                            | Runs ESLint across both workspaces                                                                                    |
+| `npm run format` / `npm run format:check` | Runs Prettier (write / check)                                                                                         |
+| `npm run build`                           | Builds the client for production into `client/dist`                                                                   |
+| `npm run seed`                            | Creates the trainer account, the 3 starter courses and (optionally) demo students. Existing records are never changed |
+| `npm run seed -- --reset`                 | Development only: deletes all courses, enrollments and demo students, then seeds again                                |
 
 To run a single test file: `npm test -w server -- tests/auth.test.js` or `npm test -w client -- src/routes/guards.test.jsx`. Add `-t "name"` to filter by test name.
 
