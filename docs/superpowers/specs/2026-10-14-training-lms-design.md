@@ -31,24 +31,24 @@ The project succeeds when:
 
 ## 3. Tech stack
 
-| Area | Choice | Notes |
-|---|---|---|
-| Client | React 19, Vite, Tailwind CSS v4, React Router v7 | |
-| Server state | TanStack Query | Handles caching, loading and error states, and pagination |
-| Forms | react-hook-form + zod | The same validation rules as the server, written separately on each side |
-| HTTP client | axios instance with an interceptor | Attaches the access token and retries once after a refresh |
-| Notes rendering | react-markdown + remark-gfm + rehype-sanitize | **[DECISION D2]** Notes are stored as Markdown |
-| Syntax highlighting | prism-react-renderer | Covers JS/TS, Java, SQL, HTML, CSS, JSON, bash and more |
-| Code input | CodeMirror 6 (`@uiw/react-codemirror`) | For trainer snippets and student code submissions |
-| Server | Node 22, Express 5, Mongoose 8, ES modules | |
-| Auth | bcrypt (cost 12) and jsonwebtoken | **[DECISION D4]** Access token kept in memory, refresh token in an httpOnly cookie |
-| Validation | zod schemas plus a `validate(schema)` middleware | Applied to body, params and query |
-| Security | helmet, cors (allowlist), express-rate-limit, `express.json({limit:'1mb'})`, Mongoose `sanitizeFilter` | `express-mongo-sanitize` doesn't work with Express 5, so filters are sanitized through Mongoose and zod |
-| Uploads | multer and `file-type` (magic-byte check) | Checks extension, MIME type and actual file content |
-| Storage | `StorageProvider` interface: `local` driver, plus an S3-compatible driver | **[DECISION D3]** |
-| Logging | pino + pino-http | |
-| Tests | Vitest + Supertest (API); Vitest + React Testing Library (UI); Playwright (E2E, Phase 8) | API tests use a throwaway `lms_test_<run>` database on the local mongod |
-| Language | JavaScript (ESM) | **[DECISION D1]** TypeScript is the alternative |
+| Area                | Choice                                                                                                 | Notes                                                                                                   |
+| ------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| Client              | React 19, Vite, Tailwind CSS v4, React Router v7                                                       |                                                                                                         |
+| Server state        | TanStack Query                                                                                         | Handles caching, loading and error states, and pagination                                               |
+| Forms               | react-hook-form + zod                                                                                  | The same validation rules as the server, written separately on each side                                |
+| HTTP client         | axios instance with an interceptor                                                                     | Attaches the access token and retries once after a refresh                                              |
+| Notes rendering     | react-markdown + remark-gfm + rehype-sanitize                                                          | **[DECISION D2]** Notes are stored as Markdown                                                          |
+| Syntax highlighting | prism-react-renderer                                                                                   | Covers JS/TS, Java, SQL, HTML, CSS, JSON, bash and more                                                 |
+| Code input          | CodeMirror 6 (`@uiw/react-codemirror`)                                                                 | For trainer snippets and student code submissions                                                       |
+| Server              | Node 22, Express 5, Mongoose 8, ES modules                                                             |                                                                                                         |
+| Auth                | bcrypt (cost 12) and jsonwebtoken                                                                      | **[DECISION D4]** Access token kept in memory, refresh token in an httpOnly cookie                      |
+| Validation          | zod schemas plus a `validate(schema)` middleware                                                       | Applied to body, params and query                                                                       |
+| Security            | helmet, cors (allowlist), express-rate-limit, `express.json({limit:'1mb'})`, Mongoose `sanitizeFilter` | `express-mongo-sanitize` doesn't work with Express 5, so filters are sanitized through Mongoose and zod |
+| Uploads             | multer and `file-type` (magic-byte check)                                                              | Checks extension, MIME type and actual file content                                                     |
+| Storage             | `StorageProvider` interface: `local` driver, plus an S3-compatible driver                              | **[DECISION D3]**                                                                                       |
+| Logging             | pino + pino-http                                                                                       |                                                                                                         |
+| Tests               | Vitest + Supertest (API); Vitest + React Testing Library (UI); Playwright (E2E, Phase 8)               | API tests use a throwaway `lms_test_<run>` database on the local mongod                                 |
+| Language            | JavaScript (ESM)                                                                                       | **[DECISION D1]** TypeScript is the alternative                                                         |
 
 A root `package.json` uses npm workspaces (`client`, `server`) with `dev`, `test`, `lint` and `seed` scripts. The server and client run together through `concurrently`. ESLint and Prettier are set up for both workspaces.
 
@@ -122,6 +122,7 @@ All models have `timestamps: true`. `ref` means an ObjectId reference.
 **Lesson**: `course`, `module`, `title`, `slug`, `objectives[]`, `prerequisites[]`, `estimatedMinutes`, `order`, `status`. Index: `{module, order}`, `{course, status}`.
 
 **Material**: one ordered content block inside a lesson. `lesson`, `course` (denormalized for access checks), `type` (`note` | `code` | `file` | `link`), `title`, `order`, `status`, plus a type-specific payload:
+
 - `note`: `body` (Markdown, which can include fenced code)
 - `code`: `language`, `source`, `caption`
 - `file`: `file` (ref FileAsset), `downloadable` (bool)
@@ -142,6 +143,7 @@ A lesson page renders its materials in order. Keeping notes, code and files as s
 The student-facing state of an assignment is **derived**, not stored: `pending`, `overdue` (past the deadline or late cutoff with no submission), `submitted`, `reviewed`, `resubmit_requested`.
 
 Rules:
+
 - A student can **edit** their latest attempt while it's `submitted` (not yet reviewed) and the submission window is still open.
 - A **new attempt** is allowed only when the trainer sets `resubmit_requested`, and `maxAttempts` hasn't been reached.
 - Late submissions are accepted until `lateUntil` if `allowLate` is set. `finalMarks = marks × (1 − penaltyPercent/100)` when the submission is late.
@@ -152,19 +154,19 @@ Rules:
 
 ## 6. Permissions matrix
 
-| Resource / action | Admin | Student |
-|---|---|---|
-| Sign up | — (admins are created by seed/CLI only) | ✔ always created as `student` |
-| Courses: list | all statuses | `published` only |
-| Course detail, modules, lessons, materials | all | published course **and** published module/lesson/material **and** active enrollment (the course overview page is visible without enrollment, lesson content is not) |
-| Course/module/lesson/material create, update, reorder, publish, archive, delete | ✔ | ✘ |
-| Files | ✔ | `material`/`assignment` files: same rule as the parent content. `submission` files: only the owner. `downloadable:false` files: view inline, no attachment header |
-| Enrollment | manage anyone | request/self-enroll per **[D5]**; read own |
-| Lesson progress | read all | mark/unmark **own**, enrolled + published lessons only |
-| Assignments | full CRUD | read published assignments for enrolled courses |
-| Submissions | read all, review, grade, request resubmission | create/edit **own** under the rules in §5. Never sees another student's submission (404) |
-| Reports / dashboards | trainer dashboard, course & student reports | own dashboard only |
-| Notifications | own | own |
+| Resource / action                                                               | Admin                                         | Student                                                                                                                                                             |
+| ------------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sign up                                                                         | — (admins are created by seed/CLI only)       | ✔ always created as `student`                                                                                                                                       |
+| Courses: list                                                                   | all statuses                                  | `published` only                                                                                                                                                    |
+| Course detail, modules, lessons, materials                                      | all                                           | published course **and** published module/lesson/material **and** active enrollment (the course overview page is visible without enrollment, lesson content is not) |
+| Course/module/lesson/material create, update, reorder, publish, archive, delete | ✔                                             | ✘                                                                                                                                                                   |
+| Files                                                                           | ✔                                             | `material`/`assignment` files: same rule as the parent content. `submission` files: only the owner. `downloadable:false` files: view inline, no attachment header   |
+| Enrollment                                                                      | manage anyone                                 | request/self-enroll per **[D5]**; read own                                                                                                                          |
+| Lesson progress                                                                 | read all                                      | mark/unmark **own**, enrolled + published lessons only                                                                                                              |
+| Assignments                                                                     | full CRUD                                     | read published assignments for enrolled courses                                                                                                                     |
+| Submissions                                                                     | read all, review, grade, request resubmission | create/edit **own** under the rules in §5. Never sees another student's submission (404)                                                                            |
+| Reports / dashboards                                                            | trainer dashboard, course & student reports   | own dashboard only                                                                                                                                                  |
+| Notifications                                                                   | own                                           | own                                                                                                                                                                 |
 
 Ownership always comes from `req.user.id`. Any `student`, `role`, `reviewedBy`, `marks` or `status` fields in a student's request body are dropped by the zod schemas.
 
@@ -231,35 +233,35 @@ The seed content is written in Phase 2 (course, module and lesson structure plus
 
 Each phase ends with passing tests, an updated README, a phase report in `docs/phase-reports/phase-N.md`, and a stop for the trainer's review.
 
-| Phase | Scope | Accepted when |
-|---|---|---|
-| **0** Plan | This document | The trainer approves this plan and answers the decisions in §11 |
-| **1** Foundation & auth | Workspaces, lint/format, env validation, DB connection, error handling and response envelope, security middleware, User model, auth endpoints, refresh flow, admin seed; client shell with Tailwind, router, AuthContext, login/register/profile pages, role-guarded layouts | API tests cover register/login/refresh/logout/me, duplicate email, weak password, role injection ignored, rate limit, and protected route without/with a wrong-role token. The UI can register, log in, refresh the page and stay logged in, and log out |
-| **2** Courses & roadmap | Course/Module/Lesson models and CRUD, status changes, reorder, roadmap endpoint, enrollment, seed structure + notes for 3 courses; admin course builder (tree editor, drag/keyboard reorder, publish toggles, confirm dialogs); student catalog + roadmap timeline | Students can't see draft or archived content (404). Reorder persists. Archive is used instead of delete when data exists. Seeding twice creates no duplicates |
-| **3** Study materials | Material + FileAsset models, storage provider (local first), upload pipeline, file streaming with access checks; Markdown editor with preview, code block editor; lesson reader with ordered blocks, syntax highlighting, PDF inline viewer/download, prev/next navigation | Spoofed file types are rejected. Unenrolled students and anonymous users get 404 on files. Markdown with `<script>` renders inert |
-| **4** Assignments | Assignment + Submission models, link validation, PDF/code submissions, editing/attempt rules, late policy; admin assignment editor; student assignment page and submit form with history | A student can't read or edit another student's submission. Editing is blocked after review or after the window closes. Late flags and penalties are computed correctly. Disallowed submission types are rejected |
-| **5** Student portal | Lesson completion, progress aggregation, continue-learning, my-assignments with derived statuses, student dashboard | Progress % is correct when lessons are added or unpublished. Overdue is computed correctly around time zones (dates stored in UTC, shown in the browser's local time) |
-| **6** Review & analytics | Review queue, grading, feedback, resubmission requests; student list/detail; trainer dashboard; course & student reports | Only admins can grade. Marks are capped at `maxMarks`. A resubmission request unlocks a new attempt. Report numbers match the seed fixtures |
-| **7** Notifications & polish | Notification model, triggers, bell + list, deadline-soon job (on-request check or a daily `node-cron` task); permission audit; accessibility pass (labels, focus, contrast, keyboard); responsive review; skeletons, empty states and error states everywhere; index review | Notifications fire for every event in §5. The permission-audit test suite (every endpoint × role) passes. No obvious accessibility issues on key pages |
-| **8** Testing & deployment | Playwright E2E for the critical flows, bug fixes, production build, S3 storage driver verified, env docs, deployment guide | The E2E suite passes against a production build. The README has full setup and deployment instructions |
+| Phase                        | Scope                                                                                                                                                                                                                                                                        | Accepted when                                                                                                                                                                                                                                            |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **0** Plan                   | This document                                                                                                                                                                                                                                                                | The trainer approves this plan and answers the decisions in §11                                                                                                                                                                                          |
+| **1** Foundation & auth      | Workspaces, lint/format, env validation, DB connection, error handling and response envelope, security middleware, User model, auth endpoints, refresh flow, admin seed; client shell with Tailwind, router, AuthContext, login/register/profile pages, role-guarded layouts | API tests cover register/login/refresh/logout/me, duplicate email, weak password, role injection ignored, rate limit, and protected route without/with a wrong-role token. The UI can register, log in, refresh the page and stay logged in, and log out |
+| **2** Courses & roadmap      | Course/Module/Lesson models and CRUD, status changes, reorder, roadmap endpoint, enrollment, seed structure + notes for 3 courses; admin course builder (tree editor, drag/keyboard reorder, publish toggles, confirm dialogs); student catalog + roadmap timeline           | Students can't see draft or archived content (404). Reorder persists. Archive is used instead of delete when data exists. Seeding twice creates no duplicates                                                                                            |
+| **3** Study materials        | Material + FileAsset models, storage provider (local first), upload pipeline, file streaming with access checks; Markdown editor with preview, code block editor; lesson reader with ordered blocks, syntax highlighting, PDF inline viewer/download, prev/next navigation   | Spoofed file types are rejected. Unenrolled students and anonymous users get 404 on files. Markdown with `<script>` renders inert                                                                                                                        |
+| **4** Assignments            | Assignment + Submission models, link validation, PDF/code submissions, editing/attempt rules, late policy; admin assignment editor; student assignment page and submit form with history                                                                                     | A student can't read or edit another student's submission. Editing is blocked after review or after the window closes. Late flags and penalties are computed correctly. Disallowed submission types are rejected                                         |
+| **5** Student portal         | Lesson completion, progress aggregation, continue-learning, my-assignments with derived statuses, student dashboard                                                                                                                                                          | Progress % is correct when lessons are added or unpublished. Overdue is computed correctly around time zones (dates stored in UTC, shown in the browser's local time)                                                                                    |
+| **6** Review & analytics     | Review queue, grading, feedback, resubmission requests; student list/detail; trainer dashboard; course & student reports                                                                                                                                                     | Only admins can grade. Marks are capped at `maxMarks`. A resubmission request unlocks a new attempt. Report numbers match the seed fixtures                                                                                                              |
+| **7** Notifications & polish | Notification model, triggers, bell + list, deadline-soon job (on-request check or a daily `node-cron` task); permission audit; accessibility pass (labels, focus, contrast, keyboard); responsive review; skeletons, empty states and error states everywhere; index review  | Notifications fire for every event in §5. The permission-audit test suite (every endpoint × role) passes. No obvious accessibility issues on key pages                                                                                                   |
+| **8** Testing & deployment   | Playwright E2E for the critical flows, bug fixes, production build, S3 storage driver verified, env docs, deployment guide                                                                                                                                                   | The E2E suite passes against a production build. The README has full setup and deployment instructions                                                                                                                                                   |
 
 ## 11. Decisions (confirmed 2026-10-14)
 
-| # | Decision | Confirmed choice |
-|---|---|---|
-| D1 | Language | JavaScript (ES modules) on both client and server |
-| D2 | Notes format | Markdown, edited with a live-preview editor |
-| D3 | File storage | Local disk in development; S3-compatible storage (Cloudflare R2) in production, behind one `StorageProvider` interface |
-| D4 | Session handling | Short-lived access token (15 min) held in memory; rotating refresh token (7 days) in an httpOnly cookie |
-| D5 | Enrollment | Students request enrollment and the trainer approves; the trainer can also enroll students directly |
-| D6 | Notification delivery | Client polls every 60 s |
-| D7 | Deployment | Vercel (client) + Render (server) + MongoDB Atlas + Cloudflare R2 |
-| D8 | Git | Repository initialized; one commit after each completed **and reviewed** phase. Remote: `https://github.com/Dayapal/LMS-.git` |
-| D9 | Admin accounts | One trainer account, created by the seed script. The `role` field allows more admins later; no multi-tenant structure |
+| #   | Decision              | Confirmed choice                                                                                                              |
+| --- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| D1  | Language              | JavaScript (ES modules) on both client and server                                                                             |
+| D2  | Notes format          | Markdown, edited with a live-preview editor                                                                                   |
+| D3  | File storage          | Local disk in development; S3-compatible storage (Cloudflare R2) in production, behind one `StorageProvider` interface        |
+| D4  | Session handling      | Short-lived access token (15 min) held in memory; rotating refresh token (7 days) in an httpOnly cookie                       |
+| D5  | Enrollment            | Students request enrollment and the trainer approves; the trainer can also enroll students directly                           |
+| D6  | Notification delivery | Client polls every 60 s                                                                                                       |
+| D7  | Deployment            | Vercel (client) + Render (server) + MongoDB Atlas + Cloudflare R2                                                             |
+| D8  | Git                   | Repository initialized; one commit after each completed **and reviewed** phase. Remote: `https://github.com/Dayapal/LMS-.git` |
+| D9  | Admin accounts        | One trainer account, created by the seed script. The `role` field allows more admins later; no multi-tenant structure         |
 
 ### 11a. Authentication across the deployment domains (D4 + D7)
 
-**The problem.** The client on `*.vercel.app` and the API on `*.onrender.com` would be different *sites*. Both domains are on the Public Suffix List, so even two subdomains of `vercel.app` count as separate sites. If the browser called the Render API directly, the refresh cookie would be a third-party cookie and would need `SameSite=None; Secure`. Safari (ITP) blocks those by default and Firefox partitions them, so silent refresh would fail for part of the audience.
+**The problem.** The client on `*.vercel.app` and the API on `*.onrender.com` would be different _sites_. Both domains are on the Public Suffix List, so even two subdomains of `vercel.app` count as separate sites. If the browser called the Render API directly, the refresh cookie would be a third-party cookie and would need `SameSite=None; Secure`. Safari (ITP) blocks those by default and Firefox partitions them, so silent refresh would fail for part of the audience.
 
 **The design.** The browser only ever talks to the Vercel origin.
 
@@ -271,6 +273,7 @@ Browser ──https://<app>.vercel.app/api/v1/*──▶ Vercel rewrite (proxy) 
 - The API client always uses the relative base URL `/api/v1`. No API host is built into the client bundle.
 
 **Refresh cookie.**
+
 - Name `lms_rt`, `HttpOnly`, `Secure` in production, `SameSite=Lax`, `Path=/api/v1/auth`.
 - No `Domain` attribute, so it's a host-only cookie for the Vercel origin.
 - It's only ever sent to the auth endpoints, never to the rest of the API.
@@ -278,6 +281,7 @@ Browser ──https://<app>.vercel.app/api/v1/*──▶ Vercel rewrite (proxy) 
 **Access token.** A JWT signed with HS256, valid for 15 min, with payload `{ sub, role, tv }`. It's held in a JS module variable, never in `localStorage`, and sent as `Authorization: Bearer`. On every request the server loads the user and rejects the token if the user is inactive or `tv` doesn't match `user.tokenVersion`. That means role changes, password changes and deactivation take effect immediately.
 
 **Rotation.**
+
 - Refresh tokens are 256-bit random values. Only their SHA-256 hash is stored, in a `Session` collection with `family`, `expiresAt` (TTL index), `revokedAt` and `replacedAt`.
 - Every `POST /auth/refresh` revokes the presented token and issues a new one in the same family.
 - **Reuse detection:** if a token that was already rotated is presented again more than 10 s after rotation, the whole family is revoked. That logs out that device and anyone holding a stolen copy.
@@ -287,22 +291,23 @@ Browser ──https://<app>.vercel.app/api/v1/*──▶ Vercel rewrite (proxy) 
 **Logout.** `POST /auth/logout` revokes the session family and clears the cookie, even if the access token has already expired. Changing the password bumps `tokenVersion`, which revokes every session and access token for that user, then signs in only the current device again.
 
 **CORS and CSRF.**
+
 - In production the browser sees only same-origin requests, so CORS isn't involved.
 - The server still uses `cors({ origin: CLIENT_ORIGINS allowlist, credentials: true })` for direct calls and local tools.
 - The cookie-using endpoints (`/auth/refresh`, `/auth/logout`) also reject any request whose `Origin` header isn't in `CLIENT_ORIGINS`. Together with `SameSite=Lax`, which stops cross-site POSTs from carrying the cookie, this covers CSRF.
 - All other endpoints authenticate with the bearer header only, which browsers never attach on their own.
 
-**Proxies and rate limits.** Requests reach Express through Vercel's edge and then Render's load balancer. `TRUST_PROXY` (the number of proxy hops) is configurable so that `req.ip` (used by the rate limiter) is the real client IP. *To verify in Phase 8:* the correct hop count against the live deployment.
+**Proxies and rate limits.** Requests reach Express through Vercel's edge and then Render's load balancer. `TRUST_PROXY` (the number of proxy hops) is configurable so that `req.ip` (used by the rate limiter) is the real client IP. _To verify in Phase 8:_ the correct hop count against the live deployment.
 
 **Cross-site fallback.** If the API is ever called cross-site, set `COOKIE_SAMESITE=none` and add the client origin to `CLIENT_ORIGINS`. No code changes are needed, but Safari users will lose silent refresh, as described above.
 
 ## 12. Risks
 
-1. **Seed content volume.** About 38 modules × 2–4 lessons means roughly 100 lessons of real notes and code. *Mitigation:* concise notes per lesson, written in Phases 2–3. The trainer can expand them in the UI later.
+1. **Seed content volume.** About 38 modules × 2–4 lessons means roughly 100 lessons of real notes and code. _Mitigation:_ concise notes per lesson, written in Phases 2–3. The trainer can expand them in the UI later.
 2. **Cross-site cookies in production.** Resolved by design: the Vercel `/api` rewrite keeps the refresh cookie first-party (§11a). The remaining check, the proxy hop count for `TRUST_PROXY`, happens in Phase 8.
-3. **Ephemeral disk on PaaS hosts.** Local uploads are lost on redeploy. *Mitigation:* the S3-compatible driver is required in production, and production fails fast at startup if `STORAGE_DRIVER=local`.
-4. **Native `bcrypt` on Windows.** It installs from prebuilt binaries for Node 22. *Mitigation:* if a build ever fails, fall back to `bcryptjs`, which has the same API.
-5. **Express 5 ecosystem.** Some middleware (for example `express-mongo-sanitize`) isn't compatible. *Mitigation:* use Mongoose `sanitizeFilter` and strict zod schemas instead.
-6. **Permission regressions** as features are added. *Mitigation:* the access service is the single source of truth, and Phase 7 adds an endpoint × role audit suite.
-7. **Deadlines and time zones.** *Mitigation:* store dates in UTC, compute "overdue" on the server, and show deadlines in the browser's local time with the time zone visible.
+3. **Ephemeral disk on PaaS hosts.** Local uploads are lost on redeploy. _Mitigation:_ the S3-compatible driver is required in production, and production fails fast at startup if `STORAGE_DRIVER=local`.
+4. **Native `bcrypt` on Windows.** It installs from prebuilt binaries for Node 22. _Mitigation:_ if a build ever fails, fall back to `bcryptjs`, which has the same API.
+5. **Express 5 ecosystem.** Some middleware (for example `express-mongo-sanitize`) isn't compatible. _Mitigation:_ use Mongoose `sanitizeFilter` and strict zod schemas instead.
+6. **Permission regressions** as features are added. _Mitigation:_ the access service is the single source of truth, and Phase 7 adds an endpoint × role audit suite.
+7. **Deadlines and time zones.** _Mitigation:_ store dates in UTC, compute "overdue" on the server, and show deadlines in the browser's local time with the time zone visible.
 8. **Scope creep.** Video, payments, live classes, quizzes and certificates are explicitly out of scope.
