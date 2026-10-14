@@ -4,12 +4,6 @@ export const LEVEL_LABEL = {
   advanced: 'Advanced',
 };
 
-export const STATUS_OPTIONS = [
-  { value: 'draft', label: 'Draft' },
-  { value: 'published', label: 'Published' },
-  { value: 'archived', label: 'Archived' },
-];
-
 export function formatMinutes(total) {
   if (!total) return '—';
   const hours = Math.floor(total / 60);
@@ -19,13 +13,6 @@ export function formatMinutes(total) {
 }
 
 export const plural = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`;
-
-/** Splits plain text into paragraphs on blank lines (Markdown rendering arrives in Phase 3). */
-export const paragraphs = (text = '') =>
-  text
-    .split(/\n\s*\n/)
-    .map((p) => p.trim())
-    .filter(Boolean);
 
 /** One item per non-empty line, for objectives and prerequisites textareas. */
 export const linesToList = (text = '') =>

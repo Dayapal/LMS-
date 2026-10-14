@@ -30,4 +30,9 @@ export class ApiError extends Error {
   static conflict(message) {
     return new ApiError(409, 'CONFLICT', message);
   }
+
+  /** An upload that fails the type, content or size rules. */
+  static fileRejected(message, status = 400) {
+    return new ApiError(status, 'FILE_REJECTED', message);
+  }
 }

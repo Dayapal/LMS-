@@ -11,6 +11,8 @@ import { ApiError } from '../utils/ApiError.js';
 import { paginationMeta, skipFor } from '../utils/pagination.js';
 import { escapeRegex, slugify, uniqueSlug } from '../utils/text.js';
 import { getCourseForViewer, isAdmin, visibleTo } from './access.service.js';
+import { deleteFilesWhere } from './file.service.js';
+import { deleteMaterialsWhere } from './material.service.js';
 import { toCourseDTO, toLessonDTO, toModuleDTO, toOwnEnrollment } from './serializers.js';
 
 const { trusted } = mongoose;
@@ -173,6 +175,7 @@ export async function setCourseStatus(user, courseId, status) {
 /**
  * Hard delete is only for courses nobody is learning from: not published and
  * without active or pending enrollments. Everything else should be archived.
+ * Its modules, lessons, materials and files are deleted with it.
  */
 export async function deleteCourse(courseId) {
   const course = await findCourseOr404(courseId);
@@ -188,6 +191,9 @@ export async function deleteCourse(courseId) {
       'This course has enrolled or requesting students. Archive it instead of deleting.',
     );
   }
+  await deleteMaterialsWhere({ course: course._id });
+  // Also files uploaded for the course but never attached to a material.
+  await deleteFilesWhere({ course: course._id });
   await Promise.all([
     Lesson.deleteMany({ course: course._id }),
     CourseModule.deleteMany({ course: course._id }),

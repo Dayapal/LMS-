@@ -3,3 +3,5 @@ dist
 coverage
 package-lock.json
 server/uploads
+# Starter lesson content, kept verbatim: Prettier would reformat the code examples.
+server/src/seeds/content

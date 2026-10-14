@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import * as courses from '../controllers/course.controller.js';
 import * as roadmap from '../controllers/roadmap.controller.js';
+import * as materials from '../controllers/material.controller.js';
 import { authenticate, requireRole } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { ROLES } from '../models/index.js';
@@ -16,6 +17,7 @@ import {
   updateLessonSchema,
   updateModuleSchema,
 } from '../validators/content.validators.js';
+import { createMaterialSchema, updateMaterialSchema } from '../validators/material.validators.js';
 
 const admin = requireRole(ROLES.ADMIN);
 const byId = validate({ params: idParams });
@@ -97,5 +99,32 @@ export function lessonRoutes() {
     roadmap.updateLesson,
   );
   router.delete('/:id', admin, byId, roadmap.deleteLesson);
+  router.get('/:id/navigation', byId, materials.navigation);
+  router.get('/:id/materials', byId, materials.list);
+  router.post(
+    '/:id/materials',
+    admin,
+    validate({ params: idParams, body: createMaterialSchema }),
+    materials.create,
+  );
+  router.patch(
+    '/:id/materials/reorder',
+    admin,
+    validate({ params: idParams, body: reorderSchema }),
+    materials.reorder,
+  );
+  return router;
+}
+
+export function materialRoutes() {
+  const router = Router();
+  router.use(authenticate, admin);
+
+  router.patch(
+    '/:id',
+    validate({ params: idParams, body: updateMaterialSchema }),
+    materials.update,
+  );
+  router.delete('/:id', byId, materials.remove);
   return router;
 }

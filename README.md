@@ -6,12 +6,13 @@ The design and the phase plan are in [docs/superpowers/specs/2026-10-14-training
 
 ## Status
 
-| Phase | Scope                                                                     | Status                                                |
-| ----- | ------------------------------------------------------------------------- | ----------------------------------------------------- |
-| 0     | Planning                                                                  | ✅ Approved                                           |
-| 1     | Foundation and authentication                                             | ✅ Approved ([report](docs/phase-reports/phase-1.md)) |
-| 2     | Courses and roadmaps                                                      | ✅ Approved ([report](docs/phase-reports/phase-2.md)) |
-| 3–8   | Materials, assignments, student portal, review, notifications, deployment | ⏳ Not started                                        |
+| Phase | Scope                                                          | Status                                                 |
+| ----- | -------------------------------------------------------------- | ------------------------------------------------------ |
+| 0     | Planning                                                       | ✅ Approved                                            |
+| 1     | Foundation and authentication                                  | ✅ Approved ([report](docs/phase-reports/phase-1.md))  |
+| 2     | Courses and roadmaps                                           | ✅ Approved ([report](docs/phase-reports/phase-2.md))  |
+| 3     | Study materials                                                | 🔍 In review ([report](docs/phase-reports/phase-3.md)) |
+| 4–8   | Assignments, student portal, review, notifications, deployment | ⏳ Not started                                         |
 
 ## Requirements
 
@@ -37,21 +38,21 @@ The values you must set in `server/.env`:
 | `JWT_ACCESS_SECRET`                       | 32+ random characters. Generate one with `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"` |
 | `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` | The trainer login created by `npm run seed`. The password needs 8+ characters with a letter and a number                  |
 
-Every other variable has a working default; [server/.env.example](server/.env.example) documents each one. Set `SEED_DEMO_STUDENT_PASSWORD` if you also want three demo students (`aarav.demo`, `neha.demo` and `kabir.demo` `@example.com`) with sample enrollments.
+Every other variable has a working default; [server/.env.example](server/.env.example) documents each one. Uploaded files go to `server/uploads/` (git-ignored) unless you set `UPLOAD_DIR`. Set `SEED_DEMO_STUDENT_PASSWORD` if you also want three demo students (`aarav.demo`, `neha.demo` and `kabir.demo` `@example.com`) with sample enrollments.
 
 Students create their own accounts at `/register`. There is no public sign-up for trainers: the trainer account comes only from the seed.
 
 ## Scripts (run from the repository root)
 
-| Command                                   | What it does                                                                                                          |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev`                             | Starts the API (with `node --watch`) and the Vite dev server together                                                 |
-| `npm test`                                | Runs the server tests, then the client tests                                                                          |
-| `npm run lint`                            | Runs ESLint across both workspaces                                                                                    |
-| `npm run format` / `npm run format:check` | Runs Prettier (write / check)                                                                                         |
-| `npm run build`                           | Builds the client for production into `client/dist`                                                                   |
-| `npm run seed`                            | Creates the trainer account, the 3 starter courses and (optionally) demo students. Existing records are never changed |
-| `npm run seed -- --reset`                 | Development only: deletes all courses, enrollments and demo students, then seeds again                                |
+| Command                                   | What it does                                                                                                                                      |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                             | Starts the API (with `node --watch`) and the Vite dev server together                                                                             |
+| `npm test`                                | Runs the server tests, then the client tests                                                                                                      |
+| `npm run lint`                            | Runs ESLint across both workspaces                                                                                                                |
+| `npm run format` / `npm run format:check` | Runs Prettier (write / check)                                                                                                                     |
+| `npm run build`                           | Builds the client for production into `client/dist`                                                                                               |
+| `npm run seed`                            | Creates the trainer account, the 3 starter courses with their study materials, and (optionally) demo students. Existing records are never changed |
+| `npm run seed -- --reset`                 | Development only: deletes all courses, materials, uploaded files, enrollments and demo students, then seeds again                                 |
 
 To run a single test file: `npm test -w server -- tests/auth.test.js` or `npm test -w client -- src/routes/guards.test.jsx`. Add `-t "name"` to filter by test name.
 
@@ -65,6 +66,14 @@ The server tests need the local MongoDB. Each test file creates and then drops i
 - **Logout:** revokes the session on the server. Other open tabs are signed out through a `BroadcastChannel` message.
 
 The full design is in §11a of the spec.
+
+## Study materials and files
+
+- Each lesson holds an ordered list of materials: Markdown notes, code examples, files (PDF, DOCX, PPTX up to 20 MB) and links. Each has its own draft/published status.
+- Students see a lesson's published materials only when the lesson, its module and its course are published and their enrollment is active.
+- Uploads are trainer-only. The file's extension, its declared type and its actual content (magic bytes) must all agree; the stored name is a random key.
+- Files are never public. `GET /api/v1/files/:id` checks access on every request, and the app fetches files with the signed-in user's token.
+- The starter notes and code live in `server/src/seeds/content/`, one Markdown file per course. `npm run seed` adds them to starter lessons that have no materials yet, so it is safe to rerun.
 
 ## Project layout
 

@@ -1,4 +1,9 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
+
+// Upload paths are relative to server/, regardless of the directory the process started in.
+const SERVER_DIR = fileURLToPath(new URL('../..', import.meta.url));
 
 const csv = z.string().transform((value) =>
   value
@@ -27,6 +32,11 @@ const envSchema = z.object({
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(300),
   AUTH_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(10),
   REFRESH_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(60),
+  UPLOAD_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(30),
+
+  // Phase 8 adds the S3-compatible driver for production.
+  STORAGE_DRIVER: z.enum(['local']).default('local'),
+  UPLOAD_DIR: z.string().optional(),
 
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
 
@@ -79,6 +89,12 @@ function loadConfig() {
       max: env.RATE_LIMIT_MAX,
       authMax: env.AUTH_RATE_LIMIT_MAX,
       refreshMax: env.REFRESH_RATE_LIMIT_MAX,
+      uploadWindowMs: 60 * 60 * 1000,
+      uploadMax: env.UPLOAD_RATE_LIMIT_MAX,
+    },
+    storage: {
+      driver: env.STORAGE_DRIVER,
+      localDir: path.resolve(SERVER_DIR, env.UPLOAD_DIR ?? 'uploads'),
     },
     seed: {
       adminName: env.SEED_ADMIN_NAME,

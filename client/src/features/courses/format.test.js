@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatMinutes, linesToList, moveId, paragraphs, plural } from './format.js';
+import { formatMinutes, linesToList, moveId, plural } from './format.js';
 
 describe('course formatting helpers', () => {
   it('moves ids up and down and ignores moves past the ends', () => {
@@ -16,9 +16,8 @@ describe('course formatting helpers', () => {
     expect(formatMinutes(150)).toBe('2 h 30 min');
   });
 
-  it('splits text into lists and paragraphs', () => {
+  it('splits lines into lists and pluralizes', () => {
     expect(linesToList(' one \n\n two\n')).toEqual(['one', 'two']);
-    expect(paragraphs('a\nb\n\n  \nc')).toEqual(['a\nb', 'c']);
     expect(plural(1, 'module')).toBe('1 module');
     expect(plural(3, 'lesson')).toBe('3 lessons');
   });

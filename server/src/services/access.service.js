@@ -4,7 +4,11 @@ import {
   CourseModule,
   Enrollment,
   ENROLLMENT_STATUS,
+  FILE_PURPOSES,
+  FileAsset,
   Lesson,
+  Material,
+  MATERIAL_TYPES,
   ROLES,
 } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
@@ -42,12 +46,13 @@ export async function getActiveEnrollment(userId, courseId) {
 }
 
 /**
- * Lesson content requires, for students: published lesson, module and course,
- * and an active enrollment in the course.
+ * The lesson with its module and course when `user` may open it, otherwise null.
+ * Students need the lesson, module and course published and an active
+ * enrollment in the course.
  */
-export async function getLessonForViewer(user, lessonId) {
+async function findLessonForViewer(user, lessonId) {
   const lesson = await Lesson.findById(lessonId);
-  if (!lesson) throw ApiError.notFound('Lesson not found');
+  if (!lesson) return null;
   if (isAdmin(user)) {
     const [module, course] = await Promise.all([
       CourseModule.findById(lesson.module),
@@ -63,6 +68,44 @@ export async function getLessonForViewer(user, lessonId) {
   ]);
   const visible =
     isPublished(lesson) && isPublished(module) && isPublished(course) && Boolean(enrollment);
-  if (!visible) throw ApiError.notFound('Lesson not found');
-  return { lesson, module, course, enrollment };
+  return visible ? { lesson, module, course, enrollment } : null;
+}
+
+/** Lesson content (the lesson, its materials and navigation) for `user`, or 404. */
+export async function getLessonForViewer(user, lessonId) {
+  const found = await findLessonForViewer(user, lessonId);
+  if (!found) throw ApiError.notFound('Lesson not found');
+  return found;
+}
+
+/**
+ * A stored file and whether `user` may download it, or 404.
+ * Material files follow their material: a student needs at least one published
+ * file material that uses it, inside a lesson they can open. The file is
+ * downloadable when any of those materials allows it. Files of other purposes
+ * arrive in later phases and stay admin-only until then.
+ */
+export async function getFileForViewer(user, fileId) {
+  const file = await FileAsset.findById(fileId);
+  if (!file) throw ApiError.notFound('File not found');
+  if (isAdmin(user)) return { file, downloadable: true };
+
+  if (file.purpose === FILE_PURPOSES.MATERIAL) {
+    const materials = await Material.find({
+      file: file._id,
+      type: MATERIAL_TYPES.FILE,
+      status: CONTENT_STATUS.PUBLISHED,
+    })
+      .select('lesson downloadable')
+      .lean();
+    let visible = false;
+    let downloadable = false;
+    for (const material of materials) {
+      if (!(await findLessonForViewer(user, material.lesson))) continue;
+      visible = true;
+      downloadable ||= Boolean(material.downloadable);
+    }
+    if (visible) return { file, downloadable };
+  }
+  throw ApiError.notFound('File not found');
 }

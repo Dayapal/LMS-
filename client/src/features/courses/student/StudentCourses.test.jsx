@@ -6,6 +6,8 @@ import { CourseCatalogPage } from './CourseCatalogPage.jsx';
 import { CourseDetailPage } from './CourseDetailPage.jsx';
 import { renderWithProviders, notFoundError } from '../../../test/renderWithProviders.jsx';
 import { makeCourse, makeRoadmap, STUDENT } from '../test-fixtures.js';
+// Loaded up front so the lazily loaded description renderer resolves at once.
+import '../../../components/content/MarkdownView.jsx';
 
 const routes = [
   { path: '/app/courses', element: <CourseCatalogPage /> },
@@ -82,7 +84,35 @@ describe('CourseDetailPage', () => {
       screen.getByRole('heading', { name: /module 1: html fundamentals/i }),
     ).toBeInTheDocument();
     expect(screen.getByText('Lesson l1')).toBeInTheDocument();
-    expect(screen.getByText('Second paragraph.')).toBeInTheDocument();
+    // The Markdown renderer loads lazily, then splits the paragraphs.
+    expect(await screen.findByText('Second paragraph.')).toBeInTheDocument();
+    // Not enrolled: the roadmap is an outline, without links to lesson content.
+    expect(screen.queryByRole('link', { name: 'Lesson l1' })).not.toBeInTheDocument();
+  });
+
+  it('renders the course description as safe Markdown', async () => {
+    vi.spyOn(coursesApi, 'roadmap').mockResolvedValue(
+      makeRoadmap({ description: '## Who it is for\n\n**Beginners** <script>alert(1)</script>' }),
+    );
+    const { container } = renderWithProviders(routes, { path: '/app/courses/c1', user: STUDENT });
+    expect(await screen.findByRole('heading', { name: 'Who it is for' })).toBeInTheDocument();
+    expect(screen.getByText('Beginners').tagName).toBe('STRONG');
+    expect(container.querySelector('script')).toBeNull();
+  });
+
+  it('links enrolled students to each lesson and the first lesson', async () => {
+    vi.spyOn(coursesApi, 'roadmap').mockResolvedValue(
+      makeRoadmap({ enrollment: { status: 'active', enrolledAt: '2026-10-01' } }),
+    );
+    renderWithProviders(routes, { path: '/app/courses/c1', user: STUDENT });
+    expect(await screen.findByRole('link', { name: 'Lesson l1' })).toHaveAttribute(
+      'href',
+      '/app/courses/c1/lessons/l1',
+    );
+    expect(screen.getByRole('link', { name: /start with/i })).toHaveAttribute(
+      'href',
+      '/app/courses/c1/lessons/l1',
+    );
   });
 
   it('requests enrollment and shows the pending state', async () => {

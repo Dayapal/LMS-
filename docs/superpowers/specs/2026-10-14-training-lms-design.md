@@ -1,6 +1,6 @@
 # Training LMS: Design and Implementation Plan
 
-Status: **Phase 0 approved 2026-10-14**. All decisions in §11 confirmed by the trainer.
+Status: **Phase 0 approved 2026-10-14**. All decisions in §11 confirmed by the trainer. Phases 1–2 approved; Phase 3 implemented and awaiting review.
 Date: 2026-10-14
 
 This document covers the architecture, data model, API, permissions, phases and acceptance criteria for the full-stack training LMS. Items marked **[DECISION Dn]** refer to the confirmed decisions in §11.
@@ -132,6 +132,12 @@ A lesson page renders its materials in order. Keeping notes, code and files as s
 
 **FileAsset**: `provider`, `storageKey`, `originalName`, `mimeType`, `size`, `uploadedBy`, `purpose` (`material` | `assignment` | `submission` | `thumbnail` | `avatar`), `course?`, `checksum`. Files are **never** served as public static files. They're streamed through `GET /files/:id`, which runs the access service first (S3 uses short-lived signed URLs instead).
 
+As built in Phase 3:
+
+- Only the `material` purpose exists so far; later phases add theirs. Material files must be uploaded for a course, and can only be attached to materials of that course.
+- The client fetches files with the bearer token as a Blob and shows PDFs from a local `blob:` URL, so no file ever has a URL that works without signing in.
+- A file is deleted, with its stored bytes, when the last material using it is deleted or switches to another file, and when its course is deleted.
+
 **Enrollment**: `user`, `course`, `status` (`pending` | `active` | `removed`), `enrolledBy`, `lastLesson`, `lastAccessedAt`. Unique `{user, course}`. **[DECISION D5]**
 
 **LessonProgress**: `user`, `course`, `lesson`, `completedAt`. Unique `{user, lesson}`. Course progress = completed **published** lessons ÷ total published lessons. It's computed with an aggregation and never stored, so it stays correct when the trainer adds or removes lessons.
@@ -154,19 +160,19 @@ Rules:
 
 ## 6. Permissions matrix
 
-| Resource / action                                                               | Admin                                         | Student                                                                                                                                                             |
-| ------------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Sign up                                                                         | — (admins are created by seed/CLI only)       | ✔ always created as `student`                                                                                                                                       |
-| Courses: list                                                                   | all statuses                                  | `published` only                                                                                                                                                    |
-| Course detail, modules, lessons, materials                                      | all                                           | published course **and** published module/lesson/material **and** active enrollment (the course overview page is visible without enrollment, lesson content is not) |
-| Course/module/lesson/material create, update, reorder, publish, archive, delete | ✔                                             | ✘                                                                                                                                                                   |
-| Files                                                                           | ✔                                             | `material`/`assignment` files: same rule as the parent content. `submission` files: only the owner. `downloadable:false` files: view inline, no attachment header   |
-| Enrollment                                                                      | manage anyone                                 | request/self-enroll per **[D5]**; read own                                                                                                                          |
-| Lesson progress                                                                 | read all                                      | mark/unmark **own**, enrolled + published lessons only                                                                                                              |
-| Assignments                                                                     | full CRUD                                     | read published assignments for enrolled courses                                                                                                                     |
-| Submissions                                                                     | read all, review, grade, request resubmission | create/edit **own** under the rules in §5. Never sees another student's submission (404)                                                                            |
-| Reports / dashboards                                                            | trainer dashboard, course & student reports   | own dashboard only                                                                                                                                                  |
-| Notifications                                                                   | own                                           | own                                                                                                                                                                 |
+| Resource / action                                                               | Admin                                         | Student                                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sign up                                                                         | — (admins are created by seed/CLI only)       | ✔ always created as `student`                                                                                                                                                                                                           |
+| Courses: list                                                                   | all statuses                                  | `published` only                                                                                                                                                                                                                        |
+| Course detail, modules, lessons, materials                                      | all                                           | published course **and** published module/lesson/material **and** active enrollment (the course overview page is visible without enrollment, lesson content is not)                                                                     |
+| Course/module/lesson/material create, update, reorder, publish, archive, delete | ✔                                             | ✘                                                                                                                                                                                                                                       |
+| Files                                                                           | ✔                                             | `material`/`assignment` files: same rule as the parent content. `submission` files: only the owner. `downloadable:false` files: view inline, no attachment header. Requests without a token get 404, like any file the viewer can't see |
+| Enrollment                                                                      | manage anyone                                 | request/self-enroll per **[D5]**; read own                                                                                                                                                                                              |
+| Lesson progress                                                                 | read all                                      | mark/unmark **own**, enrolled + published lessons only                                                                                                                                                                                  |
+| Assignments                                                                     | full CRUD                                     | read published assignments for enrolled courses                                                                                                                                                                                         |
+| Submissions                                                                     | read all, review, grade, request resubmission | create/edit **own** under the rules in §5. Never sees another student's submission (404)                                                                                                                                                |
+| Reports / dashboards                                                            | trainer dashboard, course & student reports   | own dashboard only                                                                                                                                                                                                                      |
+| Notifications                                                                   | own                                           | own                                                                                                                                                                                                                                     |
 
 Ownership always comes from `req.user.id`. Any `student`, `role`, `reviewedBy`, `marks` or `status` fields in a student's request body are dropped by the zod schemas.
 
@@ -175,8 +181,9 @@ Ownership always comes from `req.user.id`. Any `student`, `role`, `reviewedBy`, 
 - **Course:** only when it isn't published and has no active or pending enrollments. Deleting it also deletes its modules, lessons and removed enrollments.
 - **Module:** only when neither the module nor any of its lessons is published. Deleting it also deletes its lessons.
 - **Lesson:** only when it isn't published.
+- **Material (Phase 3):** only when it isn't published.
 
-Anything else returns `409 CONFLICT` with a message telling the trainer to unpublish or archive first.
+Anything else returns `409 CONFLICT` with a message telling the trainer to unpublish or archive first. Deleting a course, module or lesson also deletes its materials and their unused files.
 
 ## 7. API plan (by phase)
 
@@ -236,7 +243,7 @@ The seed creates:
 The seed content was built up in stages:
 
 - **Phase 2:** course, module and lesson structure, with each lesson's summary, objectives, prerequisites and estimated time. Demo students are created only when `SEED_DEMO_STUDENT_PASSWORD` is set. `--reset` also recreates them.
-- **Phase 3:** lesson notes, code, PDF and link materials. Notes are Material documents, so they wait for the Material model.
+- **Phase 3:** lesson notes, code, PDF and link materials. The content lives in `server/src/seeds/content/<course slug>.md`, one Markdown file per course. A starter lesson (found by its slug, so renames don't matter) gets its materials only while it has none at all. Rerunning the seed never duplicates or changes them, and databases seeded in Phase 2 get their notes on the next `npm run seed`. One generated cheat-sheet PDF per course is attached to its first lesson.
 - **Phase 4:** assignments.
 - **Phase 5:** demo progress.
 
@@ -316,7 +323,7 @@ Browser ──https://<app>.vercel.app/api/v1/*──▶ Vercel rewrite (proxy) 
 
 1. **Seed content volume.** About 38 modules × 2–4 lessons means roughly 100 lessons of real notes and code. _Mitigation:_ concise notes per lesson, written in Phases 2–3. The trainer can expand them in the UI later.
 2. **Cross-site cookies in production.** Resolved by design: the Vercel `/api` rewrite keeps the refresh cookie first-party (§11a). The remaining check, the proxy hop count for `TRUST_PROXY`, happens in Phase 8.
-3. **Ephemeral disk on PaaS hosts.** Local uploads are lost on redeploy. _Mitigation:_ the S3-compatible driver is required in production, and production fails fast at startup if `STORAGE_DRIVER=local`.
+3. **Ephemeral disk on PaaS hosts.** Local uploads are lost on redeploy. _Mitigation:_ the S3-compatible driver is required in production, and production fails fast at startup if `STORAGE_DRIVER=local`. Phase 3 ships only the local driver behind the `StorageProvider` interface; the S3 driver and the fail-fast check arrive together in Phase 8.
 4. **Native `bcrypt` on Windows.** It installs from prebuilt binaries for Node 22. _Mitigation:_ if a build ever fails, fall back to `bcryptjs`, which has the same API.
 5. **Express 5 ecosystem.** Some middleware (for example `express-mongo-sanitize`) isn't compatible. _Mitigation:_ use Mongoose `sanitizeFilter` and strict zod schemas instead.
 6. **Permission regressions** as features are added. _Mitigation:_ the access service is the single source of truth, and Phase 7 adds an endpoint × role audit suite.

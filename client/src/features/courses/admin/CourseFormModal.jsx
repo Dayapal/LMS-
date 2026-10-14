@@ -67,7 +67,7 @@ function CourseForm({ course, onCancel, onSubmit }) {
       <TextAreaField
         label="Description"
         rows={6}
-        hint="Shown on the course page. Separate paragraphs with a blank line."
+        hint="Shown on the course page. Markdown is supported: **bold**, lists, links and headings."
         error={errors.description?.message}
         {...register('description')}
       />

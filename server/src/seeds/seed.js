@@ -8,6 +8,7 @@ import {
   resetCourseData,
   seedCourses,
   seedDemoStudents,
+  seedMaterials,
 } from './course.seed.js';
 
 const reset = process.argv.includes('--reset');
@@ -29,11 +30,18 @@ async function main() {
 
   if (reset) {
     await Promise.all([resetCourseData(), removeDemoStudents()]);
-    logger.warn('Removed all courses, modules, lessons, enrollments and demo students (--reset)');
+    logger.warn(
+      'Removed all courses, modules, lessons, materials, files, enrollments and demo students (--reset)',
+    );
   }
 
   for (const course of await seedCourses({ createdBy: admin.user._id })) {
     logger.info(`Course ${course.slug}: ${course.created ? 'created' : 'already exists, kept'}`);
+  }
+  for (const result of await seedMaterials({ createdBy: admin.user._id })) {
+    logger.info(
+      `Materials for ${result.slug}: added to ${result.added} lessons, ${result.kept} lessons already had materials`,
+    );
   }
 
   const demoPassword = config.seed.demoStudentPassword;

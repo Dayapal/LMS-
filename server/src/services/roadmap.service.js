@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { CONTENT_STATUS, CourseModule, Lesson } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
 import { slugify, uniqueSlug } from '../utils/text.js';
@@ -8,8 +9,11 @@ import {
   visibleTo,
 } from './access.service.js';
 import { findCourseOr404 } from './course.service.js';
+import { deleteMaterialsWhere } from './material.service.js';
 import { applyOrder, nextOrder } from './ordering.js';
 import { toLessonDTO, toModuleDTO } from './serializers.js';
+
+const { trusted } = mongoose;
 
 // Phases 4-5 extend these guards with assignment, submission and progress checks.
 function assertNotPublished(doc, label) {
@@ -60,7 +64,10 @@ export async function reorderModules(courseId, ids) {
   return modules.map((m) => toModuleDTO(m));
 }
 
-/** Deletes an unpublished module together with its lessons, none of which may be published. */
+/**
+ * Deletes an unpublished module together with its lessons (none of which may be
+ * published) and their materials.
+ */
 export async function deleteModule(moduleId) {
   const module = await findModuleOr404(moduleId);
   assertNotPublished(module, 'module');
@@ -73,6 +80,8 @@ export async function deleteModule(moduleId) {
       'This module still has published lessons. Unpublish or archive them before deleting it.',
     );
   }
+  const lessonIds = await Lesson.distinct('_id', { module: module._id });
+  await deleteMaterialsWhere({ lesson: trusted({ $in: lessonIds }) });
   await Lesson.deleteMany({ module: module._id });
   await module.deleteOne();
 }
@@ -140,8 +149,52 @@ export async function reorderLessons(moduleId, ids) {
   return lessons.map(toLessonDTO);
 }
 
+/** Deletes an unpublished lesson and its materials. */
 export async function deleteLesson(lessonId) {
   const lesson = await findLessonOr404(lessonId);
   assertNotPublished(lesson, 'lesson');
+  await deleteMaterialsWhere({ lesson: lesson._id });
   await lesson.deleteOne();
+}
+
+/**
+ * The lessons before and after this one in course order (module order, then
+ * lesson order), counting only lessons the viewer can open.
+ */
+export async function getLessonNavigation(user, lessonId) {
+  const { lesson, course } = await getLessonForViewer(user, lessonId);
+  const modules = await CourseModule.find({ course: course._id, ...visibleTo(user) })
+    .sort({ order: 1 })
+    .select('_id title')
+    .lean();
+  const moduleIndex = new Map(modules.map((m, index) => [m._id.toString(), index]));
+  const lessons = await Lesson.find({
+    course: course._id,
+    module: trusted({ $in: modules.map((m) => m._id) }),
+    ...visibleTo(user),
+  })
+    .select('_id title module order')
+    .lean();
+  lessons.sort(
+    (a, b) =>
+      moduleIndex.get(a.module.toString()) - moduleIndex.get(b.module.toString()) ||
+      a.order - b.order,
+  );
+
+  const index = lessons.findIndex((l) => l._id.equals(lesson._id));
+  const summary = (item) =>
+    item
+      ? {
+          id: item._id.toString(),
+          title: item.title,
+          moduleId: item.module.toString(),
+          moduleTitle: modules[moduleIndex.get(item.module.toString())].title,
+        }
+      : null;
+  return {
+    previous: index > 0 ? summary(lessons[index - 1]) : null,
+    next: index >= 0 ? summary(lessons[index + 1]) : null,
+    position: index + 1,
+    total: lessons.length,
+  };
 }

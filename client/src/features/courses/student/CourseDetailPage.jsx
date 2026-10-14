@@ -2,13 +2,18 @@ import { Link, useParams } from 'react-router';
 import { useRoadmap } from '../api.js';
 import { CourseCover } from '../components/CourseCover.jsx';
 import { EnrollmentAction, EnrollmentBadge } from './EnrollmentAction.jsx';
-import { LEVEL_LABEL, formatMinutes, paragraphs, plural } from '../format.js';
+import { LEVEL_LABEL, formatMinutes, plural } from '../format.js';
+import { LazyMarkdownView } from '../../../components/content/LazyMarkdownView.jsx';
 import { Badge } from '../../../components/ui/Badge.jsx';
 import { Card, CardBody } from '../../../components/ui/Card.jsx';
 import { EmptyState, ErrorState, Skeleton } from '../../../components/ui/Feedback.jsx';
 import { getErrorMessage } from '../../../utils/apiErrors.js';
 
-function RoadmapTimeline({ modules }) {
+/**
+ * The roadmap of published modules and lessons. Lessons link to the reader
+ * once the student's enrollment is active (`lessonPath` is set).
+ */
+function RoadmapTimeline({ modules, lessonPath }) {
   if (modules.length === 0) {
     return (
       <EmptyState title="Roadmap coming soon">
@@ -45,7 +50,18 @@ function RoadmapTimeline({ modules }) {
                         {index + 1}.{lessonIndex + 1}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-slate-800">{lesson.title}</p>
+                        <p className="text-sm font-medium text-slate-800">
+                          {lessonPath ? (
+                            <Link
+                              to={lessonPath(lesson.id)}
+                              className="text-brand-700 hover:text-brand-800 hover:underline"
+                            >
+                              {lesson.title}
+                            </Link>
+                          ) : (
+                            lesson.title
+                          )}
+                        </p>
                         {lesson.summary && (
                           <p className="text-sm text-slate-500">{lesson.summary}</p>
                         )}
@@ -94,6 +110,11 @@ export function CourseDetailPage() {
   }
 
   const { course, modules } = data;
+  const enrolled = course.enrollment?.status === 'active';
+  const lessonPath = enrolled
+    ? (lessonId) => `/app/courses/${course.id}/lessons/${lessonId}`
+    : undefined;
+  const firstLesson = modules.find((m) => m.lessons.length > 0)?.lessons[0];
 
   return (
     <div className="space-y-8">
@@ -130,6 +151,14 @@ export function CourseDetailPage() {
             </div>
           </dl>
           <EnrollmentAction course={course} />
+          {enrolled && firstLesson && (
+            <Link
+              to={lessonPath(firstLesson.id)}
+              className="inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"
+            >
+              Start with “{firstLesson.title}”
+            </Link>
+          )}
         </div>
       </section>
 
@@ -144,7 +173,7 @@ export function CourseDetailPage() {
               guided lessons
             </p>
           </div>
-          <RoadmapTimeline modules={modules} />
+          <RoadmapTimeline modules={modules} lessonPath={lessonPath} />
         </section>
 
         {course.description && (
@@ -152,11 +181,7 @@ export function CourseDetailPage() {
             <h2 id="about-heading" className="text-lg font-semibold text-slate-900">
               About this course
             </h2>
-            <div className="space-y-3 text-sm leading-6 text-slate-700">
-              {paragraphs(course.description).map((text) => (
-                <p key={text}>{text}</p>
-              ))}
-            </div>
+            <LazyMarkdownView className="text-sm leading-6">{course.description}</LazyMarkdownView>
             {course.tags.length > 0 && (
               <ul className="flex flex-wrap gap-2 pt-2" aria-label="Topics">
                 {course.tags.map((tag) => (

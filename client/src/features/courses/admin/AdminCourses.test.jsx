@@ -101,6 +101,13 @@ describe('CourseBuilderPage', () => {
     expect(reorder).toHaveBeenCalledWith('m1', ['l2', 'l1']);
   });
 
+  it('links each lesson to its materials editor', async () => {
+    renderBuilder();
+    expect(
+      await screen.findByRole('link', { name: 'Materials for lesson Lesson l1' }),
+    ).toHaveAttribute('href', '/admin/courses/c1/lessons/l1');
+  });
+
   it('confirms before deleting and reports server refusals', async () => {
     const remove = vi
       .spyOn(coursesApi, 'removeLesson')

@@ -15,17 +15,37 @@ import { slugify } from '../utils/text.js';
 import mern from './data/mern.js';
 import java from './data/java.js';
 import dsa from './data/dsa.js';
+import { resetMaterials, seedCourseMaterials } from './materials.seed.js';
 
 export const COURSE_SEEDS = [mern, java, dsa];
 
 const PUBLISHED = CONTENT_STATUS.PUBLISHED;
 const { trusted } = mongoose;
 
+/**
+ * The slug each starter lesson gets, keyed by title. Slugs never change after
+ * creation, so the material seed uses them to find starter lessons again even
+ * after the trainer renames them.
+ */
+export function lessonSlugsFor(data) {
+  const slugs = new Map();
+  const used = new Set();
+  data.modules.forEach((module, moduleIndex) => {
+    for (const lesson of module.lessons) {
+      let slug = slugify(lesson.title);
+      while (used.has(slug)) slug = `${slug}-${moduleIndex + 1}`;
+      used.add(slug);
+      slugs.set(lesson.title, slug);
+    }
+  });
+  return slugs;
+}
+
 async function createCourseTree(data, createdBy) {
   const { modules, ...courseFields } = data;
   const course = await Course.create({ ...courseFields, status: PUBLISHED, createdBy });
+  const slugs = lessonSlugsFor(data);
   try {
-    const usedSlugs = new Set();
     for (const [moduleIndex, { lessons, ...moduleFields }] of modules.entries()) {
       const module = await CourseModule.create({
         ...moduleFields,
@@ -34,19 +54,14 @@ async function createCourseTree(data, createdBy) {
         status: PUBLISHED,
       });
       await Lesson.insertMany(
-        lessons.map((lesson, lessonIndex) => {
-          let slug = slugify(lesson.title);
-          while (usedSlugs.has(slug)) slug = `${slug}-${moduleIndex + 1}`;
-          usedSlugs.add(slug);
-          return {
-            ...lesson,
-            slug,
-            course: course._id,
-            module: module._id,
-            order: lessonIndex,
-            status: PUBLISHED,
-          };
-        }),
+        lessons.map((lesson, lessonIndex) => ({
+          ...lesson,
+          slug: slugs.get(lesson.title),
+          course: course._id,
+          module: module._id,
+          order: lessonIndex,
+          status: PUBLISHED,
+        })),
       );
     }
   } catch (error) {
@@ -77,6 +92,10 @@ export async function seedCourses({ createdBy } = {}) {
   }
   return results;
 }
+
+/** Starter notes, code, links and cheat sheets for the starter lessons. See materials.seed.js. */
+export const seedMaterials = ({ createdBy } = {}) =>
+  seedCourseMaterials({ courses: COURSE_SEEDS, lessonSlugsFor, createdBy });
 
 const DEMO_STUDENTS = [
   {
@@ -147,8 +166,9 @@ export async function removeDemoStudents() {
   ]);
 }
 
-/** Removes all course content and enrollments. Users are kept. Development only. */
+/** Removes all course content, materials, files and enrollments. Users are kept. Development only. */
 export async function resetCourseData() {
+  await resetMaterials();
   await Promise.all([
     Enrollment.deleteMany({}),
     Lesson.deleteMany({}),

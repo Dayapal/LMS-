@@ -59,3 +59,48 @@ export const toEnrollmentDTO = (enrollment) => ({
 /** The viewer's own enrollment summary embedded in course responses. */
 export const toOwnEnrollment = (enrollment) =>
   enrollment ? { status: enrollment.status, enrolledAt: enrollment.enrolledAt ?? null } : null;
+
+export const toFileDTO = (file) => ({
+  id: id(file._id),
+  originalName: file.originalName,
+  mimeType: file.mimeType,
+  size: file.size,
+  purpose: file.purpose,
+  courseId: id(file.course),
+  createdAt: file.createdAt,
+});
+
+const isPopulatedFile = (file) => Boolean(file && typeof file === 'object' && 'storageKey' in file);
+
+/** A material with only the payload fields of its type. Expects `file` populated. */
+export function toMaterialDTO(material) {
+  const base = {
+    id: id(material._id),
+    lessonId: id(material.lesson),
+    courseId: id(material.course),
+    type: material.type,
+    title: material.title,
+    order: material.order,
+    status: material.status,
+    updatedAt: material.updatedAt,
+  };
+  switch (material.type) {
+    case 'note':
+      return { ...base, body: material.body ?? '' };
+    case 'code':
+      return {
+        ...base,
+        language: material.language,
+        source: material.source ?? '',
+        caption: material.caption ?? '',
+      };
+    case 'file':
+      return {
+        ...base,
+        downloadable: Boolean(material.downloadable),
+        file: isPopulatedFile(material.file) ? toFileDTO(material.file) : null,
+      };
+    default:
+      return { ...base, url: material.url, description: material.description ?? '' };
+  }
+}

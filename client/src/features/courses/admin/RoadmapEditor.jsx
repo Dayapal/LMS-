@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router';
 import { coursesApi, useCourseMutation } from '../api.js';
 import { formatMinutes, moveId, plural } from '../format.js';
 import { LessonFormModal, ModuleFormModal } from './ContentForms.jsx';
@@ -245,6 +246,13 @@ export function RoadmapEditor({ courseId, modules }) {
                           >
                             <Arrow />
                           </IconButton>
+                          <Link
+                            to={`/admin/courses/${courseId}/lessons/${lesson.id}`}
+                            aria-label={`Materials for lesson ${lesson.title}`}
+                            className="inline-flex h-8 items-center rounded-lg px-3 text-sm font-medium text-brand-700 hover:bg-brand-50"
+                          >
+                            Materials
+                          </Link>
                           <Button
                             size="sm"
                             variant="ghost"

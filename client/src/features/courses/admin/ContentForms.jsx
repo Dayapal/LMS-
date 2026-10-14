@@ -1,52 +1,10 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Modal } from '../../../components/ui/Modal.jsx';
-import { Button } from '../../../components/ui/Button.jsx';
 import { Alert } from '../../../components/ui/Alert.jsx';
 import { SelectField, TextAreaField, TextField } from '../../../components/ui/FormField.jsx';
-import { applyFieldErrors, getErrorMessage } from '../../../utils/apiErrors.js';
+import { FormActions, StatusSelect } from '../../../components/ui/FormParts.jsx';
+import { useServerAwareForm } from '../../../hooks/useServerAwareForm.js';
 import { lessonFormSchema, moduleFormSchema } from '../schemas.js';
-import { listToLines, STATUS_OPTIONS } from '../format.js';
-
-function useServerAwareForm(schema, defaultValues, onSubmit) {
-  const [formError, setFormError] = useState(null);
-  const form = useForm({ resolver: zodResolver(schema), defaultValues });
-  const submit = form.handleSubmit(async (values) => {
-    setFormError(null);
-    try {
-      await onSubmit(values);
-    } catch (error) {
-      if (!applyFieldErrors(error, form.setError)) setFormError(getErrorMessage(error));
-    }
-  });
-  return { ...form, submit, formError };
-}
-
-function FormActions({ onCancel, submitting, label }) {
-  return (
-    <div className="flex flex-col-reverse gap-2 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
-      <Button variant="secondary" onClick={onCancel} disabled={submitting}>
-        Cancel
-      </Button>
-      <Button type="submit" loading={submitting}>
-        {label}
-      </Button>
-    </div>
-  );
-}
-
-function StatusSelect({ register, error, hint }) {
-  return (
-    <SelectField label="Status" hint={hint} error={error} {...register('status')}>
-      {STATUS_OPTIONS.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </SelectField>
-  );
-}
+import { listToLines } from '../format.js';
 
 export function ModuleFormModal({ open, module, onClose, onSubmit }) {
   return (
