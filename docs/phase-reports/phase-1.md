@@ -1,6 +1,6 @@
 # Phase 1 report: foundation and authentication
 
-Date: 2026-10-14 · Status: **implemented, waiting for the trainer's review**
+Date: 2026-10-14 · Status: **approved**
 
 ## Summary
 
