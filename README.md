@@ -6,13 +6,13 @@ The design and the phase plan are in [docs/superpowers/specs/2026-10-14-training
 
 ## Status
 
-| Phase | Scope                                                          | Status                                                 |
-| ----- | -------------------------------------------------------------- | ------------------------------------------------------ |
-| 0     | Planning                                                       | ✅ Approved                                            |
-| 1     | Foundation and authentication                                  | ✅ Approved ([report](docs/phase-reports/phase-1.md))  |
-| 2     | Courses and roadmaps                                           | ✅ Approved ([report](docs/phase-reports/phase-2.md))  |
-| 3     | Study materials                                                | 🔍 In review ([report](docs/phase-reports/phase-3.md)) |
-| 4–8   | Assignments, student portal, review, notifications, deployment | ⏳ Not started                                         |
+| Phase | Scope                                                          | Status                                                |
+| ----- | -------------------------------------------------------------- | ----------------------------------------------------- |
+| 0     | Planning                                                       | ✅ Approved                                           |
+| 1     | Foundation and authentication                                  | ✅ Approved ([report](docs/phase-reports/phase-1.md)) |
+| 2     | Courses and roadmaps                                           | ✅ Approved ([report](docs/phase-reports/phase-2.md)) |
+| 3     | Study materials                                                | ✅ Approved ([report](docs/phase-reports/phase-3.md)) |
+| 4–8   | Assignments, student portal, review, notifications, deployment | ⏳ Not started                                        |
 
 ## Requirements
 

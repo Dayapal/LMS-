@@ -1,6 +1,6 @@
 # Phase 3 report: study materials
 
-Date: 2026-10-14 · Status: **implemented, awaiting the trainer's review**
+Date: 2026-10-14 · Status: **approved** (2026-10-16, with the known issues below recorded and accepted)
 
 ## Summary
 
