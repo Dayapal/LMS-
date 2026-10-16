@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router';
 import { useLesson, useLessonNavigation, useMaterials } from './api.js';
 import { LessonMaterials } from './components/MaterialBlock.jsx';
+import { LessonAssignments } from '../assignments/components/AssignmentSections.jsx';
 import { formatMinutes } from '../courses/format.js';
 import { Alert } from '../../components/ui/Alert.jsx';
 import { StatusBadge } from '../../components/ui/Badge.jsx';
@@ -13,11 +14,14 @@ const PATHS = {
   student: {
     course: (courseId) => `/app/courses/${courseId}`,
     lesson: (courseId, lessonId) => `/app/courses/${courseId}/lessons/${lessonId}`,
+    assignment: (courseId, assignmentId) => `/app/courses/${courseId}/assignments/${assignmentId}`,
     backLabel: 'Back to the course',
   },
   preview: {
     course: (courseId, lessonId) => `/admin/courses/${courseId}/lessons/${lessonId}`,
     lesson: (courseId, lessonId) => `/admin/courses/${courseId}/lessons/${lessonId}/preview`,
+    assignment: (courseId, assignmentId) =>
+      `/admin/courses/${courseId}/assignments/${assignmentId}`,
     backLabel: 'Back to the materials editor',
   },
 };
@@ -202,6 +206,12 @@ export function LessonReaderPage({ mode = 'student' }) {
       ) : (
         <LessonMaterials materials={materials.data} showStatus={preview} />
       )}
+
+      <LessonAssignments
+        lessonId={data.id}
+        pathFor={(assignment) => paths.assignment(data.course.id, assignment.id)}
+        showState={!preview}
+      />
 
       <div className="border-t border-slate-200 pt-6">
         <LessonNav navigation={position} courseId={data.course.id} paths={paths} />

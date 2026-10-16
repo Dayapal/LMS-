@@ -13,6 +13,10 @@ const MIME_BY_EXTENSION = {
 /** What each upload purpose accepts (spec §8). Later phases add their purposes here. */
 export const UPLOAD_RULES = {
   [FILE_PURPOSES.MATERIAL]: { maxBytes: 20 * MB, extensions: ['pdf', 'docx', 'pptx'] },
+  // Trainer handouts attached to an assignment: the same rules as study materials.
+  [FILE_PURPOSES.ASSIGNMENT]: { maxBytes: 20 * MB, extensions: ['pdf', 'docx', 'pptx'] },
+  // Student work.
+  [FILE_PURPOSES.SUBMISSION]: { maxBytes: 10 * MB, extensions: ['pdf'] },
 };
 
 /** The largest file any purpose accepts: the parser's hard limit. */

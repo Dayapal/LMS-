@@ -16,6 +16,7 @@ import mern from './data/mern.js';
 import java from './data/java.js';
 import dsa from './data/dsa.js';
 import { resetMaterials, seedCourseMaterials } from './materials.seed.js';
+import { resetAssignments, seedCourseAssignments } from './assignments.seed.js';
 
 export const COURSE_SEEDS = [mern, java, dsa];
 
@@ -97,6 +98,10 @@ export async function seedCourses({ createdBy } = {}) {
 export const seedMaterials = ({ createdBy } = {}) =>
   seedCourseMaterials({ courses: COURSE_SEEDS, lessonSlugsFor, createdBy });
 
+/** Starter assignments for the starter courses. See assignments.seed.js. */
+export const seedAssignments = ({ createdBy, now } = {}) =>
+  seedCourseAssignments({ courses: COURSE_SEEDS, lessonSlugsFor, createdBy, now });
+
 const DEMO_STUDENTS = [
   {
     name: 'Aarav Mehta',
@@ -166,8 +171,9 @@ export async function removeDemoStudents() {
   ]);
 }
 
-/** Removes all course content, materials, files and enrollments. Users are kept. Development only. */
+/** Removes all course content, materials, assignments, files and enrollments. Users are kept. Development only. */
 export async function resetCourseData() {
+  await resetAssignments();
   await resetMaterials();
   await Promise.all([
     Enrollment.deleteMany({}),

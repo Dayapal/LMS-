@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { CONTENT_STATUS, CourseModule, Lesson } from '../models/index.js';
+import { Assignment, CONTENT_STATUS, CourseModule, Lesson } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
 import { slugify, uniqueSlug } from '../utils/text.js';
 import {
@@ -8,6 +8,7 @@ import {
   getModuleForViewer,
   visibleTo,
 } from './access.service.js';
+import { assertNoAssignments } from './assignment.service.js';
 import { findCourseOr404 } from './course.service.js';
 import { deleteMaterialsWhere } from './material.service.js';
 import { applyOrder, nextOrder } from './ordering.js';
@@ -15,7 +16,7 @@ import { toLessonDTO, toModuleDTO } from './serializers.js';
 
 const { trusted } = mongoose;
 
-// Phases 4-5 extend these guards with assignment, submission and progress checks.
+// Phase 5 extends these guards with progress checks.
 function assertNotPublished(doc, label) {
   if (doc.status === CONTENT_STATUS.PUBLISHED) {
     throw ApiError.conflict(
@@ -66,7 +67,7 @@ export async function reorderModules(courseId, ids) {
 
 /**
  * Deletes an unpublished module together with its lessons (none of which may be
- * published) and their materials.
+ * published) and their materials. Assignments must be moved or deleted first.
  */
 export async function deleteModule(moduleId) {
   const module = await findModuleOr404(moduleId);
@@ -80,6 +81,8 @@ export async function deleteModule(moduleId) {
       'This module still has published lessons. Unpublish or archive them before deleting it.',
     );
   }
+  // Includes assignments of its lessons: a lesson's assignment always names its module.
+  await assertNoAssignments({ module: module._id }, 'module');
   const lessonIds = await Lesson.distinct('_id', { module: module._id });
   await deleteMaterialsWhere({ lesson: trusted({ $in: lessonIds }) });
   await Lesson.deleteMany({ module: module._id });
@@ -127,7 +130,8 @@ export async function createLesson(moduleId, data) {
 /** Updates fields; `moduleId` moves the lesson to the end of another module in the same course. */
 export async function updateLesson(lessonId, { moduleId, ...data }) {
   const lesson = await findLessonOr404(lessonId);
-  if (moduleId && moduleId !== lesson.module.toString()) {
+  const moved = Boolean(moduleId && moduleId !== lesson.module.toString());
+  if (moved) {
     const target = await CourseModule.findById(moduleId);
     if (!target || !target.course.equals(lesson.course)) {
       throw ApiError.validation([
@@ -139,6 +143,10 @@ export async function updateLesson(lessonId, { moduleId, ...data }) {
   }
   lesson.set(data);
   await lesson.save();
+  if (moved) {
+    // The lesson's assignments follow it into its new module.
+    await Assignment.updateMany({ lesson: lesson._id }, { $set: { module: lesson.module } });
+  }
   return toLessonDTO(lesson);
 }
 
@@ -149,10 +157,11 @@ export async function reorderLessons(moduleId, ids) {
   return lessons.map(toLessonDTO);
 }
 
-/** Deletes an unpublished lesson and its materials. */
+/** Deletes an unpublished lesson and its materials. Assignments must be moved or deleted first. */
 export async function deleteLesson(lessonId) {
   const lesson = await findLessonOr404(lessonId);
   assertNotPublished(lesson, 'lesson');
+  await assertNoAssignments({ lesson: lesson._id }, 'lesson');
   await deleteMaterialsWhere({ lesson: lesson._id });
   await lesson.deleteOne();
 }

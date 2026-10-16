@@ -6,13 +6,14 @@ The design and the phase plan are in [docs/superpowers/specs/2026-10-14-training
 
 ## Status
 
-| Phase | Scope                                                          | Status                                                |
-| ----- | -------------------------------------------------------------- | ----------------------------------------------------- |
-| 0     | Planning                                                       | ✅ Approved                                           |
-| 1     | Foundation and authentication                                  | ✅ Approved ([report](docs/phase-reports/phase-1.md)) |
-| 2     | Courses and roadmaps                                           | ✅ Approved ([report](docs/phase-reports/phase-2.md)) |
-| 3     | Study materials                                                | ✅ Approved ([report](docs/phase-reports/phase-3.md)) |
-| 4–8   | Assignments, student portal, review, notifications, deployment | ⏳ Not started                                        |
+| Phase | Scope                                                           | Status                                                       |
+| ----- | --------------------------------------------------------------- | ------------------------------------------------------------ |
+| 0     | Planning                                                        | ✅ Approved                                                  |
+| 1     | Foundation and authentication                                   | ✅ Approved ([report](docs/phase-reports/phase-1.md))        |
+| 2     | Courses and roadmaps                                            | ✅ Approved ([report](docs/phase-reports/phase-2.md))        |
+| 3     | Study materials                                                 | ✅ Approved ([report](docs/phase-reports/phase-3.md))        |
+| 4     | Assignments and submissions                                     | 🔍 Awaiting review ([report](docs/phase-reports/phase-4.md)) |
+| 5–8   | Student portal, review and analytics, notifications, deployment | ⏳ Not started                                               |
 
 ## Requirements
 
@@ -44,15 +45,15 @@ Students create their own accounts at `/register`. There is no public sign-up fo
 
 ## Scripts (run from the repository root)
 
-| Command                                   | What it does                                                                                                                                      |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev`                             | Starts the API (with `node --watch`) and the Vite dev server together                                                                             |
-| `npm test`                                | Runs the server tests, then the client tests                                                                                                      |
-| `npm run lint`                            | Runs ESLint across both workspaces                                                                                                                |
-| `npm run format` / `npm run format:check` | Runs Prettier (write / check)                                                                                                                     |
-| `npm run build`                           | Builds the client for production into `client/dist`                                                                                               |
-| `npm run seed`                            | Creates the trainer account, the 3 starter courses with their study materials, and (optionally) demo students. Existing records are never changed |
-| `npm run seed -- --reset`                 | Development only: deletes all courses, materials, uploaded files, enrollments and demo students, then seeds again                                 |
+| Command                                   | What it does                                                                                                                                                      |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                             | Starts the API (with `node --watch`) and the Vite dev server together                                                                                             |
+| `npm test`                                | Runs the server tests, then the client tests                                                                                                                      |
+| `npm run lint`                            | Runs ESLint across both workspaces                                                                                                                                |
+| `npm run format` / `npm run format:check` | Runs Prettier (write / check)                                                                                                                                     |
+| `npm run build`                           | Builds the client for production into `client/dist`                                                                                                               |
+| `npm run seed`                            | Creates the trainer account, the 3 starter courses with their study materials and assignments, and (optionally) demo students. Existing records are never changed |
+| `npm run seed -- --reset`                 | Development only: deletes all courses, materials, assignments, submissions, uploaded files, enrollments and demo students, then seeds again                       |
 
 To run a single test file: `npm test -w server -- tests/auth.test.js` or `npm test -w client -- src/routes/guards.test.jsx`. Add `-t "name"` to filter by test name.
 
@@ -74,6 +75,15 @@ The full design is in §11a of the spec.
 - Uploads are trainer-only. The file's extension, its declared type and its actual content (magic bytes) must all agree; the stored name is a random key.
 - Files are never public. `GET /api/v1/files/:id` checks access on every request, and the app fetches files with the signed-in user's token.
 - The starter notes and code live in `server/src/seeds/content/`, one Markdown file per course. `npm run seed` adds them to starter lessons that have no materials yet, so it is safe to rerun.
+
+## Assignments and submissions
+
+- The trainer creates assignments from a course's **Assignments** tab: for the whole course, a module or a lesson, with Markdown instructions, a due date, maximum marks, an attempt limit, the accepted submission types and an optional late policy (a cutoff date and a penalty). Handouts are PDF, DOCX or PPTX files.
+- Students see published assignments of the courses they're enrolled in, on the course page and under the lesson they belong to. Dates are shown in the browser's time zone.
+- Students hand in any mix of a GitHub repository link, a deployed project link, a Google Drive link, a PDF (up to 10 MB) and a code snippet (up to 100 KB, stored as text and never run). Links must be `https://`; project links can't point at localhost or private addresses.
+- A submission can be edited until the trainer reviews it and, for a first attempt, until the window closes. Work after the due date is marked late and loses the late penalty when graded.
+- The trainer reviews each student's latest attempt: marks (capped at the maximum), Markdown feedback, or a request for a new attempt. Every attempt is kept as history.
+- A student's submissions and PDFs are visible only to that student and the trainer.
 
 ## Project layout
 

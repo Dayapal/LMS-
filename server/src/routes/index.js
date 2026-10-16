@@ -5,6 +5,7 @@ import { userRoutes } from './user.routes.js';
 import { courseRoutes, lessonRoutes, materialRoutes, moduleRoutes } from './course.routes.js';
 import { fileRoutes } from './file.routes.js';
 import { adminRoutes } from './admin.routes.js';
+import { assignmentRoutes, submissionRoutes } from './assignment.routes.js';
 
 export function apiRoutes(limiters) {
   const router = Router();
@@ -25,6 +26,8 @@ export function apiRoutes(limiters) {
   router.use('/lessons', lessonRoutes());
   router.use('/materials', materialRoutes());
   router.use('/files', fileRoutes(limiters));
+  router.use('/assignments', assignmentRoutes(limiters));
+  router.use('/submissions', submissionRoutes());
   router.use('/admin', adminRoutes());
   return router;
 }

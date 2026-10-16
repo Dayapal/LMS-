@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import { screen, waitFor, within } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
+import { cleanup, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { filesApi, lessonsApi } from './api.js';
+import { assignmentsApi } from '../assignments/api.js';
 import { LessonReaderPage } from './LessonReaderPage.jsx';
 import { renderWithProviders, notFoundError } from '../../test/renderWithProviders.jsx';
 import { ADMIN, STUDENT } from '../courses/test-fixtures.js';
@@ -43,7 +44,18 @@ function mockLesson({
 const openReader = (path = '/app/courses/c1/lessons/l2', user = STUDENT) =>
   renderWithProviders(routes, { path, user });
 
-afterEach(() => vi.restoreAllMocks());
+// The pages also list assignments; these tests don't look at them.
+beforeEach(() => {
+  vi.spyOn(assignmentsApi, 'list').mockResolvedValue({
+    items: [],
+    meta: { page: 1, limit: 100, total: 0, totalPages: 1 },
+  });
+});
+// Unmount before the stubs go, so nothing that mounts late reaches the network.
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 describe('LessonReaderPage', () => {
   it('shows the lesson, its objectives and every material in order', async () => {
@@ -174,6 +186,30 @@ describe('LessonReaderPage', () => {
       'href',
       '/app/courses/c1',
     );
+  });
+
+  it('lists the lesson’s assignments under its materials', async () => {
+    mockLesson();
+    const list = vi.spyOn(assignmentsApi, 'list').mockResolvedValue({
+      items: [
+        {
+          id: 'a7',
+          title: 'Flexbox navbar',
+          dueAt: '2030-01-15T18:29:00.000Z',
+          maxMarks: 20,
+          mySubmission: { status: 'pending' },
+        },
+      ],
+      meta: { page: 1, limit: 50, total: 1, totalPages: 1 },
+    });
+    openReader();
+    const section = await screen.findByRole('region', { name: 'Practice assignments' });
+    expect(within(section).getByRole('link', { name: 'Flexbox navbar' })).toHaveAttribute(
+      'href',
+      '/app/courses/c1/assignments/a7',
+    );
+    expect(within(section).getByText('Not submitted')).toBeInTheDocument();
+    expect(list.mock.calls[0][0]).toEqual({ lesson: 'l2' });
   });
 
   it('marks drafts in the trainer preview and links within the preview', async () => {

@@ -22,6 +22,10 @@ const lessonMaterials = async () => ({
   Component: (await import('../features/lessons/admin/LessonMaterialsPage.jsx'))
     .LessonMaterialsPage,
 });
+// Assignment pages use the Markdown renderer, code highlighting and the code editor.
+const assignmentPage = (name) => async () => ({
+  Component: (await import('../features/assignments/pages.js'))[name],
+});
 // Shown while a lazy page loads on a fresh page load (deep link or reload).
 const pageLoading = (
   <div className="flex justify-center py-16 text-brand-600">
@@ -63,6 +67,26 @@ export const routes = [
             lazy: lessonReader('preview'),
             hydrateFallbackElement: pageLoading,
           },
+          {
+            path: 'courses/:courseId/assignments/new',
+            lazy: assignmentPage('AssignmentEditorPage'),
+            hydrateFallbackElement: pageLoading,
+          },
+          {
+            path: 'courses/:courseId/assignments/:assignmentId',
+            lazy: assignmentPage('AdminAssignmentPage'),
+            hydrateFallbackElement: pageLoading,
+          },
+          {
+            path: 'courses/:courseId/assignments/:assignmentId/edit',
+            lazy: assignmentPage('AssignmentEditorPage'),
+            hydrateFallbackElement: pageLoading,
+          },
+          {
+            path: 'courses/:courseId/assignments/:assignmentId/submissions/:submissionId',
+            lazy: assignmentPage('SubmissionReviewPage'),
+            hydrateFallbackElement: pageLoading,
+          },
           { path: 'profile', element: <ProfilePage /> },
         ],
       },
@@ -81,6 +105,11 @@ export const routes = [
           {
             path: 'courses/:courseId/lessons/:lessonId',
             lazy: lessonReader('student'),
+            hydrateFallbackElement: pageLoading,
+          },
+          {
+            path: 'courses/:courseId/assignments/:assignmentId',
+            lazy: assignmentPage('AssignmentPage'),
             hydrateFallbackElement: pageLoading,
           },
           { path: 'profile', element: <ProfilePage /> },

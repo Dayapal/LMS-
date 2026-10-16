@@ -104,3 +104,93 @@ export function toMaterialDTO(material) {
       return { ...base, url: material.url, description: material.description ?? '' };
   }
 }
+
+const isPopulated = (ref, field) => Boolean(ref && typeof ref === 'object' && field in ref);
+
+// The id of a reference, whether or not it is populated (Mongoose gives ObjectIds an `_id` getter).
+const refId = (ref) => id(ref?._id ?? ref);
+
+const titled = (ref) => (isPopulated(ref, 'title') ? { id: id(ref._id), title: ref.title } : null);
+
+/** An assignment. Expects `attachments` populated; `extra` adds viewer-specific fields. */
+export const toAssignmentDTO = (assignment, extra = {}) => ({
+  id: id(assignment._id),
+  courseId: refId(assignment.course),
+  moduleId: refId(assignment.module),
+  lessonId: refId(assignment.lesson),
+  title: assignment.title,
+  instructions: assignment.instructions ?? '',
+  objectives: assignment.objectives ?? [],
+  dueAt: assignment.dueAt,
+  maxMarks: assignment.maxMarks,
+  allowedSubmissionTypes: assignment.allowedSubmissionTypes ?? [],
+  attachments: (assignment.attachments ?? []).filter(isPopulatedFile).map(toFileDTO),
+  latePolicy: {
+    allowLate: Boolean(assignment.latePolicy?.allowLate),
+    lateUntil: assignment.latePolicy?.lateUntil ?? null,
+    penaltyPercent: assignment.latePolicy?.penaltyPercent ?? 0,
+  },
+  maxAttempts: assignment.maxAttempts ?? null,
+  status: assignment.status,
+  createdAt: assignment.createdAt,
+  updatedAt: assignment.updatedAt,
+  ...extra,
+});
+
+/** Course, module and lesson titles for breadcrumbs, from populated refs. */
+export const toPlacement = (assignment) => ({
+  course: titled(assignment.course),
+  module: titled(assignment.module),
+  lesson: titled(assignment.lesson),
+});
+
+function toSubmissionItem(item, { summary }) {
+  switch (item.type) {
+    case 'pdf':
+      return { type: item.type, file: isPopulatedFile(item.file) ? toFileDTO(item.file) : null };
+    case 'code':
+      return {
+        type: item.type,
+        code: summary
+          ? { language: item.code?.language, lines: item.code?.source?.split('\n').length ?? 0 }
+          : { language: item.code?.language, source: item.code?.source ?? '' },
+      };
+    default:
+      return { type: item.type, url: item.url };
+  }
+}
+
+/**
+ * One submission attempt. Expects `items.file` populated. `summary` leaves out
+ * code sources and the note, for lists.
+ */
+export function toSubmissionDTO(submission, { summary = false } = {}) {
+  const { review } = submission;
+  return {
+    id: id(submission._id),
+    assignmentId: refId(submission.assignment),
+    courseId: refId(submission.course),
+    student: isPopulated(submission.student, 'email')
+      ? {
+          id: id(submission.student._id),
+          name: submission.student.name,
+          email: submission.student.email,
+        }
+      : { id: id(submission.student) },
+    attempt: submission.attempt,
+    items: (submission.items ?? []).map((item) => toSubmissionItem(item, { summary })),
+    ...(!summary && { note: submission.note ?? '' }),
+    submittedAt: submission.submittedAt,
+    editedAt: submission.editedAt ?? null,
+    isLate: Boolean(submission.isLate),
+    status: submission.status,
+    review: review
+      ? {
+          marks: review.marks ?? null,
+          finalMarks: review.finalMarks ?? null,
+          ...(!summary && { feedback: review.feedback ?? '' }),
+          reviewedAt: review.reviewedAt ?? null,
+        }
+      : null,
+  };
+}

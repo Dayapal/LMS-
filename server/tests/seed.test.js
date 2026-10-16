@@ -4,12 +4,14 @@ import { fileTypeFromBuffer } from 'file-type';
 import { describe, it, expect } from 'vitest';
 import { config } from '../src/config/env.js';
 import {
+  Assignment,
   Course,
   CourseModule,
   Enrollment,
   FileAsset,
   Lesson,
   Material,
+  Submission,
   User,
 } from '../src/models/index.js';
 import {
@@ -17,6 +19,7 @@ import {
   lessonSlugsFor,
   removeDemoStudents,
   resetCourseData,
+  seedAssignments,
   seedCourses,
   seedDemoStudents,
   seedMaterials,
@@ -27,6 +30,8 @@ import {
   parseMaterialContent,
 } from '../src/seeds/materials.seed.js';
 import { CHEAT_SHEETS } from '../src/seeds/data/cheatsheets.js';
+import { ASSIGNMENT_SEEDS } from '../src/seeds/data/assignments.js';
+import { createAssignmentSchema } from '../src/validators/assignment.validators.js';
 import { createUser } from './helpers.js';
 import { storedFiles } from './file-helpers.js';
 
@@ -292,5 +297,93 @@ describe('seedMaterials', () => {
     expect(await Material.countDocuments()).toBe(0);
     expect(await FileAsset.countDocuments()).toBe(0);
     expect(await storedFiles()).toEqual([]);
+  });
+});
+
+describe('seedAssignments', () => {
+  const now = new Date('2026-10-16T09:00:00.000Z');
+
+  it('ships one or two valid assignments per course in the first modules', () => {
+    for (const course of COURSE_SEEDS) {
+      const seeds = ASSIGNMENT_SEEDS[course.slug];
+      expect(seeds.length, course.slug).toBeGreaterThanOrEqual(1);
+      expect(seeds.length, course.slug).toBeLessThanOrEqual(2);
+      const firstLessons = course.modules.slice(0, 3).flatMap((m) => m.lessons.map((l) => l.title));
+      for (const seed of seeds) {
+        expect(firstLessons, seed.title).toContain(seed.lesson);
+        const parsed = createAssignmentSchema.safeParse({
+          courseId: '0123456789abcdef01234567',
+          title: seed.title,
+          instructions: seed.instructions,
+          objectives: seed.objectives,
+          dueAt: now.toISOString(),
+          maxMarks: seed.maxMarks,
+          maxAttempts: seed.maxAttempts,
+          allowedSubmissionTypes: seed.allowedSubmissionTypes,
+        });
+        expect(parsed.success, `${seed.title}: ${parsed.error?.message}`).toBe(true);
+      }
+    }
+    const all = Object.values(ASSIGNMENT_SEEDS).flat();
+    expect(new Set(all.flatMap((a) => a.allowedSubmissionTypes))).toEqual(
+      new Set(['drive_url', 'github_url', 'project_url', 'pdf', 'code']),
+    );
+    expect(new Set(all.map((a) => a.latePolicy.allowLate))).toEqual(new Set([true, false]));
+  });
+
+  it('creates published assignments placed in their lessons and modules', async () => {
+    const admin = await createUser({ role: 'admin' });
+    await seedCourses();
+    const results = await seedAssignments({ createdBy: admin._id, now });
+    expect(results.map((r) => r.added)).toEqual([2, 1, 2]);
+
+    const portfolio = await Assignment.findOne({ title: 'Personal Profile Page' });
+    const forms = await Lesson.findOne({ slug: 'forms-and-accessibility' });
+    expect(portfolio).toMatchObject({ status: 'published', maxMarks: 100, maxAttempts: 2 });
+    expect(portfolio.module.equals(forms.module)).toBe(true);
+    expect(portfolio.lesson).toBeNull();
+    expect(portfolio.dueAt.toISOString()).toBe('2026-10-30T18:30:00.000Z');
+    expect(portfolio.latePolicy).toMatchObject({ allowLate: true, penaltyPercent: 10 });
+    expect(portfolio.latePolicy.lateUntil.toISOString()).toBe('2026-11-06T18:30:00.000Z');
+    expect(portfolio.createdBy.equals(admin._id)).toBe(true);
+
+    const grades = await Assignment.findOne({ title: 'Console Grade Calculator' });
+    const lesson = await Lesson.findOne({ slug: 'control-flow-and-methods' });
+    expect(grades.lesson.equals(lesson._id)).toBe(true);
+    expect(grades.module.equals(lesson.module)).toBe(true);
+  });
+
+  it('never adds assignments to a course that already has some', async () => {
+    const admin = await createUser({ role: 'admin' });
+    await seedCourses();
+    await seedAssignments({ createdBy: admin._id, now });
+    const edited = await Assignment.findOne({ title: 'Two-Pointer Practice Set' });
+    edited.title = 'Two pointers (edited)';
+    await edited.save();
+    await Assignment.deleteOne({ title: 'Big-O Analysis Worksheet' });
+
+    const rerun = await seedAssignments({ createdBy: admin._id, now });
+    expect(rerun.map((r) => r.added)).toEqual([0, 0, 0]);
+    expect(await Assignment.countDocuments()).toBe(4);
+    expect(await Assignment.exists({ title: 'Two pointers (edited)' })).toBeTruthy();
+  });
+
+  it('reset removes assignments and submissions', async () => {
+    const admin = await createUser({ role: 'admin' });
+    const student = await createUser();
+    await seedCourses();
+    await seedAssignments({ createdBy: admin._id, now });
+    const assignment = await Assignment.findOne();
+    await Submission.create({
+      assignment: assignment._id,
+      course: assignment.course,
+      student: student._id,
+      attempt: 1,
+      items: [{ type: 'github_url', url: 'https://github.com/a/b' }],
+      submittedAt: now,
+    });
+    await resetCourseData();
+    expect(await Assignment.countDocuments()).toBe(0);
+    expect(await Submission.countDocuments()).toBe(0);
   });
 });

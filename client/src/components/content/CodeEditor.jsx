@@ -26,7 +26,15 @@ const LANGUAGE_EXTENSIONS = {
  * CodeMirror editor for trainer code snippets. Loaded lazily (see
  * LazyCodeEditor) so the editor isn't part of the main bundle.
  */
-export default function CodeEditor({ value, onChange, onBlur, language, labelledBy, describedBy }) {
+export default function CodeEditor({
+  value,
+  onChange,
+  onBlur,
+  language,
+  labelledBy,
+  describedBy,
+  takeFocus,
+}) {
   const extensions = useMemo(
     () => [
       ...(LANGUAGE_EXTENSIONS[language] ? [LANGUAGE_EXTENSIONS[language]()] : []),
@@ -44,6 +52,12 @@ export default function CodeEditor({ value, onChange, onBlur, language, labelled
       value={value}
       onChange={onChange}
       onBlur={onBlur}
+      onCreateEditor={(view) => {
+        // Replacing the stand-in textarea while it had focus (see LazyCodeEditor).
+        if (!takeFocus?.current) return;
+        view.focus();
+        view.dispatch({ selection: { anchor: view.state.doc.length } });
+      }}
       extensions={extensions}
       // Tab moves focus as in any form field (no keyboard trap), and Escape is
       // left to the surrounding dialog. Enter keeps the current indentation.

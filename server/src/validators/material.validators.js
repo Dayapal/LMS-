@@ -65,7 +65,10 @@ export const updateMaterialSchema = z
   .refine((data) => Object.keys(data).length > 0, 'Provide at least one field to update');
 
 export const uploadFileSchema = z.object({
-  purpose: z.enum(Object.values(FILE_PURPOSES), { error: 'Unsupported upload purpose' }),
+  // Students upload submission files through POST /assignments/:id/files instead.
+  purpose: z.enum([FILE_PURPOSES.MATERIAL, FILE_PURPOSES.ASSIGNMENT], {
+    error: 'Unsupported upload purpose',
+  }),
   courseId: objectId,
 });
 

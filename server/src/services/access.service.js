@@ -1,4 +1,6 @@
+import mongoose from 'mongoose';
 import {
+  Assignment,
   CONTENT_STATUS,
   Course,
   CourseModule,
@@ -10,8 +12,11 @@ import {
   Material,
   MATERIAL_TYPES,
   ROLES,
+  Submission,
 } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
+
+const { trusted } = mongoose;
 
 /**
  * Single source of truth for who may see which course content.
@@ -78,12 +83,89 @@ export async function getLessonForViewer(user, lessonId) {
   return found;
 }
 
+// ---- Assignments and submissions ----
+
+/**
+ * The course (and enrollment) through which a student may see `assignment`,
+ * or null. The assignment and its course must be published, the enrollment
+ * active, and the module or lesson it belongs to (if any) published too.
+ */
+async function studentAssignmentAccess(user, assignment) {
+  if (!isPublished(assignment)) return null;
+  const [course, enrollment, module, lesson] = await Promise.all([
+    Course.findById(assignment.course),
+    getActiveEnrollment(user._id, assignment.course),
+    assignment.module ? CourseModule.findById(assignment.module) : null,
+    assignment.lesson ? Lesson.findById(assignment.lesson) : null,
+  ]);
+  const visible =
+    isPublished(course) &&
+    Boolean(enrollment) &&
+    (!assignment.module || isPublished(module)) &&
+    (!assignment.lesson || isPublished(lesson));
+  return visible ? { course, enrollment } : null;
+}
+
+/** An assignment and its course when `user` may see it, otherwise 404. */
+export async function getAssignmentForViewer(user, assignmentId) {
+  const assignment = await Assignment.findById(assignmentId);
+  if (!assignment) throw ApiError.notFound('Assignment not found');
+  if (isAdmin(user)) return { assignment, course: await Course.findById(assignment.course) };
+  const access = await studentAssignmentAccess(user, assignment);
+  if (!access) throw ApiError.notFound('Assignment not found');
+  return { assignment, ...access };
+}
+
+/**
+ * Mongo filter limiting assignments to the ones `user` may list. For students:
+ * published assignments of published courses they are actively enrolled in,
+ * whose module and lesson (when set) are published.
+ */
+export async function assignmentsVisibleTo(user) {
+  if (isAdmin(user)) return {};
+  const enrolled = await Enrollment.distinct('course', {
+    user: user._id,
+    status: ENROLLMENT_STATUS.ACTIVE,
+  });
+  const courses = await Course.distinct('_id', {
+    _id: trusted({ $in: enrolled }),
+    status: CONTENT_STATUS.PUBLISHED,
+  });
+  const inCourses = { course: trusted({ $in: courses }), status: CONTENT_STATUS.PUBLISHED };
+  const [modules, lessons] = await Promise.all([
+    CourseModule.distinct('_id', inCourses),
+    Lesson.distinct('_id', inCourses),
+  ]);
+  return {
+    ...inCourses,
+    $and: [
+      { $or: [{ module: null }, { module: trusted({ $in: modules }) }] },
+      { $or: [{ lesson: null }, { lesson: trusted({ $in: lessons }) }] },
+    ],
+  };
+}
+
+/**
+ * A submission when `user` may see it: the trainer sees every submission, a
+ * student only their own. Anything else is 404, so ids reveal nothing.
+ */
+export async function getSubmissionForViewer(user, submissionId) {
+  const submission = await Submission.findById(submissionId);
+  if (!submission || (!isAdmin(user) && !submission.student.equals(user._id))) {
+    throw ApiError.notFound('Submission not found');
+  }
+  return submission;
+}
+
+// ---- Files ----
+
 /**
  * A stored file and whether `user` may download it, or 404.
- * Material files follow their material: a student needs at least one published
- * file material that uses it, inside a lesson they can open. The file is
- * downloadable when any of those materials allows it. Files of other purposes
- * arrive in later phases and stay admin-only until then.
+ * - Material files follow their material: a student needs at least one
+ *   published file material that uses it, inside a lesson they can open. The
+ *   file is downloadable when any of those materials allows it.
+ * - Assignment attachments follow their assignment.
+ * - Submission files are visible to the student who uploaded them (and the trainer).
  */
 export async function getFileForViewer(user, fileId) {
   const file = await FileAsset.findById(fileId);
@@ -106,6 +188,17 @@ export async function getFileForViewer(user, fileId) {
       downloadable ||= Boolean(material.downloadable);
     }
     if (visible) return { file, downloadable };
+  }
+
+  if (file.purpose === FILE_PURPOSES.ASSIGNMENT) {
+    const assignments = await Assignment.find({ attachments: file._id });
+    for (const assignment of assignments) {
+      if (await studentAssignmentAccess(user, assignment)) return { file, downloadable: true };
+    }
+  }
+
+  if (file.purpose === FILE_PURPOSES.SUBMISSION && file.uploadedBy.equals(user._id)) {
+    return { file, downloadable: true };
   }
   throw ApiError.notFound('File not found');
 }

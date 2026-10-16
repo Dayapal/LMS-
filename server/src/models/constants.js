@@ -35,5 +35,24 @@ export const CODE_LANGUAGES = Object.freeze([
   'text',
 ]);
 
-// Later phases add assignment, submission, thumbnail and avatar files.
-export const FILE_PURPOSES = Object.freeze({ MATERIAL: 'material' });
+// Later phases add thumbnail and avatar files.
+export const FILE_PURPOSES = Object.freeze({
+  MATERIAL: 'material',
+  ASSIGNMENT: 'assignment',
+  SUBMISSION: 'submission',
+});
+
+/** What a student may hand in: a link of one of three kinds, a PDF, or pasted code. */
+export const SUBMISSION_TYPES = Object.freeze({
+  DRIVE_URL: 'drive_url',
+  GITHUB_URL: 'github_url',
+  PROJECT_URL: 'project_url',
+  PDF: 'pdf',
+  CODE: 'code',
+});
+
+export const SUBMISSION_STATUS = Object.freeze({
+  SUBMITTED: 'submitted',
+  REVIEWED: 'reviewed',
+  RESUBMIT_REQUESTED: 'resubmit_requested',
+});

@@ -56,6 +56,13 @@ npm run seed -- --reset  # dev only: wipe course data + demo students, then rese
   - Bytes are stored by `services/storage/` (`getStorage()`; only the `local` driver until Phase 8) under random keys. Nothing is served statically: `GET /files/:id` calls `getFileForViewer` in `access.service.js`. Requests without a token get 404 there.
   - Delete files with `deleteFilesIfUnused` / `deleteFilesWhere` (`file.service.js`), never by hand; deleting a course, module or lesson cascades through `deleteMaterialsWhere`.
   - The client fetches files as Blobs (`filesApi.fetch`) because the access token lives in memory; never link to `/api/v1/files/:id` directly.
+- **Assignments and submissions (Phase 4):**
+  - `Assignment` belongs to a course and optionally a module/lesson (a lesson implies its module). `Submission` is one document per attempt; `isLate`, `attempt`, `status` and `review` are always set by the server.
+  - The window, late, edit, attempt and penalty rules are pure functions in `services/submissionRules.js`; use them rather than re-deriving dates. Visibility goes through `getAssignmentForViewer`, `assignmentsVisibleTo` and `getSubmissionForViewer` in `access.service.js` (students: own submissions only, 404 otherwise).
+  - Link rules (Drive, GitHub, public project hosts) are in `validators/links.js`, mirrored loosely in `client/src/features/assignments/schemas.js`.
+  - Student PDFs go through `POST /assignments/:id/files` (`parseSubmissionUpload`, 10 MB). The route checks role, rate limit and the right to submit _before_ the body is read. Trainer handouts use `POST /files` with `purpose=assignment`.
+  - `deleteFilesIfUnused` counts material, assignment-attachment and submission references; keep it that way when adding file users.
+  - The assignment pages are lazy-loaded as one chunk through `features/assignments/pages.js`.
 - **Rendering untrusted content (client):** use `components/content/MarkdownView.jsx` (react-markdown + remark-gfm + rehype-sanitize; raw HTML is never rendered) and `CodeBlock.jsx` (prism-react-renderer). Java and Bash grammars are registered through `languages.js`, which must keep importing `prismGlobal.js` first. `MarkdownView`, the lesson pages and CodeMirror are lazy-loaded to keep the main bundle small.
 - **Enrollment (D5):** a student `POST /courses/:id/enroll` creates a `pending` request. The trainer approves it or sets it to `removed` through `/admin/enrollments`, or enrolls a student directly by email.
 - **Seeds:** the course roadmaps are data files in `server/src/seeds/data/{mern,java,dsa}.js`. A course is created only when its slug is absent, so reseeding never overwrites trainer edits.

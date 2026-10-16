@@ -1,6 +1,6 @@
 # Training LMS: Design and Implementation Plan
 
-Status: **Phase 0 approved 2026-10-14**. All decisions in §11 confirmed by the trainer. Phases 1–2 approved; Phase 3 implemented and awaiting review.
+Status: **Phase 0 approved 2026-10-14**. All decisions in §11 confirmed by the trainer. Phases 1–3 approved; Phase 4 implemented and awaiting review.
 Date: 2026-10-14
 
 This document covers the architecture, data model, API, permissions, phases and acceptance criteria for the full-stack training LMS. Items marked **[DECISION Dn]** refer to the confirmed decisions in §11.
@@ -134,7 +134,7 @@ A lesson page renders its materials in order. Keeping notes, code and files as s
 
 As built in Phase 3:
 
-- Only the `material` purpose exists so far; later phases add theirs. Material files must be uploaded for a course, and can only be attached to materials of that course.
+- Only the `material` purpose exists so far; later phases add theirs. (Phase 4 adds `assignment` and `submission`; see below.) Material files must be uploaded for a course, and can only be attached to materials of that course.
 - The client fetches files with the bearer token as a Blob and shows PDFs from a local `blob:` URL, so no file ever has a URL that works without signing in.
 - A file is deleted, with its stored bytes, when the last material using it is deleted or switches to another file, and when its course is deleted.
 
@@ -146,13 +146,23 @@ As built in Phase 3:
 
 **Submission**: one document **per attempt** (that gives the submission history). `assignment`, `course`, `student`, `attempt` (1, 2, …), `items[]` (each `{ type, url? | file? | code?{language, source} }`), `note`, `submittedAt`, `isLate`, `status` (`submitted` | `reviewed` | `resubmit_requested`), `review { marks, finalMarks, feedback, reviewedBy, reviewedAt }`. Unique `{assignment, student, attempt}`. Index: `{course, status}`, `{student, submittedAt}`.
 
-The student-facing state of an assignment is **derived**, not stored: `pending`, `overdue` (past the deadline or late cutoff with no submission), `submitted`, `reviewed`, `resubmit_requested`.
+The student-facing state of an assignment is **derived**, not stored: `pending`, `overdue` (past the due date with no submission), `submitted`, `reviewed`, `resubmit_requested`.
 
 Rules:
 
 - A student can **edit** their latest attempt while it's `submitted` (not yet reviewed) and the submission window is still open.
 - A **new attempt** is allowed only when the trainer sets `resubmit_requested`, and `maxAttempts` hasn't been reached.
 - Late submissions are accepted until `lateUntil` if `allowLate` is set. `finalMarks = marks × (1 − penaltyPercent/100)` when the submission is late.
+
+As built in Phase 4:
+
+- **Window.** It closes at `dueAt`, or at `lateUntil` when late work is allowed. `lateUntil` is required with `allowLate` and must be after `dueAt`; without `allowLate` the penalty is stored as 0. Work handed in after `dueAt` is late.
+- **Editing a first attempt after the due date** (inside the late window) makes it late, so an on-time placeholder can't be swapped for late work. `editedAt` records the last edit; `submittedAt` never changes.
+- **Resubmissions.** The trainer's request is the permission for one new attempt, so it can be made (and edited until reviewed) even after the window has closed. A resubmission keeps the late flag of the attempt it replaces. Requesting a resubmission when `maxAttempts` is used up is refused.
+- **Placement.** `module` and `lesson` are optional and must belong to the course; a lesson implies its module. Students see an assignment only when it, its course and (when set) its module and lesson are published, and their enrollment is active.
+- **Attachments** are FileAssets with purpose `assignment`, uploaded through `POST /files` for the same course (PDF/DOCX/PPTX ≤ 20 MB). They follow the visibility of the assignments that list them.
+- **Submission items**: at most 5 per attempt, each of an allowed type. PDF items reference a FileAsset with purpose `submission` that the same student uploaded for the same assignment (`FileAsset.assignment`); only that student and the trainer can open it. Unattached submission uploads older than an hour are removed when the student uploads again.
+- **Review.** Only the latest attempt can be reviewed. Marks (≤ `maxMarks`, two decimals) and `finalMarks` are stored at review time; later changes to the penalty don't recompute them, and `maxMarks` can't be lowered below marks already awarded. `maxAttempts: null` means unlimited.
 
 **Notification**: `user`, `type` (`material_published` | `assignment_published` | `submission_reviewed` | `resubmit_requested` | `deadline_soon` | `submission_received`), `title`, `body`, `link`, `readAt`. Index: `{user, readAt, createdAt}`. Old read notifications are removed with a TTL of 90 days.
 
@@ -176,12 +186,14 @@ Rules:
 
 Ownership always comes from `req.user.id`. Any `student`, `role`, `reviewedBy`, `marks` or `status` fields in a student's request body are dropped by the zod schemas.
 
-**Deleting content:** a course, module or lesson can't be hard-deleted if it has submissions or progress. Archive it instead. The rules as implemented in Phase 2 (Phases 4–5 add the submission and progress checks):
+**Deleting content:** a course, module or lesson can't be hard-deleted if it has submissions or progress. Archive it instead. The rules as implemented in Phases 2–4 (Phase 5 adds the progress checks):
 
 - **Course:** only when it isn't published and has no active or pending enrollments. Deleting it also deletes its modules, lessons and removed enrollments.
 - **Module:** only when neither the module nor any of its lessons is published. Deleting it also deletes its lessons.
 - **Lesson:** only when it isn't published.
 - **Material (Phase 3):** only when it isn't published.
+- **Assignment (Phase 4):** only when it isn't published and has no submissions. Its unused attachments are deleted with it.
+- **Phase 4 additions:** a course with any submissions can't be deleted, and deleting one deletes its assignments. A module or lesson that assignments point at can't be deleted until they are moved or deleted. Moving a lesson to another module moves its assignments with it.
 
 Anything else returns `409 CONFLICT` with a message telling the trainer to unpublish or archive first. Deleting a course, module or lesson also deletes its materials and their unused files.
 
@@ -199,10 +211,11 @@ Anything else returns `409 CONFLICT` with a message telling the trainer to unpub
 **Phase 3 (materials):** `GET|POST /lessons/:id/materials`, `PATCH /lessons/:id/materials/reorder`, `PATCH|DELETE /materials/:id`, `POST /files` (multipart), `GET /files/:id`, `GET /lessons/:id/navigation` (previous/next).
 
 **Phase 4 (assignments):** `GET|POST /assignments` (filters: course, module, lesson, status), `GET|PATCH|DELETE /assignments/:id`, `POST /assignments/:id/submissions`, `GET /assignments/:id/submissions/me`, `PATCH /submissions/:id`.
+As built, Phase 4 also adds `POST /assignments/:id/files` (a student's PDF for their submission), `GET /assignments/:id/submissions` (trainer: latest attempt per student), `GET /submissions/:id`, and the per-submission grading endpoints `POST /submissions/:id/review` and `POST /submissions/:id/request-resubmission`, brought forward from Phase 6 so the edit-after-review, penalty and resubmission rules work end to end.
 
 **Phase 5 (student progress):** `POST|DELETE /lessons/:id/complete`, `GET /me/courses` (enrolled + progress + continue-learning), `GET /me/assignments` (with derived statuses), `GET /dashboard/student`.
 
-**Phase 6 (review & analytics):** `GET /admin/submissions` (filters: course, status, student, late), `POST /submissions/:id/review`, `POST /submissions/:id/request-resubmission`, `GET /admin/students` (search, filter, paginate), `GET /admin/students/:id`, `GET /dashboard/admin`, `GET /reports/courses/:id`, `GET /reports/students/:id`.
+**Phase 6 (review & analytics):** `GET /admin/submissions` (filters: course, status, student, late), `POST /submissions/:id/review` and `POST /submissions/:id/request-resubmission` (built in Phase 4), `GET /admin/students` (search, filter, paginate), `GET /admin/students/:id`, `GET /dashboard/admin`, `GET /reports/courses/:id`, `GET /reports/students/:id`.
 
 **Phase 7 (notifications):** `GET /notifications`, `PATCH /notifications/:id/read`, `PATCH /notifications/read-all`, `GET /notifications/unread-count`. The client polls the unread count every 60 s. **[DECISION D6]**
 
@@ -244,7 +257,7 @@ The seed content was built up in stages:
 
 - **Phase 2:** course, module and lesson structure, with each lesson's summary, objectives, prerequisites and estimated time. Demo students are created only when `SEED_DEMO_STUDENT_PASSWORD` is set. `--reset` also recreates them.
 - **Phase 3:** lesson notes, code, PDF and link materials. The content lives in `server/src/seeds/content/<course slug>.md`, one Markdown file per course. A starter lesson (found by its slug, so renames don't matter) gets its materials only while it has none at all. Rerunning the seed never duplicates or changes them, and databases seeded in Phase 2 get their notes on the next `npm run seed`. One generated cheat-sheet PDF per course is attached to its first lesson.
-- **Phase 4:** assignments.
+- **Phase 4:** five published starter assignments (two MERN, one Java, two DSA) in the first modules, from `server/src/seeds/data/assignments.js`, covering all five submission types, with and without late work. Due dates are relative to the seed run. A course gets them only while it has no assignments at all. Demo submissions arrive with the Phase 5 demo progress.
 - **Phase 5:** demo progress.
 
 ## 10. Phases and acceptance criteria

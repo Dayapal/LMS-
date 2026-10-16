@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useLocation, useNavigate, useParams } from 'react-router';
 import { coursesApi, useCourseMutation, useRoadmap } from '../api.js';
 import { LEVEL_LABEL, formatMinutes, plural } from '../format.js';
 import { CourseFormModal } from './CourseFormModal.jsx';
 import { RoadmapEditor } from './RoadmapEditor.jsx';
 import { EnrollmentsPanel } from './EnrollmentsPanel.jsx';
+import { CourseAssignmentsPanel } from '../../assignments/admin/CourseAssignmentsPanel.jsx';
 import { Button } from '../../../components/ui/Button.jsx';
 import { StatusBadge } from '../../../components/ui/Badge.jsx';
 import { ConfirmDialog } from '../../../components/ui/ConfirmDialog.jsx';
@@ -33,6 +34,7 @@ const STATUS_MESSAGE = {
 
 const TABS = [
   { id: 'roadmap', label: 'Roadmap' },
+  { id: 'assignments', label: 'Assignments' },
   { id: 'students', label: 'Students' },
 ];
 
@@ -40,7 +42,9 @@ export function CourseBuilderPage() {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
-  const [tab, setTab] = useState('roadmap');
+  // Pages that link back to a tab pass it in the location state.
+  const location = useLocation();
+  const [tab, setTab] = useState(location.state?.tab ?? 'roadmap');
   const [editing, setEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const { data, isPending, isError, error, refetch } = useRoadmap(courseId);
@@ -183,11 +187,9 @@ export function CourseBuilderPage() {
       </div>
 
       <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
-        {tab === 'roadmap' ? (
-          <RoadmapEditor courseId={course.id} modules={modules} />
-        ) : (
-          <EnrollmentsPanel courseId={course.id} />
-        )}
+        {tab === 'roadmap' && <RoadmapEditor courseId={course.id} modules={modules} />}
+        {tab === 'assignments' && <CourseAssignmentsPanel courseId={course.id} modules={modules} />}
+        {tab === 'students' && <EnrollmentsPanel courseId={course.id} />}
       </div>
 
       <CourseFormModal

@@ -7,6 +7,7 @@ import {
   removeDemoStudents,
   resetCourseData,
   seedCourses,
+  seedAssignments,
   seedDemoStudents,
   seedMaterials,
 } from './course.seed.js';
@@ -31,7 +32,7 @@ async function main() {
   if (reset) {
     await Promise.all([resetCourseData(), removeDemoStudents()]);
     logger.warn(
-      'Removed all courses, modules, lessons, materials, files, enrollments and demo students (--reset)',
+      'Removed all courses, modules, lessons, materials, assignments, submissions, files, enrollments and demo students (--reset)',
     );
   }
 
@@ -41,6 +42,14 @@ async function main() {
   for (const result of await seedMaterials({ createdBy: admin.user._id })) {
     logger.info(
       `Materials for ${result.slug}: added to ${result.added} lessons, ${result.kept} lessons already had materials`,
+    );
+  }
+
+  for (const result of await seedAssignments({ createdBy: admin.user._id })) {
+    logger.info(
+      result.added
+        ? `Assignments for ${result.slug}: added ${result.added}`
+        : `Assignments for ${result.slug}: the course already has assignments, kept`,
     );
   }
 

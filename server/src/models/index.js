@@ -6,6 +6,8 @@ export { Lesson } from './Lesson.js';
 export { Enrollment } from './Enrollment.js';
 export { Material } from './Material.js';
 export { FileAsset } from './FileAsset.js';
+export { Assignment } from './Assignment.js';
+export { Submission } from './Submission.js';
 export {
   CODE_LANGUAGES,
   CONTENT_STATUS,
@@ -13,4 +15,6 @@ export {
   ENROLLMENT_STATUS,
   FILE_PURPOSES,
   MATERIAL_TYPES,
+  SUBMISSION_STATUS,
+  SUBMISSION_TYPES,
 } from './constants.js';

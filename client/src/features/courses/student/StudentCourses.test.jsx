@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import { screen, within } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
+import { cleanup, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { coursesApi } from '../api.js';
+import { assignmentsApi } from '../../assignments/api.js';
 import { CourseCatalogPage } from './CourseCatalogPage.jsx';
 import { CourseDetailPage } from './CourseDetailPage.jsx';
 import { renderWithProviders, notFoundError } from '../../../test/renderWithProviders.jsx';
@@ -14,7 +15,18 @@ const routes = [
   { path: '/app/courses/:courseId', element: <CourseDetailPage /> },
 ];
 
-afterEach(() => vi.restoreAllMocks());
+// The pages also list assignments; these tests don't look at them.
+beforeEach(() => {
+  vi.spyOn(assignmentsApi, 'list').mockResolvedValue({
+    items: [],
+    meta: { page: 1, limit: 100, total: 0, totalPages: 1 },
+  });
+});
+// Unmount before the stubs go, so nothing that mounts late reaches the network.
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 describe('CourseCatalogPage', () => {
   it('lists published courses with stats and enrollment state', async () => {
@@ -140,6 +152,39 @@ describe('CourseDetailPage', () => {
     renderWithProviders(routes, { path: '/app/courses/c1', user: STUDENT });
     expect(await screen.findByText(/you're enrolled/i)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /request/i })).not.toBeInTheDocument();
+  });
+
+  it('lists the course’s assignments with the student’s status once enrolled', async () => {
+    vi.spyOn(coursesApi, 'roadmap').mockResolvedValue(
+      makeRoadmap({ enrollment: { status: 'active', enrolledAt: '2026-10-01' } }),
+    );
+    const list = vi.spyOn(assignmentsApi, 'list').mockResolvedValue({
+      items: [
+        {
+          id: 'a1',
+          title: 'Personal Profile Page',
+          dueAt: '2030-01-15T18:29:00.000Z',
+          maxMarks: 100,
+          mySubmission: { status: 'resubmit_requested' },
+        },
+      ],
+      meta: { page: 1, limit: 100, total: 1, totalPages: 1 },
+    });
+    renderWithProviders(routes, { path: '/app/courses/c1', user: STUDENT });
+    const section = await screen.findByRole('region', { name: 'Assignments' });
+    expect(
+      await within(section).findByRole('link', { name: 'Personal Profile Page' }),
+    ).toHaveAttribute('href', '/app/courses/c1/assignments/a1');
+    expect(within(section).getByText('Resubmission requested')).toBeInTheDocument();
+    expect(list.mock.calls[0][0]).toMatchObject({ course: 'c1' });
+  });
+
+  it('does not ask for assignments before the student is enrolled', async () => {
+    vi.spyOn(coursesApi, 'roadmap').mockResolvedValue(makeRoadmap());
+    renderWithProviders(routes, { path: '/app/courses/c1', user: STUDENT });
+    expect(await screen.findByRole('heading', { name: 'Roadmap' })).toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'Assignments' })).not.toBeInTheDocument();
+    expect(assignmentsApi.list).not.toHaveBeenCalled();
   });
 
   it('shows a friendly message for unavailable courses', async () => {

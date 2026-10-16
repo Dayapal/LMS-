@@ -4,6 +4,7 @@ import { CourseCover } from '../components/CourseCover.jsx';
 import { EnrollmentAction, EnrollmentBadge } from './EnrollmentAction.jsx';
 import { LEVEL_LABEL, formatMinutes, plural } from '../format.js';
 import { LazyMarkdownView } from '../../../components/content/LazyMarkdownView.jsx';
+import { CourseAssignments } from '../../assignments/components/AssignmentSections.jsx';
 import { Badge } from '../../../components/ui/Badge.jsx';
 import { Card, CardBody } from '../../../components/ui/Card.jsx';
 import { EmptyState, ErrorState, Skeleton } from '../../../components/ui/Feedback.jsx';
@@ -176,22 +177,29 @@ export function CourseDetailPage() {
           <RoadmapTimeline modules={modules} lessonPath={lessonPath} />
         </section>
 
-        {course.description && (
-          <section aria-labelledby="about-heading" className="space-y-3 lg:order-last">
-            <h2 id="about-heading" className="text-lg font-semibold text-slate-900">
-              About this course
-            </h2>
-            <LazyMarkdownView className="text-sm leading-6">{course.description}</LazyMarkdownView>
-            {course.tags.length > 0 && (
-              <ul className="flex flex-wrap gap-2 pt-2" aria-label="Topics">
-                {course.tags.map((tag) => (
-                  <li key={tag}>
-                    <Badge>{tag}</Badge>
-                  </li>
-                ))}
-              </ul>
+        {(enrolled || course.description) && (
+          <div className="space-y-8 lg:order-last">
+            {enrolled && <CourseAssignments courseId={course.id} />}
+            {course.description && (
+              <section aria-labelledby="about-heading" className="space-y-3">
+                <h2 id="about-heading" className="text-lg font-semibold text-slate-900">
+                  About this course
+                </h2>
+                <LazyMarkdownView className="text-sm leading-6">
+                  {course.description}
+                </LazyMarkdownView>
+                {course.tags.length > 0 && (
+                  <ul className="flex flex-wrap gap-2 pt-2" aria-label="Topics">
+                    {course.tags.map((tag) => (
+                      <li key={tag}>
+                        <Badge>{tag}</Badge>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
             )}
-          </section>
+          </div>
         )}
       </div>
     </div>

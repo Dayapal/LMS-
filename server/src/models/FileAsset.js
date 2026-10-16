@@ -16,6 +16,8 @@ const fileAssetSchema = new mongoose.Schema(
     checksum: { type: String, required: true }, // sha256, hex
     purpose: { type: String, enum: Object.values(FILE_PURPOSES), required: true },
     course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
+    // Submission files belong to one assignment (and are owned by `uploadedBy`).
+    assignment: { type: mongoose.Schema.Types.ObjectId, ref: 'Assignment' },
     uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   },
   { timestamps: true },
@@ -23,5 +25,6 @@ const fileAssetSchema = new mongoose.Schema(
 
 fileAssetSchema.index({ storageKey: 1 }, { unique: true });
 fileAssetSchema.index({ course: 1, purpose: 1 });
+fileAssetSchema.index({ assignment: 1, uploadedBy: 1 });
 
 export const FileAsset = mongoose.model('FileAsset', fileAssetSchema);
