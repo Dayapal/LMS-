@@ -66,6 +66,7 @@ export function AssignmentList({ assignments, pathFor, showState = true }) {
               Due {formatDateTime(assignment.dueAt)} · {assignment.maxMarks} marks
             </p>
           </div>
+          {assignment.status === 'archived' && <Badge tone="muted">Archived</Badge>}
           {showState && assignment.mySubmission && (
             <SubmissionStateBadge status={assignment.mySubmission.status} />
           )}

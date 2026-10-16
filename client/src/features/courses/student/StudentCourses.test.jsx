@@ -167,6 +167,14 @@ describe('CourseDetailPage', () => {
           maxMarks: 100,
           mySubmission: { status: 'resubmit_requested' },
         },
+        {
+          id: 'a2',
+          title: 'Old portfolio',
+          status: 'archived',
+          dueAt: '2026-01-15T18:29:00.000Z',
+          maxMarks: 50,
+          mySubmission: { status: 'reviewed' },
+        },
       ],
       meta: { page: 1, limit: 100, total: 1, totalPages: 1 },
     });
@@ -176,6 +184,9 @@ describe('CourseDetailPage', () => {
       await within(section).findByRole('link', { name: 'Personal Profile Page' }),
     ).toHaveAttribute('href', '/app/courses/c1/assignments/a1');
     expect(within(section).getByText('Resubmission requested')).toBeInTheDocument();
+    const archived = within(section).getByRole('link', { name: 'Old portfolio' }).closest('li');
+    expect(within(archived).getByText('Archived')).toBeInTheDocument();
+    expect(within(archived).getByText('Reviewed')).toBeInTheDocument();
     expect(list.mock.calls[0][0]).toMatchObject({ course: 'c1' });
   });
 

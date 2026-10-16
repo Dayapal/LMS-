@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import mongoose from 'mongoose';
 import { isPrivateHost, linkProblem } from '../src/validators/links.js';
 import {
+  closedReason,
   closesAt,
   editCheck,
   finalMarksFor,
@@ -18,6 +19,7 @@ const after = new Date('2026-11-01T18:30:01.000Z');
 const afterCutoff = new Date('2026-11-04T18:30:01.000Z');
 
 const assignment = (overrides = {}) => ({
+  status: 'published',
   dueAt: due,
   latePolicy: { allowLate: false, lateUntil: null, penaltyPercent: 0 },
   maxAttempts: null,
@@ -102,6 +104,25 @@ describe('attempts and editing', () => {
     }
     const resubmission = attempt({ attempt: 2 });
     expect(editCheck(assignment(), resubmission, resubmission, afterCutoff).allowed).toBe(true);
+  });
+});
+
+describe('closed assignments', () => {
+  it('take no new attempts or edits unless published, whatever the window', () => {
+    const archived = assignment({ status: 'archived' });
+    const reason = 'This assignment is archived, so it no longer accepts work.';
+    expect(closedReason(assignment())).toBeNull();
+    expect(closedReason(archived)).toBe(reason);
+    expect(closedReason(assignment({ status: 'draft' }))).toBe(
+      'This assignment is not open for submissions.',
+    );
+    expect(newAttemptCheck(archived, null, before)).toEqual({ allowed: false, reason });
+    expect(newAttemptCheck(archived, attempt({ status: 'resubmit_requested' }), before)).toEqual({
+      allowed: false,
+      reason,
+    });
+    const latest = attempt();
+    expect(editCheck(archived, latest, latest, before)).toEqual({ allowed: false, reason });
   });
 });
 

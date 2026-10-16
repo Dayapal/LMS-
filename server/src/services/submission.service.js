@@ -11,6 +11,7 @@ import { getAssignmentForViewer, getSubmissionForViewer, isAdmin } from './acces
 import { deleteFilesIfUnused } from './file.service.js';
 import { toAssignmentDTO, toSubmissionDTO } from './serializers.js';
 import {
+  closedReason,
   editCheck,
   finalMarksFor,
   lateAfterEdit,
@@ -224,6 +225,11 @@ export async function reviewSubmission(trainer, submissionId, { marks, feedback 
 export async function requestResubmission(trainer, submissionId, { marks, feedback }) {
   const { submission, assignment } = await latestForReview(submissionId);
   assertMarksInRange(assignment, marks);
+  if (closedReason(assignment)) {
+    throw ApiError.conflict(
+      `This assignment is ${assignment.status}, so the student can't hand in a new attempt. Publish it again first, or review this attempt.`,
+    );
+  }
   if (assignment.maxAttempts != null && submission.attempt >= assignment.maxAttempts) {
     throw ApiError.conflict(
       `The student has used all ${assignment.maxAttempts} attempts. Review this attempt instead.`,

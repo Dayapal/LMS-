@@ -27,6 +27,7 @@ const { trusted } = mongoose;
 export const isAdmin = (user) => user?.role === ROLES.ADMIN;
 
 const isPublished = (doc) => doc?.status === CONTENT_STATUS.PUBLISHED;
+const isArchived = (doc) => doc?.status === CONTENT_STATUS.ARCHIVED;
 
 /** Mongo filter limiting content documents to what `user` may list. */
 export const visibleTo = (user) => (isAdmin(user) ? {} : { status: CONTENT_STATUS.PUBLISHED });
@@ -87,11 +88,17 @@ export async function getLessonForViewer(user, lessonId) {
 
 /**
  * The course (and enrollment) through which a student may see `assignment`,
- * or null. The assignment and its course must be published, the enrollment
- * active, and the module or lesson it belongs to (if any) published too.
+ * or null. The course must be published, the enrollment active, and the
+ * module or lesson it belongs to (if any) published too. The assignment must
+ * be published, or archived with work from this student: archiving closes an
+ * assignment but keeps its history readable (the rules refuse new work).
  */
 async function studentAssignmentAccess(user, assignment) {
-  if (!isPublished(assignment)) return null;
+  const readable =
+    isPublished(assignment) ||
+    (isArchived(assignment) &&
+      Boolean(await Submission.exists({ assignment: assignment._id, student: user._id })));
+  if (!readable) return null;
   const [course, enrollment, module, lesson] = await Promise.all([
     Course.findById(assignment.course),
     getActiveEnrollment(user._id, assignment.course),
@@ -118,8 +125,9 @@ export async function getAssignmentForViewer(user, assignmentId) {
 
 /**
  * Mongo filter limiting assignments to the ones `user` may list. For students:
- * published assignments of published courses they are actively enrolled in,
- * whose module and lesson (when set) are published.
+ * assignments of published courses they are actively enrolled in, whose module
+ * and lesson (when set) are published, and which are published, or archived
+ * with work from this student.
  */
 export async function assignmentsVisibleTo(user) {
   if (isAdmin(user)) return {};
@@ -132,13 +140,20 @@ export async function assignmentsVisibleTo(user) {
     status: CONTENT_STATUS.PUBLISHED,
   });
   const inCourses = { course: trusted({ $in: courses }), status: CONTENT_STATUS.PUBLISHED };
-  const [modules, lessons] = await Promise.all([
+  const [modules, lessons, submittedTo] = await Promise.all([
     CourseModule.distinct('_id', inCourses),
     Lesson.distinct('_id', inCourses),
+    Submission.distinct('assignment', { student: user._id }),
   ]);
   return {
-    ...inCourses,
+    course: trusted({ $in: courses }),
     $and: [
+      {
+        $or: [
+          { status: CONTENT_STATUS.PUBLISHED },
+          { status: CONTENT_STATUS.ARCHIVED, _id: trusted({ $in: submittedTo }) },
+        ],
+      },
       { $or: [{ module: null }, { module: trusted({ $in: modules }) }] },
       { $or: [{ lesson: null }, { lesson: trusted({ $in: lessons }) }] },
     ],

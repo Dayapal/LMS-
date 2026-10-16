@@ -1,4 +1,4 @@
-import { SUBMISSION_STATUS } from '../models/index.js';
+import { CONTENT_STATUS, SUBMISSION_STATUS } from '../models/index.js';
 
 /*
  * The submission rules of spec §5, as pure functions of an assignment, the
@@ -13,6 +13,8 @@ import { SUBMISSION_STATUS } from '../models/index.js';
  *   works after the window has closed, and the new attempt keeps the late flag
  *   of the work it replaces.
  * - Nothing can be edited once the trainer has reviewed it.
+ * - Only a published assignment accepts work. An archived one stays readable
+ *   for the students who submitted, but takes no new attempts or edits.
  */
 
 const allowed = Object.freeze({ allowed: true, reason: null });
@@ -28,11 +30,21 @@ export const isWindowOpen = (assignment, now) => now.getTime() <= closesAt(assig
 
 const isAfterDue = (assignment, at) => at.getTime() > assignment.dueAt.getTime();
 
+/** Why an assignment takes no work at all, or null while it is published. */
+export function closedReason(assignment) {
+  if (assignment.status === CONTENT_STATUS.PUBLISHED) return null;
+  return assignment.status === CONTENT_STATUS.ARCHIVED
+    ? 'This assignment is archived, so it no longer accepts work.'
+    : 'This assignment is not open for submissions.';
+}
+
 const hasAttemptsLeft = (assignment, attemptsUsed) =>
   assignment.maxAttempts == null || attemptsUsed < assignment.maxAttempts;
 
 /** Whether the student may start a new attempt now. */
 export function newAttemptCheck(assignment, latest, now) {
+  const closed = closedReason(assignment);
+  if (closed) return refused(closed);
   if (!latest) {
     return isWindowOpen(assignment, now) ? allowed : refused('The submission window has closed.');
   }
@@ -52,6 +64,8 @@ export function newAttemptCheck(assignment, latest, now) {
 
 /** Whether the student may still edit `submission`, given their `latest` attempt. */
 export function editCheck(assignment, submission, latest, now) {
+  const closed = closedReason(assignment);
+  if (closed) return refused(closed);
   if (!latest || !submission._id.equals(latest._id)) {
     return refused('Only your latest attempt can be edited.');
   }

@@ -1,6 +1,6 @@
 # Phase 4 report: assignments and submissions
 
-Date: 2026-10-16 · Status: **awaiting review**
+Date: 2026-10-16 · Status: **awaiting review** (scope confirmed; archive fix added in a follow-up commit)
 
 ## Summary
 
@@ -14,7 +14,22 @@ The trainer can now set assignments and review the work students hand in.
 
 Everything is enforced on the server. A student can only see their own submissions and PDFs: anything else is a 404, including another student's submission id. Phase 1–3 behaviour is unchanged, and all of their tests still pass.
 
-**One scope decision to check first (decision 1):** the approved plan puts grading in Phase 6. I brought the per-submission review forward (marks, feedback, request resubmission), because the Phase 4 acceptance criteria ("editing is blocked after review", "penalties are computed correctly") and the resubmission workflow can't work without it. Phase 6 keeps the cross-course review queue, student management, dashboards and reports.
+**Scope (confirmed by the trainer on 2026-10-16, decision 1):** per-submission review is part of Phase 4, because the Phase 4 workflow depends on it. Phase 6 stays limited to work across courses and students:
+
+| Phase 4 (built)                                                                | Phase 6 (not built)                                            |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| Reviewing one submission: marks capped at the assignment's maximum, feedback   | The review queue across all courses (`GET /admin/submissions`) |
+| Requesting a resubmission, within the attempt limit                            | Student management: list, search and detail pages              |
+| Each assignment's submissions list (latest attempt per student, status filter) | The trainer dashboard                                          |
+| The attempt history on the review page                                         | Course and student reports                                     |
+
+## Review follow-up (2026-10-16)
+
+After the first review, one change was made, in a separate commit:
+
+- **Archiving no longer hides a student's own past work** (decision 13). A student who submitted to an assignment that is later archived keeps read-only access: the assignment page, every attempt, marks, feedback, their own PDFs and the handouts. Archived assignments accept no new attempts, edits or uploads, and the trainer can't request a resubmission on one, but can still review it. Students who never submitted don't see archived assignments, and the trainer keeps everything.
+- **Client test timeout raised to 15 s** (`client/vite.config.js`). During re-verification, four form tests that type key by key timed out at Vitest's default 5 s in one full run. One of them is from Phase 3. Run alone they take 1.5–2.8 s; with all 13 files in parallel they took over 5 s. The server suite already uses 20 s. No test or app logic changed, and three full runs afterwards all passed.
+- **Everything else was re-verified** against the commit under review: authorization, submission limits, late penalties, the marks cap, resubmission rules and private PDF access. This covered the full test suites, a mutation check of 17 rules, lint, formatting, the production build, the dependency audit, a security check of the fix, and a live check through the dev proxy and a browser. The results are below.
 
 ## Features completed
 
@@ -69,7 +84,7 @@ Everything is enforced on the server. A student can only see their own submissio
 
 ## Decisions made in this phase
 
-1. **Per-submission grading is in Phase 4** (see the summary). Built: `POST /submissions/:id/review`, `POST /submissions/:id/request-resubmission`, and a per-assignment submissions list. Not built (Phase 6): `GET /admin/submissions` across courses, student management, dashboards and reports.
+1. **Per-submission grading is in Phase 4** (confirmed; see the table in the summary). Built: `POST /submissions/:id/review`, `POST /submissions/:id/request-resubmission`, and `GET /assignments/:id/submissions`. Phase 6 keeps the cross-course review queue (`GET /admin/submissions`), student management, the trainer dashboard and the reports.
 2. **When the window closes.** It closes at the due date, or at the late cutoff when late work is allowed. A late cutoff is required when late work is on, and must be after the due date. With late work off, the penalty is stored as 0.
 3. **Editing after the due date makes a first attempt late.** Otherwise a student could submit a placeholder on time and swap in the real work later. `submittedAt` stays the original time; `editedAt` records the last change.
 4. **A requested resubmission works after the deadline,** and can be edited until it is reviewed. Trainers mostly review after the deadline, so the request itself is the permission. The new attempt keeps the late flag of the work it replaces, so a late first attempt stays late and an on-time one stays on time.
@@ -81,6 +96,11 @@ Everything is enforced on the server. A student can only see their own submissio
 10. **"Overdue"** means past the due date with nothing handed in, even if late work is still accepted. The student page then says the work will be marked late.
 11. **Links are only checked, never fetched.** There is no server-side request to the submitted URL, so no SSRF risk. The private-address check keeps out links the trainer couldn't open: localhost, private and link-local ranges (including odd spellings such as `0x7f.1`), single-label and `.local` names, and URLs with credentials.
 12. **One field per link type in the form.** The API accepts up to 5 items of any mix of allowed types; the form offers one of each.
+13. **Archived assignments are read-only history** (review follow-up).
+    - **Who can still see it:** a student who handed in at least one attempt keeps the assignment page, `submissions/me`, their marks and feedback, their own PDFs and the handouts. It still appears in their course and lesson lists, with an "Archived" badge and a notice.
+    - **What it refuses:** new attempts, edits and uploads, all with "This assignment is archived, so it no longer accepts work." This includes a resubmission the trainer had already requested. The trainer can still review, but a new resubmission request is refused (409) until the assignment is published again.
+    - **What stays hidden:** students who never submitted don't see it, as before. Drafts stay hidden from everyone but the trainer, even if submissions exist, because a draft means "not ready". The course, module, lesson and active-enrollment rules still apply, so archiving the whole course still hides everything in it.
+    - **Where the rule lives:** visibility in `studentAssignmentAccess` and `assignmentsVisibleTo`; "accepts no work" in `closedReason` (`submissionRules.js`), checked by both the attempt and the edit rules.
 
 ## Database changes
 
@@ -135,15 +155,15 @@ All links: at most 2048 characters, no `user:password@`. `javascript:`, `data:`,
 
 ## Tests executed (actual results)
 
-| Check            | Command                                     | Result                                                                                                                                                                                                                                                                                                      |
-| ---------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Server tests     | `npm test -w server`                        | **14 files, 294 tests passed** (190 from Phases 1–3 + 104 new)                                                                                                                                                                                                                                              |
-| Client tests     | `npm test -w client`                        | **13 files, 111 tests passed** (79 from Phases 1–3 + 32 new)                                                                                                                                                                                                                                                |
-| Lint             | `npm run lint`                              | **0 errors, 0 warnings**                                                                                                                                                                                                                                                                                    |
-| Formatting       | `npm run format:check`                      | **All files pass**                                                                                                                                                                                                                                                                                          |
-| Production build | `npm run build`                             | **Succeeds.** The JS loaded at startup is 605 kB (188 kB gzip), up from 595/184 kB. The assignment pages are a separate 38 kB (11 kB gzip) chunk. The over-500 kB warning remains for the main bundle and CodeMirror (known issue 8)                                                                        |
-| Dependency audit | `npm audit`                                 | **0 vulnerabilities.** No new dependencies                                                                                                                                                                                                                                                                  |
-| Security review  | `/security-review` on the full Phase 4 diff | **No findings** at medium or high severity. Checked: role gates on every route, assignment visibility, submission ownership, attaching another student's file, file access by purpose, protected fields, grading, upload ordering, NoSQL injection, data exposure, XSS through links and Markdown, and SSRF |
+| Check            | Command                                                                                               | Result                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ---------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Server tests     | `npm test -w server`                                                                                  | **15 files, 303 tests passed** (190 from Phases 1–3 + 113 new, 9 of them for archiving)                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Client tests     | `npm test -w client`                                                                                  | **13 files, 113 tests passed** (79 from Phases 1–3 + 34 new, 2 of them for archiving); three consecutive full runs green after the timeout change                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Lint             | `npm run lint`                                                                                        | **0 errors, 0 warnings**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| Formatting       | `npm run format:check`                                                                                | **All files pass**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Production build | `npm run build`                                                                                       | **Succeeds.** The JS loaded at startup is 605 kB (188 kB gzip), up from 595/184 kB. The assignment pages are a separate 39 kB (11 kB gzip) chunk. The over-500 kB warning remains for the main bundle and CodeMirror (known issue 7)                                                                                                                                                                                                                                                                                                                             |
+| Dependency audit | `npm audit`                                                                                           | **0 vulnerabilities.** No new dependencies                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| Security review  | `/security-review` on the full Phase 4 diff; the archive fix re-checked by tracing every student path | **No findings** at medium or high severity. For the fix: student creates, edits and uploads on an archived assignment are refused by the same rule functions; the new read access only applies to the student's own submissions; the course, module, lesson and enrollment checks are unchanged. Checked: role gates on every route, assignment visibility, submission ownership, attaching another student's file, file access by purpose, protected fields, grading, upload ordering, NoSQL injection, data exposure, XSS through links and Markdown, and SSRF |
 
 **What the new server tests cover:**
 
@@ -153,6 +173,7 @@ All links: at most 2048 characters, no `user:password@`. `javascript:`, `data:`,
   - attempt and edit permissions
   - penalty arithmetic with rounding
   - derived states
+  - closed assignments: an archived (or draft) assignment refuses new attempts, including a requested resubmission, and edits
   - 33 link cases, including `javascript:`/`data:` schemes, look-alike hosts, credentials, `0x7f.1`, `2130706433`, `[::1]`, `[::ffff:127.0.0.1]`, `169.254.169.254`, and GitHub pages that aren't repositories
 - **Assignments:**
   - create with defaults; dates stored in UTC whatever offset was sent
@@ -195,6 +216,13 @@ All links: at most 2048 characters, no `user:password@`. `javascript:`, `data:`,
   - older attempts can't be reviewed
   - the late flag carries over to a resubmission
   - the trainer's list: latest attempt per student, summaries without code or feedback, status filter, pagination
+- **Archived assignments** (`archived-assignments.test.js`):
+  - a student who submitted keeps the page (read-only, with marks), the history with feedback, and the submission itself
+  - the assignment is listed for that student only; another student gets 404 for the page and the history
+  - no new attempt, edit or PDF upload, even after a resubmission request, with the "archived" message
+  - their own PDF and the handouts stay downloadable; another student gets 404 for both
+  - archiving the course still hides it; a draft with submissions stays hidden
+  - the trainer still lists and opens every attempt and can review, but a resubmission request is refused
 - **Deletion:** a module or lesson with assignments is refused; a course with submissions is refused; otherwise a course deletes its assignments and files; a moved lesson takes its assignments along.
 - **Seed:** 1–2 valid assignments per course in the first modules, covering all types and both late policies; placement, due dates and late cutoffs; reruns change nothing; reset removes assignments and submissions.
 
@@ -215,26 +243,30 @@ All links: at most 2048 characters, no `user:password@`. `javascript:`, `data:`,
   - server errors on the "Belongs to" field; handouts uploaded first and not re-uploaded on retry; editing an existing assignment
   - the assignment page with per-student rows and filters; publish; delete refusal
   - the review page: links open safely, code is shown as text, the marks cap, the penalty preview, the exact review payload, feedback required for a resubmission, the no-attempts-left state, earlier attempts read-only
-- **Course page and reader:** the enrolled student's assignment list with their state; no assignment request before enrollment; the lesson's practice assignments.
+- **Course page and reader:** the enrolled student's assignment list with their state, including an "Archived" badge; no assignment request before enrollment; the lesson's practice assignments.
+- **Archived assignment page:** the "This assignment is archived" notice, the badge, the history with marks and feedback, and no submit or edit buttons, both after review and while waiting for review.
 
-**Mutation check.** I broke each rule below on purpose, one at a time. Each break failed tests, and the full suite passed again after restoring the code:
+**Mutation check** (rerun after the archive fix). I broke each rule below on purpose, one at a time. Each break failed tests, and the full suite passed again after restoring the code:
 
-| Rule removed                                  | Tests that failed |
-| --------------------------------------------- | ----------------- |
-| Students see only their own submissions       | 1                 |
-| Active enrollment needed to see an assignment | 3                 |
-| Module and lesson must be published           | 1                 |
-| Submission files: uploader (and trainer) only | 1                 |
-| No editing after review                       | 4                 |
-| No editing after the window closes            | 2                 |
-| No first attempt after the window closes      | 4                 |
-| Late flag after the due date                  | 5                 |
-| Late penalty in the final marks               | 3                 |
-| `maxAttempts` limit                           | 1                 |
-| Disallowed submission types rejected          | 2                 |
-| A PDF must be the student's own upload        | 1                 |
-| Marks capped at `maxMarks`                    | 1                 |
-| Only the latest attempt can be reviewed       | 1                 |
+| Rule removed                                        | Tests that failed |
+| --------------------------------------------------- | ----------------- |
+| Students see only their own submissions             | 1                 |
+| Active enrollment needed to see an assignment       | 3                 |
+| Module and lesson must be published                 | 1                 |
+| Submission files: uploader (and trainer) only       | 2                 |
+| No editing after review                             | 4                 |
+| No editing after the window closes                  | 2                 |
+| No first attempt after the window closes            | 4                 |
+| Late flag after the due date                        | 5                 |
+| Late penalty in the final marks                     | 3                 |
+| `maxAttempts` limit                                 | 1                 |
+| Disallowed submission types rejected                | 2                 |
+| A PDF must be the student's own upload              | 1                 |
+| Marks capped at `maxMarks`                          | 1                 |
+| Only the latest attempt can be reviewed             | 1                 |
+| Archived history readable by students who submitted | 4                 |
+| Archived assignments listed for those students      | 1                 |
+| Archived assignments accept no work                 | 4                 |
 
 **Manual check in a real browser** (Playwright, `npm run dev`, through the Vite proxy, against the local database):
 
@@ -269,20 +301,37 @@ All links: at most 2048 characters, no `user:password@`. `javascript:`, `data:`,
 - The only console error during the session was the expected 400 for the fake PDF.
 - **Cleanup:** I deleted my test assignment, Aarav's four test submissions and his uploaded PDFs. The local database is back to the five seeded assignments with no submissions or submission files.
 
+**Live check of the archive fix** (dev servers, through the Vite proxy):
+
+- **Steps:** Aarav submitted to "Personal Profile Page", the trainer graded it 72 with Markdown feedback, then archived it.
+- **Aarav:**
+  - opened it (200, `archived`, `canSubmit: false`, final marks 72) and his history, with the feedback
+  - his course list showed it as `[archived]` next to the published "Responsive Landing Page"
+  - submitting again was refused (409, "This assignment is archived, so it no longer accepts work.")
+- **Neha** (never submitted): 404 for the assignment, and it was not in her list.
+- **The trainer:** a resubmission request was refused (409, "This assignment is archived, so the student can't hand in a new attempt. Publish it again first, or review this attempt."); the submissions list still showed Aarav's attempt.
+- **In the browser, at 390 px:** Aarav's page showed the Reviewed and Archived badges, the "This assignment is archived" notice, the attempt with "Marks: 72 / 100" and the feedback, and no form. The course page row showed Archived and Reviewed. No horizontal scrolling.
+- **Cleanup:** the assignment was published again and Aarav's test submission removed. The local database is back to five published seeded assignments and no submissions.
+
 ## Known issues and remaining work
 
-1. **Grading arrived early** (decision 1). Please confirm you're happy with it in Phase 4, or I can hide the review endpoints until Phase 6.
-2. **No virus scanning.** Students can now upload PDFs. Each one must really be a PDF (magic bytes), is at most 10 MB, is stored under a random key, and is served only to its owner and you, with `nosniff` and a sandboxing CSP, and the app shows it from a `blob:` URL. A malicious but valid PDF could still target a PDF reader. Consider a scanning step before production (Phase 8).
-3. **Links are not checked for reachability.** A Drive link may still be private to the student; the form asks them to make sure you can open it.
-4. **Archiving hides the assignment from students, including their own past submissions** (404, like other archived content). You still see everything.
-5. **No per-student extensions.** A resubmission request works after the deadline (decision 4), but there's no way to give one student a later first deadline. Moving the due date affects everyone.
-6. **Changing the penalty after grading** doesn't recompute existing final marks (decision 6). Re-review to apply it.
-7. **Orphaned handouts.** As with Phase 3 materials, handouts uploaded for a save that then fails stay stored but unattached until the course is deleted. Student uploads are cleaned up (decision 8).
-8. **Bundle size.** The startup JS grew by 10 kB (4 kB gzip), and the over-500 kB warning remains. Route-level splitting is still planned for Phase 7.
-9. **Phase 5/6 items not built:** students have no cross-course "my assignments" list or dashboard (Phase 5), and there is no review queue across courses (Phase 6). Demo students have no seeded submissions yet; they arrive with the Phase 5 demo progress.
-10. **Flaky stray request in an old client test.** `AdminCourses.test.jsx` (Phase 2) sometimes logs one unmocked network error (1 in 8 runs, before and after this phase). It never fails a test. The new tests unmount before restoring their stubs, so they don't do this.
-11. **Seeded due dates depend on when you seed.** They are 7–28 days after the run, at 18:30 UTC (midnight India time). On your current database they count from today, 2026-10-16.
-12. **Local sessions from the browser check.** Signing in for the check created refresh sessions for the trainer and the three demo students in the local database. They expire on their own within 7 days; logging out or changing the password ends them sooner. An empty `server/uploads/submission/` folder (git-ignored) also remains.
+1. **No virus scanning.** Students can now upload PDFs. Each one must really be a PDF (magic bytes), is at most 10 MB, is stored under a random key, and is served only to its owner and you, with `nosniff` and a sandboxing CSP, and the app shows it from a `blob:` URL. A malicious but valid PDF could still target a PDF reader. Consider a scanning step before production (Phase 8).
+2. **Links are not checked for reachability.** A Drive link may still be private to the student; the form asks them to make sure you can open it.
+3. **Where archived history stays hidden** (decision 13). A student loses their read-only history when:
+   - the assignment is moved back to **draft** instead of archived
+   - the **course** is archived, or the module or lesson is unpublished
+   - their **enrollment** is removed
+
+   Their submissions are kept, and you still see them.
+
+4. **No per-student extensions.** A resubmission request works after the deadline (decision 4), but there's no way to give one student a later first deadline. Moving the due date affects everyone.
+5. **Changing the penalty after grading** doesn't recompute existing final marks (decision 6). Re-review to apply it.
+6. **Orphaned handouts.** As with Phase 3 materials, handouts uploaded for a save that then fails stay stored but unattached until the course is deleted. Student uploads are cleaned up (decision 8).
+7. **Bundle size.** The startup JS grew by 10 kB (4 kB gzip), and the over-500 kB warning remains. Route-level splitting is still planned for Phase 7.
+8. **Phase 5/6 items not built:** students have no cross-course "my assignments" list or dashboard (Phase 5), and there is no review queue across courses (Phase 6). Demo students have no seeded submissions yet; they arrive with the Phase 5 demo progress.
+9. **Flaky stray request in an old client test.** `AdminCourses.test.jsx` (Phase 2) sometimes logs one unmocked network error (1 in 8 runs, before and after this phase). It never fails a test. The new tests unmount before restoring their stubs, so they don't do this.
+10. **Seeded due dates depend on when you seed.** They are 7–28 days after the run, at 18:30 UTC (midnight India time). On your current database they count from today, 2026-10-16.
+11. **Local sessions from the browser checks.** Signing in for the two checks created refresh sessions for the trainer and the three demo students in the local database. They expire on their own within 7 days; logging out or changing the password ends them sooner. An empty `server/uploads/submission/` folder (git-ignored) also remains.
 
 ## Manual testing instructions
 
@@ -312,6 +361,12 @@ All links: at most 2048 characters, no `user:password@`. `javascript:`, `data:`,
     - deleting a published assignment is refused
     - an archived assignment with submissions can't be deleted
     - a module or lesson with assignments can't be deleted until you move the assignments
+12. **Archiving:**
+    - archive an assignment Aarav has submitted to
+    - as Aarav, it is still listed with an "Archived" badge; the page shows the notice, the attempts, marks and feedback, and no form; his PDF still opens
+    - as Neha (who never submitted), it is gone from the list
+    - as the trainer, "Request resubmission" on Aarav's attempt is refused, but you can still save a review
+    - publish it again and Aarav can work on it as before
 
 ## Recommended next phase
 

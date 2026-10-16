@@ -84,6 +84,7 @@ The full design is in §11a of the spec.
 - A submission can be edited until the trainer reviews it and, for a first attempt, until the window closes. Work after the due date is marked late and loses the late penalty when graded.
 - The trainer reviews each student's latest attempt: marks (capped at the maximum), Markdown feedback, or a request for a new attempt. Every attempt is kept as history.
 - A student's submissions and PDFs are visible only to that student and the trainer.
+- Archiving an assignment closes it. Students who submitted can still read their attempts, marks and feedback; nobody can hand in new work.
 
 ## Project layout
 

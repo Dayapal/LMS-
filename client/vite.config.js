@@ -17,5 +17,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.js'],
     css: false,
+    // Form tests type key by key; with every file running in parallel they can pass 5 s.
+    testTimeout: 15_000,
   },
 });

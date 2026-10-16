@@ -13,6 +13,7 @@ import { SubmissionForm } from './SubmissionForm.jsx';
 import { MarkdownView } from '../../../components/content/MarkdownView.jsx';
 import { FileMaterial } from '../../lessons/components/FileMaterial.jsx';
 import { Alert } from '../../../components/ui/Alert.jsx';
+import { Badge } from '../../../components/ui/Badge.jsx';
 import { Button } from '../../../components/ui/Button.jsx';
 import { Card, CardBody, CardHeader } from '../../../components/ui/Card.jsx';
 import { ErrorState, Skeleton } from '../../../components/ui/Feedback.jsx';
@@ -142,6 +143,13 @@ function SubmissionPanel({ assignment, history }) {
     );
   }
 
+  if (assignment.status === 'archived') {
+    return (
+      <Alert tone="info" title="This assignment is archived">
+        It no longer accepts work, but your submissions, marks and feedback stay here.
+      </Alert>
+    );
+  }
   return (
     state.blockedReason &&
     state.status !== 'reviewed' && <Alert tone="info">{state.blockedReason}</Alert>
@@ -226,6 +234,7 @@ export function AssignmentPage() {
             {data.title}
           </h1>
           <SubmissionStateBadge status={state.status} />
+          {data.status === 'archived' && <Badge tone="muted">Archived</Badge>}
         </div>
       </div>
 

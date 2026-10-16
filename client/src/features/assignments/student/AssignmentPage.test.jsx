@@ -260,6 +260,52 @@ describe('AssignmentPage', () => {
     expect(screen.queryByRole('button', { name: 'Submit' })).not.toBeInTheDocument();
   });
 
+  it('keeps an archived assignment’s history readable, without a way to submit', async () => {
+    const reviewed = makeSubmission({
+      status: 'reviewed',
+      review: { marks: 64, finalMarks: 64, feedback: 'Good structure', reviewedAt: null },
+    });
+    open({
+      assignment: makeAssignment({ status: 'archived' }),
+      state: studentState({
+        status: 'reviewed',
+        attempts: 1,
+        canSubmit: false,
+        blockedReason: 'This assignment is archived, so it no longer accepts work.',
+        latest: { id: 's1', attempt: 1, status: 'reviewed', finalMarks: 64 },
+      }),
+      history: [reviewed],
+    });
+    await heading('Personal Profile Page');
+    expect(screen.getByText('Archived')).toBeInTheDocument();
+    expect(screen.getByText('This assignment is archived')).toBeInTheDocument();
+    expect(screen.getByText(/your submissions, marks and feedback stay here/)).toBeInTheDocument();
+    const attempt = screen.getByRole('article');
+    expect(within(attempt).getByText(/Marks: 64 \/ 100/)).toBeInTheDocument();
+    expect(within(attempt).getByText('Good structure')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Submit' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Edit submission' })).not.toBeInTheDocument();
+  });
+
+  it('offers no editing on an archived assignment waiting for review', async () => {
+    open({
+      assignment: makeAssignment({ status: 'archived' }),
+      state: studentState({
+        status: 'submitted',
+        attempts: 1,
+        canSubmit: false,
+        canEdit: false,
+        blockedReason: 'This assignment is archived, so it no longer accepts work.',
+        latest: { id: 's1', attempt: 1, status: 'submitted' },
+      }),
+      history: [makeSubmission()],
+    });
+    await heading('Personal Profile Page');
+    expect(screen.getByText('This assignment is archived')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Your submission' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Edit submission' })).not.toBeInTheDocument();
+  });
+
   it('explains when the window has closed', async () => {
     open({
       state: studentState({
