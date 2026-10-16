@@ -1,6 +1,8 @@
 # Phase 4 report: assignments and submissions
 
-Date: 2026-10-16 · Status: **awaiting review** (scope confirmed; archive fix added in a follow-up commit)
+Date: 2026-10-16 · Status: **approved** (2026-10-16, with the archive-history fix and the known issues below accepted)
+
+Commits: `8d43b9ca4111232bb4eddefb73b6d3646dc61841` (Phase 4) and `2a7cd7120b5f678893dcdd28efa7b49a1eb0058b` (archive-history fix).
 
 ## Summary
 
@@ -25,7 +27,7 @@ Everything is enforced on the server. A student can only see their own submissio
 
 ## Review follow-up (2026-10-16)
 
-After the first review, one change was made, in a separate commit:
+After the first review, one change was made, in a separate commit. The trainer accepted it and approved Phase 4 with the scope boundary above:
 
 - **Archiving no longer hides a student's own past work** (decision 13). A student who submitted to an assignment that is later archived keeps read-only access: the assignment page, every attempt, marks, feedback, their own PDFs and the handouts. Archived assignments accept no new attempts, edits or uploads, and the trainer can't request a resubmission on one, but can still review it. Students who never submitted don't see archived assignments, and the trainer keeps everything.
 - **Client test timeout raised to 15 s** (`client/vite.config.js`). During re-verification, four form tests that type key by key timed out at Vitest's default 5 s in one full run. One of them is from Phase 3. Run alone they take 1.5–2.8 s; with all 13 files in parallel they took over 5 s. The server suite already uses 20 s. No test or app logic changed, and three full runs afterwards all passed.
