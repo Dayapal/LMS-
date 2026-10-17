@@ -1,7 +1,8 @@
-import { Enrollment, ENROLLMENT_STATUS, ROLES, User } from '../models/index.js';
+import { ACTIVITY_TYPES, Enrollment, ENROLLMENT_STATUS, ROLES, User } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
 import { paginationMeta, skipFor } from '../utils/pagination.js';
 import { getCourseForViewer } from './access.service.js';
+import { recordActivity } from './activity.service.js';
 import { findCourseOr404 } from './course.service.js';
 import { toEnrollmentDTO, toOwnEnrollment } from './serializers.js';
 
@@ -22,6 +23,11 @@ export async function requestEnrollment(student, courseId) {
     enrolledAt: undefined,
   });
   await enrollment.save();
+  await recordActivity({
+    user: student._id,
+    type: ACTIVITY_TYPES.ENROLLMENT_REQUESTED,
+    course: course._id,
+  });
   return toOwnEnrollment(enrollment);
 }
 
@@ -60,6 +66,12 @@ export async function enrollStudent(trainer, { courseId, email }) {
     enrolledAt: new Date(),
   });
   await enrollment.save();
+  await recordActivity({
+    user: student._id,
+    actor: trainer._id,
+    type: ACTIVITY_TYPES.ENROLLED,
+    course: course._id,
+  });
   return toEnrollmentDTO(await populated(Enrollment.findById(enrollment._id)));
 }
 
@@ -72,6 +84,15 @@ export async function updateEnrollmentStatus(trainer, enrollmentId, status) {
     enrollment.enrolledBy = trainer._id;
     if (status === ENROLLMENT_STATUS.ACTIVE) enrollment.enrolledAt = new Date();
     await enrollment.save();
+    await recordActivity({
+      user: enrollment.user,
+      actor: trainer._id,
+      type:
+        status === ENROLLMENT_STATUS.ACTIVE
+          ? ACTIVITY_TYPES.ENROLLED
+          : ACTIVITY_TYPES.ENROLLMENT_REMOVED,
+      course: enrollment.course,
+    });
   }
   return toEnrollmentDTO(await populated(Enrollment.findById(enrollment._id)));
 }

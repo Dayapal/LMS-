@@ -1,4 +1,6 @@
 import {
+  Activity,
+  ACTIVITY_TYPES,
   Assignment,
   CONTENT_STATUS,
   Course,
@@ -49,12 +51,22 @@ async function seedDemoLessonProgress(now) {
     }
     const lessons = (await countableLessons(student, [course._id])).get(course._id.toString());
     const done = lessons.slice(0, demo.lessonsCompleted);
-    await LessonProgress.insertMany(
+    const records = await LessonProgress.insertMany(
       done.map((lesson, index) => ({
         user: student._id,
         course: course._id,
         lesson: lesson.id,
         completedAt: new Date(now.getTime() - (done.length - index) * DAY_MS),
+      })),
+    );
+    // The matching activity, so the trainer's recent activity isn't empty.
+    await Activity.insertMany(
+      records.map((record) => ({
+        user: student._id,
+        type: ACTIVITY_TYPES.LESSON_COMPLETED,
+        course: course._id,
+        lesson: record.lesson,
+        createdAt: record.completedAt,
       })),
     );
     const reading = lessons[done.length] ?? done.at(-1);
@@ -90,7 +102,8 @@ async function seedDemoSubmissions(reviewer, now) {
     const submittedAt = new Date(now.getTime() - 2 * DAY_MS);
     const isLate = submittedAt > assignment.dueAt;
     const marks = demo.status === SUBMISSION_STATUS.REVIEWED ? demo.marks : null;
-    await Submission.create({
+    const reviewedAt = new Date(now.getTime() - DAY_MS);
+    const submission = await Submission.create({
       assignment: assignment._id,
       course: course._id,
       student: student._id,
@@ -105,9 +118,28 @@ async function seedDemoSubmissions(reviewer, now) {
         finalMarks: finalMarksFor(assignment, { marks, isLate }),
         feedback: demo.feedback,
         reviewedBy: reviewer,
-        reviewedAt: new Date(now.getTime() - DAY_MS),
+        reviewedAt,
       },
     });
+    const event = {
+      user: student._id,
+      course: course._id,
+      assignment: assignment._id,
+      submission: submission._id,
+      attempt: 1,
+    };
+    await Activity.insertMany([
+      { ...event, type: ACTIVITY_TYPES.SUBMISSION_CREATED, createdAt: submittedAt },
+      {
+        ...event,
+        actor: reviewer,
+        type:
+          demo.status === SUBMISSION_STATUS.REVIEWED
+            ? ACTIVITY_TYPES.SUBMISSION_REVIEWED
+            : ACTIVITY_TYPES.RESUBMISSION_REQUESTED,
+        createdAt: reviewedAt,
+      },
+    ]);
     results.push({ email: demo.email, assignment: demo.assignment, added: true });
   }
   return results;

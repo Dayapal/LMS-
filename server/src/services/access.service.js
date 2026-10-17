@@ -139,10 +139,8 @@ export async function assignmentsVisibleTo(user) {
     _id: trusted({ $in: enrolled }),
     status: CONTENT_STATUS.PUBLISHED,
   });
-  const inCourses = { course: trusted({ $in: courses }), status: CONTENT_STATUS.PUBLISHED };
-  const [modules, lessons, submittedTo] = await Promise.all([
-    CourseModule.distinct('_id', inCourses),
-    Lesson.distinct('_id', inCourses),
+  const [placement, submittedTo] = await Promise.all([
+    publishedPlacement(courses),
     Submission.distinct('assignment', { student: user._id }),
   ]);
   return {
@@ -154,9 +152,41 @@ export async function assignmentsVisibleTo(user) {
           { status: CONTENT_STATUS.ARCHIVED, _id: trusted({ $in: submittedTo }) },
         ],
       },
-      { $or: [{ module: null }, { module: trusted({ $in: modules }) }] },
-      { $or: [{ lesson: null }, { lesson: trusted({ $in: lessons }) }] },
+      ...placement,
     ],
+  };
+}
+
+/** Conditions limiting assignments to published modules and lessons (or none) of `courseIds`. */
+async function publishedPlacement(courseIds) {
+  const inCourses = { course: trusted({ $in: courseIds }), status: CONTENT_STATUS.PUBLISHED };
+  const [modules, lessons] = await Promise.all([
+    CourseModule.distinct('_id', inCourses),
+    Lesson.distinct('_id', inCourses),
+  ]);
+  return [
+    { $or: [{ module: null }, { module: trusted({ $in: modules }) }] },
+    { $or: [{ lesson: null }, { lesson: trusted({ $in: lessons }) }] },
+  ];
+}
+
+/**
+ * Mongo filter for the assignments that every student with an active
+ * enrollment sees, whether or not they have submitted: published, in a
+ * published course, module and lesson. Optionally limited to `courseIds`.
+ * Archived assignments are left out: only students who submitted see those,
+ * so nobody is ever "missing" work on them. The trainer's counts of expected,
+ * pending and overdue work use this, so they agree with what students see.
+ */
+export async function assignmentsOpenToEnrolledStudents(courseIds) {
+  const courses = await Course.distinct('_id', {
+    status: CONTENT_STATUS.PUBLISHED,
+    ...(courseIds && { _id: trusted({ $in: courseIds }) }),
+  });
+  return {
+    course: trusted({ $in: courses }),
+    status: CONTENT_STATUS.PUBLISHED,
+    $and: await publishedPlacement(courses),
   };
 }
 

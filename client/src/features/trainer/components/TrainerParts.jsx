@@ -1,0 +1,123 @@
+import { Link } from 'react-router';
+import { relativeTime } from '../../assignments/format.js';
+import { Badge } from '../../../components/ui/Badge.jsx';
+import { activityText, ENROLLMENT_BADGE, studentPath } from '../format.js';
+
+export const linkClass = 'font-medium text-brand-700 hover:text-brand-800 hover:underline';
+
+export const selectClass =
+  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-xs focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none sm:w-auto';
+
+/** Pill buttons with counts (`aria-pressed`), like the Phase 4 and 5 filters. */
+export function FilterPills({ label, options, value, counts, onChange }) {
+  return (
+    <div role="group" aria-label={label} className="flex flex-wrap gap-1">
+      {options.map((option) => {
+        const count = counts?.[option.value];
+        return (
+          <button
+            key={option.value}
+            type="button"
+            aria-pressed={value === option.value}
+            onClick={() => onChange(option.value)}
+            className={`rounded-full px-3 py-1 text-sm font-medium ${
+              value === option.value
+                ? 'bg-brand-600 text-white'
+                : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50'
+            }`}
+          >
+            {option.label}
+            {count != null && <span className="ml-1.5 tabular-nums opacity-80">{count}</span>}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** A labelled native select for a filter row. */
+export function FilterSelect({ label, value, onChange, children }) {
+  return (
+    <label className="flex flex-col gap-1 text-xs font-medium text-slate-500 sm:w-auto">
+      {label}
+      <select className={selectClass} value={value} onChange={(e) => onChange(e.target.value)}>
+        {children}
+      </select>
+    </label>
+  );
+}
+
+export function EnrollmentBadge({ status }) {
+  const badge = ENROLLMENT_BADGE[status];
+  return badge ? <Badge tone={badge.tone}>{badge.label}</Badge> : null;
+}
+
+/** Latest learning events, newest first. `showStudent` names the student in each line. */
+export function ActivityList({ items, showStudent = true, empty = 'No activity yet.' }) {
+  if (items.length === 0) return <p className="text-sm text-slate-500">{empty}</p>;
+  return (
+    <ol className="space-y-3">
+      {items.map((activity) => (
+        <li key={activity.id} className="flex gap-3 text-sm">
+          <span aria-hidden="true" className="mt-1.5 size-2 shrink-0 rounded-full bg-brand-500" />
+          <div className="min-w-0">
+            <p className="text-slate-700">
+              {showStudent &&
+                (activity.student ? (
+                  <Link to={studentPath(activity.student.id)} className={linkClass}>
+                    {activity.student.name}
+                  </Link>
+                ) : (
+                  'A deleted student'
+                ))}
+              {showStudent ? ' ' : ''}
+              {showStudent ? activityText(activity) : capitalize(activityText(activity))}
+            </p>
+            <p className="text-xs text-slate-500">
+              <time
+                dateTime={activity.createdAt}
+                title={new Date(activity.createdAt).toLocaleString()}
+              >
+                {relativeTime(activity.createdAt)}
+              </time>
+              {activity.actor && ` · by ${activity.actor.name}`}
+            </p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+const capitalize = (text) => text.charAt(0).toUpperCase() + text.slice(1);
+
+/**
+ * Horizontal bars, one per row, for a single measure (one hue, values as
+ * text beside each bar, so the numbers are readable without the bars).
+ */
+export function BarList({ label, rows, unit = '' }) {
+  const max = Math.max(1, ...rows.map((row) => row.value));
+  return (
+    <ul aria-label={label} className="space-y-2.5">
+      {rows.map((row) => (
+        <li
+          key={row.label}
+          className="grid grid-cols-[minmax(0,7rem)_minmax(0,1fr)_auto] items-center gap-3 text-sm sm:grid-cols-[minmax(0,10rem)_minmax(0,1fr)_auto]"
+          title={`${row.label}: ${row.value}${unit}`}
+        >
+          <span className="truncate text-slate-600">{row.label}</span>
+          <span className="h-3 overflow-hidden rounded-r bg-slate-100" aria-hidden="true">
+            <span
+              className="block h-full rounded-r bg-brand-500"
+              style={{ width: `${(row.value / max) * 100}%` }}
+            />
+          </span>
+          <span className="text-right tabular-nums text-slate-900">
+            {row.value}
+            {unit}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}

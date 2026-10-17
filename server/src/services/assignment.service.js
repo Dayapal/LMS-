@@ -16,6 +16,7 @@ import { paginationMeta, skipFor } from '../utils/pagination.js';
 import { assignmentsVisibleTo, getAssignmentForViewer, isAdmin } from './access.service.js';
 import { deleteFilesIfUnused } from './file.service.js';
 import { toAssignmentDTO, toPlacement, toSubmissionDTO } from './serializers.js';
+import { latestAttemptStages } from './submissionQueries.js';
 import { closesAt, editCheck, newAttemptCheck, studentStatus } from './submissionRules.js';
 
 const { trusted } = mongoose;
@@ -87,20 +88,13 @@ function normalizeLatePolicy(dueAt, latePolicy) {
 /** Per assignment: students who handed something in, and how many latest attempts await review. */
 async function submissionStats(assignmentIds) {
   const rows = await Submission.aggregate([
-    { $match: { assignment: { $in: assignmentIds } } },
-    { $sort: { attempt: -1 } },
-    {
-      $group: {
-        _id: { assignment: '$assignment', student: '$student' },
-        status: { $first: '$status' },
-      },
-    },
+    ...latestAttemptStages({ assignment: { $in: assignmentIds } }),
     {
       $group: {
         _id: '$_id.assignment',
         students: { $sum: 1 },
         awaitingReview: {
-          $sum: { $cond: [{ $eq: ['$status', SUBMISSION_STATUS.SUBMITTED] }, 1, 0] },
+          $sum: { $cond: [{ $eq: ['$latest.status', SUBMISSION_STATUS.SUBMITTED] }, 1, 0] },
         },
       },
     },
@@ -385,11 +379,9 @@ export async function listMyAssignments(student, { page, limit, status, course }
 export async function listAssignmentSubmissions(assignmentId, { page, limit, status }) {
   const assignment = await findAssignmentOr404(assignmentId);
   const [result] = await Submission.aggregate([
-    { $match: { assignment: assignment._id } },
-    { $sort: { attempt: -1 } },
-    { $group: { _id: '$student', latest: { $first: '$$ROOT' }, attempts: { $sum: 1 } } },
+    ...latestAttemptStages({ assignment: assignment._id }),
     ...(status ? [{ $match: { 'latest.status': status } }] : []),
-    { $sort: { 'latest.submittedAt': -1, _id: 1 } },
+    { $sort: { 'latest.submittedAt': -1, '_id.student': 1 } },
     {
       $facet: {
         items: [{ $skip: skipFor({ page, limit }) }, { $limit: limit }],

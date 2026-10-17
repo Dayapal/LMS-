@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import {
+  Activity,
+  ACTIVITY_TYPES,
   CONTENT_STATUS,
   Course,
   CourseModule,
@@ -142,6 +144,7 @@ export async function seedDemoStudents({ password, enrolledBy }) {
       passwordHash,
       role: ROLES.STUDENT,
     });
+    await Activity.create({ user: student._id, type: ACTIVITY_TYPES.REGISTERED });
     for (const { slug, status } of demo.enrollments) {
       const course = await Course.findOne({ slug }).select('_id');
       if (!course) continue;
@@ -152,6 +155,12 @@ export async function seedDemoStudents({ password, enrolledBy }) {
         status,
         enrolledBy: active ? enrolledBy : student._id,
         ...(active && { enrolledAt: new Date() }),
+      });
+      await Activity.create({
+        user: student._id,
+        type: active ? ACTIVITY_TYPES.ENROLLED : ACTIVITY_TYPES.ENROLLMENT_REQUESTED,
+        actor: active ? enrolledBy : null,
+        course: course._id,
       });
     }
     results.push({ email: demo.email, created: true });
@@ -168,15 +177,17 @@ export async function removeDemoStudents() {
   const ids = users.map((u) => u._id);
   await Promise.all([
     Session.deleteMany({ user: trusted({ $in: ids }) }),
+    Activity.deleteMany({ user: trusted({ $in: ids }) }),
     User.deleteMany({ _id: trusted({ $in: ids }) }),
   ]);
 }
 
-/** Removes all course content, materials, assignments, files, enrollments and progress. Users are kept. Development only. */
+/** Removes all course content, materials, assignments, files, enrollments, progress and activity. Users are kept. Development only. */
 export async function resetCourseData() {
   await resetAssignments();
   await resetMaterials();
   await Promise.all([
+    Activity.deleteMany({}),
     LessonProgress.deleteMany({}),
     Enrollment.deleteMany({}),
     Lesson.deleteMany({}),

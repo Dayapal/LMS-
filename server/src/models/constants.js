@@ -66,3 +66,19 @@ export const STUDENT_ASSIGNMENT_STATUS = Object.freeze({
   OVERDUE: 'overdue',
   ...SUBMISSION_STATUS,
 });
+
+/**
+ * Learning events recorded in the append-only Activity log (spec §5). Each is
+ * about one student; `actor` is the trainer when the trainer caused it.
+ */
+export const ACTIVITY_TYPES = Object.freeze({
+  REGISTERED: 'registered',
+  LOGIN: 'login',
+  ENROLLMENT_REQUESTED: 'enrollment_requested',
+  ENROLLED: 'enrolled',
+  ENROLLMENT_REMOVED: 'enrollment_removed',
+  LESSON_COMPLETED: 'lesson_completed',
+  SUBMISSION_CREATED: 'submission_created',
+  SUBMISSION_REVIEWED: 'submission_reviewed',
+  RESUBMISSION_REQUESTED: 'resubmission_requested',
+});

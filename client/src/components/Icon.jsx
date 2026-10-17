@@ -8,6 +8,10 @@ const PATHS = {
   clipboard:
     'M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1Zm-1 2H6a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2M9 12h6M9 16h4',
   check: 'm5 12.5 4.5 4.5L19 7.5',
+  inbox: 'M4 13h4l1.5 2.5h5L16 13h4M5 5h14l1 8v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6l1-8Z',
+  users:
+    'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm-6 9a6 6 0 0 1 12 0M16 4.3a3.5 3.5 0 0 1 0 6.4M18 14a6 6 0 0 1 3 6',
+  chart: 'M4 20h16M7 16v-5M12 16V7M17 16v-8',
 };
 
 export function Icon({ name, className = 'size-5' }) {

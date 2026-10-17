@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import {
+  Activity,
   CONTENT_STATUS,
   Course,
   CourseModule,
@@ -233,6 +234,8 @@ export async function deleteCourse(courseId) {
     Lesson.deleteMany({ course: course._id }),
     CourseModule.deleteMany({ course: course._id }),
     Enrollment.deleteMany({ course: course._id }),
+    // Only enrollment events can exist here: nobody studied or handed in work.
+    Activity.deleteMany({ course: course._id }),
   ]);
   await course.deleteOne();
 }

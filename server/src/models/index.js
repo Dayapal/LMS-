@@ -9,7 +9,9 @@ export { FileAsset } from './FileAsset.js';
 export { Assignment } from './Assignment.js';
 export { Submission } from './Submission.js';
 export { LessonProgress } from './LessonProgress.js';
+export { Activity } from './Activity.js';
 export {
+  ACTIVITY_TYPES,
   CODE_LANGUAGES,
   CONTENT_STATUS,
   COURSE_LEVELS,

@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { Link, useParams } from 'react-router';
+import { Link, useLocation, useParams } from 'react-router';
 import { assignmentsApi, useAssignmentMutation, useSubmission } from '../api.js';
 import { resubmitFormSchema, reviewFormSchema } from '../schemas.js';
 import { formatDateTime, formatMarks } from '../format.js';
@@ -111,11 +111,27 @@ function ReviewForm({ submission, assignment, canResubmit }) {
   );
 }
 
+/**
+ * Where the page was opened from, when that was another trainer page such as
+ * the review queue (`state.from` from the link), so "back" returns there with
+ * its filters. Anything else falls back to the assignment page.
+ */
+function useReturnTo() {
+  const from = useLocation().state?.from;
+  if (typeof from?.pathname !== 'string' || !from.pathname.startsWith('/admin/')) return null;
+  return {
+    to: `${from.pathname}${from.search ?? ''}`,
+    label: from.label ?? 'Back',
+    state: { from },
+  };
+}
+
 /** The trainer reviews one attempt: what was handed in, the history, marks and feedback. */
 export function SubmissionReviewPage() {
   const { courseId, assignmentId, submissionId } = useParams();
   const { data: submission, isPending, isError, error, refetch } = useSubmission(submissionId);
   const back = `/admin/courses/${courseId}/assignments/${assignmentId}`;
+  const returnTo = useReturnTo();
 
   if (isPending) {
     return (
@@ -133,8 +149,11 @@ export function SubmissionReviewPage() {
           message={notFound ? 'This submission does not exist.' : getErrorMessage(error)}
           onRetry={notFound ? undefined : refetch}
         />
-        <Link to={back} className="text-sm font-medium text-brand-700 hover:text-brand-800">
-          ← Back to the assignment
+        <Link
+          to={returnTo?.to ?? back}
+          className="text-sm font-medium text-brand-700 hover:text-brand-800"
+        >
+          ← {returnTo ? returnTo.label : 'Back to the assignment'}
         </Link>
       </div>
     );
@@ -150,12 +169,17 @@ export function SubmissionReviewPage() {
         title={submission.student.name}
         description={`${assignment.title} · Attempt ${submission.attempt}`}
       >
-        <Link
-          to={back}
-          className="mb-2 inline-block text-sm font-medium text-brand-700 hover:text-brand-800"
-        >
-          ← {assignment.title}
-        </Link>
+        <div className="mb-2 flex flex-wrap gap-x-4 gap-y-1 text-sm font-medium">
+          {returnTo && (
+            <Link to={returnTo.to} className="text-brand-700 hover:text-brand-800">
+              ← {returnTo.label}
+            </Link>
+          )}
+          <Link to={back} className="text-brand-700 hover:text-brand-800">
+            {returnTo ? '' : '← '}
+            {assignment.title}
+          </Link>
+        </div>
       </PageHeader>
 
       <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
@@ -166,7 +190,12 @@ export function SubmissionReviewPage() {
           {submission.editedAt && ` · edited ${formatDateTime(submission.editedAt)}`}
         </span>
         <span className="text-slate-400">·</span>
-        <span>{submission.student.email}</span>
+        <Link
+          to={`/admin/students/${submission.student.id}`}
+          className="font-medium text-brand-700 hover:text-brand-800 hover:underline"
+        >
+          {submission.student.email}
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
@@ -229,6 +258,7 @@ export function SubmissionReviewPage() {
                     ) : (
                       <Link
                         to={`${back}/submissions/${attempt.id}`}
+                        state={returnTo?.state}
                         className="font-medium text-brand-700 hover:text-brand-800 hover:underline"
                       >
                         Attempt {attempt.attempt}

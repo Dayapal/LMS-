@@ -7,6 +7,7 @@ import { fileRoutes } from './file.routes.js';
 import { adminRoutes } from './admin.routes.js';
 import { assignmentRoutes, submissionRoutes } from './assignment.routes.js';
 import { dashboardRoutes, meRoutes } from './me.routes.js';
+import { reportRoutes } from './report.routes.js';
 
 export function apiRoutes(limiters) {
   const router = Router();
@@ -32,5 +33,6 @@ export function apiRoutes(limiters) {
   router.use('/admin', adminRoutes());
   router.use('/me', meRoutes());
   router.use('/dashboard', dashboardRoutes());
+  router.use('/reports', reportRoutes());
   return router;
 }

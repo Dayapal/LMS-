@@ -1,4 +1,5 @@
 import {
+  ACTIVITY_TYPES,
   Assignment,
   FILE_PURPOSES,
   FileAsset,
@@ -8,6 +9,7 @@ import {
 } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
 import { getAssignmentForViewer, getSubmissionForViewer, isAdmin } from './access.service.js';
+import { recordActivity } from './activity.service.js';
 import { deleteFilesIfUnused } from './file.service.js';
 import { toAssignmentDTO, toSubmissionDTO } from './serializers.js';
 import {
@@ -74,6 +76,18 @@ async function resolveItems(items, assignment, student) {
   return resolved;
 }
 
+/** Logs an event about `submission` (ids and the attempt number only, never the work itself). */
+const recordSubmissionActivity = (submission, type, actor = null) =>
+  recordActivity({
+    user: submission.student,
+    actor,
+    type,
+    course: submission.course,
+    assignment: submission.assignment,
+    submission: submission._id,
+    attempt: submission.attempt,
+  });
+
 async function populated(submission) {
   await submission.populate('items.file');
   return toSubmissionDTO(submission);
@@ -99,6 +113,7 @@ export async function createSubmission(student, assignmentId, { items, note }) {
     submittedAt: now,
     isLate: lateForNewAttempt(assignment, latest, now),
   });
+  await recordSubmissionActivity(submission, ACTIVITY_TYPES.SUBMISSION_CREATED);
   return populated(submission);
 }
 
@@ -218,6 +233,7 @@ export async function reviewSubmission(trainer, submissionId, { marks, feedback 
   submission.status = SUBMISSION_STATUS.REVIEWED;
   submission.review = reviewFields(trainer, assignment, submission, { marks, feedback });
   await submission.save();
+  await recordSubmissionActivity(submission, ACTIVITY_TYPES.SUBMISSION_REVIEWED, trainer._id);
   return getSubmission(trainer, submission._id);
 }
 
@@ -238,5 +254,6 @@ export async function requestResubmission(trainer, submissionId, { marks, feedba
   submission.status = SUBMISSION_STATUS.RESUBMIT_REQUESTED;
   submission.review = reviewFields(trainer, assignment, submission, { marks, feedback });
   await submission.save();
+  await recordSubmissionActivity(submission, ACTIVITY_TYPES.RESUBMISSION_REQUESTED, trainer._id);
   return getSubmission(trainer, submission._id);
 }

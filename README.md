@@ -6,15 +6,16 @@ The design and the phase plan are in [docs/superpowers/specs/2026-10-14-training
 
 ## Status
 
-| Phase | Scope                                           | Status                                                |
-| ----- | ----------------------------------------------- | ----------------------------------------------------- |
-| 0     | Planning                                        | ✅ Approved                                           |
-| 1     | Foundation and authentication                   | ✅ Approved ([report](docs/phase-reports/phase-1.md)) |
-| 2     | Courses and roadmaps                            | ✅ Approved ([report](docs/phase-reports/phase-2.md)) |
-| 3     | Study materials                                 | ✅ Approved ([report](docs/phase-reports/phase-3.md)) |
-| 4     | Assignments and submissions                     | ✅ Approved ([report](docs/phase-reports/phase-4.md)) |
-| 5     | Student progress and learning tracking          | ✅ Approved ([report](docs/phase-reports/phase-5.md)) |
-| 6–8   | Review and analytics, notifications, deployment | ⏳ Not started                                        |
+| Phase | Scope                                       | Status                                                |
+| ----- | ------------------------------------------- | ----------------------------------------------------- |
+| 0     | Planning                                    | ✅ Approved                                           |
+| 1     | Foundation and authentication               | ✅ Approved ([report](docs/phase-reports/phase-1.md)) |
+| 2     | Courses and roadmaps                        | ✅ Approved ([report](docs/phase-reports/phase-2.md)) |
+| 3     | Study materials                             | ✅ Approved ([report](docs/phase-reports/phase-3.md)) |
+| 4     | Assignments and submissions                 | ✅ Approved ([report](docs/phase-reports/phase-4.md)) |
+| 5     | Student progress and learning tracking      | ✅ Approved ([report](docs/phase-reports/phase-5.md)) |
+| 6     | Review queue, student management, analytics | ✅ Approved ([report](docs/phase-reports/phase-6.md)) |
+| 7–8   | Notifications, deployment                   | ⏳ Not started                                        |
 
 ## Requirements
 
@@ -94,7 +95,17 @@ The full design is in §11a of the spec.
 - The course page shows the progress bar, a check mark per completed lesson, "x of y done" per module, and a Start / Continue / Up next button.
 - The student dashboard (`/app`) shows their courses with progress, where to continue, assignments they can hand in now, recent feedback and pending enrollment requests.
 - **Assignments** (`/app/assignments`) lists every assignment across their courses, with filters for Not submitted, Overdue, Resubmission requested, Submitted and Reviewed. States are worked out on the server from UTC dates; times are shown in the browser's time zone.
-- Students only ever see their own progress and submissions. The trainer's view of student progress arrives with the reports in Phase 6.
+- Students only ever see their own progress and submissions. The trainer sees everyone's on the pages below.
+
+## The trainer workspace
+
+- **Dashboard** (`/admin`): students and enrollments, work waiting for review, overdue work, enrollment requests to approve, each course's average progress, assignments due this week or overdue, and recent student activity. Every figure comes from the server.
+- **Reviews** (`/admin/reviews`): each student's latest attempt at every assignment, across all courses. Tabs for To review (the longest-waiting first), Resubmissions, Waiting for student, Reviewed and All, with counts; filters for course, assignment and late work, and a search on student or assignment. **Review** opens the same review page as before (marks capped at the maximum, feedback, resubmission requests) with a link back to the queue and its filters.
+- **Students** (`/admin/students`): search by name or email; filter by course, enrollment (enrolled, pending, removed, not enrolled) and learning state (work to review, overdue work, not started, in progress, completed). A student's page shows their courses with progress per module, their assignments and submissions with marks, and their recent activity. You can approve or decline requests, remove, re-enroll, or enroll them in another course there.
+- **Reports** (`/admin/reports`): one row per course with enrollments, average progress, completions, review counts and overdue work, with totals. A course's report adds the progress distribution, completion per module, statistics per assignment, and its students sorted by name, progress or recent study.
+- Removing a student from a course or archiving a course never deletes their progress, submissions or activity; the trainer pages keep showing them.
+- Progress counts the lessons students can see (published lessons in published modules) and rounds down. "Overdue" means past the due date with nothing handed in, by a student actively enrolled. Review counts use each student's latest attempt.
+- Student activity (sign-ups, sign-ins, enrollment changes, completed lessons, submissions and reviews) is kept for a year. It records ids only: no passwords, tokens, addresses or submitted work.
 
 ## Project layout
 

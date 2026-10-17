@@ -42,6 +42,8 @@ const assignmentSchema = new mongoose.Schema(
 );
 
 assignmentSchema.index({ course: 1, status: 1, dueAt: 1 });
+// Upcoming and overdue assignments across courses (trainer dashboard).
+assignmentSchema.index({ status: 1, dueAt: 1 });
 assignmentSchema.index({ module: 1 });
 assignmentSchema.index({ lesson: 1 });
 assignmentSchema.index({ attachments: 1 });

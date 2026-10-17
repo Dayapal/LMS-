@@ -95,6 +95,8 @@ export function useAssignmentMutation(mutationFn, options = {}) {
         queryClient.invalidateQueries({ queryKey: assignmentKeys.all }),
         // The student's dashboard and assignment list show the same states.
         queryClient.invalidateQueries({ queryKey: ['me'] }),
+        // The review queue, trainer dashboard and reports count them too (Phase 6).
+        queryClient.invalidateQueries({ queryKey: ['trainer'] }),
       ]),
   });
 }

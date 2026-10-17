@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import {
+  ACTIVITY_TYPES,
   Course,
   CourseModule,
   Enrollment,
@@ -9,6 +10,7 @@ import {
 } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
 import { getLessonForViewer, visibleTo } from './access.service.js';
+import { recordActivity } from './activity.service.js';
 import { courseProgress, nextLesson } from './progressRules.js';
 import { toCourseSummary } from './serializers.js';
 
@@ -140,15 +142,26 @@ async function completionResponse(student, lesson) {
  */
 export async function completeLesson(student, lessonId) {
   const { lesson, enrollment } = await getLessonForViewer(student, lessonId);
+  let inserted = false;
   try {
-    await LessonProgress.updateOne(
+    const result = await LessonProgress.updateOne(
       { user: student._id, lesson: lesson._id },
       { $setOnInsert: { course: lesson.course, completedAt: new Date() } },
       { upsert: true },
     );
+    inserted = result.upsertedCount === 1;
   } catch (error) {
     // A concurrent request inserted it first: the lesson is completed either way.
     if (error.code !== 11000) throw error;
+  }
+  // Logged once per completion, not on repeats.
+  if (inserted) {
+    await recordActivity({
+      user: student._id,
+      type: ACTIVITY_TYPES.LESSON_COMPLETED,
+      course: lesson.course,
+      lesson: lesson._id,
+    });
   }
   await recordLessonVisit(enrollment, lesson);
   return completionResponse(student, lesson);

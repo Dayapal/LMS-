@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
 import { config } from '../config/env.js';
-import { User, ROLES } from '../models/index.js';
+import { ACTIVITY_TYPES, User, ROLES } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
+import { recordActivity } from './activity.service.js';
 import * as tokens from './token.service.js';
 
 const INVALID_CREDENTIALS = 'Invalid email or password';
@@ -35,6 +36,7 @@ export async function register({ name, email, password }, meta) {
     if (error.code === 11000) throw ApiError.conflict('An account with this email already exists');
     throw error;
   }
+  await recordActivity({ user: user._id, type: ACTIVITY_TYPES.REGISTERED });
   return buildAuthResult(user, meta);
 }
 
@@ -51,6 +53,10 @@ export async function login({ email, password }, meta) {
   }
   user.lastLoginAt = new Date();
   await user.save();
+  // Only students: the log is about learning. No IP or user agent is copied into it.
+  if (user.role === ROLES.STUDENT) {
+    await recordActivity({ user: user._id, type: ACTIVITY_TYPES.LOGIN });
+  }
   return buildAuthResult(user, meta);
 }
 

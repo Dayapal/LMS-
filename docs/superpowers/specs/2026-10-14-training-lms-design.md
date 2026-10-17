@@ -1,6 +1,6 @@
 # Training LMS: Design and Implementation Plan
 
-Status: **Phase 0 approved 2026-10-14**. All decisions in §11 confirmed by the trainer. Phases 1–5 approved.
+Status: **Phase 0 approved 2026-10-14**. All decisions in §11 confirmed by the trainer. Phases 1–6 approved (Phase 6 on 2026-10-17).
 Date: 2026-10-14
 
 This document covers the architecture, data model, API, permissions, phases and acceptance criteria for the full-stack training LMS. Items marked **[DECISION Dn]** refer to the confirmed decisions in §11.
@@ -175,7 +175,19 @@ As built in Phase 4:
 
 **Notification**: `user`, `type` (`material_published` | `assignment_published` | `submission_reviewed` | `resubmit_requested` | `deadline_soon` | `submission_received`), `title`, `body`, `link`, `readAt`. Index: `{user, readAt, createdAt}`. Old read notifications are removed with a TTL of 90 days.
 
-**Activity**: `user`, `course`, `type` (`lesson_completed` | `submission_created` | `login` | …), `ref`, `createdAt`. Append-only. Feeds "recent activity" and the learning-activity reports. TTL of 1 year. _Not built yet:_ Phase 5 has nothing that reads it. The student dashboard takes its recent items from completion dates and submissions. The model arrives with the reports in Phase 6.
+**Activity**: `user`, `course`, `type` (`lesson_completed` | `submission_created` | `login` | …), `ref`, `createdAt`. Append-only. Feeds "recent activity" and the learning-activity reports. TTL of 1 year.
+
+As built in Phase 6:
+
+- **Fields:** `user` (the student the event is about), `actor` (the trainer, when the trainer caused it), `type`, `course`, and typed references `lesson`, `assignment`, `submission` plus `attempt` in place of the single `ref`, so titles can be shown. Only `createdAt` (no `updatedAt`).
+- **Types:** `registered`, `login` (students only), `enrollment_requested`, `enrolled`, `enrollment_removed`, `lesson_completed` (once per completion, not on repeats), `submission_created`, `submission_reviewed`, `resubmission_requested`. Edits, un-completing and reads are not logged.
+- **Nothing sensitive:** ids, the type and the attempt number only. No passwords, tokens, IP addresses, user agents, submitted work, notes, feedback or marks.
+- **Writing never fails the action:** a failed write is logged as a warning (type only) and the request carries on.
+- **Indexes:** TTL `{createdAt}` (365 days, also serves "latest first"), `{user, createdAt}`, `{course, createdAt}`.
+- **Readers:** the trainer dashboard's recent activity (sign-ins left out) and active-learner count, and the student report. Students have no endpoint that reads it.
+- Deleting a course (possible only when nobody studied it) deletes its events; `seed --reset` clears the log. The student dashboard still builds its own lists from completions and submissions.
+
+**Phase 6 indexes on existing models:** `User {role, name}` and `{role, createdAt}` (student list), `Enrollment {status, updatedAt}` (counts and requests across courses), `Assignment {status, dueAt}` (upcoming and overdue across courses). The review queue reads the unique `Submission {assignment, student, attempt}` index backwards.
 
 ## 6. Permissions matrix
 
@@ -204,6 +216,7 @@ Ownership always comes from `req.user.id`. Any `student`, `role`, `reviewedBy`, 
 - **Assignment (Phase 4):** only when it isn't published and has no submissions. Its unused attachments are deleted with it.
 - **Phase 4 additions:** a course with any submissions can't be deleted, and deleting one deletes its assignments. A module or lesson that assignments point at can't be deleted until they are moved or deleted. Moving a lesson to another module moves its assignments with it.
 - **Phase 5 additions:** a lesson any student has completed, a module containing such a lesson, and a course with any completion record (including from students whose enrollment was removed) can't be deleted. Archive them instead, so their progress is kept.
+- **Phase 6:** no new deletion paths. Removing an enrollment or archiving a course keeps the student's progress, submissions and activity, and the trainer's student pages and reports keep showing them.
 
 Anything else returns `409 CONFLICT` with a message telling the trainer to unpublish or archive first. Deleting a course, module or lesson also deletes its materials and their unused files.
 
@@ -227,6 +240,7 @@ As built, Phase 4 also adds `POST /assignments/:id/files` (a student's PDF for t
 As built, all four are for students only (the trainer gets 403). `GET /me/assignments` takes `status` (a derived state), `course`, `page` and `limit`, and returns `meta.counts` per state. `GET /courses/:id/roadmap` also returns `progress` and a `completed` flag on each lesson, but only for a student with an active enrollment and only their own. `GET /lessons/:id` returns the student's own `completion` and is read-only. `POST /lessons/:id/visit` (student, no body) records the continue-learning point for a lesson the student may open.
 
 **Phase 6 (review & analytics):** `GET /admin/submissions` (filters: course, status, student, late), `POST /submissions/:id/review` and `POST /submissions/:id/request-resubmission` (built in Phase 4), `GET /admin/students` (search, filter, paginate), `GET /admin/students/:id`, `GET /dashboard/admin`, `GET /reports/courses/:id`, `GET /reports/students/:id`.
+As built, all are trainer-only (students get 403). `GET /admin/submissions` lists each student's latest attempt per assignment and also takes `assignment`, `q` (student name or email, or assignment title) and `sort`; its `status` is a review state (`submitted`, `resubmitted` = a new attempt waiting, `resubmit_requested`, `reviewed`) and `meta.counts` has every state. `GET /admin/students` filters by `course`, `enrollment` (`active`/`pending`/`removed`/`none`) and `learning` (`to_review`, `overdue`, `not_started`, `in_progress`, `completed`). `GET /reports/courses` (course-wise summary rows with `meta.totals`) was added for the reports index; the dashboard's course rows are the same numbers. On these endpoints `page` is capped at 10,000 (a 400 beyond it; the Phase 2–5 lists don't have the cap yet). Grading still goes through the Phase 4 endpoints. See `docs/phase-reports/phase-6.md`.
 
 **Phase 7 (notifications):** `GET /notifications`, `PATCH /notifications/:id/read`, `PATCH /notifications/read-all`, `GET /notifications/unread-count`. The client polls the unread count every 60 s. **[DECISION D6]**
 
@@ -270,6 +284,7 @@ The seed content was built up in stages:
 - **Phase 3:** lesson notes, code, PDF and link materials. The content lives in `server/src/seeds/content/<course slug>.md`, one Markdown file per course. A starter lesson (found by its slug, so renames don't matter) gets its materials only while it has none at all. Rerunning the seed never duplicates or changes them, and databases seeded in Phase 2 get their notes on the next `npm run seed`. One generated cheat-sheet PDF per course is attached to its first lesson.
 - **Phase 4:** five published starter assignments (two MERN, one Java, two DSA) in the first modules, from `server/src/seeds/data/assignments.js`, covering all five submission types, with and without late work. Due dates are relative to the seed run. A course gets them only while it has no assignments at all. Demo submissions arrive with the Phase 5 demo progress.
 - **Phase 5:** demo progress (`server/src/seeds/data/demoProgress.js`). Aarav has completed the first 8 MERN lessons and has a reviewed "Personal Profile Page" (86/100). Neha has completed 3 and has a resubmission request on the same assignment. Kabir's DSA request stays pending. A demo student gets lessons only while they have no progress in that course, and a submission only while they have none for that assignment. There's no seeded "overdue" demo: one would require a due date in the past, which would apply to every student. Overdue appears on its own once a seeded due date passes.
+- **Phase 6:** the seed also writes the demo students' activity, once, when it creates the records: sign-ups and enrollments at the time of the seed run, and lesson completions, submissions and reviews at the dates of those records.
 
 ## 10. Phases and acceptance criteria
 
@@ -286,6 +301,8 @@ Each phase ends with passing tests, an updated README, a phase report in `docs/p
 | **6** Review & analytics     | Review queue, grading, feedback, resubmission requests; student list/detail; trainer dashboard; course & student reports                                                                                                                                                     | Only admins can grade. Marks are capped at `maxMarks`. A resubmission request unlocks a new attempt. Report numbers match the seed fixtures                                                                                                              |
 | **7** Notifications & polish | Notification model, triggers, bell + list, deadline-soon job (on-request check or a daily `node-cron` task); permission audit; accessibility pass (labels, focus, contrast, keyboard); responsive review; skeletons, empty states and error states everywhere; index review  | Notifications fire for every event in §5. The permission-audit test suite (every endpoint × role) passes. No obvious accessibility issues on key pages                                                                                                   |
 | **8** Testing & deployment   | Playwright E2E for the critical flows, bug fixes, production build, S3 storage driver verified, env docs, deployment guide                                                                                                                                                   | The E2E suite passes against a production build. The README has full setup and deployment instructions                                                                                                                                                   |
+
+**Progress:** Phases 0–6 are approved, each with its report in `docs/phase-reports/`. Phase 7 is next.
 
 ## 11. Decisions (confirmed 2026-10-14)
 

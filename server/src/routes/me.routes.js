@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import * as progress from '../controllers/progress.controller.js';
+import * as trainer from '../controllers/trainer.controller.js';
 import { authenticate, requireRole } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { ROLES } from '../models/index.js';
@@ -14,10 +15,11 @@ export function meRoutes() {
   return router;
 }
 
-/** Dashboards. The trainer's dashboard arrives in Phase 6. */
+/** Dashboards: each role gets only its own. */
 export function dashboardRoutes() {
   const router = Router();
   router.use(authenticate);
   router.get('/student', requireRole(ROLES.STUDENT), progress.studentDashboard);
+  router.get('/admin', requireRole(ROLES.ADMIN), trainer.dashboard);
   return router;
 }

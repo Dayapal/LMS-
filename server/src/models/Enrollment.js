@@ -21,5 +21,7 @@ const enrollmentSchema = new mongoose.Schema(
 
 enrollmentSchema.index({ user: 1, course: 1 }, { unique: true });
 enrollmentSchema.index({ course: 1, status: 1 });
+// Counts and lists by status across courses (dashboard, pending requests).
+enrollmentSchema.index({ status: 1, updatedAt: -1 });
 
 export const Enrollment = mongoose.model('Enrollment', enrollmentSchema);

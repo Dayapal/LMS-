@@ -4,6 +4,7 @@ import { fileTypeFromBuffer } from 'file-type';
 import { describe, it, expect } from 'vitest';
 import { config } from '../src/config/env.js';
 import {
+  Activity,
   Assignment,
   Course,
   CourseModule,
@@ -477,5 +478,39 @@ describe('seedDemoProgress', () => {
     await seedDemoProgress({ reviewer: admin._id, now });
     await resetCourseData();
     expect(await LessonProgress.countDocuments()).toBe(0);
+    expect(await Activity.countDocuments()).toBe(0);
+  });
+
+  it('logs matching activity once (Phase 6)', async () => {
+    const admin = await seedAll();
+    // Sign-ups of the 3 demo students, 2 active enrollments and 2 requests.
+    expect(await Activity.countDocuments()).toBe(7);
+    await seedDemoProgress({ reviewer: admin._id, now });
+    const lessons = DEMO_PROGRESS.reduce((sum, d) => sum + d.lessonsCompleted, 0);
+    const counts = Object.fromEntries(
+      (await Activity.aggregate([{ $group: { _id: '$type', n: { $sum: 1 } } }])).map((r) => [
+        r._id,
+        r.n,
+      ]),
+    );
+    expect(counts).toEqual({
+      registered: 3,
+      enrolled: 2,
+      enrollment_requested: 2,
+      lesson_completed: lessons,
+      submission_created: 2,
+      submission_reviewed: 1,
+      resubmission_requested: 1,
+    });
+    const completion = await Activity.findOne({ type: 'lesson_completed' });
+    const record = await LessonProgress.findOne({
+      lesson: completion.lesson,
+      user: completion.user,
+    });
+    expect(completion.createdAt.getTime()).toBe(record.completedAt.getTime());
+
+    await seedDemoProgress({ reviewer: admin._id, now });
+    await seedDemoStudents({ password: 'Passw0rd!', enrolledBy: admin._id });
+    expect(await Activity.countDocuments()).toBe(7 + lessons + 4);
   });
 });

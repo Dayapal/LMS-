@@ -1,8 +1,11 @@
-// Sidebar entries per role. Later phases add reviews, reports, etc.
+// Sidebar entries per role.
 export const NAVIGATION = {
   admin: [
     { to: '/admin', label: 'Dashboard', icon: 'home', end: true },
     { to: '/admin/courses', label: 'Courses', icon: 'book' },
+    { to: '/admin/reviews', label: 'Reviews', icon: 'inbox' },
+    { to: '/admin/students', label: 'Students', icon: 'users' },
+    { to: '/admin/reports', label: 'Reports', icon: 'chart' },
     { to: '/admin/profile', label: 'Profile', icon: 'user' },
   ],
   student: [

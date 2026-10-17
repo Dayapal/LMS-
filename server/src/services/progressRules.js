@@ -12,6 +12,14 @@
  * - The percentage is rounded down, so 100% always means every lesson is done.
  */
 
+/** Completed ÷ total as a whole percentage, rounded down; 0 when there is nothing to complete. */
+export const progressPercent = (completedLessons, totalLessons) =>
+  totalLessons ? Math.floor((completedLessons * 100) / totalLessons) : 0;
+
+/** Whether every countable lesson is done (never for a course without lessons). */
+export const isCourseComplete = (completedLessons, totalLessons) =>
+  totalLessons > 0 && completedLessons === totalLessons;
+
 /**
  * `lessons`: countable lessons in course order, each with a string `id`.
  * `completedAt`: Map of lesson id → completion date (other courses' entries are ignored).
@@ -29,8 +37,8 @@ export function courseProgress(lessons, completedAt) {
   return {
     completedLessons,
     totalLessons,
-    percent: totalLessons ? Math.floor((completedLessons * 100) / totalLessons) : 0,
-    completed: totalLessons > 0 && completedLessons === totalLessons,
+    percent: progressPercent(completedLessons, totalLessons),
+    completed: isCourseComplete(completedLessons, totalLessons),
     lastCompletedAt,
   };
 }

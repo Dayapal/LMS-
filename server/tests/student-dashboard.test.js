@@ -327,7 +327,8 @@ describe('GET /dashboard/student', () => {
   it('is for students only', async () => {
     expect((await dashboard(admin)).status).toBe(403);
     expect((await api(app).get('/api/v1/dashboard/student')).status).toBe(401);
-    expect((await api(app).get('/api/v1/dashboard/admin').set(bearer(admin))).status).toBe(404);
+    // Each role gets only its own dashboard (the trainer's arrived in Phase 6).
+    expect((await api(app).get('/api/v1/dashboard/admin').set(bearer(student))).status).toBe(403);
   });
 
   it('counts an assignment that becomes visible later', async () => {

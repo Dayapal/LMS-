@@ -9,6 +9,7 @@ import { Badge } from '../../components/ui/Badge.jsx';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card.jsx';
 import { EmptyState, ErrorState, Skeleton } from '../../components/ui/Feedback.jsx';
 import { ProgressBar } from '../../components/ui/ProgressBar.jsx';
+import { StatTile } from '../../components/ui/StatTile.jsx';
 import { getErrorMessage } from '../../utils/apiErrors.js';
 
 const linkClass = 'font-medium text-brand-700 hover:text-brand-800 hover:underline';
@@ -16,21 +17,6 @@ const buttonLinkClass =
   'inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700';
 
 const assignmentPath = (row) => `/app/courses/${row.course.id}/assignments/${row.id}`;
-
-function StatTile({ label, value, tone = 'default' }) {
-  return (
-    <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-xs">
-      <dt className="text-xs font-medium text-slate-500">{label}</dt>
-      <dd
-        className={`mt-1 text-2xl font-semibold ${
-          tone === 'danger' && value > 0 ? 'text-red-700' : 'text-slate-900'
-        }`}
-      >
-        {value}
-      </dd>
-    </div>
-  );
-}
 
 function Stats({ summary }) {
   const { assignments } = summary;

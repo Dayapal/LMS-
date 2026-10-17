@@ -70,6 +70,8 @@ export function useCourseMutation(mutationFn, options = {}) {
         queryClient.invalidateQueries({ queryKey: courseKeys.all }),
         queryClient.invalidateQueries({ queryKey: ['enrollments'] }),
         queryClient.invalidateQueries({ queryKey: ['me'] }),
+        // The trainer's dashboard, student pages and reports (Phase 6).
+        queryClient.invalidateQueries({ queryKey: ['trainer'] }),
       ]),
   });
 }

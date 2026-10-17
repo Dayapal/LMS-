@@ -18,6 +18,9 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.index({ email: 1 }, { unique: true });
+// The trainer's student list, sorted by name or by sign-up date.
+userSchema.index({ role: 1, name: 1 });
+userSchema.index({ role: 1, createdAt: -1 });
 
 userSchema.methods.toPublicJSON = function toPublicJSON() {
   return {

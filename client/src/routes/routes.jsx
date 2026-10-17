@@ -3,7 +3,6 @@ import { DashboardLayout } from '../layouts/DashboardLayout.jsx';
 import { LoginPage } from '../features/auth/LoginPage.jsx';
 import { RegisterPage } from '../features/auth/RegisterPage.jsx';
 import { ProfilePage } from '../features/profile/ProfilePage.jsx';
-import { AdminDashboardPage } from '../features/dashboard/DashboardPages.jsx';
 import { StudentDashboardPage } from '../features/dashboard/StudentDashboardPage.jsx';
 import { NotFoundPage } from '../pages/NotFoundPage.jsx';
 import { AdminCoursesPage } from '../features/courses/admin/AdminCoursesPage.jsx';
@@ -26,6 +25,10 @@ const lessonMaterials = async () => ({
 // Assignment pages use the Markdown renderer, code highlighting and the code editor.
 const assignmentPage = (name) => async () => ({
   Component: (await import('../features/assignments/pages.js'))[name],
+});
+// The trainer's dashboard, review queue, students and reports (Phase 6), as one chunk.
+const trainerPage = (name) => async () => ({
+  Component: (await import('../features/trainer/pages.js'))[name],
 });
 // Shown while a lazy page loads on a fresh page load (deep link or reload).
 const pageLoading = (
@@ -55,7 +58,36 @@ export const routes = [
       {
         element: <DashboardLayout />,
         children: [
-          { index: true, element: <AdminDashboardPage /> },
+          {
+            index: true,
+            lazy: trainerPage('TrainerDashboardPage'),
+            hydrateFallbackElement: pageLoading,
+          },
+          {
+            path: 'reviews',
+            lazy: trainerPage('ReviewQueuePage'),
+            hydrateFallbackElement: pageLoading,
+          },
+          {
+            path: 'students',
+            lazy: trainerPage('StudentsPage'),
+            hydrateFallbackElement: pageLoading,
+          },
+          {
+            path: 'students/:studentId',
+            lazy: trainerPage('StudentDetailPage'),
+            hydrateFallbackElement: pageLoading,
+          },
+          {
+            path: 'reports',
+            lazy: trainerPage('ReportsPage'),
+            hydrateFallbackElement: pageLoading,
+          },
+          {
+            path: 'reports/courses/:courseId',
+            lazy: trainerPage('CourseReportPage'),
+            hydrateFallbackElement: pageLoading,
+          },
           { path: 'courses', element: <AdminCoursesPage /> },
           { path: 'courses/:courseId', element: <CourseBuilderPage /> },
           {
