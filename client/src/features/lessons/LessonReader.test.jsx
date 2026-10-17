@@ -3,6 +3,7 @@ import { cleanup, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { filesApi, lessonsApi } from './api.js';
 import { assignmentsApi } from '../assignments/api.js';
+import { progressApi } from '../progress/api.js';
 import { LessonReaderPage } from './LessonReaderPage.jsx';
 import { renderWithProviders, notFoundError } from '../../test/renderWithProviders.jsx';
 import { ADMIN, STUDENT } from '../courses/test-fixtures.js';
@@ -44,11 +45,17 @@ function mockLesson({
 const openReader = (path = '/app/courses/c1/lessons/l2', user = STUDENT) =>
   renderWithProviders(routes, { path, user });
 
-// The pages also list assignments; these tests don't look at them.
+// The pages also list assignments and record the visit; most tests don't look at them.
+let visit;
 beforeEach(() => {
   vi.spyOn(assignmentsApi, 'list').mockResolvedValue({
     items: [],
     meta: { page: 1, limit: 100, total: 0, totalPages: 1 },
+  });
+  visit = vi.spyOn(progressApi, 'visit').mockResolvedValue({
+    lessonId: 'l2',
+    courseId: 'c1',
+    visitedAt: '2026-10-17T10:00:00.000Z',
   });
 });
 // Unmount before the stubs go, so nothing that mounts late reaches the network.
@@ -231,5 +238,115 @@ describe('LessonReaderPage', () => {
       'href',
       '/admin/courses/c1/lessons/l2',
     );
+  });
+
+  it('lets an enrolled student mark the lesson complete and report the course progress', async () => {
+    mockLesson({
+      lesson: makeLessonDetail({ completion: { completed: false, completedAt: null } }),
+    });
+    const complete = vi.spyOn(progressApi, 'complete').mockResolvedValue({
+      lessonId: 'l2',
+      courseId: 'c1',
+      completed: true,
+      completedAt: '2026-10-16T10:00:00.000Z',
+      courseProgress: {
+        completedLessons: 3,
+        totalLessons: 5,
+        percent: 60,
+        completed: false,
+        nextLesson: null,
+      },
+    });
+    openReader();
+
+    const region = await screen.findByRole('region', { name: 'Lesson completion' });
+    await userEvent.click(within(region).getByRole('button', { name: 'Mark as complete' }));
+
+    expect(complete.mock.calls[0][0]).toBe('l2');
+    expect(
+      await screen.findByText('Lesson completed. 60% · 3 of 5 lessons completed.'),
+    ).toBeInTheDocument();
+    expect(within(region).getByText('Completed')).toBeInTheDocument();
+    expect(within(region).getByRole('button', { name: 'Mark as not completed' })).toBeEnabled();
+  });
+
+  it('lets the student undo a completion', async () => {
+    mockLesson({
+      lesson: makeLessonDetail({
+        completion: { completed: true, completedAt: '2026-10-15T08:00:00.000Z' },
+      }),
+    });
+    const uncomplete = vi.spyOn(progressApi, 'uncomplete').mockResolvedValue({
+      lessonId: 'l2',
+      courseId: 'c1',
+      completed: false,
+      completedAt: null,
+      courseProgress: { completedLessons: 2, totalLessons: 5, percent: 40, completed: false },
+    });
+    openReader();
+
+    expect(await screen.findAllByText('Completed')).toHaveLength(2); // badge and panel
+    await userEvent.click(screen.getByRole('button', { name: 'Mark as not completed' }));
+    expect(uncomplete.mock.calls[0][0]).toBe('l2');
+    expect(await screen.findByRole('button', { name: 'Mark as complete' })).toBeInTheDocument();
+    expect(screen.queryByText('Completed')).toBeNull();
+  });
+
+  it("shows the server's refusal and keeps the lesson incomplete", async () => {
+    mockLesson({
+      lesson: makeLessonDetail({ completion: { completed: false, completedAt: null } }),
+    });
+    vi.spyOn(progressApi, 'complete').mockRejectedValue(notFoundError());
+    openReader();
+    await userEvent.click(await screen.findByRole('button', { name: 'Mark as complete' }));
+    expect(await screen.findByText('Course not found')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Mark as complete' })).toBeInTheDocument();
+  });
+
+  it('has no completion control in the trainer preview', async () => {
+    mockLesson();
+    openReader('/admin/courses/c1/lessons/l2/preview', ADMIN);
+    expect(await screen.findByText('Trainer preview')).toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'Lesson completion' })).toBeNull();
+  });
+
+  it("records an enrolled student's visit once, with a POST after the lesson has loaded", async () => {
+    mockLesson({
+      lesson: makeLessonDetail({ completion: { completed: false, completedAt: null } }),
+    });
+    openReader();
+    expect(await screen.findByRole('heading', { name: 'Flexbox Layouts' })).toBeInTheDocument();
+    await waitFor(() => expect(visit).toHaveBeenCalledTimes(1));
+    expect(visit.mock.calls[0][0]).toBe('l2');
+  });
+
+  it('records the next lesson when the student moves on', async () => {
+    mockLesson({
+      lesson: makeLessonDetail({ completion: { completed: false, completedAt: null } }),
+    });
+    const { router } = openReader();
+    await waitFor(() => expect(visit).toHaveBeenCalledTimes(1));
+    lessonsApi.get.mockResolvedValue(
+      makeLessonDetail({
+        id: 'l3',
+        title: 'CSS Grid',
+        completion: { completed: false, completedAt: null },
+      }),
+    );
+    await router.navigate('/app/courses/c1/lessons/l3');
+    await waitFor(() => expect(visit).toHaveBeenCalledTimes(2));
+    expect(visit.mock.calls[1][0]).toBe('l3');
+  });
+
+  it('records nothing in the trainer preview or for a lesson that failed to load', async () => {
+    mockLesson();
+    openReader('/admin/courses/c1/lessons/l2/preview', ADMIN);
+    expect(await screen.findByText('Trainer preview')).toBeInTheDocument();
+    cleanup();
+
+    vi.spyOn(lessonsApi, 'get').mockRejectedValue(notFoundError());
+    openReader();
+    expect(await screen.findByText(/This lesson is not available/)).toBeInTheDocument();
+    expect(visit).not.toHaveBeenCalled();
   });
 });

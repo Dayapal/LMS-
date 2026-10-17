@@ -1,4 +1,4 @@
-import { CONTENT_STATUS, SUBMISSION_STATUS } from '../models/index.js';
+import { CONTENT_STATUS, STUDENT_ASSIGNMENT_STATUS, SUBMISSION_STATUS } from '../models/index.js';
 
 /*
  * The submission rules of spec §5, as pure functions of an assignment, the
@@ -104,5 +104,7 @@ export function finalMarksFor(assignment, { marks, isLate }) {
  */
 export function studentStatus(assignment, latest, now) {
   if (latest) return latest.status;
-  return isAfterDue(assignment, now) ? 'overdue' : 'pending';
+  return isAfterDue(assignment, now)
+    ? STUDENT_ASSIGNMENT_STATUS.OVERDUE
+    : STUDENT_ASSIGNMENT_STATUS.PENDING;
 }

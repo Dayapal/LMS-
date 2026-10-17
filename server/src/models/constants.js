@@ -56,3 +56,13 @@ export const SUBMISSION_STATUS = Object.freeze({
   REVIEWED: 'reviewed',
   RESUBMIT_REQUESTED: 'resubmit_requested',
 });
+
+/**
+ * A student's derived state of an assignment (spec §5): `pending` or `overdue`
+ * before anything is handed in, then the status of their latest attempt. Never stored.
+ */
+export const STUDENT_ASSIGNMENT_STATUS = Object.freeze({
+  PENDING: 'pending',
+  OVERDUE: 'overdue',
+  ...SUBMISSION_STATUS,
+});

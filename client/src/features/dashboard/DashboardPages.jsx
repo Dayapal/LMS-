@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 import { useAuth } from '../../hooks/useAuth.js';
 import { Card, CardBody } from '../../components/ui/Card.jsx';
 
-function Welcome({ subtitle }) {
+export function Welcome({ subtitle }) {
   const { user } = useAuth();
   const firstName = user.name.split(' ')[0];
   return (
@@ -24,7 +24,7 @@ function EmptyPanel({ title, children }) {
   );
 }
 
-// Dashboards are filled with real data in Phases 5 and 6; for now they point to the course pages.
+// The trainer dashboard is filled with real data in Phase 6; for now it points to the course pages.
 export function AdminDashboardPage() {
   return (
     <div className="space-y-6">
@@ -35,22 +35,6 @@ export function AdminDashboardPage() {
           Courses
         </Link>{' '}
         page. Dashboard statistics arrive in a later phase.
-      </EmptyPanel>
-    </div>
-  );
-}
-
-export function StudentDashboardPage() {
-  return (
-    <div className="space-y-6">
-      <Welcome subtitle="Your learning dashboard" />
-      <EmptyPanel title="Find your next course">
-        Browse the{' '}
-        <Link to="/app/courses" className="font-medium text-brand-700 hover:text-brand-800">
-          course catalogue
-        </Link>{' '}
-        and request to join a course. Once your trainer approves it, your progress will show up
-        here.
       </EmptyPanel>
     </div>
   );

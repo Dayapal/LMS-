@@ -6,7 +6,7 @@ import { assignmentsApi } from '../../assignments/api.js';
 import { CourseCatalogPage } from './CourseCatalogPage.jsx';
 import { CourseDetailPage } from './CourseDetailPage.jsx';
 import { renderWithProviders, notFoundError } from '../../../test/renderWithProviders.jsx';
-import { makeCourse, makeRoadmap, STUDENT } from '../test-fixtures.js';
+import { makeCourse, makeProgress, makeRoadmap, STUDENT } from '../test-fixtures.js';
 // Loaded up front so the lazily loaded description renderer resolves at once.
 import '../../../components/content/MarkdownView.jsx';
 
@@ -112,19 +112,90 @@ describe('CourseDetailPage', () => {
     expect(container.querySelector('script')).toBeNull();
   });
 
+  const enrolledRoadmap = (progress = makeProgress()) => ({
+    ...makeRoadmap({ enrollment: { status: 'active', enrolledAt: '2026-10-01' } }),
+    progress,
+  });
+
   it('links enrolled students to each lesson and the first lesson', async () => {
-    vi.spyOn(coursesApi, 'roadmap').mockResolvedValue(
-      makeRoadmap({ enrollment: { status: 'active', enrolledAt: '2026-10-01' } }),
-    );
+    vi.spyOn(coursesApi, 'roadmap').mockResolvedValue(enrolledRoadmap());
     renderWithProviders(routes, { path: '/app/courses/c1', user: STUDENT });
     expect(await screen.findByRole('link', { name: 'Lesson l1' })).toHaveAttribute(
       'href',
       '/app/courses/c1/lessons/l1',
     );
-    expect(screen.getByRole('link', { name: /start with/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Start: Lesson l1' })).toHaveAttribute(
       'href',
       '/app/courses/c1/lessons/l1',
     );
+    expect(screen.getByRole('progressbar', { name: 'Course progress' })).toHaveAttribute(
+      'aria-valuenow',
+      '0',
+    );
+  });
+
+  it("shows the student's progress, completed lessons and where to continue", async () => {
+    const roadmap = enrolledRoadmap(
+      makeProgress({
+        completedLessons: 1,
+        totalLessons: 3,
+        percent: 33,
+        nextLesson: {
+          id: 'l3',
+          title: 'Lesson l3',
+          moduleId: 'm2',
+          moduleTitle: 'CSS Layouts',
+          kind: 'resume',
+        },
+      }),
+    );
+    roadmap.modules[0].lessons[0].completed = true;
+    roadmap.modules[0].lessons[1].completed = false;
+    roadmap.modules[1].lessons[0].completed = false;
+    vi.spyOn(coursesApi, 'roadmap').mockResolvedValue(roadmap);
+    renderWithProviders(routes, { path: '/app/courses/c1', user: STUDENT });
+
+    expect(await screen.findByText('33% · 1 of 3 lessons completed')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar', { name: 'Course progress' })).toHaveAttribute(
+      'aria-valuenow',
+      '33',
+    );
+    expect(screen.getByRole('link', { name: 'Continue: Lesson l3' })).toHaveAttribute(
+      'href',
+      '/app/courses/c1/lessons/l3',
+    );
+    expect(screen.getByText('1 of 2 done')).toBeInTheDocument();
+    const done = screen.getByRole('link', { name: 'Lesson l1' }).closest('li');
+    expect(within(done).getByText('(completed)')).toBeInTheDocument();
+    const open = screen.getByRole('link', { name: 'Lesson l2' }).closest('li');
+    expect(within(open).queryByText('(completed)')).not.toBeInTheDocument();
+  });
+
+  it('says so when every lesson is completed', async () => {
+    vi.spyOn(coursesApi, 'roadmap').mockResolvedValue(
+      enrolledRoadmap(
+        makeProgress({
+          completedLessons: 3,
+          totalLessons: 3,
+          percent: 100,
+          completed: true,
+          nextLesson: null,
+        }),
+      ),
+    );
+    renderWithProviders(routes, { path: '/app/courses/c1', user: STUDENT });
+    expect(
+      await screen.findByText("You've completed every lesson in this course."),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /^(start|continue|up next):/i })).toBeNull();
+  });
+
+  it('shows no progress to students who are not enrolled', async () => {
+    vi.spyOn(coursesApi, 'roadmap').mockResolvedValue({ ...makeRoadmap(), progress: null });
+    renderWithProviders(routes, { path: '/app/courses/c1', user: STUDENT });
+    expect(await screen.findByRole('button', { name: 'Request enrollment' })).toBeInTheDocument();
+    expect(screen.queryByRole('progressbar')).toBeNull();
+    expect(screen.queryByText(/done$/)).toBeNull();
   });
 
   it('requests enrollment and shows the pending state', async () => {

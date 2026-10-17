@@ -12,11 +12,11 @@ import { assertNoAssignments } from './assignment.service.js';
 import { findCourseOr404 } from './course.service.js';
 import { deleteMaterialsWhere } from './material.service.js';
 import { applyOrder, nextOrder } from './ordering.js';
+import { assertNoProgress, lessonCompletion } from './progress.service.js';
 import { toLessonDTO, toModuleDTO } from './serializers.js';
 
 const { trusted } = mongoose;
 
-// Phase 5 extends these guards with progress checks.
 function assertNotPublished(doc, label) {
   if (doc.status === CONTENT_STATUS.PUBLISHED) {
     throw ApiError.conflict(
@@ -67,7 +67,8 @@ export async function reorderModules(courseId, ids) {
 
 /**
  * Deletes an unpublished module together with its lessons (none of which may be
- * published) and their materials. Assignments must be moved or deleted first.
+ * published) and their materials. Assignments must be moved or deleted first,
+ * and a module with completed lessons can only be archived.
  */
 export async function deleteModule(moduleId) {
   const module = await findModuleOr404(moduleId);
@@ -84,6 +85,7 @@ export async function deleteModule(moduleId) {
   // Includes assignments of its lessons: a lesson's assignment always names its module.
   await assertNoAssignments({ module: module._id }, 'module');
   const lessonIds = await Lesson.distinct('_id', { module: module._id });
+  await assertNoProgress({ lesson: trusted({ $in: lessonIds }) }, 'module');
   await deleteMaterialsWhere({ lesson: trusted({ $in: lessonIds }) });
   await Lesson.deleteMany({ module: module._id });
   await module.deleteOne();
@@ -103,13 +105,20 @@ export async function listLessons(user, moduleId) {
   return lessons.map(toLessonDTO);
 }
 
+/**
+ * A lesson with its module and course titles. For a student it also carries
+ * their own completion. Read-only: the continue-learning point is recorded
+ * by POST /lessons/:id/visit.
+ */
 export async function getLesson(user, lessonId) {
-  const { lesson, module, course } = await getLessonForViewer(user, lessonId);
-  return {
+  const { lesson, module, course, enrollment } = await getLessonForViewer(user, lessonId);
+  const dto = {
     ...toLessonDTO(lesson),
     module: { id: module._id.toString(), title: module.title },
     course: { id: course._id.toString(), title: course.title },
   };
+  if (!enrollment) return dto;
+  return { ...dto, completion: await lessonCompletion(user, lesson) };
 }
 
 const lessonSlug = (courseId, title) =>
@@ -157,11 +166,15 @@ export async function reorderLessons(moduleId, ids) {
   return lessons.map(toLessonDTO);
 }
 
-/** Deletes an unpublished lesson and its materials. Assignments must be moved or deleted first. */
+/**
+ * Deletes an unpublished lesson and its materials. Assignments must be moved
+ * or deleted first, and a lesson students have completed can only be archived.
+ */
 export async function deleteLesson(lessonId) {
   const lesson = await findLessonOr404(lessonId);
   assertNotPublished(lesson, 'lesson');
   await assertNoAssignments({ lesson: lesson._id }, 'lesson');
+  await assertNoProgress({ lesson: lesson._id }, 'lesson');
   await deleteMaterialsWhere({ lesson: lesson._id });
   await lesson.deleteOne();
 }

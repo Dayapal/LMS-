@@ -3,9 +3,15 @@ import { Link, useParams } from 'react-router';
 import { useLesson, useLessonNavigation, useMaterials } from './api.js';
 import { LessonMaterials } from './components/MaterialBlock.jsx';
 import { LessonAssignments } from '../assignments/components/AssignmentSections.jsx';
+import { formatDateTime } from '../assignments/format.js';
 import { formatMinutes } from '../courses/format.js';
+import { useLessonCompletion, useRecordLessonVisit } from '../progress/api.js';
+import { lessonsDoneText } from '../progress/format.js';
+import { Icon } from '../../components/Icon.jsx';
 import { Alert } from '../../components/ui/Alert.jsx';
-import { StatusBadge } from '../../components/ui/Badge.jsx';
+import { Badge, StatusBadge } from '../../components/ui/Badge.jsx';
+import { Button } from '../../components/ui/Button.jsx';
+import { useToast } from '../../hooks/useToast.js';
 import { EmptyState, ErrorState, Skeleton } from '../../components/ui/Feedback.jsx';
 import { getErrorMessage } from '../../utils/apiErrors.js';
 
@@ -53,6 +59,61 @@ function LessonNav({ navigation, courseId, paths }) {
   );
 }
 
+/**
+ * The student's "Mark as complete" switch. The server decides what counts and
+ * answers with the new course progress, which the toast reports.
+ */
+function CompletionControl({ lesson }) {
+  const toast = useToast();
+  const completion = useLessonCompletion(lesson.id);
+  const { completed, completedAt } = lesson.completion;
+
+  const toggle = () =>
+    completion.mutate(!completed, {
+      onSuccess: (result) => {
+        const progress = result.courseProgress;
+        if (!result.completed) toast.success('Lesson marked as not completed.');
+        else if (progress.completed)
+          toast.success('You have completed every lesson in this course.');
+        else
+          toast.success(`Lesson completed. ${progress.percent}% · ${lessonsDoneText(progress)}.`);
+      },
+      onError: (error) => toast.error(getErrorMessage(error)),
+    });
+
+  return (
+    <section
+      aria-label="Lesson completion"
+      className={`flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between ${
+        completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-white'
+      }`}
+    >
+      {completed ? (
+        <p className="flex items-center gap-2 text-sm text-emerald-800">
+          <Icon name="check" className="size-5 shrink-0" />
+          <span>
+            <span className="font-semibold">Completed</span>
+            {completedAt && <> on {formatDateTime(completedAt)}</>}
+          </span>
+        </p>
+      ) : (
+        <p className="text-sm text-slate-600">
+          Worked through the materials? Mark the lesson as complete to track your progress.
+        </p>
+      )}
+      <Button
+        variant={completed ? 'secondary' : 'primary'}
+        size="sm"
+        loading={completion.isPending}
+        onClick={toggle}
+        className="shrink-0"
+      >
+        {completed ? 'Mark as not completed' : 'Mark as complete'}
+      </Button>
+    </section>
+  );
+}
+
 function ReaderSkeleton() {
   return (
     <div className="mx-auto max-w-3xl space-y-6" aria-label="Loading lesson">
@@ -87,6 +148,8 @@ export function LessonReaderPage({ mode = 'student' }) {
   useEffect(() => {
     if (loadedId) headingRef.current?.focus();
   }, [loadedId]);
+  // An enrolled student's lesson (it carries their completion) becomes their continue point.
+  useRecordLessonVisit(loadedId, !preview && Boolean(lesson.data?.completion));
 
   const backLink = (
     <Link
@@ -145,6 +208,7 @@ export function LessonReaderPage({ mode = 'student' }) {
             {data.title}
           </h1>
           {preview && data.status !== 'published' && <StatusBadge status={data.status} />}
+          {data.completion?.completed && <Badge tone="success">Completed</Badge>}
         </div>
         <p className="text-sm text-slate-500">
           {position?.total ? `Lesson ${position.position} of ${position.total}` : null}
@@ -212,6 +276,8 @@ export function LessonReaderPage({ mode = 'student' }) {
         pathFor={(assignment) => paths.assignment(data.course.id, assignment.id)}
         showState={!preview}
       />
+
+      {!preview && data.completion && <CompletionControl lesson={data} />}
 
       <div className="border-t border-slate-200 pt-6">
         <LessonNav navigation={position} courseId={data.course.id} paths={paths} />

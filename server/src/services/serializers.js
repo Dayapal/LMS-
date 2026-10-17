@@ -16,6 +16,17 @@ export const toCourseDTO = (course, extra = {}) => ({
   ...extra,
 });
 
+/** The card-sized part of a course, for the student's course list and dashboard. */
+export const toCourseSummary = (course) => ({
+  id: id(course._id),
+  title: course.title,
+  slug: course.slug,
+  summary: course.summary ?? '',
+  thumbnailUrl: course.thumbnailUrl ?? null,
+  level: course.level,
+  estimatedHours: course.estimatedHours ?? 0,
+});
+
 export const toModuleDTO = (module, extra = {}) => ({
   id: id(module._id),
   courseId: id(module.course),

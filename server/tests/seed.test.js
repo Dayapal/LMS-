@@ -10,6 +10,7 @@ import {
   Enrollment,
   FileAsset,
   Lesson,
+  LessonProgress,
   Material,
   Submission,
   User,
@@ -30,6 +31,9 @@ import {
   parseMaterialContent,
 } from '../src/seeds/materials.seed.js';
 import { CHEAT_SHEETS } from '../src/seeds/data/cheatsheets.js';
+import { seedDemoProgress } from '../src/seeds/progress.seed.js';
+import { DEMO_PROGRESS, DEMO_SUBMISSIONS } from '../src/seeds/data/demoProgress.js';
+import { submissionLink } from '../src/validators/links.js';
 import { ASSIGNMENT_SEEDS } from '../src/seeds/data/assignments.js';
 import { createAssignmentSchema } from '../src/validators/assignment.validators.js';
 import { createUser } from './helpers.js';
@@ -385,5 +389,93 @@ describe('seedAssignments', () => {
     await resetCourseData();
     expect(await Assignment.countDocuments()).toBe(0);
     expect(await Submission.countDocuments()).toBe(0);
+  });
+});
+
+describe('seedDemoProgress', () => {
+  const now = new Date('2026-10-16T06:00:00Z');
+
+  async function seedAll() {
+    const admin = await createUser({ role: 'admin' });
+    await seedCourses();
+    await seedAssignments({ createdBy: admin._id, now });
+    await seedDemoStudents({ password: 'Passw0rd!', enrolledBy: admin._id });
+    return admin;
+  }
+
+  it('ships valid demo links', () => {
+    for (const demo of DEMO_SUBMISSIONS) {
+      for (const item of demo.items) {
+        expect(submissionLink(item.type).safeParse(item.url).success).toBe(true);
+      }
+    }
+  });
+
+  it('completes the first lessons in roadmap order and sets where to continue', async () => {
+    const admin = await seedAll();
+    const result = await seedDemoProgress({ reviewer: admin._id, now });
+    expect(result.progress.map((r) => r.added)).toEqual(
+      DEMO_PROGRESS.map((d) => d.lessonsCompleted),
+    );
+
+    const aarav = await User.findOne({ email: 'aarav.demo@example.com' });
+    const course = await Course.findOne({ slug: 'full-stack-mern-development' });
+    const records = await LessonProgress.find({ user: aarav._id }).sort({ completedAt: 1 });
+    expect(records).toHaveLength(8);
+    expect(records.every((r) => r.course.equals(course._id) && r.completedAt < now)).toBe(true);
+
+    const modules = await CourseModule.find({ course: course._id }).sort({ order: 1 });
+    const lessons = [];
+    for (const m of modules)
+      lessons.push(...(await Lesson.find({ module: m._id }).sort({ order: 1 })));
+    expect(records.map((r) => r.lesson.toString())).toEqual(lessons.slice(0, 8).map((l) => l.id));
+    const enrollment = await Enrollment.findOne({ user: aarav._id, course: course._id });
+    expect(enrollment.lastLesson.equals(lessons[8]._id)).toBe(true);
+  });
+
+  it('adds one reviewed and one resubmission-requested submission', async () => {
+    const admin = await seedAll();
+    await seedDemoProgress({ reviewer: admin._id, now });
+    const submissions = await Submission.find().populate('student', 'email');
+    const byEmail = Object.fromEntries(submissions.map((s) => [s.student.email, s]));
+    expect(byEmail['aarav.demo@example.com']).toMatchObject({
+      attempt: 1,
+      status: 'reviewed',
+      isLate: false,
+      review: { marks: 86, finalMarks: 86 },
+    });
+    expect(byEmail['neha.demo@example.com']).toMatchObject({
+      status: 'resubmit_requested',
+      review: { marks: null },
+    });
+    expect(byEmail['neha.demo@example.com'].review.reviewedBy.equals(admin._id)).toBe(true);
+  });
+
+  it('never changes existing progress or submissions on a rerun', async () => {
+    const admin = await seedAll();
+    await seedDemoProgress({ reviewer: admin._id, now });
+    const aarav = await User.findOne({ email: 'aarav.demo@example.com' });
+    await LessonProgress.deleteOne({ user: aarav._id });
+
+    const rerun = await seedDemoProgress({ reviewer: admin._id, now });
+    expect(rerun.progress.every((r) => r.added === 0)).toBe(true);
+    expect(rerun.submissions.every((r) => !r.added)).toBe(true);
+    expect(await LessonProgress.countDocuments({ user: aarav._id })).toBe(7);
+    expect(await Submission.countDocuments()).toBe(2);
+  });
+
+  it('skips students without an active enrollment', async () => {
+    const admin = await seedAll();
+    await Enrollment.updateMany({}, { status: 'removed' });
+    const result = await seedDemoProgress({ reviewer: admin._id, now });
+    expect(result).toEqual({ progress: [], submissions: [] });
+    expect(await LessonProgress.countDocuments()).toBe(0);
+  });
+
+  it('reset removes progress', async () => {
+    const admin = await seedAll();
+    await seedDemoProgress({ reviewer: admin._id, now });
+    await resetCourseData();
+    expect(await LessonProgress.countDocuments()).toBe(0);
   });
 });

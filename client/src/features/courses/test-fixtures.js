@@ -60,3 +60,20 @@ export const makeRoadmap = (courseOverrides = {}) => ({
     },
   ],
 });
+
+/** The enrolled student's progress block of a roadmap (see GET /courses/:id/roadmap). */
+export const makeProgress = (overrides = {}) => ({
+  completedLessons: 0,
+  totalLessons: 1,
+  percent: 0,
+  completed: false,
+  lastCompletedAt: null,
+  nextLesson: {
+    id: 'l1',
+    title: 'Lesson l1',
+    moduleId: 'm1',
+    moduleTitle: 'HTML Fundamentals',
+    kind: 'start',
+  },
+  ...overrides,
+});

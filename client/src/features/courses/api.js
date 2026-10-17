@@ -58,7 +58,7 @@ export const useEnrollments = (params) =>
 
 /**
  * Mutation that refreshes every course query afterwards (lists, details,
- * roadmaps and enrollment lists all depend on the same content).
+ * roadmaps, enrollment lists and the student's own courses all depend on the same content).
  */
 export function useCourseMutation(mutationFn, options = {}) {
   const queryClient = useQueryClient();
@@ -69,6 +69,7 @@ export function useCourseMutation(mutationFn, options = {}) {
       Promise.all([
         queryClient.invalidateQueries({ queryKey: courseKeys.all }),
         queryClient.invalidateQueries({ queryKey: ['enrollments'] }),
+        queryClient.invalidateQueries({ queryKey: ['me'] }),
       ]),
   });
 }

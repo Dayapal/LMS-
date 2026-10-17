@@ -6,6 +6,7 @@ import {
   Enrollment,
   ENROLLMENT_STATUS,
   Lesson,
+  LessonProgress,
   ROLES,
   Session,
   User,
@@ -171,11 +172,12 @@ export async function removeDemoStudents() {
   ]);
 }
 
-/** Removes all course content, materials, assignments, files and enrollments. Users are kept. Development only. */
+/** Removes all course content, materials, assignments, files, enrollments and progress. Users are kept. Development only. */
 export async function resetCourseData() {
   await resetAssignments();
   await resetMaterials();
   await Promise.all([
+    LessonProgress.deleteMany({}),
     Enrollment.deleteMany({}),
     Lesson.deleteMany({}),
     CourseModule.deleteMany({}),

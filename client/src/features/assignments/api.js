@@ -90,6 +90,11 @@ export function useAssignmentMutation(mutationFn, options = {}) {
   return useMutation({
     mutationFn,
     ...options,
-    onSettled: () => queryClient.invalidateQueries({ queryKey: assignmentKeys.all }),
+    onSettled: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: assignmentKeys.all }),
+        // The student's dashboard and assignment list show the same states.
+        queryClient.invalidateQueries({ queryKey: ['me'] }),
+      ]),
   });
 }

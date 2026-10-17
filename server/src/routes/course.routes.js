@@ -2,6 +2,7 @@ import { Router } from 'express';
 import * as courses from '../controllers/course.controller.js';
 import * as roadmap from '../controllers/roadmap.controller.js';
 import * as materials from '../controllers/material.controller.js';
+import * as progress from '../controllers/progress.controller.js';
 import { authenticate, requireRole } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { ROLES } from '../models/index.js';
@@ -20,6 +21,7 @@ import {
 import { createMaterialSchema, updateMaterialSchema } from '../validators/material.validators.js';
 
 const admin = requireRole(ROLES.ADMIN);
+const student = requireRole(ROLES.STUDENT);
 const byId = validate({ params: idParams });
 
 export function courseRoutes() {
@@ -100,6 +102,10 @@ export function lessonRoutes() {
   );
   router.delete('/:id', admin, byId, roadmap.deleteLesson);
   router.get('/:id/navigation', byId, materials.navigation);
+  // The student's own learning state. No body is read: who, which course and when come from the server.
+  router.post('/:id/visit', student, byId, progress.visit);
+  router.post('/:id/complete', student, byId, progress.complete);
+  router.delete('/:id/complete', student, byId, progress.uncomplete);
   router.get('/:id/materials', byId, materials.list);
   router.post(
     '/:id/materials',

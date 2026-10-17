@@ -1,4 +1,4 @@
-// Sidebar entries per role. Later phases add assignments, reports, etc.
+// Sidebar entries per role. Later phases add reviews, reports, etc.
 export const NAVIGATION = {
   admin: [
     { to: '/admin', label: 'Dashboard', icon: 'home', end: true },
@@ -8,6 +8,7 @@ export const NAVIGATION = {
   student: [
     { to: '/app', label: 'Dashboard', icon: 'home', end: true },
     { to: '/app/courses', label: 'Courses', icon: 'book' },
+    { to: '/app/assignments', label: 'Assignments', icon: 'clipboard' },
     { to: '/app/profile', label: 'Profile', icon: 'user' },
   ],
 };

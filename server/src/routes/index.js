@@ -6,6 +6,7 @@ import { courseRoutes, lessonRoutes, materialRoutes, moduleRoutes } from './cour
 import { fileRoutes } from './file.routes.js';
 import { adminRoutes } from './admin.routes.js';
 import { assignmentRoutes, submissionRoutes } from './assignment.routes.js';
+import { dashboardRoutes, meRoutes } from './me.routes.js';
 
 export function apiRoutes(limiters) {
   const router = Router();
@@ -29,5 +30,7 @@ export function apiRoutes(limiters) {
   router.use('/assignments', assignmentRoutes(limiters));
   router.use('/submissions', submissionRoutes());
   router.use('/admin', adminRoutes());
+  router.use('/me', meRoutes());
+  router.use('/dashboard', dashboardRoutes());
   return router;
 }

@@ -11,6 +11,7 @@ import {
   seedDemoStudents,
   seedMaterials,
 } from './course.seed.js';
+import { seedDemoProgress } from './progress.seed.js';
 
 const reset = process.argv.includes('--reset');
 
@@ -32,7 +33,7 @@ async function main() {
   if (reset) {
     await Promise.all([resetCourseData(), removeDemoStudents()]);
     logger.warn(
-      'Removed all courses, modules, lessons, materials, assignments, submissions, files, enrollments and demo students (--reset)',
+      'Removed all courses, modules, lessons, materials, assignments, submissions, files, enrollments, progress and demo students (--reset)',
     );
   }
 
@@ -67,6 +68,20 @@ async function main() {
     enrolledBy: admin.user._id,
   })) {
     logger.info(`Demo student ${student.email}: ${student.created ? 'created' : 'already exists'}`);
+  }
+
+  const demo = await seedDemoProgress({ reviewer: admin.user._id });
+  for (const result of demo.progress) {
+    logger.info(
+      result.added
+        ? `Demo progress for ${result.email} in ${result.slug}: ${result.added} lessons completed`
+        : `Demo progress for ${result.email} in ${result.slug}: already has progress, kept`,
+    );
+  }
+  for (const result of demo.submissions) {
+    logger.info(
+      `Demo submission by ${result.email} for "${result.assignment}": ${result.added ? 'added' : 'already submitted, kept'}`,
+    );
   }
 }
 

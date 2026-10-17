@@ -5,14 +5,18 @@ import { EnrollmentAction, EnrollmentBadge } from './EnrollmentAction.jsx';
 import { LEVEL_LABEL, formatMinutes, plural } from '../format.js';
 import { LazyMarkdownView } from '../../../components/content/LazyMarkdownView.jsx';
 import { CourseAssignments } from '../../assignments/components/AssignmentSections.jsx';
+import { lessonsDoneText, nextLessonLabel } from '../../progress/format.js';
+import { Icon } from '../../../components/Icon.jsx';
 import { Badge } from '../../../components/ui/Badge.jsx';
+import { ProgressBar } from '../../../components/ui/ProgressBar.jsx';
 import { Card, CardBody } from '../../../components/ui/Card.jsx';
 import { EmptyState, ErrorState, Skeleton } from '../../../components/ui/Feedback.jsx';
 import { getErrorMessage } from '../../../utils/apiErrors.js';
 
 /**
  * The roadmap of published modules and lessons. Lessons link to the reader
- * once the student's enrollment is active (`lessonPath` is set).
+ * once the student's enrollment is active (`lessonPath` is set), and then
+ * carry the student's own `completed` flag.
  */
 function RoadmapTimeline({ modules, lessonPath }) {
   if (modules.length === 0) {
@@ -35,10 +39,18 @@ function RoadmapTimeline({ modules, lessonPath }) {
           <Card>
             <CardBody className="space-y-3">
               <div>
-                <h3 className="font-semibold text-slate-900">
-                  <span className="sr-only">Module {index + 1}: </span>
-                  {module.title}
-                </h3>
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+                  <h3 className="font-semibold text-slate-900">
+                    <span className="sr-only">Module {index + 1}: </span>
+                    {module.title}
+                  </h3>
+                  {lessonPath && module.lessons.length > 0 && (
+                    <span className="text-xs font-medium text-slate-500">
+                      {module.lessons.filter((l) => l.completed).length} of {module.lessons.length}{' '}
+                      done
+                    </span>
+                  )}
+                </div>
                 {module.description && (
                   <p className="mt-1 text-sm text-slate-600">{module.description}</p>
                 )}
@@ -47,9 +59,15 @@ function RoadmapTimeline({ modules, lessonPath }) {
                 <ul className="divide-y divide-slate-100 rounded-lg border border-slate-100">
                   {module.lessons.map((lesson, lessonIndex) => (
                     <li key={lesson.id} className="flex gap-3 px-3 py-2.5">
-                      <span className="w-8 shrink-0 pt-0.5 text-xs font-medium text-slate-400">
-                        {index + 1}.{lessonIndex + 1}
-                      </span>
+                      {lesson.completed ? (
+                        <span className="flex w-8 shrink-0 pt-0.5 text-emerald-600">
+                          <Icon name="check" className="size-4" />
+                        </span>
+                      ) : (
+                        <span className="w-8 shrink-0 pt-0.5 text-xs font-medium text-slate-400">
+                          {index + 1}.{lessonIndex + 1}
+                        </span>
+                      )}
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-slate-800">
                           {lessonPath ? (
@@ -62,6 +80,7 @@ function RoadmapTimeline({ modules, lessonPath }) {
                           ) : (
                             lesson.title
                           )}
+                          {lesson.completed && <span className="sr-only"> (completed)</span>}
                         </p>
                         {lesson.summary && (
                           <p className="text-sm text-slate-500">{lesson.summary}</p>
@@ -110,12 +129,11 @@ export function CourseDetailPage() {
     );
   }
 
-  const { course, modules } = data;
+  const { course, modules, progress } = data;
   const enrolled = course.enrollment?.status === 'active';
   const lessonPath = enrolled
     ? (lessonId) => `/app/courses/${course.id}/lessons/${lessonId}`
     : undefined;
-  const firstLesson = modules.find((m) => m.lessons.length > 0)?.lessons[0];
 
   return (
     <div className="space-y-8">
@@ -152,13 +170,26 @@ export function CourseDetailPage() {
             </div>
           </dl>
           <EnrollmentAction course={course} />
-          {enrolled && firstLesson && (
+          {enrolled && progress?.totalLessons > 0 && (
+            <div className="space-y-1.5">
+              <ProgressBar value={progress.percent} label="Course progress" />
+              <p className="text-sm text-slate-600">
+                {progress.percent}% · {lessonsDoneText(progress)}
+              </p>
+            </div>
+          )}
+          {enrolled && progress?.nextLesson && (
             <Link
-              to={lessonPath(firstLesson.id)}
-              className="inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"
+              to={lessonPath(progress.nextLesson.id)}
+              className="inline-flex min-h-10 items-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
             >
-              Start with “{firstLesson.title}”
+              {nextLessonLabel(progress.nextLesson)}
             </Link>
+          )}
+          {enrolled && progress?.completed && (
+            <p role="status" className="text-sm font-medium text-emerald-700">
+              You&apos;ve completed every lesson in this course.
+            </p>
           )}
         </div>
       </section>

@@ -11,10 +11,11 @@ import {
 import { ApiError } from '../utils/ApiError.js';
 import { paginationMeta, skipFor } from '../utils/pagination.js';
 import { escapeRegex, slugify, uniqueSlug } from '../utils/text.js';
-import { getCourseForViewer, isAdmin, visibleTo } from './access.service.js';
+import { getActiveEnrollment, getCourseForViewer, isAdmin, visibleTo } from './access.service.js';
 import { deleteAssignmentsWhere } from './assignment.service.js';
 import { deleteFilesWhere } from './file.service.js';
 import { deleteMaterialsWhere } from './material.service.js';
+import { assertNoProgress, completionsFor, summarizeProgress } from './progress.service.js';
 import { toCourseDTO, toLessonDTO, toModuleDTO, toOwnEnrollment } from './serializers.js';
 
 const { trusted } = mongoose;
@@ -132,12 +133,36 @@ export async function getRoadmap(user, courseId) {
     .lean();
 
   const lessonsByModule = new Map(modules.map((m) => [m._id.toString(), []]));
-  for (const lesson of lessons)
-    lessonsByModule.get(lesson.module.toString()).push(toLessonDTO(lesson));
+  for (const lesson of lessons) lessonsByModule.get(lesson.module.toString()).push(lesson);
+
+  // An enrolled student also gets their own progress; nobody else's is ever included.
+  const enrollment = isAdmin(user) ? null : await getActiveEnrollment(user._id, course._id);
+  let progress = null;
+  let completedAt = new Map();
+  if (enrollment) {
+    completedAt = await completionsFor(user, [course._id]);
+    // These are exactly the countable lessons: the student sees published ones only.
+    const ordered = modules.flatMap((m) =>
+      lessonsByModule.get(m._id.toString()).map((lesson) => ({
+        id: lesson._id.toString(),
+        title: lesson.title,
+        moduleId: m._id.toString(),
+        moduleTitle: m.title,
+      })),
+    );
+    progress = summarizeProgress(ordered, completedAt, enrollment.lastLesson);
+  }
+  const lessonDTO = (lesson) =>
+    enrollment
+      ? { ...toLessonDTO(lesson), completed: completedAt.has(lesson._id.toString()) }
+      : toLessonDTO(lesson);
 
   return {
     course: await courseWithExtras(user, course),
-    modules: modules.map((m) => toModuleDTO(m, { lessons: lessonsByModule.get(m._id.toString()) })),
+    modules: modules.map((m) =>
+      toModuleDTO(m, { lessons: lessonsByModule.get(m._id.toString()).map(lessonDTO) }),
+    ),
+    ...(!isAdmin(user) && { progress }),
   };
 }
 
@@ -176,7 +201,7 @@ export async function setCourseStatus(user, courseId, status) {
 
 /**
  * Hard delete is only for courses nobody is learning from: not published,
- * without active or pending enrollments, and without submitted work.
+ * without active or pending enrollments, submitted work or lesson progress.
  * Everything else should be archived. Its modules, lessons, materials,
  * assignments and files are deleted with it.
  */
@@ -199,6 +224,7 @@ export async function deleteCourse(courseId) {
       'Students have submitted work in this course. Archive it instead of deleting.',
     );
   }
+  await assertNoProgress({ course: course._id }, 'course');
   await deleteMaterialsWhere({ course: course._id });
   await deleteAssignmentsWhere({ course: course._id });
   // Also files uploaded for the course but never attached to a material or assignment.

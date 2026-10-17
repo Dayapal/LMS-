@@ -1,6 +1,6 @@
 # Training LMS: Design and Implementation Plan
 
-Status: **Phase 0 approved 2026-10-14**. All decisions in §11 confirmed by the trainer. Phases 1–4 approved.
+Status: **Phase 0 approved 2026-10-14**. All decisions in §11 confirmed by the trainer. Phases 1–5 approved.
 Date: 2026-10-14
 
 This document covers the architecture, data model, API, permissions, phases and acceptance criteria for the full-stack training LMS. Items marked **[DECISION Dn]** refer to the confirmed decisions in §11.
@@ -142,6 +142,14 @@ As built in Phase 3:
 
 **LessonProgress**: `user`, `course`, `lesson`, `completedAt`. Unique `{user, lesson}`. Course progress = completed **published** lessons ÷ total published lessons. It's computed with an aggregation and never stored, so it stays correct when the trainer adds or removes lessons.
 
+As built in Phase 5:
+
+- **What counts:** the lessons a student sees on the roadmap, meaning published lessons inside published modules of a published course. Progress = completed countable lessons ÷ countable lessons, rounded **down**, so 100% always means every lesson is done. A course with no countable lessons is 0% and not complete. The rules are pure functions in `services/progressRules.js`.
+- **History is kept:** a completion record stays when its lesson is unpublished or archived, its module is unpublished, the course is archived or the enrollment is removed. It doesn't count while hidden, and counts again when the content or enrollment returns.
+- **Writes:** the record is created only by `POST /lessons/:id/complete` for a lesson the student can open. Repeating the request keeps the first `completedAt`. The request body is ignored. `course` is copied from the lesson, which never changes course.
+- **Indexes:** unique `{user, lesson}`, `{user, course}`, `{lesson}` and `{course}`. The last two serve the deletion guards.
+- **Continue learning** uses `Enrollment.lastLesson` and `lastAccessedAt`, which are set only by explicit student requests: `POST /lessons/:id/visit` (sent by the reader once a lesson has loaded) and completing or un-completing a lesson. Reading a lesson (`GET`) changes nothing. The next lesson is that lesson while it is incomplete (`resume`). Otherwise it is the first incomplete lesson after it, wrapping round to the start (`next`), or the first lesson when nothing is done (`start`).
+
 **Assignment**: `course`, `module?`, `lesson?`, `title`, `instructions` (md), `objectives[]`, `dueAt`, `maxMarks`, `allowedSubmissionTypes[]` (`drive_url` | `github_url` | `project_url` | `pdf` | `code`), `attachments[]` (ref FileAsset), `latePolicy { allowLate, lateUntil?, penaltyPercent }`, `maxAttempts?`, `status`. Index: `{course, status, dueAt}`.
 
 **Submission**: one document **per attempt** (that gives the submission history). `assignment`, `course`, `student`, `attempt` (1, 2, …), `items[]` (each `{ type, url? | file? | code?{language, source} }`), `note`, `submittedAt`, `isLate`, `status` (`submitted` | `reviewed` | `resubmit_requested`), `review { marks, finalMarks, feedback, reviewedBy, reviewedAt }`. Unique `{assignment, student, attempt}`. Index: `{course, status}`, `{student, submittedAt}`.
@@ -167,7 +175,7 @@ As built in Phase 4:
 
 **Notification**: `user`, `type` (`material_published` | `assignment_published` | `submission_reviewed` | `resubmit_requested` | `deadline_soon` | `submission_received`), `title`, `body`, `link`, `readAt`. Index: `{user, readAt, createdAt}`. Old read notifications are removed with a TTL of 90 days.
 
-**Activity**: `user`, `course`, `type` (`lesson_completed` | `submission_created` | `login` | …), `ref`, `createdAt`. Append-only. Feeds "recent activity" and the learning-activity reports. TTL of 1 year.
+**Activity**: `user`, `course`, `type` (`lesson_completed` | `submission_created` | `login` | …), `ref`, `createdAt`. Append-only. Feeds "recent activity" and the learning-activity reports. TTL of 1 year. _Not built yet:_ Phase 5 has nothing that reads it. The student dashboard takes its recent items from completion dates and submissions. The model arrives with the reports in Phase 6.
 
 ## 6. Permissions matrix
 
@@ -187,7 +195,7 @@ As built in Phase 4:
 
 Ownership always comes from `req.user.id`. Any `student`, `role`, `reviewedBy`, `marks` or `status` fields in a student's request body are dropped by the zod schemas.
 
-**Deleting content:** a course, module or lesson can't be hard-deleted if it has submissions or progress. Archive it instead. The rules as implemented in Phases 2–4 (Phase 5 adds the progress checks):
+**Deleting content:** a course, module or lesson can't be hard-deleted if it has submissions or progress. Archive it instead. The rules as implemented in Phases 2–5:
 
 - **Course:** only when it isn't published and has no active or pending enrollments. Deleting it also deletes its modules, lessons and removed enrollments.
 - **Module:** only when neither the module nor any of its lessons is published. Deleting it also deletes its lessons.
@@ -195,6 +203,7 @@ Ownership always comes from `req.user.id`. Any `student`, `role`, `reviewedBy`, 
 - **Material (Phase 3):** only when it isn't published.
 - **Assignment (Phase 4):** only when it isn't published and has no submissions. Its unused attachments are deleted with it.
 - **Phase 4 additions:** a course with any submissions can't be deleted, and deleting one deletes its assignments. A module or lesson that assignments point at can't be deleted until they are moved or deleted. Moving a lesson to another module moves its assignments with it.
+- **Phase 5 additions:** a lesson any student has completed, a module containing such a lesson, and a course with any completion record (including from students whose enrollment was removed) can't be deleted. Archive them instead, so their progress is kept.
 
 Anything else returns `409 CONFLICT` with a message telling the trainer to unpublish or archive first. Deleting a course, module or lesson also deletes its materials and their unused files.
 
@@ -215,6 +224,7 @@ Anything else returns `409 CONFLICT` with a message telling the trainer to unpub
 As built, Phase 4 also adds `POST /assignments/:id/files` (a student's PDF for their submission), `GET /assignments/:id/submissions` (trainer: latest attempt per student), `GET /submissions/:id`, and the per-submission grading endpoints `POST /submissions/:id/review` and `POST /submissions/:id/request-resubmission`, brought forward from Phase 6 so the edit-after-review, penalty and resubmission rules work end to end.
 
 **Phase 5 (student progress):** `POST|DELETE /lessons/:id/complete`, `GET /me/courses` (enrolled + progress + continue-learning), `GET /me/assignments` (with derived statuses), `GET /dashboard/student`.
+As built, all four are for students only (the trainer gets 403). `GET /me/assignments` takes `status` (a derived state), `course`, `page` and `limit`, and returns `meta.counts` per state. `GET /courses/:id/roadmap` also returns `progress` and a `completed` flag on each lesson, but only for a student with an active enrollment and only their own. `GET /lessons/:id` returns the student's own `completion` and is read-only. `POST /lessons/:id/visit` (student, no body) records the continue-learning point for a lesson the student may open.
 
 **Phase 6 (review & analytics):** `GET /admin/submissions` (filters: course, status, student, late), `POST /submissions/:id/review` and `POST /submissions/:id/request-resubmission` (built in Phase 4), `GET /admin/students` (search, filter, paginate), `GET /admin/students/:id`, `GET /dashboard/admin`, `GET /reports/courses/:id`, `GET /reports/students/:id`.
 
@@ -259,7 +269,7 @@ The seed content was built up in stages:
 - **Phase 2:** course, module and lesson structure, with each lesson's summary, objectives, prerequisites and estimated time. Demo students are created only when `SEED_DEMO_STUDENT_PASSWORD` is set. `--reset` also recreates them.
 - **Phase 3:** lesson notes, code, PDF and link materials. The content lives in `server/src/seeds/content/<course slug>.md`, one Markdown file per course. A starter lesson (found by its slug, so renames don't matter) gets its materials only while it has none at all. Rerunning the seed never duplicates or changes them, and databases seeded in Phase 2 get their notes on the next `npm run seed`. One generated cheat-sheet PDF per course is attached to its first lesson.
 - **Phase 4:** five published starter assignments (two MERN, one Java, two DSA) in the first modules, from `server/src/seeds/data/assignments.js`, covering all five submission types, with and without late work. Due dates are relative to the seed run. A course gets them only while it has no assignments at all. Demo submissions arrive with the Phase 5 demo progress.
-- **Phase 5:** demo progress.
+- **Phase 5:** demo progress (`server/src/seeds/data/demoProgress.js`). Aarav has completed the first 8 MERN lessons and has a reviewed "Personal Profile Page" (86/100). Neha has completed 3 and has a resubmission request on the same assignment. Kabir's DSA request stays pending. A demo student gets lessons only while they have no progress in that course, and a submission only while they have none for that assignment. There's no seeded "overdue" demo: one would require a due date in the past, which would apply to every student. Overdue appears on its own once a seeded due date passes.
 
 ## 10. Phases and acceptance criteria
 

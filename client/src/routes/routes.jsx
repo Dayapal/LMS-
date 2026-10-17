@@ -3,7 +3,8 @@ import { DashboardLayout } from '../layouts/DashboardLayout.jsx';
 import { LoginPage } from '../features/auth/LoginPage.jsx';
 import { RegisterPage } from '../features/auth/RegisterPage.jsx';
 import { ProfilePage } from '../features/profile/ProfilePage.jsx';
-import { AdminDashboardPage, StudentDashboardPage } from '../features/dashboard/DashboardPages.jsx';
+import { AdminDashboardPage } from '../features/dashboard/DashboardPages.jsx';
+import { StudentDashboardPage } from '../features/dashboard/StudentDashboardPage.jsx';
 import { NotFoundPage } from '../pages/NotFoundPage.jsx';
 import { AdminCoursesPage } from '../features/courses/admin/AdminCoursesPage.jsx';
 import { CourseBuilderPage } from '../features/courses/admin/CourseBuilderPage.jsx';
@@ -102,6 +103,11 @@ export const routes = [
           { index: true, element: <StudentDashboardPage /> },
           { path: 'courses', element: <CourseCatalogPage /> },
           { path: 'courses/:courseId', element: <CourseDetailPage /> },
+          {
+            path: 'assignments',
+            lazy: assignmentPage('MyAssignmentsPage'),
+            hydrateFallbackElement: pageLoading,
+          },
           {
             path: 'courses/:courseId/lessons/:lessonId',
             lazy: lessonReader('student'),

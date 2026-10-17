@@ -7,6 +7,7 @@ import {
   FILE_PURPOSES,
   FileAsset,
   Lesson,
+  STUDENT_ASSIGNMENT_STATUS,
   Submission,
   SUBMISSION_STATUS,
 } from '../models/index.js';
@@ -139,6 +140,7 @@ export function toStudentState(assignment, latest, now = new Date()) {
           isLate: Boolean(latest.isLate),
           submittedAt: latest.submittedAt,
           finalMarks: latest.review?.finalMarks ?? null,
+          reviewedAt: latest.review?.reviewedAt ?? null,
         }
       : null,
     canSubmit: create.allowed,
@@ -311,6 +313,67 @@ export async function assertNoAssignments(filter, label) {
       } to another part of the course or delete ${count === 1 ? 'it' : 'them'} first.`,
     );
   }
+}
+
+// ---- The student's own assignments across courses ----
+
+const titledRef = (ref) => (ref?.title ? { id: ref._id.toString(), title: ref.title } : null);
+
+/**
+ * Every assignment the student can see (optionally in one course), due date
+ * first, each with their derived state. States come from the server's clock,
+ * so "overdue" doesn't depend on the browser's time zone.
+ */
+export async function myAssignmentRows(student, { course } = {}, now = new Date()) {
+  const visible = await assignmentsVisibleTo(student);
+  const assignments = await Assignment.find(course ? { $and: [visible, { course }] } : visible)
+    .select(
+      'course module lesson title dueAt maxMarks maxAttempts latePolicy allowedSubmissionTypes status createdAt',
+    )
+    .populate([
+      { path: 'course', select: 'title' },
+      { path: 'module', select: 'title' },
+      { path: 'lesson', select: 'title' },
+    ])
+    .sort({ dueAt: 1, createdAt: 1 })
+    .lean();
+  const latest = await latestAttempts(
+    student,
+    assignments.map((a) => a._id),
+  );
+  return assignments.map((assignment) => ({
+    id: assignment._id.toString(),
+    title: assignment.title,
+    status: assignment.status,
+    dueAt: assignment.dueAt,
+    closesAt: closesAt(assignment),
+    maxMarks: assignment.maxMarks,
+    allowedSubmissionTypes: assignment.allowedSubmissionTypes,
+    course: titledRef(assignment.course),
+    module: titledRef(assignment.module),
+    lesson: titledRef(assignment.lesson),
+    mySubmission: toStudentState(assignment, latest.get(assignment._id.toString()), now),
+  }));
+}
+
+/** How many rows are in each derived state, plus `all`. */
+export function countStates(rows) {
+  const counts = Object.fromEntries(
+    Object.values(STUDENT_ASSIGNMENT_STATUS).map((state) => [state, 0]),
+  );
+  for (const row of rows) counts[row.mySubmission.status] += 1;
+  return { all: rows.length, ...counts };
+}
+
+/** GET /me/assignments: filtered by derived `status`, paginated, with counts per state. */
+export async function listMyAssignments(student, { page, limit, status, course }) {
+  const rows = await myAssignmentRows(student, { course });
+  const matching = status ? rows.filter((row) => row.mySubmission.status === status) : rows;
+  const start = skipFor({ page, limit });
+  return {
+    items: matching.slice(start, start + limit),
+    meta: { ...paginationMeta({ page, limit }, matching.length), counts: countStates(rows) },
+  };
 }
 
 // ---- Trainer view of an assignment's submissions ----

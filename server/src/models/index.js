@@ -8,6 +8,7 @@ export { Material } from './Material.js';
 export { FileAsset } from './FileAsset.js';
 export { Assignment } from './Assignment.js';
 export { Submission } from './Submission.js';
+export { LessonProgress } from './LessonProgress.js';
 export {
   CODE_LANGUAGES,
   CONTENT_STATUS,
@@ -17,4 +18,5 @@ export {
   MATERIAL_TYPES,
   SUBMISSION_STATUS,
   SUBMISSION_TYPES,
+  STUDENT_ASSIGNMENT_STATUS,
 } from './constants.js';
