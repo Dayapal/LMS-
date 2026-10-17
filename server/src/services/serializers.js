@@ -16,6 +16,16 @@ export const toCourseDTO = (course, extra = {}) => ({
   ...extra,
 });
 
+/**
+ * A row of GET /courses: everything but the Markdown description (up to
+ * 10,000 characters), which only the single-course endpoints send. The lists
+ * show cards and filter options, so this keeps a 100-course list small.
+ */
+export const toCourseListItem = (course, extra = {}) => {
+  const { description: _description, ...row } = toCourseDTO(course, extra);
+  return row;
+};
+
 /** The card-sized part of a course, for the student's course list and dashboard. */
 export const toCourseSummary = (course) => ({
   id: id(course._id),

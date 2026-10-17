@@ -176,7 +176,7 @@ export function LessonMaterialsPage() {
                 key={material.id}
                 className="flex flex-wrap items-center gap-3 px-4 py-3 sm:flex-nowrap"
               >
-                <span className="w-6 shrink-0 text-xs font-medium text-slate-400">{index + 1}</span>
+                <span className="w-6 shrink-0 text-xs font-medium text-slate-500">{index + 1}</span>
                 <Badge tone={TYPE_TONE[material.type]} className="shrink-0">
                   {MATERIAL_TYPE_LABEL[material.type]}
                 </Badge>

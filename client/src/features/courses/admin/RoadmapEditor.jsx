@@ -204,7 +204,7 @@ export function RoadmapEditor({ courseId, modules }) {
                         key={lesson.id}
                         className="flex flex-wrap items-center gap-3 px-4 py-2.5 sm:flex-nowrap"
                       >
-                        <span className="w-10 shrink-0 text-xs font-medium text-slate-400">
+                        <span className="w-10 shrink-0 text-xs font-medium text-slate-500">
                           {moduleIndex + 1}.{lessonIndex + 1}
                         </span>
                         <div className="min-w-0 flex-1">

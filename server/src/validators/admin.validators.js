@@ -9,10 +9,7 @@ const flag = z.enum(['true', 'false']).transform((value) => value === 'true');
 
 const search = z.string().trim().max(100, 'Search text is too long').optional();
 
-// A page number past this would make MongoDB's skip fail (a 500) instead of a clear 400.
-const page = z.coerce.number().int().min(1).max(10_000).default(1);
-
-const listPage = { ...pageQuery, page, limit: pageQuery.limit.default(20) };
+const listPage = { ...pageQuery, limit: pageQuery.limit.default(20) };
 
 /** GET /admin/submissions */
 export const reviewQueueQuery = z.object({
@@ -39,7 +36,6 @@ export const listStudentsQuery = z.object({
 /** GET /reports/courses */
 export const courseReportsQuery = z.object({
   ...pageQuery,
-  page,
   limit: pageQuery.limit.default(50),
   q: search,
   status: z.enum(Object.values(CONTENT_STATUS)).optional(),

@@ -1,159 +1,131 @@
 import { AuthLayout } from '../layouts/AuthLayout.jsx';
 import { DashboardLayout } from '../layouts/DashboardLayout.jsx';
-import { LoginPage } from '../features/auth/LoginPage.jsx';
-import { RegisterPage } from '../features/auth/RegisterPage.jsx';
-import { ProfilePage } from '../features/profile/ProfilePage.jsx';
-import { StudentDashboardPage } from '../features/dashboard/StudentDashboardPage.jsx';
 import { NotFoundPage } from '../pages/NotFoundPage.jsx';
-import { AdminCoursesPage } from '../features/courses/admin/AdminCoursesPage.jsx';
-import { CourseBuilderPage } from '../features/courses/admin/CourseBuilderPage.jsx';
-import { CourseCatalogPage } from '../features/courses/student/CourseCatalogPage.jsx';
-import { CourseDetailPage } from '../features/courses/student/CourseDetailPage.jsx';
+import { RouteErrorPage } from '../pages/RouteErrorPage.jsx';
 import { Spinner } from '../components/ui/Spinner.jsx';
 import { GuestOnly, HomeRedirect, RequireAuth } from './guards.jsx';
 
-// Lesson pages pull in the Markdown and syntax-highlighting libraries, so they
-// load on first use instead of with the main bundle.
-const lessonReader = (mode) => async () => {
-  const { LessonReaderPage } = await import('../features/lessons/LessonReaderPage.jsx');
-  return { element: <LessonReaderPage mode={mode} /> };
-};
-const lessonMaterials = async () => ({
-  Component: (await import('../features/lessons/admin/LessonMaterialsPage.jsx'))
-    .LessonMaterialsPage,
-});
-// Assignment pages use the Markdown renderer, code highlighting and the code editor.
-const assignmentPage = (name) => async () => ({
-  Component: (await import('../features/assignments/pages.js'))[name],
-});
-// The trainer's dashboard, review queue, students and reports (Phase 6), as one chunk.
-const trainerPage = (name) => async () => ({
-  Component: (await import('../features/trainer/pages.js'))[name],
-});
 // Shown while a lazy page loads on a fresh page load (deep link or reload).
+// Client-side navigations keep the current page and show the layout's loading bar.
 const pageLoading = (
   <div className="flex justify-center py-16 text-brand-600">
     <Spinner className="size-8" label="Loading page" />
   </div>
 );
 
+/**
+ * A page loaded on first use. The startup bundle holds only the shell
+ * (layouts, guards, auth and toasts); every page, and the libraries only
+ * pages use (forms and validation, Markdown, code highlighting, CodeMirror),
+ * arrive with the page. `title` names the browser tab.
+ */
+const page = (load, name, title, extra = {}) => ({
+  lazy: async () => ({ Component: (await load())[name] }),
+  hydrateFallbackElement: pageLoading,
+  handle: { title },
+  ...extra,
+});
+
+const authPages = () => import('../features/auth/pages.js');
+const coursesAdmin = () => import('../features/courses/admin/pages.js');
+const coursesStudent = () => import('../features/courses/student/pages.js');
+const profile = () => import('../features/profile/ProfilePage.jsx');
+const notifications = () => import('../features/notifications/NotificationsPage.jsx');
+// Lesson pages pull in the Markdown and syntax-highlighting libraries.
+const lessonReader = () => import('../features/lessons/LessonReaderPage.jsx');
+const lessonMaterials = () => import('../features/lessons/admin/LessonMaterialsPage.jsx');
+// Assignment pages use the Markdown renderer, code highlighting and the code editor.
+const assignments = () => import('../features/assignments/pages.js');
+// The trainer's dashboard, review queue, students and reports (Phase 6), as one chunk.
+const trainer = () => import('../features/trainer/pages.js');
+
+const readerPage = (mode, title) => ({
+  lazy: async () => {
+    const { LessonReaderPage } = await lessonReader();
+    return { element: <LessonReaderPage mode={mode} /> };
+  },
+  hydrateFallbackElement: pageLoading,
+  handle: { title },
+});
+
+/** The signed-in area of one role: the dashboard layout around its pages. */
+const dashboardArea = (path, role, children) => ({
+  path,
+  element: <RequireAuth roles={[role]} />,
+  errorElement: <RouteErrorPage />,
+  children: [
+    {
+      element: <DashboardLayout />,
+      // A page that fails to load or crashes is replaced inside the layout,
+      // so navigation keeps working.
+      children: [{ errorElement: <RouteErrorPage inLayout />, children }],
+    },
+  ],
+});
+
 export const routes = [
-  { path: '/', element: <HomeRedirect /> },
+  { path: '/', element: <HomeRedirect />, errorElement: <RouteErrorPage /> },
   {
     element: <GuestOnly />,
+    errorElement: <RouteErrorPage />,
     children: [
       {
         element: <AuthLayout />,
         children: [
-          { path: '/login', element: <LoginPage /> },
-          { path: '/register', element: <RegisterPage /> },
+          { path: '/login', ...page(authPages, 'LoginPage', 'Sign in') },
+          { path: '/register', ...page(authPages, 'RegisterPage', 'Create your account') },
         ],
       },
     ],
   },
-  {
-    path: '/admin',
-    element: <RequireAuth roles={['admin']} />,
-    children: [
-      {
-        element: <DashboardLayout />,
-        children: [
-          {
-            index: true,
-            lazy: trainerPage('TrainerDashboardPage'),
-            hydrateFallbackElement: pageLoading,
-          },
-          {
-            path: 'reviews',
-            lazy: trainerPage('ReviewQueuePage'),
-            hydrateFallbackElement: pageLoading,
-          },
-          {
-            path: 'students',
-            lazy: trainerPage('StudentsPage'),
-            hydrateFallbackElement: pageLoading,
-          },
-          {
-            path: 'students/:studentId',
-            lazy: trainerPage('StudentDetailPage'),
-            hydrateFallbackElement: pageLoading,
-          },
-          {
-            path: 'reports',
-            lazy: trainerPage('ReportsPage'),
-            hydrateFallbackElement: pageLoading,
-          },
-          {
-            path: 'reports/courses/:courseId',
-            lazy: trainerPage('CourseReportPage'),
-            hydrateFallbackElement: pageLoading,
-          },
-          { path: 'courses', element: <AdminCoursesPage /> },
-          { path: 'courses/:courseId', element: <CourseBuilderPage /> },
-          {
-            path: 'courses/:courseId/lessons/:lessonId',
-            lazy: lessonMaterials,
-            hydrateFallbackElement: pageLoading,
-          },
-          {
-            path: 'courses/:courseId/lessons/:lessonId/preview',
-            lazy: lessonReader('preview'),
-            hydrateFallbackElement: pageLoading,
-          },
-          {
-            path: 'courses/:courseId/assignments/new',
-            lazy: assignmentPage('AssignmentEditorPage'),
-            hydrateFallbackElement: pageLoading,
-          },
-          {
-            path: 'courses/:courseId/assignments/:assignmentId',
-            lazy: assignmentPage('AdminAssignmentPage'),
-            hydrateFallbackElement: pageLoading,
-          },
-          {
-            path: 'courses/:courseId/assignments/:assignmentId/edit',
-            lazy: assignmentPage('AssignmentEditorPage'),
-            hydrateFallbackElement: pageLoading,
-          },
-          {
-            path: 'courses/:courseId/assignments/:assignmentId/submissions/:submissionId',
-            lazy: assignmentPage('SubmissionReviewPage'),
-            hydrateFallbackElement: pageLoading,
-          },
-          { path: 'profile', element: <ProfilePage /> },
-        ],
-      },
-    ],
-  },
-  {
-    path: '/app',
-    element: <RequireAuth roles={['student']} />,
-    children: [
-      {
-        element: <DashboardLayout />,
-        children: [
-          { index: true, element: <StudentDashboardPage /> },
-          { path: 'courses', element: <CourseCatalogPage /> },
-          { path: 'courses/:courseId', element: <CourseDetailPage /> },
-          {
-            path: 'assignments',
-            lazy: assignmentPage('MyAssignmentsPage'),
-            hydrateFallbackElement: pageLoading,
-          },
-          {
-            path: 'courses/:courseId/lessons/:lessonId',
-            lazy: lessonReader('student'),
-            hydrateFallbackElement: pageLoading,
-          },
-          {
-            path: 'courses/:courseId/assignments/:assignmentId',
-            lazy: assignmentPage('AssignmentPage'),
-            hydrateFallbackElement: pageLoading,
-          },
-          { path: 'profile', element: <ProfilePage /> },
-        ],
-      },
-    ],
-  },
-  { path: '*', element: <NotFoundPage /> },
+  dashboardArea('/admin', 'admin', [
+    { index: true, ...page(trainer, 'TrainerDashboardPage', 'Dashboard') },
+    { path: 'reviews', ...page(trainer, 'ReviewQueuePage', 'Reviews') },
+    { path: 'students', ...page(trainer, 'StudentsPage', 'Students') },
+    { path: 'students/:studentId', ...page(trainer, 'StudentDetailPage', 'Student') },
+    { path: 'reports', ...page(trainer, 'ReportsPage', 'Reports') },
+    { path: 'reports/courses/:courseId', ...page(trainer, 'CourseReportPage', 'Course report') },
+    { path: 'courses', ...page(coursesAdmin, 'AdminCoursesPage', 'Courses') },
+    { path: 'courses/:courseId', ...page(coursesAdmin, 'CourseBuilderPage', 'Course builder') },
+    {
+      path: 'courses/:courseId/lessons/:lessonId',
+      ...page(lessonMaterials, 'LessonMaterialsPage', 'Lesson materials'),
+    },
+    {
+      path: 'courses/:courseId/lessons/:lessonId/preview',
+      ...readerPage('preview', 'Lesson preview'),
+    },
+    {
+      path: 'courses/:courseId/assignments/new',
+      ...page(assignments, 'AssignmentEditorPage', 'New assignment'),
+    },
+    {
+      path: 'courses/:courseId/assignments/:assignmentId',
+      ...page(assignments, 'AdminAssignmentPage', 'Assignment'),
+    },
+    {
+      path: 'courses/:courseId/assignments/:assignmentId/edit',
+      ...page(assignments, 'AssignmentEditorPage', 'Edit assignment'),
+    },
+    {
+      path: 'courses/:courseId/assignments/:assignmentId/submissions/:submissionId',
+      ...page(assignments, 'SubmissionReviewPage', 'Review submission'),
+    },
+    { path: 'notifications', ...page(notifications, 'NotificationsPage', 'Notifications') },
+    { path: 'profile', ...page(profile, 'ProfilePage', 'Profile') },
+  ]),
+  dashboardArea('/app', 'student', [
+    { index: true, ...page(coursesStudent, 'StudentDashboardPage', 'Dashboard') },
+    { path: 'courses', ...page(coursesStudent, 'CourseCatalogPage', 'Courses') },
+    { path: 'courses/:courseId', ...page(coursesStudent, 'CourseDetailPage', 'Course') },
+    { path: 'assignments', ...page(assignments, 'MyAssignmentsPage', 'Assignments') },
+    { path: 'courses/:courseId/lessons/:lessonId', ...readerPage('student', 'Lesson') },
+    {
+      path: 'courses/:courseId/assignments/:assignmentId',
+      ...page(assignments, 'AssignmentPage', 'Assignment'),
+    },
+    { path: 'notifications', ...page(notifications, 'NotificationsPage', 'Notifications') },
+    { path: 'profile', ...page(profile, 'ProfilePage', 'Profile') },
+  ]),
+  { path: '*', element: <NotFoundPage />, handle: { title: 'Page not found' } },
 ];

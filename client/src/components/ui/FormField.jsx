@@ -20,22 +20,23 @@ function Field({ id, label, hint, error, required, children }) {
         )}
       </label>
       {children}
-      {error ? (
+      {hint && (
+        <p id={`${id}-hint`} className="mt-1.5 text-sm text-slate-500">
+          {hint}
+        </p>
+      )}
+      {error && (
         <p id={`${id}-error`} className="mt-1.5 text-sm text-red-600">
           {error}
         </p>
-      ) : (
-        hint && (
-          <p id={`${id}-hint`} className="mt-1.5 text-sm text-slate-500">
-            {hint}
-          </p>
-        )
       )}
     </div>
   );
 }
 
-const describedBy = (id, error, hint) => (error ? `${id}-error` : hint ? `${id}-hint` : undefined);
+// The error first, so it is read before the hint.
+const describedBy = (id, error, hint) =>
+  [error && `${id}-error`, hint && `${id}-hint`].filter(Boolean).join(' ') || undefined;
 
 /** Labelled input wired for react-hook-form's `register()` and accessible error text. */
 export const TextField = forwardRef(function TextField(
@@ -73,6 +74,7 @@ export const TextAreaField = forwardRef(function TextAreaField(
         rows={rows}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy(id, error, hint)}
+        aria-required={required || undefined}
         className={controlClasses(Boolean(error))}
         {...props}
       />
@@ -93,6 +95,7 @@ export const SelectField = forwardRef(function SelectField(
         id={id}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy(id, error, hint)}
+        aria-required={required || undefined}
         className={controlClasses(Boolean(error))}
         {...props}
       >

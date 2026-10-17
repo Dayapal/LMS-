@@ -1,6 +1,6 @@
 # Training LMS: Design and Implementation Plan
 
-Status: **Phase 0 approved 2026-10-14**. All decisions in §11 confirmed by the trainer. Phases 1–6 approved (Phase 6 on 2026-10-17).
+Status: **Phase 0 approved 2026-10-14**. All decisions in §11 confirmed by the trainer. Phases 1–7 approved (Phase 7 on 2026-10-17).
 Date: 2026-10-14
 
 This document covers the architecture, data model, API, permissions, phases and acceptance criteria for the full-stack training LMS. Items marked **[DECISION Dn]** refer to the confirmed decisions in §11.
@@ -103,7 +103,7 @@ Admin pages live under `/admin/*` and student pages under `/app/*`. The route gu
 - Base path `/api/v1`.
 - Success: `{ success: true, data, meta? }`, where `meta` = `{ page, limit, total, totalPages }` for lists.
 - Error: `{ success: false, error: { code, message, details? } }`, with codes such as `VALIDATION_ERROR`, `UNAUTHENTICATED`, `FORBIDDEN`, `NOT_FOUND`, `CONFLICT`, `RATE_LIMITED`, `FILE_REJECTED`.
-- Pagination: `?page=1&limit=20` (max 100). Lists also take `?q=` and filters.
+- Pagination: `?page=1&limit=20` (max 100). Lists also take `?q=` and filters. Since Phase 7 every list refuses a `page` above 10,000 with a 400 (MongoDB's skip would otherwise fail with a 500), and `GET /courses` rows leave out the Markdown `description`, which only the single-course endpoints send.
 - When students request unpublished content or content they're not enrolled in, the API returns **404, not 403**, so it doesn't reveal what exists.
 - Ordering: every ordered entity has an integer `order`. Reordering goes through `PATCH …/reorder` with `{ ids: [...] }`, which runs as a single `bulkWrite`.
 
@@ -175,6 +175,17 @@ As built in Phase 4:
 
 **Notification**: `user`, `type` (`material_published` | `assignment_published` | `submission_reviewed` | `resubmit_requested` | `deadline_soon` | `submission_received`), `title`, `body`, `link`, `readAt`. Index: `{user, readAt, createdAt}`. Old read notifications are removed with a TTL of 90 days.
 
+As built in Phase 7:
+
+- **Fields:** the spec's fields plus `key`, which names the event (`material_published:<material>`, `assignment_published:<assignment>`, `submission_feedback:<submission>`, `deadline_soon:<assignment>:<due date>`, `submission_received:<submission>`). `{user, key}` is unique, so an event never notifies the same person twice. `createdAt` is set by the server (no `updatedAt`). `link` is an in-app path built by the server; the client follows only paths starting with a single `/`.
+- **Who is told, and when:**
+  - `material_published` and `assignment_published`: active students with an active enrollment, when the item moves to published (created as published, or changed to published) **and** students can already see it (its lesson or module and course published). Publishing again, editing, or publishing the lesson, module or course later sends nothing.
+  - `submission_reviewed` / `resubmit_requested`: the student, one notification per attempt (shared key). A later review or request on the same attempt updates it, makes it unread and moves it to the top. The text names the assignment and attempt only: no marks or feedback.
+  - `submission_received`: every active trainer, for each new attempt (first or resubmission), not for edits.
+  - `deadline_soon`: worked out on request (spec §10's option), when a student reads their unread count or list, at most once every 5 minutes per student: published assignments they can see, due within 24 hours, not handed in and still open. The key includes the due date, so moving the deadline reminds again. Trainers get none.
+- **Never fails the action:** like the activity log, a failed write is logged (event type only) and the request carries on. Seeding writes models directly and sends no notifications; `seed --reset` deletes them.
+- **Indexes:** unique `{user, key}`; `{user, readAt, createdAt, _id}` (unread count and list); `{user, createdAt, _id}` (full list); TTL `{readAt}` (90 days; unread ones never expire).
+
 **Activity**: `user`, `course`, `type` (`lesson_completed` | `submission_created` | `login` | …), `ref`, `createdAt`. Append-only. Feeds "recent activity" and the learning-activity reports. TTL of 1 year.
 
 As built in Phase 6:
@@ -243,6 +254,7 @@ As built, all four are for students only (the trainer gets 403). `GET /me/assign
 As built, all are trainer-only (students get 403). `GET /admin/submissions` lists each student's latest attempt per assignment and also takes `assignment`, `q` (student name or email, or assignment title) and `sort`; its `status` is a review state (`submitted`, `resubmitted` = a new attempt waiting, `resubmit_requested`, `reviewed`) and `meta.counts` has every state. `GET /admin/students` filters by `course`, `enrollment` (`active`/`pending`/`removed`/`none`) and `learning` (`to_review`, `overdue`, `not_started`, `in_progress`, `completed`). `GET /reports/courses` (course-wise summary rows with `meta.totals`) was added for the reports index; the dashboard's course rows are the same numbers. On these endpoints `page` is capped at 10,000 (a 400 beyond it; the Phase 2–5 lists don't have the cap yet). Grading still goes through the Phase 4 endpoints. See `docs/phase-reports/phase-6.md`.
 
 **Phase 7 (notifications):** `GET /notifications`, `PATCH /notifications/:id/read`, `PATCH /notifications/read-all`, `GET /notifications/unread-count`. The client polls the unread count every 60 s. **[DECISION D6]**
+As built, all four are for any signed-in user and only ever touch their own notifications (someone else's id is a 404). `GET /notifications` takes `status` (`all`/`unread`), `page` and `limit` (≤ 50, default 20) and returns `meta.unread`; the two `PATCH` endpoints also return `meta.unread`, so the badge updates without another request. The client polls once per tab (not per bell), only while the tab is visible, and refreshes on return to the tab. See `docs/phase-reports/phase-7.md`.
 
 ## 8. Validation and upload rules
 
@@ -302,7 +314,7 @@ Each phase ends with passing tests, an updated README, a phase report in `docs/p
 | **7** Notifications & polish | Notification model, triggers, bell + list, deadline-soon job (on-request check or a daily `node-cron` task); permission audit; accessibility pass (labels, focus, contrast, keyboard); responsive review; skeletons, empty states and error states everywhere; index review  | Notifications fire for every event in §5. The permission-audit test suite (every endpoint × role) passes. No obvious accessibility issues on key pages                                                                                                   |
 | **8** Testing & deployment   | Playwright E2E for the critical flows, bug fixes, production build, S3 storage driver verified, env docs, deployment guide                                                                                                                                                   | The E2E suite passes against a production build. The README has full setup and deployment instructions                                                                                                                                                   |
 
-**Progress:** Phases 0–6 are approved, each with its report in `docs/phase-reports/`. Phase 7 is next.
+**Progress:** Phases 0–6 are approved, each with its report in `docs/phase-reports/`. Phase 8 is next. Decided when approving Phase 7: notifications stay limited to the six types in §5, axios stays, and the screen reader and axe audit and the Safari, Firefox and real-device checks belong to Phase 8.
 
 ## 11. Decisions (confirmed 2026-10-14)
 

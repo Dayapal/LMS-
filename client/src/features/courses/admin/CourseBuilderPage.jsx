@@ -8,6 +8,7 @@ import { EnrollmentsPanel } from './EnrollmentsPanel.jsx';
 import { CourseAssignmentsPanel } from '../../assignments/admin/CourseAssignmentsPanel.jsx';
 import { Button } from '../../../components/ui/Button.jsx';
 import { StatusBadge } from '../../../components/ui/Badge.jsx';
+import { TabPanel, Tabs } from '../../../components/ui/Tabs.jsx';
 import { ConfirmDialog } from '../../../components/ui/ConfirmDialog.jsx';
 import { ErrorState, PageHeader, Skeleton } from '../../../components/ui/Feedback.jsx';
 import { useToast } from '../../../hooks/useToast.js';
@@ -161,36 +162,13 @@ export function CourseBuilderPage() {
         </div>
       </dl>
 
-      <div
-        role="tablist"
-        aria-label="Course sections"
-        className="flex gap-1 border-b border-slate-200"
-      >
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            role="tab"
-            id={`tab-${t.id}`}
-            aria-selected={tab === t.id}
-            aria-controls={`panel-${t.id}`}
-            onClick={() => setTab(t.id)}
-            className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium ${
-              tab === t.id
-                ? 'border-brand-600 text-brand-700'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+      <Tabs label="Course sections" tabs={TABS} value={tab} onChange={setTab} idPrefix="course" />
 
-      <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
+      <TabPanel idPrefix="course" tab={tab}>
         {tab === 'roadmap' && <RoadmapEditor courseId={course.id} modules={modules} />}
         {tab === 'assignments' && <CourseAssignmentsPanel courseId={course.id} modules={modules} />}
         {tab === 'students' && <EnrollmentsPanel courseId={course.id} />}
-      </div>
+      </TabPanel>
 
       <CourseFormModal
         open={editing}

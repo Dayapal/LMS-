@@ -9,6 +9,7 @@ import {
 import { ApiError } from '../utils/ApiError.js';
 import { getLessonForViewer, visibleTo } from './access.service.js';
 import { deleteFilesIfUnused } from './file.service.js';
+import { materialPublished } from './notification.service.js';
 import { applyOrder, nextOrder } from './ordering.js';
 import { toMaterialDTO } from './serializers.js';
 
@@ -65,6 +66,7 @@ export async function createMaterial(lessonId, { type, fileId, ...data }) {
   };
   if (type === MATERIAL_TYPES.FILE) doc.file = (await resolveFile(fileId, lesson.course))._id;
   const material = await Material.create(doc);
+  await materialPublished(material, null);
   await material.populate('file');
   return toMaterialDTO(material);
 }
@@ -92,8 +94,10 @@ export async function updateMaterial(materialId, data) {
       material.file = file._id;
     }
   }
+  const previousStatus = material.status;
   material.set(changes);
   await material.save();
+  await materialPublished(material, previousStatus);
   if (replacedFile) await deleteFilesIfUnused([replacedFile]);
   await material.populate('file');
   return toMaterialDTO(material);

@@ -71,7 +71,7 @@ function CourseForm({ course, onCancel, onSubmit }) {
         error={errors.description?.message}
         {...register('description')}
       />
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <SelectField label="Level" error={errors.level?.message} {...register('level')}>
           {Object.entries(LEVEL_LABEL).map(([value, label]) => (
             <option key={value} value={value}>

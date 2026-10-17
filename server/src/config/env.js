@@ -92,6 +92,12 @@ function loadConfig() {
       uploadWindowMs: 60 * 60 * 1000,
       uploadMax: env.UPLOAD_RATE_LIMIT_MAX,
     },
+    notifications: {
+      // "Due soon" reminders cover assignments due within this many hours.
+      deadlineSoonHours: 24,
+      // How often one student's reminders are worked out (they poll every 60 s).
+      deadlineCheckIntervalMs: 5 * 60 * 1000,
+    },
     storage: {
       driver: env.STORAGE_DRIVER,
       localDir: path.resolve(SERVER_DIR, env.UPLOAD_DIR ?? 'uploads'),

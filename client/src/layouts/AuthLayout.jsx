@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router';
 import { Logo } from '../components/Logo.jsx';
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js';
 
 const HIGHLIGHTS = [
   'Structured roadmaps for MERN, Java Full-Stack and DSA',
@@ -8,6 +9,7 @@ const HIGHLIGHTS = [
 ];
 
 export function AuthLayout() {
+  useDocumentTitle();
   return (
     <div className="grid min-h-screen lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
       <aside className="hidden flex-col justify-between bg-brand-900 p-10 text-brand-100 lg:flex">

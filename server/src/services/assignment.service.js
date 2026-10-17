@@ -15,6 +15,7 @@ import { ApiError } from '../utils/ApiError.js';
 import { paginationMeta, skipFor } from '../utils/pagination.js';
 import { assignmentsVisibleTo, getAssignmentForViewer, isAdmin } from './access.service.js';
 import { deleteFilesIfUnused } from './file.service.js';
+import { assignmentPublished } from './notification.service.js';
 import { toAssignmentDTO, toPlacement, toSubmissionDTO } from './serializers.js';
 import { latestAttemptStages } from './submissionQueries.js';
 import { closesAt, editCheck, newAttemptCheck, studentStatus } from './submissionRules.js';
@@ -219,6 +220,7 @@ export async function createAssignment(
     course: course._id,
     createdBy: user._id,
   });
+  await assignmentPublished(assignment, null);
   return getAssignment(user, assignment._id);
 }
 
@@ -257,6 +259,7 @@ export async function updateAssignment(user, assignmentId, data) {
     assignment.attachments = next;
   }
 
+  const previousStatus = assignment.status;
   assignment.set(changes);
   const current = assignment.latePolicy;
   assignment.latePolicy = normalizeLatePolicy(
@@ -268,6 +271,7 @@ export async function updateAssignment(user, assignmentId, data) {
     },
   );
   await assignment.save();
+  await assignmentPublished(assignment, previousStatus);
   await deleteFilesIfUnused(removedAttachments);
   return getAssignment(user, assignment._id);
 }

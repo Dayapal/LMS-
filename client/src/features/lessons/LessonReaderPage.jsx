@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { useLesson, useLessonNavigation, useMaterials } from './api.js';
 import { LessonMaterials } from './components/MaterialBlock.jsx';
@@ -6,12 +6,11 @@ import { LessonAssignments } from '../assignments/components/AssignmentSections.
 import { formatDateTime } from '../assignments/format.js';
 import { formatMinutes } from '../courses/format.js';
 import { useLessonCompletion, useRecordLessonVisit } from '../progress/api.js';
-import { lessonsDoneText } from '../progress/format.js';
+import { completionMessage } from '../progress/format.js';
 import { Icon } from '../../components/Icon.jsx';
 import { Alert } from '../../components/ui/Alert.jsx';
 import { Badge, StatusBadge } from '../../components/ui/Badge.jsx';
 import { Button } from '../../components/ui/Button.jsx';
-import { useToast } from '../../hooks/useToast.js';
 import { EmptyState, ErrorState, Skeleton } from '../../components/ui/Feedback.jsx';
 import { getErrorMessage } from '../../utils/apiErrors.js';
 
@@ -52,7 +51,7 @@ function LessonNav({ navigation, courseId, paths }) {
     </Link>
   );
   return (
-    <nav aria-label="Lesson navigation" className="grid gap-3 sm:grid-cols-2">
+    <nav aria-label="Lesson navigation" className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {navigation.previous && card(navigation.previous, 'previous')}
       {navigation.next && card(navigation.next, 'next')}
     </nav>
@@ -61,55 +60,61 @@ function LessonNav({ navigation, courseId, paths }) {
 
 /**
  * The student's "Mark as complete" switch. The server decides what counts and
- * answers with the new course progress, which the toast reports.
+ * answers with the new course progress. The result is shown (and read out)
+ * inside this panel rather than as a toast, so nothing covers the
+ * "Next lesson" link below it.
  */
 function CompletionControl({ lesson }) {
-  const toast = useToast();
   const completion = useLessonCompletion(lesson.id);
   const { completed, completedAt } = lesson.completion;
+  const [feedback, setFeedback] = useState(null);
 
   const toggle = () =>
     completion.mutate(!completed, {
-      onSuccess: (result) => {
-        const progress = result.courseProgress;
-        if (!result.completed) toast.success('Lesson marked as not completed.');
-        else if (progress.completed)
-          toast.success('You have completed every lesson in this course.');
-        else
-          toast.success(`Lesson completed. ${progress.percent}% · ${lessonsDoneText(progress)}.`);
-      },
-      onError: (error) => toast.error(getErrorMessage(error)),
+      onSuccess: (result) => setFeedback({ tone: 'success', text: completionMessage(result) }),
+      onError: (error) => setFeedback({ tone: 'error', text: getErrorMessage(error) }),
     });
 
   return (
     <section
       aria-label="Lesson completion"
-      className={`flex flex-col gap-3 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between ${
+      className={`rounded-xl border px-5 py-4 ${
         completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-white'
       }`}
     >
-      {completed ? (
-        <p className="flex items-center gap-2 text-sm text-emerald-800">
-          <Icon name="check" className="size-5 shrink-0" />
-          <span>
-            <span className="font-semibold">Completed</span>
-            {completedAt && <> on {formatDateTime(completedAt)}</>}
-          </span>
-        </p>
-      ) : (
-        <p className="text-sm text-slate-600">
-          Worked through the materials? Mark the lesson as complete to track your progress.
-        </p>
-      )}
-      <Button
-        variant={completed ? 'secondary' : 'primary'}
-        size="sm"
-        loading={completion.isPending}
-        onClick={toggle}
-        className="shrink-0"
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {completed ? (
+          <p className="flex items-center gap-2 text-sm text-emerald-800">
+            <Icon name="check" className="size-5 shrink-0" />
+            <span>
+              <span className="font-semibold">Completed</span>
+              {completedAt && <> on {formatDateTime(completedAt)}</>}
+            </span>
+          </p>
+        ) : (
+          <p className="text-sm text-slate-600">
+            Worked through the materials? Mark the lesson as complete to track your progress.
+          </p>
+        )}
+        <Button
+          variant={completed ? 'secondary' : 'primary'}
+          size="sm"
+          loading={completion.isPending}
+          onClick={toggle}
+          className="shrink-0"
+        >
+          {completed ? 'Mark as not completed' : 'Mark as complete'}
+        </Button>
+      </div>
+      {/* Always rendered, so screen readers announce each new message. */}
+      <p
+        role="status"
+        className={`text-sm ${feedback ? 'mt-3' : ''} ${
+          feedback?.tone === 'error' ? 'text-red-700' : 'text-slate-700'
+        }`}
       >
-        {completed ? 'Mark as not completed' : 'Mark as complete'}
-      </Button>
+        {feedback?.text}
+      </p>
     </section>
   );
 }

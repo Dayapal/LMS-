@@ -9,6 +9,7 @@ import { TextField } from '../../../components/ui/FormField.jsx';
 import { ConfirmDialog } from '../../../components/ui/ConfirmDialog.jsx';
 import { Card, CardBody, CardHeader } from '../../../components/ui/Card.jsx';
 import { EmptyState, ErrorState, Pagination, Skeleton } from '../../../components/ui/Feedback.jsx';
+import { FilterPills } from '../../../components/ui/FilterPills.jsx';
 import { useToast } from '../../../hooks/useToast.js';
 import { applyFieldErrors, getErrorMessage } from '../../../utils/apiErrors.js';
 
@@ -107,29 +108,16 @@ export function EnrollmentsPanel({ courseId }) {
           title="Students"
           description="Approve enrollment requests and manage who can study this course."
         />
-        <div
-          className="flex flex-wrap gap-1 border-b border-slate-200 px-5 py-3 sm:px-6"
-          role="tablist"
-        >
-          {FILTERS.map((filter) => (
-            <button
-              key={filter.value}
-              type="button"
-              role="tab"
-              aria-selected={status === filter.value}
-              onClick={() => {
-                setStatus(filter.value);
-                setPage(1);
-              }}
-              className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
-                status === filter.value
-                  ? 'bg-brand-50 text-brand-700'
-                  : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              {filter.label}
-            </button>
-          ))}
+        <div className="border-b border-slate-200 px-5 py-3 sm:px-6">
+          <FilterPills
+            label="Show students"
+            options={FILTERS}
+            value={status}
+            onChange={(value) => {
+              setStatus(value);
+              setPage(1);
+            }}
+          />
         </div>
         <CardBody className="space-y-4">
           {isPending ? (

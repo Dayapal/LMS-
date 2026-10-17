@@ -62,7 +62,10 @@ export function CourseCatalogPage() {
       </div>
 
       {isPending ? (
-        <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" aria-label="Loading courses">
+        <ul
+          className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3"
+          aria-label="Loading courses"
+        >
           {[0, 1, 2].map((i) => (
             <li key={i} className="overflow-hidden rounded-xl border border-slate-200 bg-white">
               <Skeleton className="h-36 rounded-none" />
@@ -84,7 +87,7 @@ export function CourseCatalogPage() {
         </EmptyState>
       ) : (
         <>
-          <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {data.items.map((course) => (
               <li key={course.id}>
                 <Link

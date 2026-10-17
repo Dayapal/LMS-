@@ -234,7 +234,7 @@ function AssignmentForm({ courseId, modules, assignment }) {
       <Card>
         <CardHeader title="Basics" />
         <CardBody className="space-y-5">
-          <div className="grid gap-5 sm:grid-cols-[2fr_1fr]">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
             <TextField
               label="Title"
               required
@@ -274,7 +274,7 @@ function AssignmentForm({ courseId, modules, assignment }) {
           description={`Times are in your time zone (${localTimeZone()}). Students see them in theirs.`}
         />
         <CardBody className="space-y-5">
-          <div className="grid gap-5 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
             <TextField
               label="Due"
               type="datetime-local"
@@ -315,7 +315,7 @@ function AssignmentForm({ courseId, modules, assignment }) {
             </span>
           </label>
           {allowLate && (
-            <div className="grid gap-5 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
               <TextField
                 label="Accept late work until"
                 type="datetime-local"
@@ -343,7 +343,7 @@ function AssignmentForm({ courseId, modules, assignment }) {
             <legend className="mb-3 text-sm font-medium text-slate-700">
               Accepted submission types
             </legend>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {SUBMISSION_TYPES.map((type) => (
                 <label key={type.value} className="flex items-center gap-3 text-sm text-slate-700">
                   <input
@@ -386,7 +386,7 @@ function AssignmentForm({ courseId, modules, assignment }) {
             {tab('write', 'Write')}
             {tab('preview', 'Preview')}
           </div>
-          <div className="grid gap-5 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
             <div className={`[&_textarea]:font-mono ${pane === 'write' ? '' : 'max-lg:hidden'}`}>
               <TextAreaField
                 label="Instructions (Markdown)"

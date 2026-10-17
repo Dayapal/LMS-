@@ -63,6 +63,16 @@ npm run seed -- --reset  # dev only: wipe course data + demo students, then rese
   - Student PDFs go through `POST /assignments/:id/files` (`parseSubmissionUpload`, 10 MB). The route checks role, rate limit and the right to submit _before_ the body is read. Trainer handouts use `POST /files` with `purpose=assignment`.
   - `deleteFilesIfUnused` counts material, assignment-attachment and submission references; keep it that way when adding file users.
   - The assignment pages are lazy-loaded as one chunk through `features/assignments/pages.js`.
+- **Notifications (Phase 7):**
+  - Services call the event functions in `services/notification.service.js` (`materialPublished`, `assignmentPublished`, `submissionFeedback`, `submissionReceived`) after the write. Like `recordActivity`, they never throw. `notify()` upserts on the unique `{user, key}`, so pick a key per event; pass `{ refresh: true }` only when a repeat should re-surface it.
+  - "Due soon" reminders are worked out on request in `services/deadlineReminders.js` (throttled per student by `config.notifications.deadlineCheckIntervalMs`; tests set it to 0 or call `resetDeadlineChecks()`).
+  - Client: `DashboardLayout` calls `useNotificationPolling()` once and passes the count to both bells. Mutations update the count from `meta.unread`; don't add a second poll.
+- **Permission audit:** `tests/permission-audit.test.js` reads the route files and fails when an endpoint has no row in its matrix. Add a row for every new route.
+- **Client routes and accessibility (Phase 7):**
+  - Every page in `routes/routes.jsx` is lazy (`page(load, name, title)`), with `handle.title` for the tab title (`useDocumentTitle`) and `RouteErrorPage` boundaries. Keep libraries that only pages use (zod, react-hook-form, Markdown, CodeMirror) out of the shell: layouts, guards, contexts.
+  - CodeMirror grammars load per language in `CodeEditor.jsx`.
+  - Shared a11y pieces: `useFocusTrap` (modals, drawer), `Tabs`/`TabPanel` (real tabs only), `FilterPills` (filters: `aria-pressed`, not tabs). Toasts sit at the top; show a result next to its control when a toast could hide what the user does next.
+  - Single-column grids need `grid-cols-1` (not an implicit column), or long `truncate` text widens the page on phones.
 - **Rendering untrusted content (client):** use `components/content/MarkdownView.jsx` (react-markdown + remark-gfm + rehype-sanitize; raw HTML is never rendered) and `CodeBlock.jsx` (prism-react-renderer). Java and Bash grammars are registered through `languages.js`, which must keep importing `prismGlobal.js` first. `MarkdownView`, the lesson pages and CodeMirror are lazy-loaded to keep the main bundle small.
 - **Enrollment (D5):** a student `POST /courses/:id/enroll` creates a `pending` request. The trainer approves it or sets it to `removed` through `/admin/enrollments`, or enrolls a student directly by email.
 - **Seeds:** the course roadmaps are data files in `server/src/seeds/data/{mern,java,dsa}.js`. A course is created only when its slug is absent, so reseeding never overwrites trainer edits.
@@ -85,4 +95,6 @@ npm run seed -- --reset  # dev only: wipe course data + demo students, then rese
 - Client tests stub the API with `vi.spyOn(coursesApi, 'list')` and so on. Hooks call `coursesApi.*` at run time, so spies work without module mocks. `src/test/renderWithProviders.jsx` provides the query client, router, auth and toast context.
 - `bcrypt` uses only the first 72 bytes of a password, so password validators cap passwords at 72 bytes on both client and server.
 - On Windows, `node --watch` (used by `npm run dev`) was seen restarting the API right after a helper script read `server/.env` (it watches the `--env-file`). Scripts that need those values while the dev server runs should read a copy.
+- Express 5's query parser keeps `a[$ne]=x` as a literal key, which zod strips, so bracketed query parameters never become operators (tested). Every list's `page` is capped at 10,000 through the shared `pageQuery`.
+- jsdom applies no CSS, so both notification bells (sidebar and mobile header) are in the DOM in tests; pick one with `findAllByRole(...)[0]`.
 - jsdom's `Blob` has no `.text()`; read Blobs with `FileReader` in client code that tests exercise (see `features/lessons/api.js`).

@@ -15,7 +15,8 @@ The design and the phase plan are in [docs/superpowers/specs/2026-10-14-training
 | 4     | Assignments and submissions                 | ✅ Approved ([report](docs/phase-reports/phase-4.md)) |
 | 5     | Student progress and learning tracking      | ✅ Approved ([report](docs/phase-reports/phase-5.md)) |
 | 6     | Review queue, student management, analytics | ✅ Approved ([report](docs/phase-reports/phase-6.md)) |
-| 7–8   | Notifications, deployment                   | ⏳ Not started                                        |
+| 7     | Notifications, performance, accessibility   | ✅ Approved ([report](docs/phase-reports/phase-7.md)) |
+| 8     | Testing and deployment                      | ⏳ Not started                                        |
 
 ## Requirements
 
@@ -106,6 +107,22 @@ The full design is in §11a of the spec.
 - Removing a student from a course or archiving a course never deletes their progress, submissions or activity; the trainer pages keep showing them.
 - Progress counts the lessons students can see (published lessons in published modules) and rounds down. "Overdue" means past the due date with nothing handed in, by a student actively enrolled. Review counts use each student's latest attempt.
 - Student activity (sign-ups, sign-ins, enrollment changes, completed lessons, submissions and reviews) is kept for a year. It records ids only: no passwords, tokens, addresses or submitted work.
+
+## Notifications
+
+- The bell (top of the sidebar, or the top bar on phones) shows how many notifications are unread; it opens the latest six, and **View all notifications** opens the full list (`/app/notifications` or `/admin/notifications`) with an Unread filter. Opening a notification marks it read and goes to what it is about.
+- **Students** are told when a study material or assignment is published in a course they are enrolled in (only once it is visible to them), when the trainer reviews their work or asks for another attempt, and when an assignment they haven't handed in is due within 24 hours.
+- **The trainer** is told when a student hands in an attempt, with a link to its review page.
+- Each event notifies a person once; a changed review updates the existing notification. Read notifications are deleted after 90 days.
+- The app asks the server for the unread count once a minute while the tab is visible (no WebSockets). "Due soon" reminders are worked out at most every 5 minutes per student, so one can appear a few minutes after an assignment comes within 24 hours of its deadline, and only while the student uses the app (no email). Everyone only ever sees and changes their own notifications.
+
+## Performance and accessibility
+
+- Every page is loaded on first use. The JavaScript loaded at startup is the app shell only (435 kB, 140 kB gzip, down from 617 kB / 192 kB); forms, Markdown, code highlighting and the code editor arrive with the pages that use them, and each code editor language loads when it is first needed.
+- A page that can't load (offline, or a new release) shows a message with **Reload** instead of a blank screen.
+- Keyboard: a skip link, focus moves to the new page after navigation, dialogs and the mobile menu keep focus inside and return it, the course builder's tabs use the arrow keys. Each page names the browser tab.
+- Messages (toasts) appear at the top of the screen, pause while the pointer or focus is on them, and never cover the lesson's **Next lesson** link: marking a lesson complete reports the result inside the lesson's completion panel.
+- Animations stop when the system asks for reduced motion. Every page works at 390 px wide without sideways scrolling.
 
 ## Project layout
 

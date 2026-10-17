@@ -57,7 +57,7 @@ describe('AdminCoursesPage', () => {
       meta: { page: 1, limit: 12, total: 0, totalPages: 1 },
     });
     renderWithProviders(routes, { path: '/admin/courses', user: ADMIN });
-    await userEvent.click(await screen.findByRole('tab', { name: 'Drafts' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Drafts' }));
     await waitFor(() =>
       expect(list).toHaveBeenLastCalledWith({ page: 1, limit: 12, status: 'draft' }),
     );

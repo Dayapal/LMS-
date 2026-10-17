@@ -77,6 +77,19 @@ async function findLessonForViewer(user, lessonId) {
   return visible ? { lesson, module, course, enrollment } : null;
 }
 
+/**
+ * Whether every student with an active enrollment in its course can open the
+ * lesson: the lesson, its module and its course are published.
+ */
+export async function lessonOpenToEnrolledStudents(lesson) {
+  if (!isPublished(lesson)) return false;
+  const [module, course] = await Promise.all([
+    CourseModule.findById(lesson.module).select('status').lean(),
+    Course.findById(lesson.course).select('status').lean(),
+  ]);
+  return isPublished(module) && isPublished(course);
+}
+
 /** Lesson content (the lesson, its materials and navigation) for `user`, or 404. */
 export async function getLessonForViewer(user, lessonId) {
   const found = await findLessonForViewer(user, lessonId);

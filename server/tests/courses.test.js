@@ -82,6 +82,22 @@ describe('GET /courses', () => {
     expect(drafts.body.data.map((c) => c.status)).toEqual(['draft']);
   });
 
+  it('leaves the Markdown description out of list rows; the course itself has it', async () => {
+    const course = await Course.create({
+      title: 'Long read',
+      slug: 'long-read',
+      status: 'published',
+      description: 'x'.repeat(9_000),
+    });
+    const list = await api(app).get('/api/v1/courses').set(asAdmin());
+    expect(list.body.data).toHaveLength(4);
+    for (const row of list.body.data) expect(row).not.toHaveProperty('description');
+    expect(list.body.data[0]).toMatchObject({ title: expect.any(String), summary: '' });
+
+    const one = await api(app).get(`/api/v1/courses/${course.id}`).set(bearer(student));
+    expect(one.body.data.description).toHaveLength(9_000);
+  });
+
   it('shows students only published courses, even when they ask for drafts', async () => {
     const res = await api(app).get('/api/v1/courses?status=draft').set(bearer(student));
     expect(res.status).toBe(200);

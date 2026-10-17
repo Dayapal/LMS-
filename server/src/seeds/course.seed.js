@@ -9,6 +9,7 @@ import {
   ENROLLMENT_STATUS,
   Lesson,
   LessonProgress,
+  Notification,
   ROLES,
   Session,
   User,
@@ -178,16 +179,18 @@ export async function removeDemoStudents() {
   await Promise.all([
     Session.deleteMany({ user: trusted({ $in: ids }) }),
     Activity.deleteMany({ user: trusted({ $in: ids }) }),
+    Notification.deleteMany({ user: trusted({ $in: ids }) }),
     User.deleteMany({ _id: trusted({ $in: ids }) }),
   ]);
 }
 
-/** Removes all course content, materials, assignments, files, enrollments, progress and activity. Users are kept. Development only. */
+/** Removes all course content, materials, assignments, files, enrollments, progress, activity and notifications. Users are kept. Development only. */
 export async function resetCourseData() {
   await resetAssignments();
   await resetMaterials();
   await Promise.all([
     Activity.deleteMany({}),
+    Notification.deleteMany({}),
     LessonProgress.deleteMany({}),
     Enrollment.deleteMany({}),
     Lesson.deleteMany({}),

@@ -82,3 +82,16 @@ export const ACTIVITY_TYPES = Object.freeze({
   SUBMISSION_REVIEWED: 'submission_reviewed',
   RESUBMISSION_REQUESTED: 'resubmission_requested',
 });
+
+/**
+ * In-app notifications (spec §5). The first five go to students, the last to
+ * the trainer.
+ */
+export const NOTIFICATION_TYPES = Object.freeze({
+  MATERIAL_PUBLISHED: 'material_published',
+  ASSIGNMENT_PUBLISHED: 'assignment_published',
+  SUBMISSION_REVIEWED: 'submission_reviewed',
+  RESUBMIT_REQUESTED: 'resubmit_requested',
+  DEADLINE_SOON: 'deadline_soon',
+  SUBMISSION_RECEIVED: 'submission_received',
+});

@@ -1,26 +1,42 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import CodeMirror, { EditorView } from '@uiw/react-codemirror';
-import { css } from '@codemirror/lang-css';
-import { html } from '@codemirror/lang-html';
-import { java } from '@codemirror/lang-java';
-import { javascript } from '@codemirror/lang-javascript';
-import { json } from '@codemirror/lang-json';
-import { sql } from '@codemirror/lang-sql';
-import { yaml } from '@codemirror/lang-yaml';
 
-// Bash and plain text are edited without highlighting.
-const LANGUAGE_EXTENSIONS = {
-  javascript: () => javascript(),
-  jsx: () => javascript({ jsx: true }),
-  typescript: () => javascript({ typescript: true }),
-  tsx: () => javascript({ jsx: true, typescript: true }),
-  java: () => java(),
-  sql: () => sql(),
-  html: () => html(),
-  css: () => css(),
-  json: () => json(),
-  yaml: () => yaml(),
+// Each grammar is its own chunk, fetched the first time an editor needs it,
+// so the editor itself stays small. Bash and plain text have no highlighting.
+const LANGUAGE_LOADERS = {
+  javascript: () => import('@codemirror/lang-javascript').then((m) => m.javascript()),
+  jsx: () => import('@codemirror/lang-javascript').then((m) => m.javascript({ jsx: true })),
+  typescript: () =>
+    import('@codemirror/lang-javascript').then((m) => m.javascript({ typescript: true })),
+  tsx: () =>
+    import('@codemirror/lang-javascript').then((m) =>
+      m.javascript({ jsx: true, typescript: true }),
+    ),
+  java: () => import('@codemirror/lang-java').then((m) => m.java()),
+  sql: () => import('@codemirror/lang-sql').then((m) => m.sql()),
+  html: () => import('@codemirror/lang-html').then((m) => m.html()),
+  css: () => import('@codemirror/lang-css').then((m) => m.css()),
+  json: () => import('@codemirror/lang-json').then((m) => m.json()),
+  yaml: () => import('@codemirror/lang-yaml').then((m) => m.yaml()),
 };
+
+/** The grammar extension for `language`, or null until it has loaded (or if there is none). */
+function useLanguageExtension(language) {
+  const [loaded, setLoaded] = useState({ language: null, extension: null });
+  useEffect(() => {
+    const load = LANGUAGE_LOADERS[language];
+    if (!load) return undefined;
+    let cancelled = false;
+    load()
+      .then((extension) => !cancelled && setLoaded({ language, extension }))
+      // Without the grammar the editor still works, just without colours.
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [language]);
+  return loaded.language === language ? loaded.extension : null;
+}
 
 /**
  * CodeMirror editor for trainer code snippets. Loaded lazily (see
@@ -35,16 +51,17 @@ export default function CodeEditor({
   describedBy,
   takeFocus,
 }) {
+  const languageExtension = useLanguageExtension(language);
   const extensions = useMemo(
     () => [
-      ...(LANGUAGE_EXTENSIONS[language] ? [LANGUAGE_EXTENSIONS[language]()] : []),
+      ...(languageExtension ? [languageExtension] : []),
       EditorView.lineWrapping,
       EditorView.contentAttributes.of({
         'aria-labelledby': labelledBy,
         ...(describedBy && { 'aria-describedby': describedBy }),
       }),
     ],
-    [language, labelledBy, describedBy],
+    [languageExtension, labelledBy, describedBy],
   );
 
   return (

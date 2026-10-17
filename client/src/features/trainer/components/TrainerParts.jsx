@@ -8,32 +8,8 @@ export const linkClass = 'font-medium text-brand-700 hover:text-brand-800 hover:
 export const selectClass =
   'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-xs focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none sm:w-auto';
 
-/** Pill buttons with counts (`aria-pressed`), like the Phase 4 and 5 filters. */
-export function FilterPills({ label, options, value, counts, onChange }) {
-  return (
-    <div role="group" aria-label={label} className="flex flex-wrap gap-1">
-      {options.map((option) => {
-        const count = counts?.[option.value];
-        return (
-          <button
-            key={option.value}
-            type="button"
-            aria-pressed={value === option.value}
-            onClick={() => onChange(option.value)}
-            className={`rounded-full px-3 py-1 text-sm font-medium ${
-              value === option.value
-                ? 'bg-brand-600 text-white'
-                : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50'
-            }`}
-          >
-            {option.label}
-            {count != null && <span className="ml-1.5 tabular-nums opacity-80">{count}</span>}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
+// Shared with the rest of the app; re-exported for the trainer pages.
+export { FilterPills } from '../../../components/ui/FilterPills.jsx';
 
 /** A labelled native select for a filter row. */
 export function FilterSelect({ label, value, onChange, children }) {

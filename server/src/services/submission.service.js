@@ -11,6 +11,7 @@ import { ApiError } from '../utils/ApiError.js';
 import { getAssignmentForViewer, getSubmissionForViewer, isAdmin } from './access.service.js';
 import { recordActivity } from './activity.service.js';
 import { deleteFilesIfUnused } from './file.service.js';
+import { submissionFeedback, submissionReceived } from './notification.service.js';
 import { toAssignmentDTO, toSubmissionDTO } from './serializers.js';
 import {
   closedReason,
@@ -114,6 +115,7 @@ export async function createSubmission(student, assignmentId, { items, note }) {
     isLate: lateForNewAttempt(assignment, latest, now),
   });
   await recordSubmissionActivity(submission, ACTIVITY_TYPES.SUBMISSION_CREATED);
+  await submissionReceived(submission, assignment, student);
   return populated(submission);
 }
 
@@ -234,6 +236,7 @@ export async function reviewSubmission(trainer, submissionId, { marks, feedback 
   submission.review = reviewFields(trainer, assignment, submission, { marks, feedback });
   await submission.save();
   await recordSubmissionActivity(submission, ACTIVITY_TYPES.SUBMISSION_REVIEWED, trainer._id);
+  await submissionFeedback(submission, assignment);
   return getSubmission(trainer, submission._id);
 }
 
@@ -255,5 +258,6 @@ export async function requestResubmission(trainer, submissionId, { marks, feedba
   submission.review = reviewFields(trainer, assignment, submission, { marks, feedback });
   await submission.save();
   await recordSubmissionActivity(submission, ACTIVITY_TYPES.RESUBMISSION_REQUESTED, trainer._id);
+  await submissionFeedback(submission, assignment);
   return getSubmission(trainer, submission._id);
 }

@@ -12,6 +12,7 @@ const PATHS = {
   users:
     'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm-6 9a6 6 0 0 1 12 0M16 4.3a3.5 3.5 0 0 1 0 6.4M18 14a6 6 0 0 1 3 6',
   chart: 'M4 20h16M7 16v-5M12 16V7M17 16v-8',
+  bell: 'M6 9a6 6 0 1 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9Zm4 11a2.2 2.2 0 0 0 4 0',
 };
 
 export function Icon({ name, className = 'size-5' }) {

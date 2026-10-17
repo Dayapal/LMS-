@@ -45,7 +45,7 @@ const saveLabel = (material, noun) => (material ? 'Save changes' : `Add ${noun}`
 
 function TitleAndStatus({ register, errors }) {
   return (
-    <div className="grid gap-5 sm:grid-cols-[2fr_1fr]">
+    <div className="grid grid-cols-1 gap-5 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
       <TextField label="Title" required error={errors.title?.message} {...register('title')} />
       <StatusSelect register={register} error={errors.status?.message} hint={STATUS_HINT} />
     </div>
@@ -96,7 +96,7 @@ function NoteForm({ material, onCancel, onSubmit }) {
         {tab('write', 'Write')}
         {tab('preview', 'Preview')}
       </div>
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <div className={`[&_textarea]:font-mono ${pane === 'write' ? '' : 'max-lg:hidden'}`}>
           <TextAreaField
             label="Note (Markdown)"

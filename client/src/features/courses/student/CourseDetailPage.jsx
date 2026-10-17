@@ -64,7 +64,7 @@ function RoadmapTimeline({ modules, lessonPath }) {
                           <Icon name="check" className="size-4" />
                         </span>
                       ) : (
-                        <span className="w-8 shrink-0 pt-0.5 text-xs font-medium text-slate-400">
+                        <span className="w-8 shrink-0 pt-0.5 text-xs font-medium text-slate-500">
                           {index + 1}.{lessonIndex + 1}
                         </span>
                       )}
@@ -194,7 +194,7 @@ export function CourseDetailPage() {
         </div>
       </section>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <section aria-labelledby="roadmap-heading" className="space-y-4">
           <div>
             <h2 id="roadmap-heading" className="text-lg font-semibold text-slate-900">

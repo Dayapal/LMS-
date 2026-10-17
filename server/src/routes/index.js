@@ -8,6 +8,7 @@ import { adminRoutes } from './admin.routes.js';
 import { assignmentRoutes, submissionRoutes } from './assignment.routes.js';
 import { dashboardRoutes, meRoutes } from './me.routes.js';
 import { reportRoutes } from './report.routes.js';
+import { notificationRoutes } from './notification.routes.js';
 
 export function apiRoutes(limiters) {
   const router = Router();
@@ -34,5 +35,6 @@ export function apiRoutes(limiters) {
   router.use('/me', meRoutes());
   router.use('/dashboard', dashboardRoutes());
   router.use('/reports', reportRoutes());
+  router.use('/notifications', notificationRoutes());
   return router;
 }

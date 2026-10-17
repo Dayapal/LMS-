@@ -105,7 +105,7 @@ function LessonForm({ lesson, moduleId, modules, onCancel, onSubmit }) {
         error={errors.summary?.message}
         {...register('summary')}
       />
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <TextAreaField
           label="Learning objectives"
           rows={4}
@@ -121,7 +121,7 @@ function LessonForm({ lesson, moduleId, modules, onCancel, onSubmit }) {
           {...register('prerequisites')}
         />
       </div>
-      <div className="grid gap-5 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
         <TextField
           label="Estimated minutes"
           type="number"

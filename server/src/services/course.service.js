@@ -17,7 +17,13 @@ import { deleteAssignmentsWhere } from './assignment.service.js';
 import { deleteFilesWhere } from './file.service.js';
 import { deleteMaterialsWhere } from './material.service.js';
 import { assertNoProgress, completionsFor, summarizeProgress } from './progress.service.js';
-import { toCourseDTO, toLessonDTO, toModuleDTO, toOwnEnrollment } from './serializers.js';
+import {
+  toCourseDTO,
+  toCourseListItem,
+  toLessonDTO,
+  toModuleDTO,
+  toOwnEnrollment,
+} from './serializers.js';
 
 const { trusted } = mongoose;
 
@@ -83,7 +89,12 @@ export async function listCourses(user, { page, limit, q, status, level }) {
 
   const sort = isAdmin(user) ? { updatedAt: -1 } : { createdAt: 1 };
   const [courses, total] = await Promise.all([
-    Course.find(filter).sort(sort).skip(skipFor({ page, limit })).limit(limit).lean(),
+    Course.find(filter)
+      .select('-description')
+      .sort(sort)
+      .skip(skipFor({ page, limit }))
+      .limit(limit)
+      .lean(),
     Course.countDocuments(filter),
   ]);
 
@@ -94,7 +105,7 @@ export async function listCourses(user, { page, limit, q, status, level }) {
   ]);
 
   const items = courses.map((course) =>
-    toCourseDTO(course, {
+    toCourseListItem(course, {
       stats: stats.get(course._id.toString()),
       ...(!isAdmin(user) && {
         enrollment: toOwnEnrollment(enrollments.get(course._id.toString())),

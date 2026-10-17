@@ -6,6 +6,7 @@ import { CourseCover } from '../components/CourseCover.jsx';
 import { LEVEL_LABEL, plural } from '../format.js';
 import { Button } from '../../../components/ui/Button.jsx';
 import { StatusBadge } from '../../../components/ui/Badge.jsx';
+import { FilterPills } from '../../../components/ui/FilterPills.jsx';
 import {
   EmptyState,
   ErrorState,
@@ -63,24 +64,12 @@ export function AdminCoursesPage() {
       />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div role="tablist" aria-label="Filter by status" className="flex flex-wrap gap-1">
-          {TABS.map((tab) => (
-            <button
-              key={tab.value}
-              type="button"
-              role="tab"
-              aria-selected={status === tab.value}
-              onClick={() => updateParams({ status: tab.value, page: '' })}
-              className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
-                status === tab.value
-                  ? 'bg-brand-50 text-brand-700'
-                  : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        <FilterPills
+          label="Filter by status"
+          options={TABS}
+          value={status}
+          onChange={(value) => updateParams({ status: value, page: '' })}
+        />
         <input
           type="search"
           value={search}
@@ -149,7 +138,10 @@ export function AdminCoursesPage() {
 
 export function CourseListSkeleton() {
   return (
-    <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-label="Loading courses">
+    <ul
+      className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
+      aria-label="Loading courses"
+    >
       {[0, 1, 2].map((i) => (
         <li key={i} className="overflow-hidden rounded-xl border border-slate-200 bg-white">
           <Skeleton className="h-28 rounded-none" />

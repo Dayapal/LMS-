@@ -189,7 +189,9 @@ export function SubmissionReviewPage() {
           Submitted {formatDateTime(submission.submittedAt)}
           {submission.editedAt && ` · edited ${formatDateTime(submission.editedAt)}`}
         </span>
-        <span className="text-slate-400">·</span>
+        <span className="text-slate-400" aria-hidden="true">
+          ·
+        </span>
         <Link
           to={`/admin/students/${submission.student.id}`}
           className="font-medium text-brand-700 hover:text-brand-800 hover:underline"

@@ -1,9 +1,7 @@
 import { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Icon } from '../Icon.jsx';
-
-const FOCUSABLE =
-  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+import { useFocusTrap } from '../../hooks/useFocusTrap.js';
 
 /**
  * Accessible modal dialog: traps focus, closes on Escape or backdrop click,
@@ -14,41 +12,15 @@ export function Modal({ open, onClose, title, description, size = 'md', children
   const bodyRef = useRef(null);
   const titleId = useId();
   const descriptionId = useId();
-  const onCloseRef = useRef(onClose);
-  onCloseRef.current = onClose;
+
+  useFocusTrap(panelRef, open, { onEscape: onClose, initialFocusRef: bodyRef });
 
   useEffect(() => {
     if (!open) return undefined;
-    const opener = document.activeElement;
-    const panel = panelRef.current;
-    const first = panel?.querySelector('[autofocus]') ?? bodyRef.current?.querySelector(FOCUSABLE);
-    (first ?? panel)?.focus();
-
-    const onKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        event.stopPropagation();
-        onCloseRef.current();
-        return;
-      }
-      if (event.key !== 'Tab' || !panel) return;
-      const items = [...panel.querySelectorAll(FOCUSABLE)];
-      if (items.length === 0) return;
-      const [firstItem, lastItem] = [items[0], items.at(-1)];
-      if (event.shiftKey && document.activeElement === firstItem) {
-        event.preventDefault();
-        lastItem.focus();
-      } else if (!event.shiftKey && document.activeElement === lastItem) {
-        event.preventDefault();
-        firstItem.focus();
-      }
-    };
-    document.addEventListener('keydown', onKeyDown);
     const { overflow } = document.body.style;
     document.body.style.overflow = 'hidden';
     return () => {
-      document.removeEventListener('keydown', onKeyDown);
       document.body.style.overflow = overflow;
-      if (opener instanceof HTMLElement) opener.focus();
     };
   }, [open]);
 

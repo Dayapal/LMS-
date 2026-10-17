@@ -263,9 +263,15 @@ describe('LessonReaderPage', () => {
     await userEvent.click(within(region).getByRole('button', { name: 'Mark as complete' }));
 
     expect(complete.mock.calls[0][0]).toBe('l2');
-    expect(
-      await screen.findByText('Lesson completed. 60% · 3 of 5 lessons completed.'),
-    ).toBeInTheDocument();
+    // Phase 7: the result is announced inside the panel, not in a toast that
+    // could cover the "Next lesson" link below it.
+    const message = await within(region).findByText(
+      'Lesson completed. 60% · 3 of 5 lessons completed.',
+    );
+    expect(message).toHaveAttribute('role', 'status');
+    expect(screen.getAllByText('Lesson completed. 60% · 3 of 5 lessons completed.')).toHaveLength(
+      1,
+    );
     expect(within(region).getByText('Completed')).toBeInTheDocument();
     expect(within(region).getByRole('button', { name: 'Mark as not completed' })).toBeEnabled();
   });

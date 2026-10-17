@@ -10,6 +10,7 @@ export { Assignment } from './Assignment.js';
 export { Submission } from './Submission.js';
 export { LessonProgress } from './LessonProgress.js';
 export { Activity } from './Activity.js';
+export { Notification } from './Notification.js';
 export {
   ACTIVITY_TYPES,
   CODE_LANGUAGES,
@@ -18,6 +19,7 @@ export {
   ENROLLMENT_STATUS,
   FILE_PURPOSES,
   MATERIAL_TYPES,
+  NOTIFICATION_TYPES,
   SUBMISSION_STATUS,
   SUBMISSION_TYPES,
   STUDENT_ASSIGNMENT_STATUS,

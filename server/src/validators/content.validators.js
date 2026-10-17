@@ -13,8 +13,9 @@ const shortList = (label) =>
     .array(z.string().trim().min(1, `${label} cannot be empty`).max(200))
     .max(20, `At most 20 ${label.toLowerCase()} items`);
 
+// A page number past 10,000 would make MongoDB's skip fail (a 500) instead of a clear 400.
 export const pageQuery = {
-  page: z.coerce.number().int().min(1).default(1),
+  page: z.coerce.number().int().min(1).max(10_000).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(12),
 };
 

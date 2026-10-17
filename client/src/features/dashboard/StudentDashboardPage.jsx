@@ -181,7 +181,7 @@ function DashboardSkeleton() {
         ))}
       </div>
       <Skeleton className="h-40" />
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Skeleton className="h-56" />
         <Skeleton className="h-56" />
       </div>
@@ -227,7 +227,7 @@ export function StudentDashboardPage() {
             for what to learn next.
           </p>
         ) : null}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <Card aria-label="My courses">
             <CardHeader title="My courses" />
             <ul className="divide-y divide-slate-100">
