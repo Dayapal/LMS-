@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Module 5 — Recursion &amp; Backtracking in JavaScript | Handmade Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Kalam:wght@300;400;700&family=Patrick+Hand&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THE HANDMADE NOTEBOOK — premium paper + ink styling
+   ============================================================ */
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  padding: 34px 14px 70px;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(214,197,166,.55), transparent 46%),
+    radial-gradient(circle at 84% 78%, rgba(198,181,150,.5), transparent 52%),
+    repeating-linear-gradient(115deg, rgba(140,115,80,.05) 0 3px, transparent 3px 7px),
+    #c8b295;
+  font-family: 'Patrick Hand', 'Kalam', cursive;
+  color: #21304a;
+  font-size: 18px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+
+.book { max-width: 900px; margin: 0 auto; }
+
+/* ---------- the "sheet of paper" ---------- */
+.page {
+  position: relative;
+  background-color: #fdfaf1;
+  background-image:
+    repeating-linear-gradient(to bottom,
+      transparent 0px, transparent 30px,
+      #c9d6ea 30px, #c9d6ea 31px),
+    repeating-linear-gradient(90deg, rgba(160,140,110,.035) 0 1px, transparent 1px 5px);
+  border-radius: 3px 10px 10px 3px;
+  box-shadow:
+    0 1px 0 #e8e0cd inset,
+    0 18px 34px -14px rgba(40,25,10,.55),
+    0 3px 0 rgba(255,255,255,.35) inset;
+  padding: 46px 46px 62px 96px;
+  margin: 0 0 40px;
+  overflow: hidden;
+}
+
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 74px;
+  width: 2px;
+  background: linear-gradient(to bottom,
+    rgba(203,78,78,.15), rgba(203,78,78,.75) 6%,
+    rgba(203,78,78,.75) 94%, rgba(203,78,78,.15));
+}
+
+.page::after {
+  content: "";
+  position: absolute;
+  left: 24px; top: 0; bottom: 0;
+  width: 24px;
+  background-image: radial-gradient(circle at 50% 50%, #cdbca0 0 8px, rgba(0,0,0,.12) 8px 9px, transparent 10px);
+  background-size: 24px 150px;
+  background-repeat: repeat-y;
+  background-position: 0 40px;
+  opacity: .85;
+}
+
+/* ---------- headings ---------- */
+h1, h2, h3, h4 {
+  font-family: 'Caveat', cursive;
+  color: #1b2a45;
+  margin: 0 0 .35em;
+  line-height: 1.15;
+}
+
+.cover h1 {
+  font-size: clamp(44px, 8.5vw, 80px);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: center;
+  margin: 0;
+  text-shadow: 2px 2px 0 rgba(255,241,118,.85), 4px 4px 0 rgba(0,0,0,.07);
+}
+.cover .sub {
+  text-align: center;
+  font-family: 'Caveat', cursive;
+  font-size: 30px;
+  color: #b3372f;
+  margin-top: 6px;
+}
+
+h2.section {
+  font-size: 46px;
+  display: inline-block;
+  padding: 2px 16px 6px;
+  margin-bottom: 4px;
+  transform: rotate(-1.2deg);
+}
+
+h3 {
+  font-size: 29px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+  border-bottom: 1.5px dashed #b9c6dc;
+  padding-bottom: 4px;
+}
+h4 { font-size: 23px; color: #2b3d5e; margin-top: 20px; }
+
+/* number badge */
+.qnum {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 26px;
+  color: #b3372f;
+  border: 2.2px solid #b3372f;
+  border-radius: 50%;
+  min-width: 54px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 9px;
+  flex: 0 0 auto;
+  transform: rotate(-3deg);
+  background: rgba(255,255,255,.6);
+}
+
+/* ---------- highlighters ---------- */
+.hl-y, .hl-p, .hl-g, .hl-b, .hl-o {
+  padding: 0 3px;
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.hl-y { background: linear-gradient(100deg, rgba(255,241,118,0) 0%, rgba(255,238,88,.85) 2%, rgba(255,238,88,.85) 97%, rgba(255,241,118,0) 100%); }
+.hl-p { background: linear-gradient(100deg, rgba(255,190,215,0) 0%, rgba(255,183,208,.8) 2%, rgba(255,183,208,.8) 97%, rgba(255,190,215,0) 100%); }
+.hl-g { background: linear-gradient(100deg, rgba(178,240,180,0) 0%, rgba(167,238,170,.85) 2%, rgba(167,238,170,.85) 97%, rgba(178,240,180,0) 100%); }
+.hl-b { background: linear-gradient(100deg, rgba(175,220,255,0) 0%, rgba(163,214,255,.8) 2%, rgba(163,214,255,.8) 97%, rgba(175,220,255,0) 100%); }
+.hl-o { background: linear-gradient(100deg, rgba(255,214,150,0) 0%, rgba(255,209,138,.85) 2%, rgba(255,209,138,.85) 97%, rgba(255,214,150,0) 100%); }
+
+/* red-pen emphasis */
+.red { color: #b3372f; }
+.blue { color: #1f4e8c; }
+.green { color: #2f6b3a; }
+.pen-underline { border-bottom: 2.5px solid #b3372f; padding-bottom: 1px; }
+.wavy { text-decoration: underline wavy #b3372f; text-underline-offset: 4px; }
+
+/* ---------- code blocks ---------- */
+pre.code {
+  font-family: 'Kalam', cursive;
+  font-size: 16.5px;
+  line-height: 1.75;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 26px, rgba(160,185,220,.35) 26px 27px),
+    #f4f8ff;
+  border: 1.6px solid #b9c9e2;
+  border-left: 6px solid #8fb3e0;
+  border-radius: 4px 8px 8px 4px;
+  padding: 14px 16px 16px 18px;
+  margin: 14px 0 12px;
+  overflow-x: auto;
+  color: #1c2b47;
+  white-space: pre;
+  box-shadow: 2px 3px 0 rgba(120,150,190,.22);
+  position: relative;
+}
+pre.code::before {
+  content: "js";
+  position: absolute;
+  top: -12px; right: 12px;
+  font-family: 'Caveat', cursive;
+  font-size: 17px;
+  color: #6d8db8;
+  background: #fdfaf1;
+  padding: 0 7px;
+  transform: rotate(3deg);
+}
+.cm { color: #2e8b57; font-style: italic; }
+
+code.inline {
+  font-family: 'Kalam', cursive;
+  background: rgba(180,210,245,.32);
+  border-radius: 3px;
+  padding: 0 5px;
+  font-size: .95em;
+  color: #14315c;
+}
+
+/* ---------- callouts ---------- */
+.note, .warn, .tip, .complexity, .dryrun, .trap, .think {
+  position: relative;
+  border-radius: 5px;
+  padding: 12px 16px 12px 18px;
+  margin: 14px 0;
+  font-size: 17px;
+}
+
+.dryrun {
+  background: linear-gradient(180deg, rgba(255,246,196,.75), rgba(255,240,160,.5));
+  border-left: 6px solid #e3b93c;
+  box-shadow: 2px 3px 0 rgba(200,160,40,.18);
+}
+.dryrun b:first-child { color: #a5761a; }
+
+.complexity {
+  background: linear-gradient(180deg, rgba(200,240,205,.7), rgba(175,232,182,.45));
+  border-left: 6px solid #4e9b5b;
+  box-shadow: 2px 3px 0 rgba(70,150,85,.16);
+  font-family: 'Kalam', cursive;
+}
+.complexity b:first-child { color: #2f6b3a; }
+
+.note {
+  background: linear-gradient(180deg, rgba(205,228,255,.7), rgba(180,212,250,.45));
+  border-left: 6px solid #4a7fbf;
+  box-shadow: 2px 3px 0 rgba(70,120,180,.16);
+}
+
+.warn, .trap {
+  background: linear-gradient(180deg, rgba(255,215,215,.8), rgba(255,190,190,.5));
+  border-left: 6px solid #c0403a;
+  box-shadow: 2px 3px 0 rgba(180,60,55,.16);
+}
+.warn b:first-child, .trap b:first-child { color: #9c2f2a; }
+
+/* "Think first" box */
+.think {
+  background: linear-gradient(180deg, rgba(255,225,245,.75), rgba(250,205,235,.5));
+  border-left: 6px solid #b55a9e;
+  box-shadow: 2px 3px 0 rgba(170,80,150,.15);
+}
+.think b:first-child { color: #8a2f76; }
+
+/* ---------- sticky notes ---------- */
+.sticky {
+  background: #fff8a8;
+  background-image: linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%);
+  padding: 18px 20px;
+  margin: 22px 0;
+  border-radius: 2px;
+  box-shadow: 3px 6px 14px -6px rgba(90,70,20,.55);
+  transform: rotate(-.8deg);
+  font-family: 'Caveat', cursive;
+  font-size: 23px;
+  line-height: 1.4;
+  color: #4a3d10;
+  position: relative;
+}
+.sticky.pink { background: #ffd6e8; color: #6b2447; transform: rotate(1deg); }
+.sticky.green { background: #d3f7cf; color: #23502a; transform: rotate(-1.4deg); }
+.sticky.blue { background: #cfe6ff; color: #17375f; transform: rotate(.6deg); }
+
+/* tape */
+.tape {
+  position: absolute;
+  width: 108px; height: 28px;
+  background: rgba(255,255,255,.55);
+  border-left: 1px dashed rgba(0,0,0,.12);
+  border-right: 1px dashed rgba(0,0,0,.12);
+  box-shadow: 0 2px 5px rgba(0,0,0,.12);
+  top: -14px; left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+}
+
+/* ---------- lists ---------- */
+ul.ticks { list-style: none; padding-left: 4px; }
+ul.ticks li { position: relative; padding-left: 30px; margin-bottom: 6px; }
+ul.ticks li::before { content: "✔"; position: absolute; left: 0; top: -1px; color: #3f8f4f; font-size: 19px; }
+
+ul.arrows { list-style: none; padding-left: 4px; }
+ul.arrows li { position: relative; padding-left: 28px; margin-bottom: 5px; }
+ul.arrows li::before { content: "➜"; position: absolute; left: 0; top: -1px; color: #b3372f; font-size: 17px; }
+
+ol.steps { list-style: none; counter-reset: s; padding-left: 0; margin: 16px 0; }
+ol.steps li {
+  counter-increment: s;
+  position: relative;
+  padding: 10px 14px 10px 58px;
+  margin-bottom: 10px;
+  background: rgba(255,255,255,.5);
+  border-radius: 6px;
+  border-left: 5px solid #4a7fbf;
+}
+ol.steps li::before {
+  content: counter(s);
+  position: absolute; left: 14px; top: 9px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #4a7fbf; color: #fff;
+  font-family: 'Caveat', cursive; font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ---------- dry-run tables ---------- */
+table.dry {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+  font-family: 'Kalam', cursive;
+  font-size: 16.5px;
+  background: rgba(255,255,255,.55);
+  box-shadow: 2px 3px 0 rgba(120,150,190,.16);
+}
+table.dry caption {
+  font-family: 'Caveat', cursive;
+  font-size: 23px;
+  color: #b3372f;
+  text-align: left;
+  padding-bottom: 6px;
+}
+table.dry th, table.dry td {
+  border: 1.6px solid #8fa8c9;
+  padding: 6px 10px;
+  text-align: left;
+}
+table.dry th { background: rgba(200,222,250,.6); font-weight: 700; color: #17335c; }
+table.dry tr:nth-child(even) td { background: rgba(240,246,255,.55); }
+table.dry td.yes { color: #2f6b3a; font-weight: 700; }
+table.dry td.no  { color: #9c2f2a; }
+
+/* ---------- pattern cards ---------- */
+.pattern-card {
+  position: relative;
+  border: 2px dashed #8fa8c9;
+  border-radius: 10px;
+  padding: 20px 18px 18px;
+  margin: 26px 0;
+  background: rgba(255,255,255,.45);
+}
+.pattern-card::before {
+  content: "PATTERN";
+  position: absolute; top: -13px; left: 18px;
+  background: #fdfaf1; padding: 0 8px;
+  font-family: 'Caveat', cursive; font-size: 19px;
+  color: #4a7fbf; letter-spacing: 2px;
+}
+
+.trigger {
+  display: inline-block;
+  background: #b3372f;
+  color: #fff;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  padding: 1px 14px 3px;
+  border-radius: 20px;
+  transform: rotate(-1.5deg);
+  box-shadow: 2px 2px 0 rgba(0,0,0,.15);
+}
+
+.analogy {
+  display: inline-block;
+  background: #4a7fbf;
+  color: #fff;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  padding: 1px 14px 3px;
+  border-radius: 20px;
+  transform: rotate(1deg);
+  box-shadow: 2px 2px 0 rgba(0,0,0,.15);
+}
+
+/* ---------- banner ---------- */
+.banner {
+  background: linear-gradient(120deg, #1b2a45, #2f4a76);
+  color: #fdfaf1;
+  padding: 22px 28px;
+  border-radius: 4px;
+  box-shadow: 0 12px 22px -12px rgba(20,30,50,.8), 3px 4px 0 rgba(0,0,0,.15);
+  margin-bottom: 26px;
+  transform: rotate(-.4deg);
+  position: relative;
+}
+.banner h2 { color: #fdfaf1; margin: 0; font-size: 42px; }
+.banner p { margin: 4px 0 0; font-family: 'Kalam', cursive; font-size: 16px; opacity: .9; }
+.banner .hl-y { color: #21304a; }
+
+/* ---------- tree drawing ---------- */
+pre.tree {
+  font-family: 'Kalam', cursive;
+  font-size: 16px;
+  line-height: 1.5;
+  background: rgba(255,255,255,.5);
+  border: 1.6px dashed #8fa8c9;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  color: #1c2b47;
+  margin: 14px 0;
+}
+
+/* ---------- misc ---------- */
+.pnum {
+  position: absolute;
+  right: 26px; bottom: 16px;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  color: #8a9bb5;
+}
+.pnum::before { content: "— "; }
+.pnum::after { content: " —"; }
+
+hr.hand {
+  border: none;
+  height: 2px;
+  background: repeating-linear-gradient(to right, #b9c6dc 0 10px, transparent 10px 18px);
+  margin: 26px 0;
+}
+
+.mini { font-size: 15px; color: #6c7d97; font-family: 'Kalam', cursive; }
+.center { text-align: center; }
+.stamp {
+  display: inline-block;
+  border: 3px double #b3372f;
+  color: #b3372f;
+  font-family: 'Caveat', cursive;
+  font-size: 24px;
+  padding: 4px 16px;
+  border-radius: 6px;
+  transform: rotate(-6deg);
+  opacity: .85;
+}
+.doodle-stars { font-size: 26px; letter-spacing: 12px; color: #d9a441; text-align: center; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+@media (max-width: 660px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .page { padding: 36px 20px 54px 60px; }
+  .page::before { left: 44px; }
+  .page::after { display: none; }
+  body { font-size: 17px; }
+  pre.code { font-size: 15px; }
+  pre.tree { font-size: 14px; }
+  table.dry { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+
+<div class="book">
+
+<!-- ============================ COVER ============================ -->
+<section class="page cover">
+  <div class="tape"></div>
+  <div class="doodle-stars">✦ ✧ ✦ ✧ ✦</div>
+
+  <h1>DSA MODULE 5</h1>
+  <div class="sub">Recursion &amp; Backtracking in JavaScript</div>
+
+  <p class="center" style="font-family:'Caveat',cursive;font-size:25px;margin-top:14px;">
+    <span class="hl-y">Handmade Solutions, Dry-Runs &amp; Pattern Notes</span>
+  </p>
+
+  <p class="center mini" style="margin-top:6px;">
+    Cinema row · Maze explorer · Subsets · Permutations · N-Queens
+  </p>
+
+  <hr class="hand">
+
+  <h2 style="font-size:36px;transform:rotate(-1deg);">📘 What is inside</h2>
+  <ul class="ticks">
+    <li><b>Recursion</b> — the cinema row analogy, three rules, the call stack</li>
+    <li><b>Fast power (LC 50)</b> — O(log n) recursion with a full call tree</li>
+    <li><b>Recursion tree</b> — why naive Fibonacci explodes to O(2ⁿ)</li>
+    <li><b>Backtracking</b> — the maze explorer with chalk template</li>
+    <li><b>Subsets (LC 78)</b> — choose / explore / un-choose at every node</li>
+    <li><b>Permutations (LC 46)</b> — a <code class="inline">used[]</code> register instead of <code class="inline">start</code></li>
+    <li><b>Combination Sum (LC 39)</b> — reuse allowed, prune with sorted input</li>
+    <li><b>N-Queens (LC 51)</b> — three Sets for O(1) attack checks</li>
+    <li><b>Practice list</b> — 14 problems with one-line hints</li>
+  </ul>
+
+  <div class="sticky pink" style="margin-top:34px;">
+    <b>My note to self:</b><br>
+    Recursion solves a problem by <u>trusting a smaller copy of itself</u>.
+    Backtracking is recursion that <b>tries a choice, explores, then undoes the choice</b>. ✍️
+  </div>
+
+  <div class="center" style="margin-top:30px;">
+    <span class="stamp">HANDMADE NOTES</span>
+  </div>
+
+  <div class="pnum">cover</div>
+</section>
+
+<!-- ============================ SECTION 1 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>1. Recursion</h2>
+    <p><span class="hl-y">The cinema row analogy · Three rules · The call stack</span></p>
+  </div>
+
+  <p>Recursion solves a problem by <b>trusting a smaller copy of itself</b>;
+  backtracking is recursion that <b>tries a choice, explores, then undoes the choice</b>.
+  Together they generate every subset, permutation and arrangement — and recursion is the
+  foundation for <b>trees, graphs and DP</b>.</p>
+
+  <div class="note">
+    <span class="analogy">Analogy — the cinema row</span><br>
+    You're in a dark cinema and want to know your row number. You ask the person in front:
+    <i>"Which row are you in?"</i> They ask the person in front of them, and so on.
+    The person in the <b>front row knows the answer: "1"</b> (base case). Each answer
+    travels back, and everyone <b>adds 1</b>. Nobody solved the whole problem — each
+    person solved <b>one tiny step</b> and trusted the person in front.
+  </div>
+
+  <h3><span class="qnum">1.0</span> <span class="hl-y">Three rules for every recursive function</span></h3>
+
+  <ol class="steps">
+    <li><b>Base case</b> — the smallest input you can answer directly
+        (the front row).</li>
+    <li><b>Smaller problem</b> — call yourself on an input <b>closer to the base case</b>.</li>
+    <li><b>Leap of faith</b> — assume the smaller call returns the <b>right answer</b>;
+        just combine it.</li>
+  </ol>
+
+  <div class="note">
+    <b>The call stack — a stack of plates:</b><br>
+    Each call is a <b>plate placed on top</b>. A plate can only be removed (return) when
+    everything above it is removed. Too many plates →
+    <span class="red">RangeError: Maximum call stack size exceeded</span>
+    (around <b>10,000 deep</b> in typical JS engines).
+  </div>
+
+  <h3><span class="qnum">1.1</span> <span class="hl-b">Warm-up — sum of 1..n</span></h3>
+
+<pre class="code">function sumTo(n) {
+  if (n === 1) return 1;        // base case
+  return n + sumTo(n - 1);      // smaller problem + leap of faith
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run of sumTo(4)</caption>
+    <thead><tr><th>Call</th><th>Waits for</th><th>Returns</th></tr></thead>
+    <tbody>
+      <tr><td>sumTo(4)</td><td>4 + sumTo(3)</td><td>4 + 6 = 10</td></tr>
+      <tr><td>sumTo(3)</td><td>3 + sumTo(2)</td><td>3 + 3 = 6</td></tr>
+      <tr><td>sumTo(2)</td><td>2 + sumTo(1)</td><td>2 + 1 = 3</td></tr>
+      <tr><td>sumTo(1)</td><td>base case</td><td>1</td></tr>
+    </tbody>
+  </table>
+
+  <div class="dryrun"><b>Read top-down for calls, bottom-up for returns.</b>
+  Total = <b>10</b>. O(n) time, O(n) stack space.</div>
+
+  <div class="sticky green">
+    <b>Recursion in one line 🌟</b><br>
+    Trust the smaller call. Do <u>one step</u>. Let the base case stop everything.
+  </div>
+
+  <div class="pnum">2</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">1.2</span> <span class="hl-y">Solved — fast power (LC 50)</span></h3>
+  <p>Compute <b>xⁿ</b> in <b>O(log n)</b>.</p>
+  <div class="dryrun"><b>Input:</b> x = 2, n = 10 → <b>1024</b></div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    2¹⁰ = (2⁵)². And 2⁵ = (2²)² × 2. What's the pattern for <b>even vs odd n</b>?
+  </div>
+
+<pre class="code">function pow(x, n) {
+  if (n === 0) return 1;                       // base case
+  if (n &lt; 0) return 1 / pow(x, -n);
+  const half = pow(x, Math.floor(n / 2));      // smaller problem, computed ONCE
+  return n % 2 === 0 ? half * half : half * half * x;
+}</pre>
+
+  <table class="dry">
+    <caption>The recursion tree for pow(2, 10)</caption>
+    <thead>
+      <tr><th>Call</th><th>Waits for</th><th>n even?</th><th>Returns</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>pow(2, 10)</td><td>half = pow(2, 5)</td><td>Yes</td><td>32 × 32 = 1024</td></tr>
+      <tr><td>pow(2, 5)</td><td>half = pow(2, 2)</td><td>No</td><td>4 × 4 × 2 = 32</td></tr>
+      <tr><td>pow(2, 2)</td><td>half = pow(2, 1)</td><td>Yes</td><td>2 × 2 = 4</td></tr>
+      <tr><td>pow(2, 1)</td><td>half = pow(2, 0)</td><td>No</td><td>1 × 1 × 2 = 2</td></tr>
+      <tr><td>pow(2, 0)</td><td>base case</td><td>—</td><td>1</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity"><b>Complexity:</b> 5 calls instead of 10 multiplications;
+  n halves each time → <b>O(log n)</b>.</div>
+
+  <div class="warn">
+    <b>Trap:</b> writing <code class="inline">pow(x, n/2) * pow(x, n/2)</code> makes
+    <b>two calls per level</b> and brings back <span class="red">O(n)</span>.
+    Compute the smaller problem <b>once</b> and store it.
+  </div>
+
+  <h3><span class="qnum">1.3</span> <span class="hl-p">The recursion tree — and why it can explode</span></h3>
+
+<pre class="code">const fib = n =&gt; (n &lt;= 1 ? n : fib(n - 1) + fib(n - 2));</pre>
+
+<pre class="tree">                fib(4)
+               /      \
+          fib(3)        fib(2)
+         /      \      /      \
+     fib(2)   fib(1) fib(1)  fib(0)
+     /    \
+ fib(1)  fib(0)</pre>
+
+  <div class="warn">
+    <b>9 calls</b> for <code class="inline">fib(4)</code>, and <code class="inline">fib(2)</code>
+    is computed <b>twice</b>. For <b>fib(40)</b> that's over <b>300 million calls</b> —
+    <span class="red">O(2ⁿ)</span>.
+  </div>
+
+  <div class="note">
+    <b>Remember this tree:</b> dynamic programming fixes it later by
+    <b>saving answers</b>.
+  </div>
+
+  <div class="sticky blue">
+    <b>Recursion vs DP 🌳</b><br>
+    Same tree — recursion <u>recomputes</u>, DP <u>caches</u>.<br>
+    If you see the same subtree twice, memoize.
+  </div>
+
+  <div class="pnum">3</div>
+</section>
+
+<!-- ============================ SECTION 2 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>2. Backtracking</h2>
+    <p><span class="hl-p">The maze explorer with chalk · The template</span></p>
+  </div>
+
+  <div class="note">
+    <span class="analogy">Analogy — the maze explorer with chalk</span><br>
+    You explore a maze carrying chalk. At every junction you
+    <b>mark the path you choose (choose)</b>, walk down it (<b>explore</b>), and if it's
+    a dead end you walk back and <b>rub out the chalk (un-choose)</b> before trying the
+    next path. Rubbing out the chalk is what lets the <b>same path be reused</b> for the
+    next attempt.
+  </div>
+
+  <h3><span class="qnum">2.0</span> <span class="hl-y">Template — memorize this shape</span></h3>
+
+<pre class="code">function backtrack(state, choices) {
+  if (isComplete(state)) { result.push([...state]); return; }   // copy!
+  for (const c of choices) {
+    if (!isValid(c)) continue;
+    state.push(c);              // choose
+    backtrack(state, next(c));  // explore
+    state.pop();                // un-choose (rub out the chalk)
+  }
+}</pre>
+
+  <div class="note">
+    <b>Trigger words:</b> "all possible", "generate every",
+    "all combinations / permutations / subsets", "place N items so that…",
+    "is there any arrangement".
+  </div>
+
+  <div class="sticky pink">
+    <b>Backtracking rule 🧽</b><br>
+    <b>Choose</b> → <b>Explore</b> → <b>Un-choose</b>.<br>
+    The <u>un-choose is not optional</u> — it's the whole point.
+  </div>
+
+  <div class="pnum">4</div>
+</section>
+
+<!-- ============================ SECTION 2.1 ============================ -->
+<section class="page">
+  <h3><span class="qnum">2.1</span> <span class="hl-y">Solved — Subsets (LC 78)</span></h3>
+  <p>Return all subsets.</p>
+  <div class="dryrun"><b>Input:</b> [1, 2, 3] →
+  [[], [1], [1,2], [1,2,3], [1,3], [2], [2,3], [3]]</div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    For each element, how many choices do you have? So how many subsets for n elements?<br>
+    To avoid producing both <code class="inline">[1, 2]</code> and
+    <code class="inline">[2, 1]</code>, what rule decides which elements a call may
+    <b>still pick</b>?
+  </div>
+
+  <p><b>Solution idea:</b> every call records its <b>current path</b> as a subset, then
+  tries adding each remaining element <b>after <code class="inline">start</code></b>
+  (so the same group is never produced in a different order).</p>
+
+<pre class="code">function subsets(nums) {
+  const res = [], path = [];
+  function bt(start) {
+    res.push([...path]);                      // every node of the tree is a subset
+    for (let i = start; i &lt; nums.length; i++) {
+      path.push(nums[i]);                     // choose
+      bt(i + 1);                              // explore
+      path.pop();                             // un-choose
+    }
+  }
+  bt(0);
+  return res;
+}</pre>
+
+  <pre class="tree">The recursion tree (each box is one call; the path it records is shown):
+
+                          []                     ← records []
+              /           |           \
+           [1]           [2]          [3]         ← records [1], [2], [3]
+          /   \            \
+      [1,2]  [1,3]        [2,3]                   ← records [1,2], [1,3], [2,3]
+        |
+    [1,2,3]                                       ← records [1,2,3]</pre>
+
+  <div class="complexity">
+    <b>Complexity:</b> 8 = 2³ subsets; each costs O(n) to copy →
+    <b>O(n · 2ⁿ) time</b>, <b>O(n) recursion depth</b>.
+  </div>
+
+  <table class="dry">
+    <caption>Dry run — order in which subsets are recorded</caption>
+    <thead>
+      <tr><th>Step</th><th>Call</th><th>path</th><th>res after</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>bt(0)</td><td>[]</td><td>[[]]</td></tr>
+      <tr><td>2</td><td>bt(1)</td><td>[1]</td><td>[[], [1]]</td></tr>
+      <tr><td>3</td><td>bt(2)</td><td>[1, 2]</td><td>[[], [1], [1,2]]</td></tr>
+      <tr><td>4</td><td>bt(3)</td><td>[1, 2, 3]</td><td>[[], [1], [1,2], [1,2,3]]</td></tr>
+      <tr><td>5</td><td>back at bt(2)</td><td>[1, 3]</td><td>…, [1,3]</td></tr>
+      <tr><td>6</td><td>back at bt(1)</td><td>[2]</td><td>…, [2]</td></tr>
+      <tr><td>7</td><td>bt(2) again</td><td>[2, 3]</td><td>…, [2,3]</td></tr>
+      <tr><td>8</td><td>back at bt(0)</td><td>[3]</td><td>…, [3]</td></tr>
+    </tbody>
+  </table>
+
+  <div class="pnum">5</div>
+</section>
+
+<!-- ============================ SECTION 3.1 ============================ -->
+<section class="page">
+  <h3><span class="qnum">3.1</span> <span class="hl-g">Solved — Permutations (LC 46)</span></h3>
+  <div class="dryrun"><b>Input:</b> [1, 2, 3] →
+  [[1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2], [3,2,1]]</div>
+
+  <div class="note">
+    <span class="analogy">Analogy — seating guests</span><br>
+    Three guests, three chairs. Fill chair 1 with anyone, chair 2 with anyone
+    <b>still standing</b>, chair 3 with the last one. A
+    <code class="inline">used[]</code> list is the <b>"already seated" register</b>.
+  </div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    In subsets, <code class="inline">start</code> stopped us reusing earlier elements.<br>
+    In permutations <b>order matters</b> — any unused element can go next.
+    <b>What do you track instead of <code class="inline">start</code>?</b>
+  </div>
+
+<pre class="code">function permute(nums) {
+  const res = [], path = [], used = new Array(nums.length).fill(false);
+  function bt() {
+    if (path.length === nums.length) { res.push([...path]); return; }
+    for (let i = 0; i &lt; nums.length; i++) {
+      if (used[i]) continue;
+      used[i] = true; path.push(nums[i]);   // choose
+      bt();                                  // explore
+      path.pop(); used[i] = false;           // un-choose
+    }
+  }
+  bt();
+  return res;
+}</pre>
+
+  <table class="dry">
+    <caption>The first branch of the tree</caption>
+    <thead>
+      <tr><th>Step</th><th>path</th><th>Seated</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>[1]</td><td>{1}</td><td>pick 1</td></tr>
+      <tr><td>2</td><td>[1, 2]</td><td>{1, 2}</td><td>pick 2</td></tr>
+      <tr><td>3</td><td>[1, 2, 3]</td><td>{1, 2, 3}</td><td>full → record [1,2,3]; pop 3</td></tr>
+      <tr><td>4</td><td>[1, 2]</td><td>{1, 2}</td><td>no more options; pop 2</td></tr>
+      <tr><td>5</td><td>[1, 3]</td><td>{1, 3}</td><td>pick 3</td></tr>
+      <tr><td>6</td><td>[1, 3, 2]</td><td>all</td><td>full → record [1,3,2]; pop 2, pop 3, pop 1</td></tr>
+      <tr><td>7</td><td>[2]</td><td>{2}</td><td>the same story starts with 2…</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity"><b>Complexity:</b> 3! = 6 permutations →
+  <b>O(n · n!) time</b>, O(n) recursion depth.</div>
+
+  <h3><span class="qnum">3.2</span> <span class="hl-o">Solved — Combination Sum (LC 39)</span></h3>
+  <p>Each number can be <b>reused</b>. Find all combinations that sum to target.</p>
+  <div class="dryrun"><b>Input:</b> [2, 3, 6, 7], target = 7 → <b>[[2, 2, 3], [7]]</b></div>
+
+  <div class="note">
+    <span class="analogy">Analogy — paying exact change</span><br>
+    You have unlimited 2, 3, 6, 7 coins and must pay exactly 7. You keep adding coins
+    (<b>never a smaller one after a bigger one</b>, so you don't count 2+3+2 and 2+2+3
+    twice), and stop as soon as the coin is <b>bigger than what's left</b>.
+  </div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    Reuse is allowed — should the next call start at <code class="inline">i</code> or
+    <code class="inline">i + 1</code>?<br>
+    With sorted input, <b>when can you stop the loop early</b> (pruning)?
+  </div>
+
+<pre class="code">function combinationSum(cands, target) {
+  cands.sort((a, b) =&gt; a - b);
+  const res = [], path = [];
+  function bt(start, remain) {
+    if (remain === 0) { res.push([...path]); return; }
+    for (let i = start; i &lt; cands.length; i++) {
+      if (cands[i] &gt; remain) break;    // sorted: the rest are bigger too
+      path.push(cands[i]);
+      bt(i, remain - cands[i]);        // i, not i + 1: reuse allowed
+      path.pop();
+    }
+  }
+  bt(0, target);
+  return res;
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run on [2, 3, 6, 7], target = 7</caption>
+    <thead>
+      <tr><th>path</th><th>remain</th><th>Next choice</th><th>Outcome</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>[2]</td><td>5</td><td>2</td><td>go deeper</td></tr>
+      <tr><td>[2, 2]</td><td>3</td><td>2</td><td>go deeper</td></tr>
+      <tr><td>[2, 2, 2]</td><td>1</td><td>2 &gt; 1</td><td class="no">prune (break)</td></tr>
+      <tr><td>[2, 2, 3]</td><td>0</td><td>—</td><td class="yes">record</td></tr>
+      <tr><td>[2, 2]</td><td>—</td><td>then 6</td><td class="no">6 &gt; 3 → prune</td></tr>
+      <tr><td>[2, 3]</td><td>2</td><td>3</td><td class="no">3 &gt; 2 → prune</td></tr>
+      <tr><td>[3]</td><td>4</td><td>3</td><td>[3,3] remain 1 → prune below</td></tr>
+      <tr><td>[6]</td><td>1</td><td>6</td><td class="no">6 &gt; 1 → prune</td></tr>
+      <tr><td>[7]</td><td>0</td><td>—</td><td class="yes">record</td></tr>
+    </tbody>
+  </table>
+
+  <div class="pnum">6</div>
+</section>
+
+<!-- ============================ SECTION 3.3 ============================ -->
+<section class="page">
+  <h3><span class="qnum">3.3</span> <span class="hl-y">Idea — N-Queens (LC 51)</span></h3>
+  <p>Place <b>n queens</b> on an n × n board so no two attack each other
+  (same row, column or diagonal).</p>
+
+  <p><b>Solution idea:</b> put <b>one queen per row</b>. For each row, try every column,
+  skipping columns and diagonals already under attack. A queen at <b>(r, c)</b> blocks
+  column <b>c</b>, diagonal <b>r − c</b> and anti-diagonal <b>r + c</b> — keep
+  <b>three Sets</b> for O(1) checks.</p>
+
+<pre class="code">function solveNQueens(n) {
+  const res = [], cols = new Set(), d1 = new Set(), d2 = new Set(), place = [];
+  function bt(r) {
+    if (r === n) { res.push([...place]); return; }
+    for (let c = 0; c &lt; n; c++) {
+      if (cols.has(c) || d1.has(r - c) || d2.has(r + c)) continue;
+      cols.add(c); d1.add(r - c); d2.add(r + c); place.push(c);   // choose
+      bt(r + 1);                                                  // explore
+      cols.delete(c); d1.delete(r - c); d2.delete(r + c); place.pop();  // un-choose
+    }
+  }
+  bt(0);
+  return res;      // each answer = column of the queen in each row
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run for n = 4 (columns per row)</caption>
+    <thead>
+      <tr><th>Attempt</th><th>Row 0</th><th>Row 1</th><th>Row 2</th><th>Row 3</th><th>Result</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>0</td><td>2</td><td>—</td><td>—</td><td class="no">no safe column → backtrack</td></tr>
+      <tr><td>2</td><td>0</td><td>3</td><td>1</td><td>—</td><td class="no">no safe column → backtrack to row 0</td></tr>
+      <tr><td>3</td><td>1</td><td>3</td><td>0</td><td>2</td><td class="yes">solution [1, 3, 0, 2]</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    The other solution is its <b>mirror</b>, <code class="inline">[2, 0, 3, 1]</code>.
+  </div>
+
+  <div class="complexity"><b>Complexity:</b> O(n!) explored nodes; each check is
+  O(1) thanks to the Sets.</div>
+
+  <div class="sticky blue">
+    <b>N-Queens in one line 👑</b><br>
+    One queen per row.<br>
+    Three Sets: <u>column</u>, <u>r − c</u>, <u>r + c</u>.
+  </div>
+
+  <div class="pnum">7</div>
+</section>
+
+<!-- ============================ SECTION 4 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>4. Teacher's Notes</h2>
+    <p><span class="hl-o">The bugs and the cheatsheet</span></p>
+  </div>
+
+  <h3><span class="qnum">4.1</span> <span class="hl-y">The #1 bug</span></h3>
+
+  <div class="warn">
+    <code class="inline">res.push(path)</code> instead of
+    <code class="inline">res.push([...path])</code> is the <b>#1 bug</b>:
+    every saved answer points to the <b>same array</b>, which ends <b>empty</b>.
+    <b>Always copy!</b>
+  </div>
+
+  <h3><span class="qnum">4.2</span> <span class="hl-b">The silent killer</span></h3>
+
+  <div class="warn">
+    Forgetting the <b>un-choose</b> step (<code class="inline">pop</code>,
+    <code class="inline">used[i] = false</code>) <b>leaks state</b> into sibling
+    branches — you'll get wrong answers with no error.
+  </div>
+
+  <h3><span class="qnum">4.3</span> <span class="hl-g">Draw before you code</span></h3>
+
+  <div class="note">
+    Draw the <b>recursion tree</b> for the smallest input before coding.
+    <span class="red">If you can't draw it, you can't code it.</span>
+  </div>
+
+  <h3><span class="qnum">4.4</span> <span class="hl-p">The four backbone rules</span></h3>
+
+  <ul class="arrows">
+    <li><b>Subsets</b> ⇒ pass <code class="inline">i + 1</code>.</li>
+    <li><b>Combinations with reuse</b> ⇒ pass <code class="inline">i</code>.</li>
+    <li><b>Permutations</b> ⇒ <code class="inline">used[]</code> array,
+        loop from <b>0</b>.</li>
+    <li><b>Duplicates in input</b> (Subsets II, Permutations II):
+        <b>sort first</b>, then skip <code class="inline">nums[i] == nums[i - 1]</code>
+        at the same level.</li>
+  </ul>
+
+  <h3><span class="qnum">4.5</span> <span class="hl-y">The one-table cheat sheet</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr>
+        <th>Problem type</th>
+        <th>Loop starts at</th>
+        <th>Next call</th>
+        <th>Record when</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Subsets</td><td>start</td><td>i + 1</td><td>every call</td></tr>
+      <tr><td>Combinations (no reuse)</td><td>start</td><td>i + 1</td><td>target / size reached</td></tr>
+      <tr><td>Combinations (reuse)</td><td>start</td><td>i</td><td>remain == 0</td></tr>
+      <tr><td>Permutations</td><td>0 (skip used)</td><td>—</td><td>path.length == n</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sticky green">
+    <b>The backtracking mantra 🧘</b><br>
+    <b>Choose</b> → <b>Explore</b> → <b>Un-choose</b>.<br>
+    Copy the path. Un-choose every state you touched.
+  </div>
+
+  <div class="pnum">8</div>
+</section>
+
+<!-- ============================ SECTION 5 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>5. Practice List</h2>
+    <p><span class="hl-y">14 problems · one-line hints</span></p>
+  </div>
+
+  <p>Work through these in order. For each, <b>draw the recursion tree on paper
+  before coding</b>, and <b>dry-run on the smallest input</b> (n = 1 or n = 2).</p>
+
+  <h3><span class="qnum">5.1</span> <span class="hl-y">Practice table</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th>#</th><th>Problem</th><th>Hint</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Fibonacci Number (LC 509)</td><td>Write it recursively, then count calls</td></tr>
+      <tr><td>2</td><td>Pow(x, n) (LC 50)</td><td>One recursive call per level</td></tr>
+      <tr><td>3</td><td>Reverse String recursively (LC 344)</td><td>Swap ends, recurse on the inside</td></tr>
+      <tr><td>4</td><td>Subsets (LC 78)</td><td>Record at every node</td></tr>
+      <tr><td>5</td><td>Subsets II (LC 90)</td><td>Sort, skip duplicates at the same level</td></tr>
+      <tr><td>6</td><td>Permutations (LC 46)</td><td>used[] array</td></tr>
+      <tr><td>7</td><td>Combination Sum (LC 39)</td><td>Recurse with i, prune when too big</td></tr>
+      <tr><td>8</td><td>Combination Sum II (LC 40)</td><td>Recurse with i + 1, skip duplicates</td></tr>
+      <tr><td>9</td><td>Letter Combinations of a Phone Number (LC 17)</td><td>One digit per level</td></tr>
+      <tr><td>10</td><td>Generate Parentheses (LC 22)</td><td>Add "(" if open &lt; n; ")" if close &lt; open</td></tr>
+      <tr><td>11</td><td>Palindrome Partitioning (LC 131)</td><td>Cut only where the prefix is a palindrome</td></tr>
+      <tr><td>12</td><td>Word Search (LC 79)</td><td>Mark the cell visited, unmark on return</td></tr>
+      <tr><td>13</td><td>N-Queens (LC 51)</td><td>Sets for column, r − c, r + c</td></tr>
+      <tr><td>14</td><td>Sudoku Solver (LC 37)</td><td>Fill the next empty cell; undo on failure</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">5.2</span> <span class="hl-g">Self-review after each problem</span></h3>
+
+  <ul class="ticks">
+    <li>I stated the <b>base case</b> first, in words.</li>
+    <li>I named the <b>smaller problem</b> and how it moves toward the base case.</li>
+    <li>I drew the <b>recursion tree</b> for the smallest input.</li>
+    <li>I have the full <b>choose / explore / un-choose</b> triple in my code.</li>
+    <li>I <b>copy the path</b> when recording (<code class="inline">[...path]</code>).</li>
+    <li>I can state the <b>time and space complexity</b>.</li>
+    <li>I can <b>re-solve it from scratch after 3 days</b> without looking.</li>
+  </ul>
+
+  <div class="note">
+    <b>Next module:</b> Module 6 — Linked Lists.
+  </div>
+
+  <div class="pnum">9</div>
+</section>
+
+<!-- ============================ QUICK REFERENCE ============================ -->
+<section class="page">
+  <h2 class="section hl-y">Quick Reference — One-Page Recap</h2>
+
+  <h3 style="border-bottom:none;"><span class="qnum">A</span> <span class="hl-b">The three rules of recursion</span></h3>
+  <ol>
+    <li><b>Base case</b> — smallest input you can answer directly.</li>
+    <li><b>Smaller problem</b> — call yourself closer to the base case.</li>
+    <li><b>Leap of faith</b> — trust the smaller call; combine the results.</li>
+  </ol>
+
+  <h3 style="border-bottom:none;"><span class="qnum">B</span> <span class="hl-p">The backtracking template</span></h3>
+<pre class="code">function backtrack(state) {
+  if (isComplete(state)) { result.push([...state]); return; }  // COPY
+  for (const c of choices) {
+    if (!isValid(c)) continue;
+    state.push(c);           // choose
+    backtrack(state);        // explore
+    state.pop();             // un-choose
+  }
+}</pre>
+
+  <h3 style="border-bottom:none;"><span class="qnum">C</span> <span class="hl-g">The four backbone rules</span></h3>
+  <ul class="arrows">
+    <li><b>Subsets</b> → <code class="inline">i + 1</code>, record at <b>every</b> call.</li>
+    <li><b>Combinations (reuse)</b> → <code class="inline">i</code>, record when
+        <code class="inline">remain == 0</code>.</li>
+    <li><b>Permutations</b> → <code class="inline">used[]</code>, loop from 0,
+        record when <code class="inline">path.length == n</code>.</li>
+    <li><b>Duplicates</b> → sort, then skip <code class="inline">nums[i] == nums[i-1]</code>
+        at the same level.</li>
+  </ul>
+
+  <h3 style="border-bottom:none;"><span class="qnum">D</span> <span class="hl-o">The two biggest bugs</span></h3>
+  <ul class="ticks">
+    <li><code class="inline">res.push(path)</code> without
+        <code class="inline">[...path]</code> → all answers are the <b>same array</b>.</li>
+    <li>Forgetting <b>un-choose</b> → state leaks into sibling branches.</li>
+    <li>Computing the smaller problem twice (e.g. <code class="inline">pow(x, n/2) * pow(x, n/2)</code>)
+        → kills the O(log n) gain.</li>
+    <li>Not <b>sorting</b> before pruning / skipping duplicates.</li>
+  </ul>
+
+  <hr class="hand">
+
+  <div class="note">
+    <b>Reminder:</b> draw the recursion tree. If you can't draw it, you can't code it.
+  </div>
+
+  <div class="sticky green" style="margin-top:36px;">
+    <b>You reached the end of Module 5. 🎉</b><br>
+    Close the notes, open a blank file, and re-write <u>sumTo(n)</u>,
+    <u>pow(x, n)</u>, <u>subsets</u>, <u>permutations</u> and
+    <u>combination sum</u> from memory — <b>with a recursion tree for each</b>.
+  </div>
+
+  <div class="center" style="margin-top:44px;">
+    <span class="stamp">END OF MODULE 5</span>
+  </div>
+
+  <div class="doodle-stars" style="margin-top:26px;">✦ ✧ ✦ ✧ ✦</div>
+
+  <div class="pnum">10</div>
+</section>
+
+</div>
+
+<!-- ============================================================
+     Tiny script: colour "// comment" text inside code blocks
+     green, so the code looks hand-annotated.
+     ============================================================ -->
+<script>
+(function () {
+  document.querySelectorAll('pre.code').forEach(function (block) {
+    var lines = block.innerHTML.split('\n');
+    var out = lines.map(function (line) {
+      var inSingle = false, inDouble = false, inTemplate = false, idx = -1;
+      for (var i = 0; i < line.length; i++) {
+        var ch = line[i];
+        var prev = line[i - 1];
+        if (ch === "'" && !inDouble && !inTemplate && prev !== '\\') inSingle = !inSingle;
+        else if (ch === '"' && !inSingle && !inTemplate && prev !== '\\') inDouble = !inDouble;
+        else if (ch === '`' && !inSingle && !inDouble && prev !== '\\') inTemplate = !inTemplate;
+        else if (!inSingle && !inDouble && !inTemplate && ch === '/' && line[i + 1] === '/') {
+          idx = i; break;
+        }
+      }
+      if (idx > -1) {
+        return line.slice(0, idx) + '<span class="cm">' + line.slice(idx) + '</span>';
+      }
+      return line;
+    });
+    block.innerHTML = out.join('\n');
+  });
+})();
+</script>
+
+</body>
+</html>

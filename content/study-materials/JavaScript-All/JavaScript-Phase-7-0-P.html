@@ -1,0 +1,2325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Mastery — Phase 7 · Lesson 7: Browser APIs, Web Storage &amp; Advanced DOM (Illustrated)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fdfaf3;--paper-warm:#f7f1e4;--paper-edge:#e6dcc7;
+  --ink:#1b2432;--ink-soft:#3b4657;--muted:#6d7686;--rule:#ddd2ba;
+  --navy:#16243d;--navy-2:#223354;--gold:#c9a227;--gold-soft:#e6d49a;--gold-deep:#9c7c14;
+  --js:#f7df1e;--teal:#0f766e;--plum:#7c3aed;--rose:#b03a52;--blue:#2563eb;--orange:#ea580c;
+  --code-bg:#131b2c;--code-bg-2:#0d1422;
+  --shadow-book:0 40px 90px -30px rgba(20,30,50,.45),0 12px 30px -12px rgba(20,30,50,.35);
+  --shadow-card:0 10px 30px -12px rgba(20,30,50,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;padding:48px 20px 90px;
+  background:radial-gradient(1200px 700px at 50% -10%,#2b3a56 0%,#16203a 45%,#0d1424 100%);
+  background-attachment:fixed;font-family:'Lora',Georgia,serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+.book{max-width:920px;margin:0 auto;counter-reset:pageCount}
+.page{position:relative;background:var(--paper);background-image:
+  radial-gradient(circle at 18% 12%,rgba(201,162,39,.055) 0 1px,transparent 1.6px),
+  radial-gradient(circle at 72% 38%,rgba(27,36,50,.045) 0 1px,transparent 1.6px),
+  radial-gradient(circle at 42% 82%,rgba(201,162,39,.05) 0 1px,transparent 1.6px),
+  linear-gradient(180deg,#fffdf8 0%,#fdfaf3 40%,#f8f3e8 100%);
+  background-size:27px 27px,31px 31px,37px 37px,100% 100%;
+  padding:62px 74px 78px;margin:0 0 34px;border-radius:4px 12px 12px 4px;
+  box-shadow:var(--shadow-book);border:1px solid #efe7d4;border-left:none;overflow:hidden}
+.page::before{content:"";position:absolute;top:0;left:0;bottom:0;width:26px;
+  background:linear-gradient(90deg,rgba(20,30,50,.16) 0%,rgba(20,30,50,.06) 32%,rgba(255,255,255,.35) 60%,rgba(20,30,50,.05) 100%);
+  border-right:1px solid rgba(20,30,50,.08);pointer-events:none}
+.page::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  box-shadow:inset 0 0 60px rgba(160,140,90,.07),inset 0 0 0 1px rgba(255,255,255,.6)}
+.page>*{position:relative;z-index:1}
+.page+.page{margin-top:0}
+
+.cover{counter-increment:none;min-height:1080px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+  padding:90px 70px;background:radial-gradient(circle at 50% 0%,#24334f 0%,#16243d 42%,#0e1728 100%);
+  color:#f6f1e4;border:1px solid rgba(201,162,39,.35);border-radius:4px 14px 14px 4px}
+.cover::before{background:linear-gradient(90deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.15) 40%,rgba(255,255,255,.08) 70%,rgba(0,0,0,.2) 100%);border-right:1px solid rgba(201,162,39,.25)}
+.cover::after{box-shadow:inset 0 0 120px rgba(0,0,0,.5),inset 0 0 0 1px rgba(201,162,39,.18)}
+.cover-frame{border:1.5px solid rgba(201,162,39,.5);outline:1px solid rgba(201,162,39,.18);outline-offset:8px;
+  padding:58px 46px 52px;width:100%;max-width:620px;border-radius:3px;position:relative}
+.cover-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:26px}
+.cover-logo{width:86px;height:86px;margin:0 auto 26px;background:var(--js);border-radius:14px;display:flex;align-items:flex-end;justify-content:flex-end;
+  padding:12px 14px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:28px;color:#111;
+  box-shadow:0 14px 34px -10px rgba(247,223,30,.55),inset 0 -4px 0 rgba(0,0,0,.12);letter-spacing:-.06em}
+.cover h1{font-family:'Playfair Display',serif;font-weight:900;font-size:42px;line-height:1.08;margin:0 0 8px;letter-spacing:-.01em;
+  background:linear-gradient(180deg,#fffdf5 0%,#e8d9a0 60%,#c9a227 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cover .cover-sub{font-family:'Playfair Display',serif;font-style:italic;font-size:17px;color:#cbd5e6;margin:14px 0 30px;line-height:1.5}
+.cover-rule{display:flex;align-items:center;justify-content:center;gap:14px;margin:26px 0 28px;color:var(--gold)}
+.cover-rule span{height:1px;width:76px;background:linear-gradient(90deg,transparent,var(--gold))}
+.cover-rule span:last-child{background:linear-gradient(270deg,transparent,var(--gold))}
+.cover-meta{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:#93a1b8;line-height:2.1}
+.cover-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+.badge{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;padding:6px 12px;
+  border-radius:100px;border:1px solid rgba(201,162,39,.45);color:var(--gold-soft);background:rgba(201,162,39,.07)}
+.cover-foot{margin-top:44px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;color:#7f8da5}
+
+.page-foot{counter-increment:pageCount;position:absolute;left:74px;right:74px;bottom:26px;display:flex;justify-content:space-between;align-items:center;
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#a99f88;
+  border-top:1px solid var(--rule);padding-top:12px;z-index:2}
+.page-foot .pn::after{content:counter(pageCount)}
+.page-foot .pn::before{content:"— "}
+
+.chap-head{margin:0 0 40px;text-align:center}
+.chap-num{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:12px}
+.chap-title{font-family:'Playfair Display',serif;font-weight:900;font-size:30px;line-height:1.14;margin:0 0 20px;color:var(--navy);letter-spacing:-.015em}
+.chap-rule{display:flex;align-items:center;justify-content:center;gap:14px;color:var(--gold);font-size:13px}
+.chap-rule span{height:1px;width:88px;background:linear-gradient(90deg,transparent,var(--gold-soft),var(--gold))}
+.chap-rule span:last-child{background:linear-gradient(270deg,transparent,var(--gold-soft),var(--gold))}
+.chap-rule i{font-style:normal;opacity:.9}
+
+h3{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy);margin:44px 0 14px;padding-bottom:9px;
+  border-bottom:1px solid var(--rule);position:relative;letter-spacing:-.01em}
+h3::after{content:"";position:absolute;left:0;bottom:-1px;width:56px;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-soft));border-radius:3px}
+h4{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy-2);margin:32px 0 10px}
+h5{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin:26px 0 8px}
+
+p{font-size:16.2px;line-height:1.82;margin:0 0 16px;color:var(--ink-soft)}
+strong{color:var(--ink);font-weight:600}
+em{font-style:italic}
+a{color:var(--teal)}
+ul,ol{font-size:16px;line-height:1.8;color:var(--ink-soft);margin:0 0 18px;padding-left:24px}
+li{margin-bottom:7px}
+ul li::marker{color:var(--gold)}
+ol li::marker{color:var(--gold-deep);font-family:'JetBrains Mono',monospace;font-size:13px}
+
+.table-wrap{margin:24px 0 30px;border-radius:10px;overflow:hidden;box-shadow:var(--shadow-card);border:1px solid var(--paper-edge)}
+table{width:100%;border-collapse:collapse;font-size:14.8px;background:#fffdf8}
+thead th{background:linear-gradient(180deg,var(--navy-2),var(--navy));color:#f4efe2;font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;text-align:left;padding:13px 18px}
+tbody td{padding:12px 18px;border-bottom:1px solid #f0e9d8;color:var(--ink-soft);vertical-align:top;line-height:1.6}
+tbody tr:nth-child(even){background:#fbf7ee}
+tbody tr:last-child td{border-bottom:none}
+tbody td:first-child{color:var(--navy);font-weight:600}
+table code{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(201,162,39,.13);padding:2px 6px;border-radius:4px;color:var(--gold-deep)}
+
+p code,li code,td code,.callout code{font-family:'JetBrains Mono',monospace;font-size:.86em;background:rgba(20,30,50,.06);
+  padding:2px 6px;border-radius:4px;color:var(--rose);border:1px solid rgba(20,30,50,.06)}
+
+figure{margin:28px 0 34px}
+.fig{border-radius:12px;overflow:hidden;box-shadow:0 18px 40px -18px rgba(15,25,45,.55),0 3px 10px -4px rgba(15,25,45,.35);border:1px solid rgba(255,255,255,.08)}
+.fig-code{background:linear-gradient(180deg,var(--code-bg) 0%,var(--code-bg-2) 100%)}
+.fig-bar{display:flex;align-items:center;gap:8px;padding:11px 16px;background:linear-gradient(180deg,#1d2740,#182136);border-bottom:1px solid rgba(255,255,255,.07)}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dot.r{background:#ff5f57}.dot.a{background:#febc2e}.dot.g{background:#28c840}
+.fig-title{margin-left:12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#8b9ab8;text-transform:lowercase}
+.fig pre{margin:0;padding:20px 22px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.8px;line-height:1.78;color:#c7d3e8;tab-size:2}
+.fig code{font-family:inherit}
+.tok-com{color:#5d6b8a;font-style:italic}.tok-str{color:#a5e075}.tok-num{color:#f7a56b}.tok-kw{color:#c792ea;font-weight:500}.tok-fn{color:#82aaff}.tok-op{color:#89ddff}
+.fig-out{background:linear-gradient(180deg,#f2ecdd,#eae2cf);border:1px solid var(--paper-edge)}
+.fig-out .fig-bar{background:linear-gradient(180deg,#e3d9c1,#dbd0b5);border-bottom:1px solid #d0c3a4}
+.fig-out .fig-bar .fig-title{color:#7a6a45}
+.fig-out pre{margin:0;padding:16px 22px;font-family:'JetBrains Mono',monospace;font-size:12.8px;line-height:1.75;color:#2f3b4f;white-space:pre-wrap;word-break:break-word}
+.fig-out .fig-bar .dot{opacity:.35}
+figcaption{margin-top:11px;font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.06em;color:var(--muted);text-align:center;line-height:1.7}
+figcaption b{color:var(--gold-deep);font-weight:700}
+.fig-illo{background:linear-gradient(180deg,#fffdf8,#f5efe1);border:1px solid var(--paper-edge);padding:20px 18px 8px;box-shadow:0 16px 36px -20px rgba(15,25,45,.5)}
+.fig-illo svg{display:block;width:100%;height:auto}
+.illo text{font-family:'JetBrains Mono',monospace}
+.illo .t-label{font-size:12px;letter-spacing:.22em;fill:#8a7d5f}
+.illo .t-strong{font-size:14px;font-weight:700;fill:#1b2432;font-family:'Lora',serif}
+.illo .t-mono{font-size:12.5px;fill:#3b4657}
+.illo .t-gold{font-size:12px;fill:#9c7c14;letter-spacing:.14em}
+.illo .t-code{font-size:12px;fill:#c7d3e8}
+
+.callout{border-radius:10px;padding:20px 24px;margin:26px 0;font-size:15.6px;line-height:1.75;position:relative;
+  border-left:4px solid var(--gold);background:linear-gradient(90deg,#fdf6e0,#fbf8ee);color:var(--ink-soft);
+  box-shadow:0 8px 22px -14px rgba(20,30,50,.4)}
+.callout .callout-title{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--gold-deep);margin-bottom:8px}
+.callout.warn{border-left-color:var(--rose);background:linear-gradient(90deg,#fdeef0,#fbf6f4)}
+.callout.warn .callout-title{color:var(--rose)}
+.callout.tip{border-left-color:var(--teal);background:linear-gradient(90deg,#e9f6f4,#f5fbfa)}
+.callout.tip .callout-title{color:var(--teal)}
+.callout.note{border-left-color:var(--navy-2);background:linear-gradient(90deg,#eef2f9,#f8fafd)}
+.callout.note .callout-title{color:var(--navy-2)}
+.callout p:last-child{margin-bottom:0}
+
+.keyidea{margin:30px 0;padding:26px 30px;border-radius:12px;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#2c3f66 100%);
+  color:#f3eee1;text-align:center;box-shadow:0 18px 40px -22px rgba(10,18,35,.9);position:relative;overflow:hidden}
+.keyidea::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 0%,rgba(201,162,39,.22),transparent 60%);pointer-events:none}
+.keyidea .k-label{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.36em;text-transform:uppercase;
+  color:var(--gold-soft);margin-bottom:10px}
+.keyidea p{margin:0;color:#f3eee1;font-size:17.5px;font-style:italic;line-height:1.65;position:relative}
+
+.q{margin:0 0 20px;padding:16px 20px 16px 22px;background:#fffdf8;border:1px solid var(--paper-edge);
+  border-left:3px solid var(--gold-soft);border-radius:8px;font-size:15.6px;line-height:1.72;color:var(--ink-soft);
+  box-shadow:0 5px 16px -12px rgba(20,30,50,.5)}
+.q .qnum{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12.5px;color:var(--gold-deep);margin-right:8px}
+.qgroup-title{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-deep);
+  margin:34px 0 14px;padding-bottom:8px;border-bottom:1px dashed var(--rule)}
+
+.checklist{list-style:none;padding:0;margin:24px 0}
+.checklist li{position:relative;padding:12px 0 12px 42px;border-bottom:1px solid #efe8d7;font-size:15.8px;color:var(--ink-soft);line-height:1.65}
+.checklist li::before{content:"";position:absolute;left:4px;top:15px;width:18px;height:18px;border:2px solid var(--gold);border-radius:4px;
+  background:#fffdf6;box-shadow:inset 0 0 0 2px #fffdf6,inset 0 0 0 3px rgba(201,162,39,.25)}
+.checklist li:last-child{border-bottom:none}
+
+.toc{list-style:none;padding:0;margin:8px 0 0;counter-reset:toc}
+.toc li{counter-increment:toc;display:flex;align-items:baseline;gap:12px;padding:13px 4px;border-bottom:1px dotted #e2d8c0;font-size:16px;color:var(--ink-soft)}
+.toc li a{text-decoration:none;color:var(--navy);font-weight:500;display:flex;align-items:baseline;gap:14px;width:100%}
+.toc li a::before{content:counter(toc,decimal-leading-zero);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);letter-spacing:.08em;flex:0 0 30px}
+.toc li a::after{content:"";flex:1 1 auto;border-bottom:1px dotted #ddd0b2;margin:0 6px 4px}
+
+.lead{font-size:18px;line-height:1.78;color:var(--ink);font-style:italic;margin-bottom:26px}
+.divider{display:flex;align-items:center;justify-content:center;gap:14px;margin:46px 0;color:var(--gold-soft);font-size:14px}
+.divider span{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-soft))}
+.divider span:last-child{background:linear-gradient(270deg,transparent,var(--gold-soft))}
+
+@media (max-width:820px){
+  body{padding:22px 10px 60px}
+  .page{padding:42px 30px 66px;border-radius:3px 8px 8px 3px}
+  .page::before{width:16px}
+  .page-foot{left:30px;right:30px}
+  .chap-title{font-size:22px}
+  .cover{min-height:auto;padding:60px 26px}
+  .cover-frame{padding:40px 22px}
+  .cover h1{font-size:28px}
+  .cover .cover-sub{font-size:14px}
+  h3{font-size:19px}
+  p,ul,ol,.q,.checklist li{font-size:15px}
+  .fig pre{font-size:11.5px;padding:15px 14px}
+}
+@media print{
+  body{background:#fff;padding:0}.book{max-width:none}
+  .page{box-shadow:none;border:none;margin:0;border-radius:0;page-break-after:always;padding:48px 54px 66px}
+  .page::before,.page::after{display:none}
+  .cover{min-height:96vh}
+}
+</style>
+</head>
+<body>
+<div class="book">
+
+<!-- ═══════ COVER ═══════ -->
+<section class="page cover">
+  <div class="cover-frame">
+    <div class="cover-eyebrow">The Complete Handbook Series</div>
+    <div class="cover-logo">JS</div>
+    <h1>JavaScript<br>Mastery</h1>
+    <div class="cover-sub">Phase 7 · Lesson 7<br>Browser APIs, Web Storage &amp; Advanced DOM</div>
+    <div class="cover-rule"><span></span><i>❖</i><span></span></div>
+    <div class="cover-meta">
+      Level &nbsp;·&nbsp; Intermediate<br>
+      Illustrated Study Edition
+    </div>
+    <div class="cover-badges">
+      <span class="badge">Storage</span>
+      <span class="badge">Timers</span>
+      <span class="badge">Observers</span>
+      <span class="badge">Clipboard</span>
+      <span class="badge">Geolocation</span>
+      <span class="badge">Downloads</span>
+    </div>
+  </div>
+  <div class="cover-foot">Connect JavaScript to the browser</div>
+</section>
+
+<!-- ═══════ FRONT MATTER ═══════ -->
+<section class="page">
+  <header class="chap-head">
+    <div class="chap-num">Before We Begin</div>
+    <h2 class="chap-title">What You Will Learn</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p class="lead">Every concept in this lesson will appear twice: first as a <strong>real-life picture</strong> you already understand, then as working code you can run.</p>
+
+  <h3>Learning Objectives</h3>
+  <ul>
+    <li>Understand <code>window</code>, <code>document</code>, <code>location</code>, <code>history</code>, <code>navigator</code> and <code>screen</code>.</li>
+    <li>Persist non-sensitive data with <code>localStorage</code> and <code>sessionStorage</code>.</li>
+    <li>Read and update URL query parameters.</li>
+    <li>Handle page loading, visibility, online/offline, scrolling and resizing.</li>
+    <li>Use timers and <code>requestAnimationFrame()</code>.</li>
+    <li>Work with <code>IntersectionObserver</code>, <code>ResizeObserver</code> and <code>MutationObserver</code>.</li>
+    <li>Use the Clipboard, Geolocation and Blob download APIs.</li>
+    <li>Improve accessibility, performance and cleanup.</li>
+    <li>Build a live <strong>Browser API Learning Dashboard</strong>.</li>
+  </ul>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 340" role="img" aria-label="Nine illustrated chapters of Browser APIs shown as a journey">
+      <rect x="0" y="0" width="700" height="340" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="34" text-anchor="middle" class="t-label" font-size="10">NINE ILLUSTRATED CHAPTERS · ONE BROWSER, EVERY API</text>
+
+      <g>
+        <circle cx="90" cy="120" r="34" fill="#16243d" stroke="#fffdf8" stroke-width="4"/>
+        <text x="90" y="118" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700" fill="#e6d49a">1</text>
+        <text x="90" y="136" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#93a1b8">ENV</text>
+        <text x="90" y="172" text-anchor="middle" font-size="10" font-family="Lora, serif" fill="#3b4657">car dashboard</text>
+
+        <circle cx="200" cy="180" r="34" fill="#0f766e" stroke="#fffdf8" stroke-width="4"/>
+        <text x="200" y="178" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700" fill="#fff">2</text>
+        <text x="200" y="196" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#fff">LIFE</text>
+        <text x="200" y="132" text-anchor="middle" font-size="10" font-family="Lora, serif" fill="#3b4657">restaurant opening</text>
+
+        <circle cx="310" cy="140" r="34" fill="#c9a227" stroke="#fffdf8" stroke-width="4"/>
+        <text x="310" y="138" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700" fill="#1b2432">3</text>
+        <text x="310" y="156" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#1b2432">STORE</text>
+        <text x="310" y="192" text-anchor="middle" font-size="10" font-family="Lora, serif" fill="#3b4657">two notebooks</text>
+
+        <circle cx="420" cy="220" r="34" fill="#b03a52" stroke="#fffdf8" stroke-width="4"/>
+        <text x="420" y="218" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700" fill="#fff">4</text>
+        <text x="420" y="236" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#fff">URL</text>
+        <text x="420" y="172" text-anchor="middle" font-size="10" font-family="Lora, serif" fill="#3b4657">library card</text>
+
+        <circle cx="530" cy="140" r="34" fill="#223354" stroke="#fffdf8" stroke-width="4"/>
+        <text x="530" y="138" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700" fill="#e6d49a">5</text>
+        <text x="530" y="156" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#e6d49a">TIMER</text>
+        <text x="530" y="192" text-anchor="middle" font-size="10" font-family="Lora, serif" fill="#3b4657">film projector</text>
+
+        <circle cx="630" cy="200" r="34" fill="#0f766e" stroke="#fffdf8" stroke-width="4"/>
+        <text x="630" y="198" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700" fill="#fff">6</text>
+        <text x="630" y="216" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#fff">EVENTS</text>
+        <text x="630" y="252" text-anchor="middle" font-size="10" font-family="Lora, serif" fill="#3b4657">motion sensor</text>
+      </g>
+
+      <g>
+        <circle cx="130" cy="290" r="34" fill="#c9a227" stroke="#fffdf8" stroke-width="4"/>
+        <text x="130" y="288" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700" fill="#1b2432">7</text>
+        <text x="130" y="306" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#1b2432">OBSERVE</text>
+        <text x="130" y="252" text-anchor="middle" font-size="10" font-family="Lora, serif" fill="#3b4657">security camera</text>
+
+        <circle cx="320" cy="290" r="34" fill="#b03a52" stroke="#fffdf8" stroke-width="4"/>
+        <text x="320" y="288" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700" fill="#fff">8</text>
+        <text x="320" y="306" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#fff">COPY</text>
+        <text x="320" y="252" text-anchor="middle" font-size="10" font-family="Lora, serif" fill="#3b4657">copy machine</text>
+
+        <circle cx="510" cy="290" r="34" fill="#16243d" stroke="#fffdf8" stroke-width="4"/>
+        <text x="510" y="288" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700" fill="#e6d49a">9</text>
+        <text x="510" y="306" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#93a1b8">A11Y</text>
+        <text x="510" y="252" text-anchor="middle" font-size="10" font-family="Lora, serif" fill="#3b4657">building with ramps</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 0.1</b> — The entire lesson, anchored to pictures you already understand.</figcaption>
+  </figure>
+
+  <div class="keyidea">
+    <span class="k-label">The Promise of This Handbook</span>
+    <p>Every API you meet has a real-world twin. Look at the picture, match it to the code, then run it live.</p>
+  </div>
+
+  <div class="page-foot"><span>Lesson 7 · Browser APIs Illustrated</span><span class="pn"></span></div>
+</section>
+
+<!-- ═══════ TOC ═══════ -->
+<section class="page">
+  <header class="chap-head">
+    <div class="chap-num">Contents</div>
+    <h2 class="chap-title">Table of Contents</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <ol class="toc">
+    <li><a href="#ch1">The Browser Environment</a></li>
+    <li><a href="#ch2">Page Lifecycle Events</a></li>
+    <li><a href="#ch3">Web Storage</a></li>
+    <li><a href="#ch4">URL, Query Parameters &amp; Navigation</a></li>
+    <li><a href="#ch5">Timers &amp; Animation</a></li>
+    <li><a href="#ch6">Scroll, Resize &amp; Network Events</a></li>
+    <li><a href="#ch7">Observer APIs</a></li>
+    <li><a href="#ch8">Clipboard, Geolocation &amp; File Downloads</a></li>
+    <li><a href="#ch9">Accessibility, Performance &amp; Cleanup</a></li>
+    <li><a href="#ch10">Final Project — Browser API Dashboard</a></li>
+    <li><a href="#ch11">Revision, Exercises &amp; Checklist</a></li>
+  </ol>
+
+  <div class="page-foot"><span>Lesson 7 · Browser APIs Illustrated</span><span class="pn"></span></div>
+</section>
+
+<!-- ═══════ CH 1 — BROWSER ENVIRONMENT ═══════ -->
+<section class="page" id="ch1">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 01</div>
+    <h2 class="chap-title">The Browser Environment</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p>JavaScript does not run in isolation inside a browser. The browser provides a set of API objects that connect your code to the page, the URL, the device and the wider web.</p>
+
+  <h3>Real-Life Analogy: The Car Dashboard</h3>
+  <p>Think of the browser as a car. The driver sees the road through the windshield, reads navigation from GPS, checks trip data from the trip computer, and looks at the physical dashboard for engine info — six separate screens, all working together.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 380" role="img" aria-label="A car dashboard mapped to six browser objects">
+      <rect x="0" y="0" width="700" height="380" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">THE BROWSER AS A CAR DASHBOARD</text>
+
+      <!-- windshield / window -->
+      <rect x="40" y="60" width="380" height="100" rx="10" fill="#dbe8f7" stroke="#1b2432" stroke-width="2.5"/>
+      <text x="60" y="86" font-size="10" font-family="JetBrains Mono, monospace" fill="#3b4657">WINDSHIELD — you see the road</text>
+      <text x="60" y="112" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#16243d">window</text>
+      <text x="60" y="134" font-size="10" font-family="Lora, serif" fill="#3b4657">the whole browser environment</text>
+      <text x="60" y="150" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">window.innerWidth</text>
+
+      <!-- document = road -->
+      <rect x="40" y="170" width="380" height="80" rx="10" fill="#7a5e3a" stroke="#1b2432" stroke-width="2.5"/>
+      <text x="60" y="196" font-size="10" font-family="JetBrains Mono, monospace" fill="#f4e6bd">THE ROAD — the page you are on</text>
+      <text x="60" y="222" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#fffdf8">document</text>
+      <text x="60" y="240" font-size="10" font-family="Lora, serif" fill="#f4e6bd">the HTML document and DOM</text>
+
+      <!-- location = GPS -->
+      <rect x="440" y="60" width="220" height="60" rx="10" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="550" y="82" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#e6d49a">GPS · location</text>
+      <text x="550" y="104" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#a5e075">location.pathname</text>
+
+      <!-- history = trip log -->
+      <rect x="440" y="130" width="220" height="60" rx="10" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="550" y="152" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#e6d49a">TRIP LOG · history</text>
+      <text x="550" y="174" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#a5e075">history.back()</text>
+
+      <!-- navigator = engine -->
+      <rect x="440" y="200" width="220" height="60" rx="10" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="550" y="222" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#e6d49a">ENGINE · navigator</text>
+      <text x="550" y="244" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#a5e075">navigator.onLine</text>
+
+      <!-- screen = physical dashboard -->
+      <rect x="440" y="270" width="220" height="60" rx="10" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="550" y="292" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#e6d49a">SCREEN · screen</text>
+      <text x="550" y="314" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#a5e075">screen.width</text>
+
+      <!-- steering wheel -->
+      <circle cx="230" cy="290" r="40" fill="none" stroke="#1b2432" stroke-width="3"/>
+      <circle cx="230" cy="290" r="10" fill="#1b2432"/>
+      <line x1="190" y1="290" x2="220" y2="290" stroke="#1b2432" stroke-width="3"/>
+      <line x1="240" y1="290" x2="270" y2="290" stroke="#1b2432" stroke-width="3"/>
+      <text x="230" y="350" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#3b4657">your code drives</text>
+    </svg>
+    <figcaption><b>Figure 1.1</b> — Six dashboard screens, six browser objects. Your code is the driver.</figcaption>
+  </figure>
+
+  <h3>Reading the Six Objects</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Object</th><th>Responsibility</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><code>window</code></td><td>Browser window and many APIs</td><td><code>window.innerWidth</code></td></tr>
+        <tr><td><code>document</code></td><td>The current HTML document and DOM</td><td><code>document.querySelector("h1")</code></td></tr>
+        <tr><td><code>location</code></td><td>Current URL and navigation</td><td><code>location.pathname</code></td></tr>
+        <tr><td><code>history</code></td><td>Session history entries</td><td><code>history.back()</code></td></tr>
+        <tr><td><code>navigator</code></td><td>Browser capabilities and device APIs</td><td><code>navigator.onLine</code></td></tr>
+        <tr><td><code>screen</code></td><td>Information about the display</td><td><code>screen.width</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">six-objects.js</span></div>
+    <pre><code>console.log(window.innerWidth);
+console.log(document.title);
+console.log(location.href);
+console.log(navigator.language);
+console.log(screen.width);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output (typical)</span></div>
+    <pre>1280
+My Page
+https://example.com/dashboard
+en-US
+1920</pre>
+  </figure>
+
+  <div class="callout warn">
+    <span class="callout-title">Important distinction</span>
+    <p><code>window</code> and <code>document</code> are <strong>not</strong> interchangeable. <code>window</code> is the browser's window environment; <code>document</code> is the page's DOM.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 01 · Browser Environment</span><span class="pn"></span></div>
+</section>
+
+<!-- ═══════ CH 2 — PAGE LIFECYCLE ═══════ -->
+<section class="page" id="ch2">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 02</div>
+    <h2 class="chap-title">Page Lifecycle Events</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p class="lead">A page goes through stages — building, loading, becoming visible, losing focus, losing network, and returning. Each stage has an event. Listen to the right one and your code runs at the right moment.</p>
+
+  <h3>Real-Life Analogy: A Restaurant Opening</h3>
+  <p>A restaurant opens in stages: first the doors unlock, then the kitchen is fully stocked, then staff notice who is seated in the room, and finally the phone line tells them whether outside calls are getting through.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 400" role="img" aria-label="A restaurant opening in stages mapped to four lifecycle events">
+      <rect x="0" y="0" width="700" height="400" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">THE PAGE AS A RESTAURANT OPENING</text>
+
+      <!-- Stage 1 -->
+      <rect x="40" y="60" width="300" height="140" rx="12" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="190" y="86" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">DOORS UNLOCK</text>
+      <rect x="80" y="98" width="90" height="90" rx="6" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+      <text x="125" y="140" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">OPEN</text>
+      <circle cx="155" cy="168" r="4" fill="#0f766e"/>
+
+      <text x="230" y="120" font-size="10.5" font-family="JetBrains Mono, monospace" font-weight="700" fill="#0f766e">DOMContentLoaded</text>
+      <text x="230" y="140" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">HTML parsed, DOM ready</text>
+      <text x="230" y="158" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">elements exist to be found</text>
+      <text x="230" y="178" font-size="10" font-family="JetBrains Mono, monospace" fill="#8a7d5f">before images load</text>
+
+      <!-- Stage 2 -->
+      <rect x="370" y="60" width="300" height="140" rx="12" fill="#fffdf8" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="520" y="86" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">KITCHEN STOCKED</text>
+      <rect x="410" y="98" width="90" height="90" rx="6" fill="#fdf6e0" stroke="#c9a227" stroke-width="2"/>
+      <text x="455" y="130" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#9c7c14">chef ready</text>
+      <text x="455" y="148" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#9c7c14">fridge full</text>
+      <text x="455" y="166" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#9c7c14">plates washed</text>
+
+      <text x="560" y="120" font-size="10.5" font-family="JetBrains Mono, monospace" font-weight="700" fill="#9c7c14">load</text>
+      <text x="560" y="140" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">all resources ready</text>
+      <text x="560" y="158" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">images, styles, fonts</text>
+      <text x="560" y="178" font-size="10" font-family="JetBrains Mono, monospace" fill="#8a7d5f">page fully loaded</text>
+
+      <!-- Stage 3 -->
+      <rect x="40" y="220" width="300" height="140" rx="12" fill="#fffdf8" stroke="#b03a52" stroke-width="2.5"/>
+      <text x="190" y="246" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#b03a52">STAFF NOTICES ROOM</text>
+
+      <circle cx="110" cy="290" r="20" fill="#fdeef0" stroke="#b03a52" stroke-width="2"/>
+      <text x="110" y="296" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#b03a52">👀</text>
+
+      <text x="150" y="278" font-size="10" font-family="JetBrains Mono, monospace" fill="#b03a52">visible</text>
+      <text x="150" y="296" font-size="10" font-family="JetBrains Mono, monospace" fill="#b03a52">hidden</text>
+      <text x="150" y="316" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">switched tabs?</text>
+
+      <text x="230" y="270" font-size="10.5" font-family="JetBrains Mono, monospace" font-weight="700" fill="#b03a52">visibilitychange</text>
+      <text x="230" y="290" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">tab became visible/hidden</text>
+      <text x="230" y="308" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">pause or refresh work</text>
+
+      <!-- Stage 4 -->
+      <rect x="370" y="220" width="300" height="140" rx="12" fill="#fffdf8" stroke="#223354" stroke-width="2.5"/>
+      <text x="520" y="246" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#223354">PHONE LINE STATUS</text>
+
+      <rect x="410" y="266" width="80" height="50" rx="8" fill="#eef2f9" stroke="#223354" stroke-width="2"/>
+      <text x="450" y="290" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#223354">📞</text>
+      <text x="450" y="306" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#223354">online</text>
+      <text x="450" y="326" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#b03a52">offline</text>
+
+      <text x="560" y="276" font-size="10.5" font-family="JetBrains Mono, monospace" font-weight="700" fill="#223354">online / offline</text>
+      <text x="560" y="296" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">network connectivity</text>
+      <text x="560" y="316" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">hint only — not proof</text>
+    </svg>
+    <figcaption><b>Figure 2.1</b> — Four lifecycle moments, four events. Choose the one that matches what you need.</figcaption>
+  </figure>
+
+  <h3>2.1 DOMContentLoaded</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">dom-ready.js</span></div>
+    <pre><code>document.addEventListener("DOMContentLoaded", () =&gt; {
+  const heading = document.querySelector("h1");
+
+  if (heading) {
+    heading.textContent = "DOM is ready!";
+  }
+});</code></pre>
+  </figure>
+
+  <h3>2.2 The load event</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">load.js</span></div>
+    <pre><code>window.addEventListener("load", () =&gt; {
+  console.log("Page resources have loaded.");
+});</code></pre>
+  </figure>
+
+  <h3>2.3 Compare the Lifecycle Events</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Event</th><th>When to use it</th></tr></thead>
+      <tbody>
+        <tr><td><code>DOMContentLoaded</code></td><td>When your code needs the parsed DOM</td></tr>
+        <tr><td><code>load</code></td><td>When your code needs all page resources</td></tr>
+        <tr><td><code>visibilitychange</code></td><td>When the page becomes visible or hidden</td></tr>
+        <tr><td><code>online</code></td><td>When the browser reports online status</td></tr>
+        <tr><td><code>offline</code></td><td>When the browser reports offline status</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2.4 visibilitychange</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">visibility.js</span></div>
+    <pre><code>document.addEventListener("visibilitychange", () =&gt; {
+  if (document.visibilityState === "hidden") {
+    console.log("The page is hidden.");
+  } else {
+    console.log("The page is visible.");
+  }
+});</code></pre>
+  </figure>
+
+  <div class="callout warn">
+    <span class="callout-title">Do not rely on beforeunload</span>
+    <p><code>beforeunload</code> is not a reliable place to save data. Save important changes as they happen.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 02 · Page Lifecycle</span><span class="pn"></span></div>
+</section>
+
+<!-- ═══════ CH 3 — WEB STORAGE ═══════ -->
+<section class="page" id="ch3">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 03</div>
+    <h2 class="chap-title">Web Storage</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p class="lead">Browsers let a website save small amounts of string data locally. Two notebooks, two lifetimes.</p>
+
+  <h3>Real-Life Analogy: Two Notebooks</h3>
+  <p>Imagine two notebooks on your desk. The first is a <strong>permanent diary</strong> — whatever you write stays there across days. The second is a <strong>sticky-note pad</strong> — useful during the current session, but torn off when you leave the room.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 340" role="img" aria-label="Two notebooks — permanent diary and sticky notes — mapped to localStorage and sessionStorage">
+      <rect x="0" y="0" width="700" height="340" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">TWO NOTEBOOKS · TWO LIFETIMES</text>
+
+      <!-- permanent diary -->
+      <rect x="40" y="60" width="290" height="240" rx="12" fill="#fdf6e0" stroke="#c9a227" stroke-width="3"/>
+      <rect x="40" y="60" width="30" height="240" rx="6" fill="#9c7c14"/>
+      <line x1="80" y1="80" x2="320" y2="80" stroke="#c9a227" stroke-width="1.5"/>
+      <text x="200" y="106" text-anchor="middle" font-size="13" font-family="Playfair Display, serif" font-weight="700" fill="#9c7c14">PERMANENT DIARY</text>
+      <text x="200" y="128" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#16243d">localStorage</text>
+
+      <line x1="80" y1="152" x2="320" y2="152" stroke="#c9a227" stroke-width="1"/>
+      <text x="100" y="176" font-size="11" font-family="JetBrains Mono, monospace" fill="#3b4657">theme: "dark"</text>
+      <text x="100" y="200" font-size="11" font-family="JetBrains Mono, monospace" fill="#3b4657">note: "study plan…"</text>
+      <text x="100" y="224" font-size="11" font-family="JetBrains Mono, monospace" fill="#3b4657">tasks: [{…}]</text>
+
+      <text x="200" y="258" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">✓ survives reload</text>
+      <text x="200" y="276" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">✓ survives tab close</text>
+      <text x="200" y="294" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">✓ survives browser restart</text>
+
+      <!-- sticky pad -->
+      <rect x="370" y="60" width="290" height="240" rx="12" fill="#e9f6f4" stroke="#0f766e" stroke-width="3"/>
+      <rect x="370" y="60" width="290" height="40" rx="12" fill="#0f766e"/>
+      <rect x="370" y="88" width="290" height="12" fill="#0f766e"/>
+      <text x="515" y="86" text-anchor="middle" font-size="13" font-family="Playfair Display, serif" font-weight="700" fill="#fff">STICKY NOTE PAD</text>
+
+      <text x="515" y="128" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#0f766e">sessionStorage</text>
+
+      <rect x="400" y="146" width="230" height="26" rx="4" fill="#fffdf8" stroke="#0f766e" stroke-width="1.5"/>
+      <text x="420" y="164" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#0f766e">step: 2</text>
+
+      <rect x="400" y="180" width="230" height="26" rx="4" fill="#fffdf8" stroke="#0f766e" stroke-width="1.5"/>
+      <text x="420" y="198" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#0f766e">draft: "in progress"</text>
+
+      <rect x="400" y="214" width="230" height="26" rx="4" fill="#fffdf8" stroke="#0f766e" stroke-width="1.5"/>
+      <text x="420" y="232" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#0f766e">tabVisits: 4</text>
+
+      <text x="515" y="266" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#0f766e">✓ survives reload</text>
+      <text x="515" y="284" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#b03a52">✗ gone when tab closes</text>
+    </svg>
+    <figcaption><b>Figure 3.1</b> — The diary persists. The sticky pad is torn off when the tab closes.</figcaption>
+  </figure>
+
+  <h3>3.1 localStorage</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">local-storage.js</span></div>
+    <pre><code>localStorage.setItem("theme", "dark");
+
+const theme = localStorage.getItem("theme");
+
+console.log(theme); // dark</code></pre>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">remove.js</span></div>
+    <pre><code>localStorage.removeItem("theme");
+
+// or remove everything for this origin
+localStorage.clear();</code></pre>
+  </figure>
+
+  <h3>3.2 sessionStorage</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">session-storage.js</span></div>
+    <pre><code>sessionStorage.setItem("currentStep", "2");
+
+const step = sessionStorage.getItem("currentStep");
+
+console.log(step); // 2</code></pre>
+  </figure>
+
+  <h3>3.3 localStorage vs sessionStorage</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Feature</th><th>localStorage</th><th>sessionStorage</th></tr></thead>
+      <tbody>
+        <tr><td>Reload the current page</td><td>Usually persists</td><td>Usually persists</td></tr>
+        <tr><td>Later browser session</td><td>Usually persists</td><td>Starts fresh</td></tr>
+        <tr><td>Typical use</td><td>Theme, preferences</td><td>Temporary tab state</td></tr>
+        <tr><td>Stores objects directly</td><td>No</td><td>No</td></tr>
+        <tr><td>Stores strings</td><td>Yes</td><td>Yes</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>3.4 Saving Arrays and Objects</h3>
+  <p>Web Storage stores strings. Use JSON for structured data.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">json-storage.js</span></div>
+    <pre><code>const preferences = {
+  theme: "dark",
+  language: "en",
+  compactLayout: true
+};
+
+localStorage.setItem(
+  "preferences",
+  JSON.stringify(preferences)
+);
+
+const raw = localStorage.getItem("preferences");
+
+if (raw !== null) {
+  const restored = JSON.parse(raw);
+  console.log(restored.theme);
+}</code></pre>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">safe-load.js</span></div>
+    <pre><code>function loadPreferences() {
+  try {
+    const raw = localStorage.getItem("preferences");
+
+    if (raw === null) {
+      return { theme: "light" };
+    }
+
+    const parsed = JSON.parse(raw);
+
+    if (!parsed || typeof parsed !== "object") {
+      return { theme: "light" };
+    }
+
+    return {
+      theme: parsed.theme === "dark" ? "dark" : "light"
+    };
+  } catch (error) {
+    console.error("Could not load preferences:", error);
+    return { theme: "light" };
+  }
+}</code></pre>
+  </figure>
+
+  <h3>3.5 The storage Event</h3>
+  <p>When another tab of the <strong>same origin</strong> changes a stored value, eligible other tabs receive a <code>storage</code> event.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 260" role="img" aria-label="Two browser tabs sharing localStorage via the storage event">
+      <rect x="0" y="0" width="700" height="260" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">THE STORAGE EVENT · TWO TABS, ONE CONVERSATION</text>
+
+      <!-- Tab A -->
+      <rect x="40" y="70" width="260" height="140" rx="10" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <rect x="40" y="70" width="260" height="28" rx="10" fill="#0f766e"/>
+      <text x="170" y="90" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#fff">Tab A</text>
+      <text x="170" y="122" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#3b4657">theme: "light"</text>
+      <rect x="90" y="136" width="160" height="34" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.8"/>
+      <text x="170" y="158" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">change to "dark"</text>
+      <text x="170" y="194" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#0f766e">the writer</text>
+
+      <!-- arrow -->
+      <path d="M310 140 Q 350 140 390 140" fill="none" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5"/>
+      <polygon points="390,132 408,140 390,148" fill="#c9a227"/>
+      <text x="350" y="122" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">storage event</text>
+
+      <!-- Tab B -->
+      <rect x="420" y="70" width="240" height="140" rx="10" fill="#fffdf8" stroke="#b03a52" stroke-width="2.5"/>
+      <rect x="420" y="70" width="240" height="28" rx="10" fill="#b03a52"/>
+      <text x="540" y="90" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#fff">Tab B</text>
+      <text x="540" y="122" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#3b4657">theme: "light"</text>
+      <rect x="460" y="136" width="160" height="34" rx="8" fill="#fdeef0" stroke="#b03a52" stroke-width="1.8"/>
+      <text x="540" y="158" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#b03a52">now sees "dark"</text>
+      <text x="540" y="194" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#b03a52">the listener</text>
+
+      <text x="350" y="240" text-anchor="middle" class="t-gold" font-size="10.5">FIRE ONLY IN OTHER TABS · NOT THE ONE THAT WROTE</text>
+    </svg>
+    <figcaption><b>Figure 3.2</b> — One tab writes, the other tab listens. Real-time sync with no server.</figcaption>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">storage-event.js</span></div>
+    <pre><code>window.addEventListener("storage", (event) =&gt; {
+  console.log("Changed key:", event.key);
+  console.log("New value:", event.newValue);
+});</code></pre>
+  </figure>
+
+  <div class="callout warn">
+    <span class="callout-title">Security</span>
+    <p>Never store passwords, secrets, sensitive personal data, or API keys in Web Storage. Any script on the same origin can read it. It is not a database — it is a small local notebook.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 03 · Web Storage</span><span class="pn"></span></div>
+</section>
+
+<!-- ═══════ CH 4 — URL & NAVIGATION ═══════ -->
+<section class="page" id="ch4">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 04</div>
+    <h2 class="chap-title">URL, Query Parameters &amp; Navigation</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p class="lead">Web apps encode filters, search terms and pagination in the URL. The URL is not just an address — it is a piece of application state.</p>
+
+  <h3>Real-Life Analogy: A Library Index Card</h3>
+  <p>A library index card has three parts: which shelf (path), which filters (search), and which bookmark page (hash). Reading them all at once tells you exactly what to bring.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 320" role="img" aria-label="A library index card split into pathname, search and hash — the three parts of a URL">
+      <rect x="0" y="0" width="700" height="320" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">THE URL AS A LIBRARY CARD</text>
+
+      <!-- card -->
+      <rect x="60" y="70" width="580" height="220" rx="12" fill="#fffdf8" stroke="#1b2432" stroke-width="2.5"/>
+      <line x1="60" y1="110" x2="640" y2="110" stroke="#1b2432" stroke-width="1.5"/>
+
+      <text x="80" y="96" font-size="10" font-family="JetBrains Mono, monospace" fill="#8a7d5f">INDEX CARD</text>
+      <text x="620" y="96" text-anchor="end" font-size="10" font-family="JetBrains Mono, monospace" fill="#8a7d5f">location.href</text>
+
+      <!-- URL string -->
+      <text x="80" y="146" font-size="14" font-family="JetBrains Mono, monospace">
+        <tspan fill="#8a7d5f">https://example.com</tspan><tspan fill="#a5e075" font-weight="700">/students</tspan><tspan fill="#f7a56b" font-weight="700">?course=react&amp;page=2</tspan><tspan fill="#82aaff" font-weight="700">#results</tspan>
+      </text>
+
+      <!-- three rows -->
+      <g>
+        <rect x="80" y="176" width="500" height="30" rx="6" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.5"/>
+        <text x="96" y="196" font-size="11" font-family="JetBrains Mono, monospace" fill="#0f766e">pathname</text>
+        <text x="230" y="196" font-size="11" font-family="JetBrains Mono, monospace" fill="#3b4657">"/students"  — which shelf</text>
+
+        <rect x="80" y="212" width="500" height="30" rx="6" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.5"/>
+        <text x="96" y="232" font-size="11" font-family="JetBrains Mono, monospace" fill="#9c7c14">search</text>
+        <text x="230" y="232" font-size="11" font-family="JetBrains Mono, monospace" fill="#3b4657">"?course=react&amp;page=2"  — filters</text>
+
+        <rect x="80" y="248" width="500" height="30" rx="6" fill="#eef2f9" stroke="#223354" stroke-width="1.5"/>
+        <text x="96" y="268" font-size="11" font-family="JetBrains Mono, monospace" fill="#223354">hash</text>
+        <text x="230" y="268" font-size="11" font-family="JetBrains Mono, monospace" fill="#3b4657">"#results"  — bookmark inside page</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 4.1</b> — Every URL carries three readable parts.</figcaption>
+  </figure>
+
+  <h3>4.1 Read the URL</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">read-url.js</span></div>
+    <pre><code>console.log(location.href);
+console.log(location.pathname);
+console.log(location.search);
+console.log(location.hash);</code></pre>
+  </figure>
+
+  <h3>4.2 URLSearchParams — Parse and Update</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">parse.js</span></div>
+    <pre><code>const params = new URLSearchParams(location.search);
+
+const course = params.get("course");
+const page = params.get("page");
+
+console.log(course); // react
+console.log(page);   // 2</code></pre>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">update.js</span></div>
+    <pre><code>const params = new URLSearchParams(location.search);
+
+params.set("course", "node");
+params.set("page", "1");
+
+console.log(params.toString()); // course=node&amp;page=1</code></pre>
+  </figure>
+
+  <h3>4.3 Update the URL Without Reloading</h3>
+  <p>The History API lets you change the address bar without a page load.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">replace-state.js</span></div>
+    <pre><code>const params = new URLSearchParams(location.search);
+params.set("course", "react");
+
+history.replaceState(
+  null,
+  "",
+  `${location.pathname}?${params.toString()}${location.hash}`
+);</code></pre>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">push-state.js</span></div>
+    <pre><code>history.pushState(
+  { page: "students" },
+  "",
+  "/students?page=2"
+);</code></pre>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">popstate.js</span></div>
+    <pre><code>window.addEventListener("popstate", (event) =&gt; {
+  console.log("Current URL:", location.href);
+  console.log("History state:", event.state);
+});</code></pre>
+  </figure>
+
+  <div class="callout note">
+    <span class="callout-title">Critical reminder</span>
+    <p><code>pushState()</code> and <code>replaceState()</code> do <strong>not</strong> automatically update your UI. Your app must respond and render the new view itself.</p>
+  </div>
+
+  <h3>4.4 Navigate and Reload</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">navigate.js</span></div>
+    <pre><code>location.assign("/dashboard");   // new history entry
+location.replace("/login");      // replace current entry
+location.reload();               // reload current page
+history.back();                  // one step back
+history.forward();               // one step forward</code></pre>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 04 · URL &amp; Navigation</span><span class="pn"></span></div>
+</section>
+
+<!-- ═══════ CH 5 — TIMERS & ANIMATION ═══════ -->
+<section class="page" id="ch5">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 05</div>
+    <h2 class="chap-title">Timers &amp; Animation</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p class="lead">JavaScript can schedule work for later, or for every frame. The three time-based tools — <code>setTimeout</code>, <code>setInterval</code>, <code>requestAnimationFrame</code> — each fits a different situation.</p>
+
+  <h3>Real-Life Analogy: Three Kinds of Clocks</h3>
+  <p>A kitchen has three kinds of clocks: a one-shot alarm you set for the oven, a wall clock that ticks forever, and a film projector that advances one frame at a time, perfectly synchronised with the screen.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 320" role="img" aria-label="Three clock types mapped to setTimeout, setInterval and requestAnimationFrame">
+      <rect x="0" y="0" width="700" height="320" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">THREE CLOCKS · THREE TIMING APIS</text>
+
+      <!-- setTimeout -->
+      <rect x="30" y="60" width="200" height="230" rx="12" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <circle cx="130" cy="140" r="50" fill="#16243d" stroke="#0f766e" stroke-width="2.5"/>
+      <circle cx="130" cy="140" r="38" fill="#0d1422"/>
+      <line x1="130" y1="140" x2="130" y2="112" stroke="#a5e075" stroke-width="3" stroke-linecap="round"/>
+      <line x1="130" y1="140" x2="152" y2="150" stroke="#a5e075" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="130" cy="140" r="4" fill="#a5e075"/>
+      <text x="130" y="212" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#0f766e">setTimeout</text>
+      <text x="130" y="232" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">one-shot oven alarm</text>
+      <text x="130" y="252" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">runs ONCE, then stops</text>
+      <text x="130" y="272" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#8a7d5f">setTimeout(fn, 2000)</text>
+
+      <!-- setInterval -->
+      <rect x="250" y="60" width="200" height="230" rx="12" fill="#fffdf8" stroke="#c9a227" stroke-width="2.5"/>
+      <circle cx="350" cy="140" r="50" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <circle cx="350" cy="140" r="38" fill="#0d1422"/>
+      <line x1="350" y1="140" x2="350" y2="112" stroke="#f7a56b" stroke-width="3" stroke-linecap="round"/>
+      <line x1="350" y1="140" x2="372" y2="150" stroke="#f7a56b" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="350" cy="140" r="4" fill="#f7a56b"/>
+      <path d="M320 100 Q 340 70 360 100 Q 380 130 400 100" fill="none" stroke="#c9a227" stroke-width="2" stroke-dasharray="4 3"/>
+      <text x="350" y="212" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#9c7c14">setInterval</text>
+      <text x="350" y="232" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">wall clock ticking</text>
+      <text x="350" y="252" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">repeats until cleared</text>
+      <text x="350" y="272" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#8a7d5f">setInterval(fn, 1000)</text>
+
+      <!-- requestAnimationFrame -->
+      <rect x="470" y="60" width="200" height="230" rx="12" fill="#fffdf8" stroke="#b03a52" stroke-width="2.5"/>
+      <rect x="500" y="120" width="140" height="90" rx="8" fill="#16243d" stroke="#b03a52" stroke-width="2"/>
+      <circle cx="570" cy="140" r="14" fill="#b03a52"/>
+      <circle cx="570" cy="140" r="6" fill="#fff"/>
+      <circle cx="570" cy="172" r="14" fill="#b03a52"/>
+      <circle cx="570" cy="172" r="6" fill="#fff"/>
+      <circle cx="570" cy="204" r="14" fill="#b03a52" opacity="0.35"/>
+      <text x="570" y="238" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#b03a52">frame by frame</text>
+
+      <text x="570" y="262" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#b03a52">requestAnimationFrame</text>
+      <text x="570" y="280" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">film projector · 60fps</text>
+    </svg>
+    <figcaption><b>Figure 5.1</b> — One-shot, repeating, or per-frame. Choose by job, not by habit.</figcaption>
+  </figure>
+
+  <h3>5.1 setTimeout</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">timeout.js</span></div>
+    <pre><code>const timeoutId = setTimeout(() =&gt; {
+  console.log("Delayed message");
+}, 2000);
+
+// Cancel before it runs:
+clearTimeout(timeoutId);</code></pre>
+  </figure>
+
+  <h3>5.2 setInterval</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">interval.js</span></div>
+    <pre><code>const intervalId = setInterval(() =&gt; {
+  console.log("Update");
+}, 1000);
+
+// Stop when done:
+clearInterval(intervalId);</code></pre>
+  </figure>
+
+  <div class="callout warn">
+    <span class="callout-title">Common bug</span>
+    <p>Starting a new <code>setInterval</code> without clearing the previous one creates multiple overlapping timers. Always store the ID and call <code>clearInterval</code> before starting again.</p>
+  </div>
+
+  <h3>5.3 requestAnimationFrame — The Film Projector</h3>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 240" role="img" aria-label="requestAnimationFrame as a film projector advancing frame by frame">
+      <rect x="0" y="0" width="700" height="240" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">requestAnimationFrame · FRAME BY FRAME</text>
+
+      <!-- film strip -->
+      <rect x="40" y="60" width="620" height="110" rx="8" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+
+      <g>
+        <rect x="60" y="76" width="80" height="78" rx="4" fill="#0d1422" stroke="#b03a52" stroke-width="1.5"/>
+        <text x="100" y="122" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#b03a52">frame 1</text>
+
+        <rect x="160" y="76" width="80" height="78" rx="4" fill="#0d1422" stroke="#b03a52" stroke-width="1.5"/>
+        <text x="200" y="122" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#b03a52">frame 2</text>
+
+        <rect x="260" y="76" width="80" height="78" rx="4" fill="#0d1422" stroke="#b03a52" stroke-width="1.5"/>
+        <text x="300" y="122" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#b03a52">frame 3</text>
+
+        <rect x="360" y="76" width="80" height="78" rx="4" fill="#0d1422" stroke="#c9a227" stroke-width="2"/>
+        <text x="400" y="122" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#a5e075">now</text>
+
+        <rect x="460" y="76" width="80" height="78" rx="4" fill="#0d1422" stroke="#93a1b8" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="500" y="122" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#93a1b8">next</text>
+
+        <rect x="560" y="76" width="80" height="78" rx="4" fill="#0d1422" stroke="#93a1b8" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="600" y="122" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#93a1b8">…</text>
+      </g>
+
+      <text x="350" y="196" text-anchor="middle" font-size="11" font-family="Lora, serif" font-style="italic" fill="#3b4657">the browser calls your function before every repaint — about 60 times per second</text>
+      <text x="350" y="220" text-anchor="middle" class="t-gold" font-size="10.5">SMOOTH ANIMATION · AUTO-PAUSED WHEN THE TAB IS HIDDEN</text>
+    </svg>
+    <figcaption><b>Figure 5.2</b> — The film projector advances only when the browser is ready to show the next frame.</figcaption>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">raf.html</span></div>
+    <pre><code>&lt;div id="box" style="width:50px;height:50px;background:steelblue;"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  const box = document.querySelector("#box");
+  const start = performance.now();
+
+  function animate(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / 1000, 1);
+
+    box.style.transform = `translateX(${progress * 200}px)`;
+
+    if (progress &lt; 1) {
+      requestAnimationFrame(animate);
+    }
+  }
+
+  requestAnimationFrame(animate);
+&lt;/script&gt;</code></pre>
+  </figure>
+
+  <h3>5.4 Debounce — The Elevator Door</h3>
+  <p><strong>Real-life analogy:</strong> An elevator door waits for people to stop entering before it closes. Each new passenger resets the timer.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 240" role="img" aria-label="An elevator door waiting for the last person before closing — that is debounce">
+      <rect x="0" y="0" width="700" height="240" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">DEBOUNCE · WAIT UNTIL INPUT STOPS</text>
+
+      <!-- timeline -->
+      <line x1="60" y1="120" x2="640" y2="120" stroke="#1b2432" stroke-width="2"/>
+      <polygon points="640,112 660,120 640,128" fill="#1b2432"/>
+
+      <!-- entries -->
+      <g>
+        <circle cx="120" cy="120" r="9" fill="#0f766e"/>
+        <text x="120" y="100" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">input</text>
+
+        <circle cx="200" cy="120" r="9" fill="#0f766e"/>
+        <text x="200" y="100" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">input</text>
+
+        <circle cx="280" cy="120" r="9" fill="#0f766e"/>
+        <text x="280" y="100" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">input</text>
+
+        <!-- wait band -->
+        <rect x="290" y="140" width="140" height="26" rx="13" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.8"/>
+        <text x="360" y="158" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">300ms quiet window</text>
+
+        <!-- run -->
+        <circle cx="440" cy="120" r="12" fill="#c9a227"/>
+        <text x="440" y="98" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">search runs ONCE</text>
+
+        <!-- door illustration -->
+        <rect x="560" y="70" width="60" height="120" rx="6" fill="#16243d" stroke="#c9a227" stroke-width="2"/>
+        <line x1="590" y1="70" x2="590" y2="190" stroke="#c9a227" stroke-width="1"/>
+        <text x="590" y="216" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono, monospace" fill="#3b4657">elevator</text>
+      </g>
+
+      <text x="350" y="196" text-anchor="middle" font-size="11" font-family="Lora, serif" font-style="italic" fill="#3b4657">every new input resets the timer — the action fires only after quiet</text>
+    </svg>
+    <figcaption><b>Figure 5.3</b> — Debounce: the door keeps waiting for the next passenger.</figcaption>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">debounce.js</span></div>
+    <pre><code>function debounce(callback, delay) {
+  let timeoutId;
+
+  return (...args) =&gt; {
+    clearTimeout(timeoutId);
+
+    timeoutId = setTimeout(() =&gt; {
+      callback(...args);
+    }, delay);
+  };
+}
+
+const search = document.querySelector("#search");
+
+search.addEventListener(
+  "input",
+  debounce(() =&gt; {
+    console.log("Perform the search:", search.value);
+  }, 300)
+);</code></pre>
+  </figure>
+
+  <h3>5.5 Throttle — The Water Faucet</h3>
+  <p><strong>Real-life analogy:</strong> A faucet has a maximum flow rate. No matter how hard you push the handle, water comes out at a controlled pace.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 240" role="img" aria-label="A faucet releasing water at a controlled rate — that is throttle">
+      <rect x="0" y="0" width="700" height="240" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">THROTTLE · MAX ONCE PER INTERVAL</text>
+
+      <!-- faucet -->
+      <rect x="80" y="70" width="60" height="34" rx="6" fill="#1b2432" stroke="#1b2432" stroke-width="2"/>
+      <rect x="100" y="104" width="20" height="60" fill="#1b2432"/>
+      <circle cx="110" cy="90" r="8" fill="#c9a227"/>
+      <text x="110" y="200" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#3b4657">faucet</text>
+
+      <!-- drip drops -->
+      <g>
+        <ellipse cx="110" cy="184" rx="6" ry="10" fill="#0f766e"/>
+        <ellipse cx="110" cy="210" rx="6" ry="10" fill="#0f766e" opacity="0.6"/>
+        <ellipse cx="110" cy="228" rx="6" ry="10" fill="#0f766e" opacity="0.3"/>
+      </g>
+
+      <!-- timeline -->
+      <line x1="200" y1="120" x2="640" y2="120" stroke="#1b2432" stroke-width="2"/>
+      <polygon points="640,112 660,120 640,128" fill="#1b2432"/>
+
+      <!-- ticks -->
+      <g font-family="JetBrains Mono, monospace" font-size="10" fill="#3b4657">
+        <line x1="240" y1="110" x2="240" y2="130" stroke="#1b2432" stroke-width="2"/>
+        <circle cx="240" cy="120" r="7" fill="#0f766e"/>
+        <text x="240" y="100" text-anchor="middle">runs</text>
+
+        <line x1="340" y1="110" x2="340" y2="130" stroke="#1b2432" stroke-width="2"/>
+        <circle cx="340" cy="120" r="7" fill="#0f766e"/>
+        <text x="340" y="100" text-anchor="middle">runs</text>
+
+        <line x1="440" y1="110" x2="440" y2="130" stroke="#1b2432" stroke-width="2"/>
+        <circle cx="440" cy="120" r="7" fill="#0f766e"/>
+        <text x="440" y="100" text-anchor="middle">runs</text>
+
+        <line x1="540" y1="110" x2="540" y2="130" stroke="#1b2432" stroke-width="2"/>
+        <circle cx="540" cy="120" r="7" fill="#0f766e"/>
+        <text x="540" y="100" text-anchor="middle">runs</text>
+
+        <!-- intervals -->
+        <text x="290" y="156" text-anchor="middle" font-size="9.5">100ms</text>
+        <text x="390" y="156" text-anchor="middle" font-size="9.5">100ms</text>
+        <text x="490" y="156" text-anchor="middle" font-size="9.5">100ms</text>
+      </g>
+
+      <text x="350" y="200" text-anchor="middle" font-size="11" font-family="Lora, serif" font-style="italic" fill="#3b4657">no matter how many events arrive, at most one call per interval</text>
+    </svg>
+    <figcaption><b>Figure 5.4</b> — Throttle delivers at a maximum rate, never faster.</figcaption>
+  </figure>
+
+  <div class="keyidea">
+    <span class="k-label">When to pick which</span>
+    <p><strong>Debounce</strong> when you want to wait for input to settle. <strong>Throttle</strong> when you want steady updates during continuous input.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 05 · Timers &amp; Animation</span><span class="pn"></span></div>
+</section>
+
+<!-- ═══════ CH 6 — SCROLL, RESIZE, NETWORK ═══════ -->
+<section class="page" id="ch6">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 06</div>
+    <h2 class="chap-title">Scroll, Resize &amp; Network Events</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>6.1 Scroll Events</h3>
+  <p>Scroll events can power reading progress indicators, sticky navigation, and lazy-load behaviours.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 260" role="img" aria-label="A scroll progress bar tracking how far a user has read">
+      <rect x="0" y="0" width="700" height="260" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">SCROLL PROGRESS = A BOOKMARK IN A LONG SCROLL</text>
+
+      <!-- track -->
+      <rect x="40" y="70" width="620" height="14" rx="7" fill="#ddd1b6" stroke="#1b2432" stroke-width="1.5"/>
+      <rect x="40" y="70" width="360" height="14" rx="7" fill="#c9a227"/>
+      <text x="220" y="112" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">58% read</text>
+
+      <!-- scroll bar illustration -->
+      <rect x="60" y="140" width="40" height="100" rx="6" fill="#16243d"/>
+      <rect x="66" y="150" width="28" height="40" rx="3" fill="#c9a227"/>
+
+      <text x="180" y="160" font-size="11" font-family="JetBrains Mono, monospace" fill="#3b4657">scrollY → current position</text>
+      <text x="180" y="184" font-size="11" font-family="JetBrains Mono, monospace" fill="#3b4657">scrollHeight − innerHeight → max scroll</text>
+      <text x="180" y="208" font-size="11" font-family="JetBrains Mono, monospace" fill="#0f766e">percent = scrollY / maxScroll</text>
+
+      <!-- thumb -->
+      <circle cx="580" cy="120" r="18" fill="#b03a52"/>
+      <text x="580" y="126" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" fill="#fff">📖</text>
+      <text x="580" y="160" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#b03a52">reading progress</text>
+    </svg>
+    <figcaption><b>Figure 6.1</b> — A reading progress bar is just a scroll position converted to a percentage.</figcaption>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">scroll.js</span></div>
+    <pre><code>window.addEventListener("scroll", () =&gt; {
+  console.log(window.scrollY);
+}, { passive: true });</code></pre>
+  </figure>
+
+  <div class="callout tip">
+    <span class="callout-title">The passive flag</span>
+    <p><code>{ passive: true }</code> tells the browser your handler will not call <code>preventDefault()</code>. The browser can then scroll smoothly without waiting for your handler.</p>
+  </div>
+
+  <h3>6.2 Resize Events</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">resize.js</span></div>
+    <pre><code>window.addEventListener("resize", () =&gt; {
+  console.log("Viewport width:", window.innerWidth);
+});</code></pre>
+  </figure>
+
+  <div class="callout note">
+    <span class="callout-title">Prefer CSS</span>
+    <p>Use CSS media queries for layout changes. Reach for JavaScript only when application logic genuinely depends on viewport dimensions.</p>
+  </div>
+
+  <h3>6.3 Online / Offline Status</h3>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 240" role="img" aria-label="Network status hint — a phone line that reports online or offline">
+      <rect x="0" y="0" width="700" height="240" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">NETWORK STATUS · A HINT, NOT PROOF</text>
+
+      <!-- online -->
+      <rect x="60" y="70" width="260" height="130" rx="12" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="190" y="100" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#0f766e">ONLINE</text>
+      <text x="190" y="126" text-anchor="middle" font-size="11" font-family="Lora, serif" fill="#3b4657">navigator.onLine → true</text>
+      <text x="190" y="148" text-anchor="middle" font-size="11" font-family="Lora, serif" fill="#3b4657">the browser thinks you're connected</text>
+      <text x="190" y="170" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#0f766e">✓ show "syncing…"</text>
+      <text x="190" y="188" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#b03a52">but your API may still be down</text>
+
+      <!-- offline -->
+      <rect x="360" y="70" width="280" height="130" rx="12" fill="#fffdf8" stroke="#b03a52" stroke-width="2.5"/>
+      <text x="500" y="100" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#b03a52">OFFLINE</text>
+      <text x="500" y="126" text-anchor="middle" font-size="11" font-family="Lora, serif" fill="#3b4657">navigator.onLine → false</text>
+      <text x="500" y="148" text-anchor="middle" font-size="11" font-family="Lora, serif" fill="#3b4657">the browser is definitely disconnected</text>
+      <text x="500" y="170" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#b03a52">✓ show "you are offline"</text>
+      <text x="500" y="188" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">handle failed fetches anyway</text>
+
+      <text x="350" y="224" text-anchor="middle" class="t-gold" font-size="10.5">ALWAYS HANDLE FAILED REQUESTS · NEVER TRUST navigator.onLine ALONE</text>
+    </svg>
+    <figcaption><b>Figure 6.2</b> — <code>navigator.onLine</code> is a hint. Real failures must be handled.</figcaption>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">network.js</span></div>
+    <pre><code>function updateNetworkStatus() {
+  console.log(
+    navigator.onLine ? "Browser reports online" : "Browser reports offline"
+  );
+}
+
+window.addEventListener("online", updateNetworkStatus);
+window.addEventListener("offline", updateNetworkStatus);
+
+updateNetworkStatus();</code></pre>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 06 · Scroll, Resize &amp; Network</span><span class="pn"></span></div>
+</section>
+
+<!-- ═══════ CH 7 — OBSERVERS ═══════ -->
+<section class="page" id="ch7">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 07</div>
+    <h2 class="chap-title">Observer APIs</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p class="lead">Instead of repeatedly checking the DOM, let the browser notify you when something meaningful changes. That is what observers do — and they do it efficiently.</p>
+
+  <h3>Real-Life Analogy: Three Watches</h3>
+  <p>A security camera watches who enters a room. A tailor measures a growing child. A door guard watches who comes and goes through a door. Three watches — three observer types.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 320" role="img" aria-label="Three watch-types mapped to IntersectionObserver, ResizeObserver and MutationObserver">
+      <rect x="0" y="0" width="700" height="320" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">THREE WATCHES · THREE OBSERVERS</text>
+
+      <!-- IntersectionObserver -->
+      <rect x="30" y="60" width="200" height="230" rx="12" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <rect x="60" y="90" width="140" height="100" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <rect x="100" y="120" width="60" height="40" rx="4" fill="#0f766e"/>
+      <circle cx="130" cy="140" r="10" fill="#fff"/>
+      <text x="130" y="146" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#0f766e">▲</text>
+      <text x="130" y="212" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#0f766e">Intersection</text>
+      <text x="130" y="228" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#0f766e">Observer</text>
+      <text x="130" y="250" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">security camera</text>
+      <text x="130" y="268" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">notifies when an element</text>
+      <text x="130" y="284" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">enters the viewport</text>
+
+      <!-- ResizeObserver -->
+      <rect x="250" y="60" width="200" height="230" rx="12" fill="#fffdf8" stroke="#c9a227" stroke-width="2.5"/>
+      <circle cx="350" cy="130" r="28" fill="#fdf6e0" stroke="#c9a227" stroke-width="2"/>
+      <circle cx="350" cy="118" r="10" fill="#9c7c14"/>
+      <path d="M330 158 q20 -14 40 0" fill="#9c7c14"/>
+      <path d="M300 96 L 400 96 M300 96 L 300 80 M400 96 L 400 80" stroke="#9c7c14" stroke-width="2"/>
+      <text x="350" y="212" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#9c7c14">Resize</text>
+      <text x="350" y="228" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#9c7c14">Observer</text>
+      <text x="350" y="250" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">tailor measuring a child</text>
+      <text x="350" y="268" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">notifies when the element</text>
+      <text x="350" y="284" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">changes its size</text>
+
+      <!-- MutationObserver -->
+      <rect x="470" y="60" width="200" height="230" rx="12" fill="#fffdf8" stroke="#b03a52" stroke-width="2.5"/>
+      <rect x="510" y="90" width="60" height="100" rx="6" fill="#fdeef0" stroke="#b03a52" stroke-width="2"/>
+      <circle cx="540" cy="130" r="8" fill="#b03a52"/>
+      <circle cx="540" cy="160" r="8" fill="#b03a52"/>
+      <text x="540" y="212" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#b03a52">Mutation</text>
+      <text x="540" y="228" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#b03a52">Observer</text>
+      <text x="540" y="250" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">door guard</text>
+      <text x="540" y="268" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">notifies when children</text>
+      <text x="540" y="284" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">enter or leave</text>
+    </svg>
+    <figcaption><b>Figure 7.1</b> — Three situations, three observers. Match the watch to the need.</figcaption>
+  </figure>
+
+  <h3>7.1 IntersectionObserver</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">intersection.html</span></div>
+    <pre><code>&lt;div style="height: 100vh;"&gt;Scroll down&lt;/div&gt;
+&lt;div id="target"&gt;I am being observed&lt;/div&gt;
+
+&lt;script&gt;
+  const target = document.querySelector("#target");
+
+  const observer = new IntersectionObserver((entries) =&gt; {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        console.log("Target is visible.");
+        observer.unobserve(entry.target);
+      }
+    }
+  }, { threshold: 0.1 });
+
+  observer.observe(target);
+&lt;/script&gt;</code></pre>
+  </figure>
+
+  <p>Common uses: lazy-loading images, revealing sections while scrolling, implementing infinite scroll, detecting when a component enters the visible area.</p>
+
+  <h3>7.2 Native Lazy Images</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">lazy.html</span></div>
+    <pre><code>&lt;img
+  src="large-course-image.jpg"
+  alt="Course preview"
+  loading="lazy"
+&gt;</code></pre>
+  </figure>
+
+  <p>The native <code>loading="lazy"</code> is often simpler than manual image lazy loading. Reach for <code>IntersectionObserver</code> when you need custom logic.</p>
+
+  <h3>7.3 ResizeObserver</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">resize-observer.js</span></div>
+    <pre><code>const panel = document.querySelector("#panel");
+
+const observer = new ResizeObserver((entries) =&gt; {
+  for (const entry of entries) {
+    console.log("Panel width:", entry.contentRect.width);
+    console.log("Panel height:", entry.contentRect.height);
+  }
+});
+
+observer.observe(panel);</code></pre>
+  </figure>
+
+  <div class="callout warn">
+    <span class="callout-title">Beware of resize loops</span>
+    <p>Changing the observed element's size inside the observer callback can trigger infinite loops. Set a flag or ignore the update if the change came from yourself.</p>
+  </div>
+
+  <h3>7.4 MutationObserver</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">mutation.html</span></div>
+    <pre><code>&lt;ul id="list"&gt;
+  &lt;li&gt;First item&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script&gt;
+  const list = document.querySelector("#list");
+
+  const observer = new MutationObserver((mutations) =&gt; {
+    for (const mutation of mutations) {
+      console.log("Mutation type:", mutation.type);
+      console.log("Added nodes:", mutation.addedNodes);
+      console.log("Removed nodes:", mutation.removedNodes);
+    }
+  });
+
+  observer.observe(list, {
+    childList: true,
+    subtree: true
+  });
+
+  const item = document.createElement("li");
+  item.textContent = "Second item";
+  list.appendChild(item);
+&lt;/script&gt;</code></pre>
+  </figure>
+
+  <h3>7.5 Disconnect When Done</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">disconnect.js</span></div>
+    <pre><code>observer.disconnect();          // stop all observation
+observer.unobserve(element);    // stop observing just one</code></pre>
+  </figure>
+
+  <div class="keyidea">
+    <span class="k-label">The Rule</span>
+    <p>Always disconnect observers when the work is done. They keep references alive and can quietly cost memory.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 07 · Observer APIs</span><span class="pn"></span></div>
+</section>
+
+<!-- ═══════ CH 8 — CLIPBOARD, GEO, DOWNLOADS ═══════ -->
+<section class="page" id="ch8">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 08</div>
+    <h2 class="chap-title">Clipboard, Geolocation &amp; File Downloads</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>8.1 Clipboard — The Copy Machine</h3>
+  <p><strong>Real-life analogy:</strong> A copy machine duplicates a document onto the user's clipboard. It only works when the user actually presses the button.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 240" role="img" aria-label="A copy machine copying text onto a clipboard">
+      <rect x="0" y="0" width="700" height="240" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">CLIPBOARD · USER-INITIATED, ASYNC, PERMISSIONED</text>
+
+      <!-- source doc -->
+      <rect x="60" y="70" width="180" height="130" rx="8" fill="#fffdf8" stroke="#1b2432" stroke-width="2"/>
+      <text x="150" y="100" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#3b4657">SOURCE</text>
+      <text x="150" y="130" text-anchor="middle" font-size="11" font-family="Lora, serif" fill="#3b4657">"BTG-2026-00123"</text>
+
+      <!-- copy machine -->
+      <rect x="270" y="60" width="140" height="150" rx="10" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="340" y="90" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#e6d49a">COPY</text>
+      <rect x="290" y="106" width="100" height="34" rx="6" fill="#0d1422"/>
+      <text x="340" y="128" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#a5e075">writeText()</text>
+      <text x="340" y="168" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#93a1b8">async · secure</text>
+      <circle cx="340" cy="190" r="6" fill="#c9a227"/>
+
+      <!-- arrow -->
+      <path d="M240 135 Q 255 135 270 135" fill="none" stroke="#c9a227" stroke-width="2.5"/>
+      <path d="M410 135 Q 425 135 440 135" fill="none" stroke="#c9a227" stroke-width="2.5"/>
+
+      <!-- clipboard result -->
+      <rect x="440" y="70" width="200" height="130" rx="10" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <rect x="520" y="58" width="40" height="14" rx="3" fill="#0f766e"/>
+      <text x="540" y="102" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">CLIPBOARD</text>
+      <text x="540" y="130" text-anchor="middle" font-size="11" font-family="Lora, serif" fill="#3b4657">"BTG-2026-00123"</text>
+      <text x="540" y="176" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#0f766e">ready to paste</text>
+
+      <text x="350" y="228" text-anchor="middle" class="t-gold" font-size="10.5">USE await · CATCH FAILURES · SHOW SUCCESS ONLY AFTER</text>
+    </svg>
+    <figcaption><b>Figure 8.1</b> — The clipboard is a real copy operation. It needs permission, it can fail, it is async.</figcaption>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">clipboard.html</span></div>
+    <pre><code>&lt;button id="copyButton"&gt;Copy student ID&lt;/button&gt;
+&lt;p id="message" role="status" aria-live="polite"&gt;&lt;/p&gt;
+
+&lt;script&gt;
+  const button = document.querySelector("#copyButton");
+  const message = document.querySelector("#message");
+
+  button.addEventListener("click", async () =&gt; {
+    try {
+      await navigator.clipboard.writeText("BTG-2026-00123");
+      message.textContent = "Student ID copied.";
+    } catch (error) {
+      console.error("Clipboard failed:", error);
+      message.textContent = "Could not access the clipboard.";
+    }
+  });
+&lt;/script&gt;</code></pre>
+  </figure>
+
+  <h3>8.2 Geolocation — Asking for Directions</h3>
+  <p><strong>Real-life analogy:</strong> You ask someone for directions. They may help, may refuse, or may not know. You must handle all three.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 260" role="img" aria-label="Asking someone for directions — permission, denial, or unavailable">
+      <rect x="0" y="0" width="700" height="260" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">GEOLOCATION · THREE POSSIBLE OUTCOMES</text>
+
+      <!-- ask -->
+      <rect x="40" y="70" width="200" height="150" rx="12" fill="#fffdf8" stroke="#1b2432" stroke-width="2.5"/>
+      <text x="140" y="100" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#1b2432">ASK</text>
+      <circle cx="140" cy="150" r="24" fill="#fdf6e0" stroke="#c9a227" stroke-width="2"/>
+      <text x="140" y="158" text-anchor="middle" font-size="14">?</text>
+      <text x="140" y="196" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">"May I have</text>
+      <text x="140" y="210" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">your location?"</text>
+
+      <!-- branches -->
+      <path d="M250 140 Q 290 100 340 100" fill="none" stroke="#0f766e" stroke-width="2"/>
+      <polygon points="340,92 358,100 340,108" fill="#0f766e"/>
+      <text x="300" y="88" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono, monospace" fill="#0f766e">allow</text>
+
+      <path d="M250 145 L 340 145" fill="none" stroke="#c9a227" stroke-width="2"/>
+      <polygon points="340,137 358,145 340,153" fill="#c9a227"/>
+      <text x="300" y="132" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">unavailable</text>
+
+      <path d="M250 150 Q 290 200 340 200" fill="none" stroke="#b03a52" stroke-width="2"/>
+      <polygon points="340,192 358,200 340,208" fill="#b03a52"/>
+      <text x="300" y="216" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono, monospace" fill="#b03a52">deny</text>
+
+      <!-- results -->
+      <rect x="370" y="80" width="300" height="42" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.8"/>
+      <text x="386" y="106" font-size="11" font-family="JetBrains Mono, monospace" fill="#0f766e">success → coords.latitude, longitude</text>
+
+      <rect x="370" y="130" width="300" height="42" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.8"/>
+      <text x="386" y="156" font-size="11" font-family="JetBrains Mono, monospace" fill="#9c7c14">error → error.message</text>
+
+      <rect x="370" y="180" width="300" height="42" rx="8" fill="#fdeef0" stroke="#b03a52" stroke-width="1.8"/>
+      <text x="386" y="206" font-size="11" font-family="JetBrains Mono, monospace" fill="#b03a52">denied → respect the answer</text>
+    </svg>
+    <figcaption><b>Figure 8.2</b> — Ask respectfully, handle every outcome.</figcaption>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">geo.js</span></div>
+    <pre><code>if (!("geolocation" in navigator)) {
+  console.log("Geolocation is unavailable.");
+} else {
+  navigator.geolocation.getCurrentPosition(
+    (position) =&gt; {
+      console.log(position.coords.latitude);
+      console.log(position.coords.longitude);
+    },
+    (error) =&gt; {
+      console.error("Location request failed:", error.message);
+    }
+  );
+}</code></pre>
+  </figure>
+
+  <div class="callout warn">
+    <span class="callout-title">Privacy</span>
+    <p>Only request location when the feature genuinely needs it. Explain why, handle denial gracefully, and never collect it unnecessarily.</p>
+  </div>
+
+  <h3>8.3 File Downloads — Writing a Letter</h3>
+  <p><strong>Real-life analogy:</strong> You write a note, hand it to someone, and they can keep it. That is what <code>Blob</code> + object URL does — creates a real file the user can save.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 260" role="img" aria-label="Creating a file from data in JavaScript and downloading it — like writing a letter">
+      <rect x="0" y="0" width="700" height="260" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">BLOB + URL.createObjectURL → A REAL FILE ON DISK</text>
+
+      <!-- data -->
+      <rect x="50" y="70" width="180" height="140" rx="10" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="140" y="96" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#e6d49a">IN MEMORY</text>
+      <text x="70" y="126" font-size="11" font-family="JetBrains Mono, monospace" fill="#a5e075">"My notes…"</text>
+      <text x="70" y="148" font-size="11" font-family="JetBrains Mono, monospace" fill="#c7d3e8">a string, a Blob,</text>
+      <text x="70" y="168" font-size="11" font-family="JetBrains Mono, monospace" fill="#c7d3e8">or JSON data</text>
+      <text x="140" y="196" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#93a1b8">not a file yet</text>
+
+      <!-- arrow -->
+      <path d="M250 140 Q 290 140 330 140" fill="none" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5"/>
+      <polygon points="330,132 348,140 330,148" fill="#c9a227"/>
+      <text x="290" y="122" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">wrap</text>
+
+      <!-- blob -->
+      <rect x="360" y="70" width="120" height="140" rx="10" fill="#fdf6e0" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="420" y="96" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">BLOB</text>
+      <rect x="380" y="116" width="80" height="50" rx="4" fill="#fffdf8" stroke="#c9a227" stroke-width="1.5"/>
+      <text x="420" y="146" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#9c7c14">binary object</text>
+      <text x="420" y="190" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">with type/text</text>
+
+      <!-- arrow -->
+      <path d="M490 140 Q 520 140 540 140" fill="none" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5"/>
+      <polygon points="540,132 558,140 540,148" fill="#c9a227"/>
+      <text x="520" y="122" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">URL</text>
+
+      <!-- download -->
+      <rect x="570" y="70" width="120" height="140" rx="10" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="630" y="96" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">USER</text>
+      <text x="630" y="132" text-anchor="middle" font-size="26">📥</text>
+      <text x="630" y="168" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono, monospace" fill="#0f766e">saved as</text>
+      <text x="630" y="186" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono, monospace" fill="#0f766e">notes.txt</text>
+
+      <text x="350" y="236" text-anchor="middle" class="t-gold" font-size="10.5">REVOKE THE OBJECT URL WHEN DONE · AVOID LEAKS</text>
+    </svg>
+    <figcaption><b>Figure 8.3</b> — Data becomes a downloadable file in three steps: Blob → URL → anchor click.</figcaption>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">download.js</span></div>
+    <pre><code>const notes = "JavaScript DOM Notes\nLesson 7: Browser APIs";
+
+const blob = new Blob([notes], {
+  type: "text/plain;charset=utf-8"
+});
+
+const objectUrl = URL.createObjectURL(blob);
+
+const link = document.createElement("a");
+link.href = objectUrl;
+link.download = "lesson-notes.txt";
+link.textContent = "Download notes";
+
+document.body.appendChild(link);
+
+// When done:
+URL.revokeObjectURL(objectUrl);</code></pre>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 08 · Clipboard, Geo &amp; Downloads</span><span class="pn"></span></div>
+</section>
+
+<!-- ═══════ CH 9 — ACCESSIBILITY & CLEANUP ═══════ -->
+<section class="page" id="ch9">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 09</div>
+    <h2 class="chap-title">Accessibility, Performance &amp; Cleanup</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>Real-Life Analogy: A Building for Everyone</h3>
+  <p>A good public building has ramps, braille signs, wide doors, clear lighting. It works for <em>every</em> visitor — not just the ones who walk in through the main door.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 320" role="img" aria-label="A building designed for everyone — ramps, braille, wide doors, clear labels">
+      <rect x="0" y="0" width="700" height="320" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">ACCESSIBILITY · A BUILDING FOR EVERY VISITOR</text>
+
+      <!-- building -->
+      <rect x="80" y="70" width="540" height="200" rx="10" fill="#fffdf8" stroke="#1b2432" stroke-width="2.5"/>
+
+      <!-- door -->
+      <rect x="280" y="140" width="140" height="130" rx="4" fill="#16243d" stroke="#1b2432" stroke-width="2"/>
+      <circle cx="400" cy="205" r="6" fill="#c9a227"/>
+
+      <!-- ramp -->
+      <path d="M80 270 L 200 220 L 280 220 L 280 270 Z" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+      <text x="190" y="252" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">ramp</text>
+
+      <!-- braille sign -->
+      <rect x="460" y="100" width="130" height="40" rx="4" fill="#fdf6e0" stroke="#c9a227" stroke-width="2"/>
+      <g fill="#9c7c14">
+        <circle cx="478" cy="115" r="3"/><circle cx="490" cy="115" r="3"/><circle cx="502" cy="115" r="3"/>
+        <circle cx="478" cy="127" r="3"/><circle cx="490" cy="127" r="3"/>
+      </g>
+      <text x="540" y="122" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">Braille</text>
+
+      <!-- keyboard focus -->
+      <rect x="320" y="180" width="60" height="20" rx="4" fill="#c9a227" opacity="0.35"/>
+      <text x="350" y="196" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#1b2432">:focus</text>
+
+      <!-- labels -->
+      <text x="110" y="160" font-size="10" font-family="JetBrains Mono, monospace" fill="#3b4657">← label</text>
+      <text x="110" y="200" font-size="10" font-family="JetBrains Mono, monospace" fill="#3b4657">← semantics</text>
+      <text x="110" y="230" font-size="10" font-family="JetBrains Mono, monospace" fill="#3b4657">← aria-live</text>
+
+      <text x="350" y="300" text-anchor="middle" class="t-gold" font-size="10.5">DESIGN FOR KEYBOARDS · SCREEN READERS · EVERY ABILITY</text>
+    </svg>
+    <figcaption><b>Figure 9.1</b> — Accessibility is the building that works for everyone, not just the quickest route.</figcaption>
+  </figure>
+
+  <h3>9.1 Use Semantic HTML</h3>
+  <ul>
+    <li><code>&lt;button&gt;</code> for actions.</li>
+    <li><code>&lt;a&gt;</code> for navigation.</li>
+    <li><code>&lt;form&gt;</code> for form submission.</li>
+    <li><code>&lt;label&gt;</code> for form controls.</li>
+    <li>Headings in a logical hierarchy.</li>
+    <li>Live status regions for important dynamic feedback.</li>
+  </ul>
+
+  <h3>9.2 Manage Focus Deliberately</h3>
+  <p>After opening a dialog, focus should move inside. When it closes, focus should return to the trigger. After deleting a list item, focus should land somewhere sensible.</p>
+
+  <h3>9.3 Announce Status Changes</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">live-region.html</span></div>
+    <pre><code>&lt;p id="status" role="status" aria-live="polite"&gt;&lt;/p&gt;
+
+&lt;script&gt;
+  document.querySelector("#status").textContent =
+    "Settings saved successfully.";
+&lt;/script&gt;</code></pre>
+  </figure>
+
+  <h3>9.4 DocumentFragment — Batch Inserts</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">fragment.js</span></div>
+    <pre><code>const fragment = document.createDocumentFragment();
+
+for (const name of ["Aman", "Riya", "Neha"]) {
+  const item = document.createElement("li");
+  item.textContent = name;
+  fragment.appendChild(item);
+}
+
+document.querySelector("#students").appendChild(fragment);</code></pre>
+  </figure>
+
+  <h3>9.5 Remove Listeners and Timers</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">cleanup.js</span></div>
+    <pre><code>function handleResize() {
+  console.log(window.innerWidth);
+}
+
+window.addEventListener("resize", handleResize);
+
+// Later:
+window.removeEventListener("resize", handleResize);
+
+// And for timers:
+const intervalId = setInterval(updateDashboard, 1000);
+clearInterval(intervalId);</code></pre>
+  </figure>
+
+  <h3>9.6 Avoid Unsafe HTML</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">safe.js</span></div>
+    <pre><code>const heading = document.createElement("h2");
+heading.textContent = userProvidedText;
+// NOT: heading.innerHTML = userProvidedText;</code></pre>
+  </figure>
+
+  <h3>9.7 Test the Failure Modes</h3>
+  <p>Production code should handle:</p>
+  <ul>
+    <li>Storage unavailable or full.</li>
+    <li>Clipboard denied.</li>
+    <li>Geolocation denied.</li>
+    <li>Network requests failing.</li>
+    <li>Stored data corrupted.</li>
+    <li>Timers and observers that no longer run.</li>
+  </ul>
+
+  <div class="page-foot"><span>Chapter 09 · Accessibility &amp; Cleanup</span><span class="pn"></span></div>
+</section>
+
+<!-- ═══════ CH 10 — FINAL PROJECT ═══════ -->
+<section class="page" id="ch10">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 10</div>
+    <h2 class="chap-title">Final Project — Browser API Learning Dashboard</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p class="lead">Every API in this lesson, connected in one live application. Theme persistence, notes autosave, session visits, live clock, visibility, connectivity, scroll progress, IntersectionObserver reveals, clipboard copy, and file download — all in one HTML file.</p>
+
+  <h3>The Dashboard at a Glance</h3>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 400" role="img" aria-label="Mockup of the Browser API Learning Dashboard with all sections labelled">
+      <rect x="0" y="0" width="700" height="400" rx="16" fill="#f7f2e7"/>
+      <text x="350" y="30" text-anchor="middle" class="t-label" font-size="10">THE DASHBOARD · EVERYTHING AT A GLANCE</text>
+
+      <!-- outer frame -->
+      <rect x="40" y="60" width="620" height="300" rx="12" fill="#fffdf8" stroke="#1b2432" stroke-width="2.5"/>
+
+      <!-- progress bar -->
+      <rect x="40" y="60" width="620" height="8" rx="4" fill="#ddd1b6"/>
+      <rect x="40" y="60" width="380" height="8" rx="4" fill="#c9a227"/>
+      <text x="230" y="86" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#9c7c14">scroll progress</text>
+
+      <!-- header -->
+      <rect x="60" y="100" width="580" height="50" rx="8" fill="#16243d"/>
+      <text x="80" y="130" font-size="12" font-family="Playfair Display, serif" font-weight="700" fill="#f6f1e4">Browser API Dashboard</text>
+      <text x="620" y="130" text-anchor="end" font-size="10" font-family="JetBrains Mono, monospace" fill="#a5e075">14:32:07</text>
+
+      <!-- status row -->
+      <rect x="60" y="160" width="580" height="34" rx="6" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.5"/>
+      <text x="80" y="182" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">visibility: visible   ·   network: online   ·   session visits: 3</text>
+
+      <!-- note area -->
+      <rect x="60" y="204" width="380" height="120" rx="8" fill="#fffdf8" stroke="#1b2432" stroke-width="1.5"/>
+      <text x="76" y="224" font-size="10" font-family="JetBrains Mono, monospace" fill="#3b4657">Personal note (autosaved)</text>
+      <text x="76" y="248" font-size="10" font-family="Lora, serif" fill="#3b4657">Practising browser APIs</text>
+      <text x="76" y="268" font-size="10" font-family="Lora, serif" fill="#3b4657">for the final dashboard…</text>
+      <text x="76" y="306" font-size="9" font-family="JetBrains Mono, monospace" fill="#93a1b8">saved 2s ago</text>
+
+      <!-- buttons -->
+      <rect x="450" y="204" width="190" height="30" rx="6" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.5"/>
+      <text x="545" y="224" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">Copy note</text>
+      <rect x="450" y="242" width="190" height="30" rx="6" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.5"/>
+      <text x="545" y="262" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">Download note</text>
+      <rect x="450" y="280" width="190" height="30" rx="6" fill="#fdeef0" stroke="#b03a52" stroke-width="1.5"/>
+      <text x="545" y="300" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#b03a52">Clear note</text>
+
+      <!-- reveal cards row -->
+      <g>
+        <rect x="60" y="330" width="180" height="20" rx="4" fill="#e9f6f4" stroke="#0f766e" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="150" y="344" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#0f766e">IntersectionObserver card</text>
+
+        <rect x="250" y="330" width="180" height="20" rx="4" fill="#e9f6f4" stroke="#0f766e" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="340" y="344" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#0f766e">Storage card</text>
+
+        <rect x="440" y="330" width="200" height="20" rx="4" fill="#e9f6f4" stroke="#0f766e" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="540" y="344" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#0f766e">Scroll progress card</text>
+      </g>
+
+      <text x="350" y="386" text-anchor="middle" class="t-gold" font-size="10.5">ALL BROWSER APIS · ONE SMALL APPLICATION</text>
+    </svg>
+    <figcaption><b>Figure 10.1</b> — The dashboard you are about to build, with every API labelled.</figcaption>
+  </figure>
+
+  <h3>The Complete Code</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">browser-dashboard.html</span></div>
+    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Browser API Learning Dashboard&lt;/title&gt;
+
+  &lt;style&gt;
+    :root {
+      color-scheme: light;
+      --background: #f8fafc;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #cbd5e1;
+      --accent: #4f46e5;
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --background: #0f172a;
+      --surface: #1e293b;
+      --text: #f1f5f9;
+      --muted: #cbd5e1;
+      --border: #475569;
+      --accent: #a5b4fc;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--background);
+      color: var(--text);
+      transition: background 0.2s, color 0.2s;
+    }
+
+    #progressTrack {
+      position: fixed;
+      inset: 0 0 auto 0;
+      height: 5px;
+      z-index: 10;
+      background: var(--border);
+    }
+
+    #progressBar {
+      height: 100%;
+      width: 0;
+      background: var(--accent);
+    }
+
+    main {
+      width: min(900px, 100% - 32px);
+      margin: 36px auto;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+
+    .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+
+    input, textarea, button {
+      font: inherit;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 130px;
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    button { cursor: pointer; background: var(--surface); color: var(--text); }
+
+    .muted { color: var(--muted); }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    #message { min-height: 24px; }
+
+    #clock { font-size: 1.5rem; font-weight: bold; }
+  &lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+  &lt;div id="progressTrack" aria-hidden="true"&gt;
+    &lt;div id="progressBar"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;main&gt;
+    &lt;header class="card"&gt;
+      &lt;h1&gt;Browser API Learning Dashboard&lt;/h1&gt;
+      &lt;p class="muted"&gt;
+        Practice browser storage, lifecycle events, clipboard,
+        timers and observers.
+      &lt;/p&gt;
+
+      &lt;div class="row"&gt;
+        &lt;button id="themeButton" type="button"&gt;Switch theme&lt;/button&gt;
+        &lt;span id="clock" aria-label="Current time"&gt;&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/header&gt;
+
+    &lt;section class="card"&gt;
+      &lt;h2&gt;Browser status&lt;/h2&gt;
+      &lt;p&gt;Page visibility: &lt;strong id="visibilityStatus"&gt;&lt;/strong&gt;&lt;/p&gt;
+      &lt;p&gt;Network status: &lt;strong id="networkStatus"&gt;&lt;/strong&gt;&lt;/p&gt;
+      &lt;p&gt;Visits in this tab session: &lt;strong id="visitCount"&gt;&lt;/strong&gt;&lt;/p&gt;
+    &lt;/section&gt;
+
+    &lt;section class="card"&gt;
+      &lt;h2&gt;Personal note&lt;/h2&gt;
+
+      &lt;label for="note"&gt;Your note (saved automatically)&lt;/label&gt;
+      &lt;textarea id="note" placeholder="Write a study note..."&gt;&lt;/textarea&gt;
+
+      &lt;div class="row"&gt;
+        &lt;button type="button" id="copyButton"&gt;Copy note&lt;/button&gt;
+        &lt;button type="button" id="downloadButton"&gt;Download note&lt;/button&gt;
+        &lt;button type="button" id="clearButton"&gt;Clear note&lt;/button&gt;
+      &lt;/div&gt;
+
+      &lt;p id="message" role="status" aria-live="polite"&gt;&lt;/p&gt;
+    &lt;/section&gt;
+
+    &lt;section class="card reveal"&gt;
+      &lt;h2&gt;IntersectionObserver&lt;/h2&gt;
+      &lt;p&gt;This card becomes visible when it enters the viewport.&lt;/p&gt;
+    &lt;/section&gt;
+
+    &lt;section class="card reveal"&gt;
+      &lt;h2&gt;Web Storage&lt;/h2&gt;
+      &lt;p&gt;Theme and note are saved in localStorage. Visits use sessionStorage.&lt;/p&gt;
+    &lt;/section&gt;
+
+    &lt;section class="card reveal"&gt;
+      &lt;h2&gt;Scroll progress&lt;/h2&gt;
+      &lt;p&gt;Scroll through the page and watch the progress bar.&lt;/p&gt;
+      &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit.&lt;/p&gt;
+      &lt;p&gt;JavaScript browser APIs connect your code to the browser.&lt;/p&gt;
+      &lt;p&gt;Keep scrolling to explore the scroll progress bar.&lt;/p&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+
+  &lt;script&gt;
+    const root = document.documentElement;
+    const themeButton = document.querySelector("#themeButton");
+    const clock = document.querySelector("#clock");
+    const visibilityStatus = document.querySelector("#visibilityStatus");
+    const networkStatus = document.querySelector("#networkStatus");
+    const visitCountOutput = document.querySelector("#visitCount");
+    const note = document.querySelector("#note");
+    const message = document.querySelector("#message");
+    const progressBar = document.querySelector("#progressBar");
+
+    function readStorage(key, fallback) {
+      try {
+        const value = localStorage.getItem(key);
+        return value === null ? fallback : value;
+      } catch (error) {
+        console.error("Storage read failed:", error);
+        return fallback;
+      }
+    }
+
+    function writeStorage(key, value) {
+      try {
+        localStorage.setItem(key, value);
+        return true;
+      } catch (error) {
+        console.error("Storage write failed:", error);
+        message.textContent = "Could not save data.";
+        return false;
+      }
+    }
+
+    let theme = readStorage("dashboard-theme", "light");
+
+    function applyTheme(nextTheme) {
+      theme = nextTheme;
+      root.dataset.theme = theme;
+      themeButton.textContent =
+        theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
+    }
+
+    applyTheme(theme);
+
+    themeButton.addEventListener("click", () =&gt; {
+      const nextTheme = theme === "dark" ? "light" : "dark";
+      applyTheme(nextTheme);
+      writeStorage("dashboard-theme", nextTheme);
+    });
+
+    note.value = readStorage("dashboard-note", "");
+
+    let saveTimeout;
+
+    note.addEventListener("input", () =&gt; {
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() =&gt; {
+        if (writeStorage("dashboard-note", note.value)) {
+          message.textContent = "Note saved.";
+        }
+      }, 300);
+    });
+
+    try {
+      const previous = Number(sessionStorage.getItem("visit-count") || 0);
+      const next = Number.isFinite(previous) ? previous + 1 : 1;
+      sessionStorage.setItem("visit-count", String(next));
+      visitCountOutput.textContent = String(next);
+    } catch (error) {
+      visitCountOutput.textContent = "Unavailable";
+    }
+
+    function updateClock() {
+      clock.textContent = new Date().toLocaleTimeString();
+    }
+    updateClock();
+    const clockInterval = setInterval(updateClock, 1000);
+
+    function updateVisibility() {
+      visibilityStatus.textContent = document.visibilityState;
+    }
+    document.addEventListener("visibilitychange", updateVisibility);
+    updateVisibility();
+
+    function updateNetworkStatus() {
+      networkStatus.textContent = navigator.onLine ? "Online" : "Offline";
+    }
+    window.addEventListener("online", updateNetworkStatus);
+    window.addEventListener("offline", updateNetworkStatus);
+    updateNetworkStatus();
+
+    document.querySelector("#copyButton").addEventListener("click", async () =&gt; {
+      try {
+        await navigator.clipboard.writeText(note.value);
+        message.textContent = "Note copied.";
+      } catch (error) {
+        message.textContent = "Clipboard access failed.";
+      }
+    });
+
+    document.querySelector("#downloadButton").addEventListener("click", () =&gt; {
+      const blob = new Blob([note.value], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "study-note.txt";
+      link.click();
+
+      setTimeout(() =&gt; URL.revokeObjectURL(url), 1000);
+      message.textContent = "Download requested.";
+    });
+
+    document.querySelector("#clearButton").addEventListener("click", () =&gt; {
+      note.value = "";
+      clearTimeout(saveTimeout);
+      if (writeStorage("dashboard-note", "")) {
+        message.textContent = "Note cleared.";
+      }
+    });
+
+    let framePending = false;
+
+    function updateProgress() {
+      const maxScroll =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const percent = maxScroll &gt; 0
+        ? (window.scrollY / maxScroll) * 100
+        : 0;
+      progressBar.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+      framePending = false;
+    }
+
+    window.addEventListener("scroll", () =&gt; {
+      if (!framePending) {
+        framePending = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+
+    window.addEventListener("resize", updateProgress);
+    updateProgress();
+
+    const revealElements = document.querySelectorAll(".reveal");
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver((entries) =&gt; {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        }
+      }, { threshold: 0.1 });
+
+      revealElements.forEach((element) =&gt; observer.observe(element));
+    } else {
+      revealElements.forEach((element) =&gt; element.classList.add("visible"));
+    }
+
+    window.addEventListener("pagehide", () =&gt; {
+      clearInterval(clockInterval);
+      clearTimeout(saveTimeout);
+    }, { once: true });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </figure>
+
+  <h3>Project Testing Checklist</h3>
+  <ol>
+    <li>Switch between light and dark themes.</li>
+    <li>Reload the page and confirm the theme persists.</li>
+    <li>Type a note, wait briefly, reload — is it still there?</li>
+    <li>Open a new tab and compare the visit count.</li>
+    <li>Switch tabs and watch the visibility status.</li>
+    <li>Disconnect the network and observe the network-status hint.</li>
+    <li>Scroll through the page and watch the progress bar.</li>
+    <li>Watch the reveal cards as they enter the viewport.</li>
+    <li>Try copying the note.</li>
+    <li>Download the note and open the resulting text file.</li>
+  </ol>
+
+  <div class="keyidea">
+    <span class="k-label">What This Project Teaches</span>
+    <p>Storage, lifecycle, timers, clipboard, downloads, scroll, resize, observers and accessibility — every browser API in one small app, each doing its proper job.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 10 · Final Project</span><span class="pn"></span></div>
+</section>
+
+<!-- ═══════ CH 11 — REVISION & CHECKLIST ═══════ -->
+<section class="page" id="ch11">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 11</div>
+    <h2 class="chap-title">Revision, Exercises &amp; Checklist</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>Practice Exercises</h3>
+
+  <div class="qgroup-title">Beginner</div>
+
+  <div class="q"><span class="qnum">1.</span> Display the current page URL, hostname and pathname.</div>
+  <div class="q"><span class="qnum">2.</span> Save a theme preference in <code>localStorage</code>.</div>
+  <div class="q"><span class="qnum">3.</span> Count reloads within a tab using <code>sessionStorage</code>.</div>
+  <div class="q"><span class="qnum">4.</span> Display a clock using <code>setInterval()</code> and stop it with <code>clearInterval()</code>.</div>
+  <div class="q"><span class="qnum">5.</span> Show a message when the page changes from visible to hidden.</div>
+
+  <div class="qgroup-title">Intermediate</div>
+
+  <div class="q"><span class="qnum">6.</span> Build a filter that reads query parameters using <code>URLSearchParams</code>.</div>
+  <div class="q"><span class="qnum">7.</span> Add a scroll progress bar using <code>requestAnimationFrame()</code>.</div>
+  <div class="q"><span class="qnum">8.</span> Use <code>IntersectionObserver</code> to reveal cards as a user scrolls.</div>
+  <div class="q"><span class="qnum">9.</span> Use <code>ResizeObserver</code> to display the dimensions of a resizable panel.</div>
+  <div class="q"><span class="qnum">10.</span> Use <code>MutationObserver</code> to detect new list items.</div>
+  <div class="q"><span class="qnum">11.</span> Handle clipboard failures without showing a false success.</div>
+  <div class="q"><span class="qnum">12.</span> Create a text-file download using <code>Blob</code> and <code>URL.createObjectURL()</code>.</div>
+
+  <div class="qgroup-title">Advanced</div>
+
+  <div class="q"><span class="qnum">13.</span> Synchronize theme changes between two tabs using the <code>storage</code> event.</div>
+  <div class="q"><span class="qnum">14.</span> Make the dashboard save notes safely even when storage is unavailable.</div>
+  <div class="q"><span class="qnum">15.</span> Add a geolocation button with clear permission handling.</div>
+  <div class="q"><span class="qnum">16.</span> Use a debounced search input to filter 1,000 records.</div>
+  <div class="q"><span class="qnum">17.</span> Extend the dashboard with cleanup for every timer, observer and listener.</div>
+
+  <h3>Final Revision Sheet</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Topic</th><th>Important API</th></tr></thead>
+      <tbody>
+        <tr><td>Browser environment</td><td><code>window</code>, <code>document</code>, <code>navigator</code></td></tr>
+        <tr><td>Page lifecycle</td><td><code>DOMContentLoaded</code>, <code>load</code>, <code>visibilitychange</code></td></tr>
+        <tr><td>Local storage</td><td><code>localStorage</code>, <code>sessionStorage</code></td></tr>
+        <tr><td>Storage change sync</td><td><code>storage</code> event</td></tr>
+        <tr><td>URL query strings</td><td><code>URLSearchParams</code></td></tr>
+        <tr><td>Navigation state</td><td><code>history.pushState()</code>, <code>popstate</code></td></tr>
+        <tr><td>Scheduling</td><td><code>setTimeout()</code>, <code>setInterval()</code></td></tr>
+        <tr><td>Visual updates</td><td><code>requestAnimationFrame()</code></td></tr>
+        <tr><td>Debounce / throttle</td><td>Custom wrappers around timers</td></tr>
+        <tr><td>Element visibility</td><td><code>IntersectionObserver</code></td></tr>
+        <tr><td>Element dimensions</td><td><code>ResizeObserver</code></td></tr>
+        <tr><td>DOM changes</td><td><code>MutationObserver</code></td></tr>
+        <tr><td>Clipboard</td><td><code>navigator.clipboard</code></td></tr>
+        <tr><td>Geolocation</td><td><code>navigator.geolocation</code></td></tr>
+        <tr><td>Downloads</td><td><code>Blob</code>, <code>URL.createObjectURL()</code></td></tr>
+        <tr><td>Responsive logic</td><td><code>resize</code> event, CSS media queries</td></tr>
+        <tr><td>Network hints</td><td><code>online</code>, <code>offline</code>, <code>navigator.onLine</code></td></tr>
+        <tr><td>Accessibility</td><td>Semantic HTML, labels, focus, live regions</td></tr>
+        <tr><td>Safety</td><td>Debounce, cleanup, safe DOM rendering</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Final Completion Checklist</h3>
+  <ul class="checklist">
+    <li>I understand <code>window</code>, <code>document</code>, <code>location</code>, <code>history</code> and <code>navigator</code>.</li>
+    <li>I can listen for the right lifecycle event.</li>
+    <li>I can persist theme, notes and small state via Web Storage.</li>
+    <li>I can read and update query parameters with <code>URLSearchParams</code>.</li>
+    <li>I can update the URL without a reload using the History API.</li>
+    <li>I can use timers, RAF, debounce and throttle.</li>
+    <li>I can watch element visibility, size, and DOM changes with observers.</li>
+    <li>I can copy, download, and safely request geolocation.</li>
+    <li>I can build an accessible, keyboard-friendly interface.</li>
+    <li>I can clean up every listener, timer and observer.</li>
+    <li>I have built and tested the Browser API Learning Dashboard.</li>
+  </ul>
+
+  <div class="divider"><span></span>❖<span></span></div>
+
+  <div class="keyidea">
+    <span class="k-label">You Have Finished Phase 7 · Lesson 7</span>
+    <p>Storage, lifecycle, timers, observers, clipboard, geolocation, downloads, accessibility — every browser API you need for real-world interactive applications.</p>
+  </div>
+
+  <div class="divider"><span></span>❖<span></span></div>
+
+  <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:#a99f88;margin-top:40px;">
+    JavaScript Mastery · Phase 7 · Lesson 7<br>
+    Browser APIs Illustrated Study Edition
+  </p>
+
+  <div class="page-foot"><span>Chapter 11 · Revision &amp; Checklist</span><span class="pn"></span></div>
+</section>
+
+</div><!-- /book -->
+
+<script>
+(function(){
+  "use strict";
+  var TOKEN_RE=new RegExp([
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)",
+    "(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'|`(?:[^`\\\\]|\\\\.)*`)",
+    "\\b(\\d+(?:\\.\\d+)?n?)\\b",
+    "\\b(let|const|var|function|if|else|return|true|false|null|undefined|new|typeof|for|while|do|class|of|in|this|try|catch|throw|finally|switch|case|break|continue|default|delete|export|import|from|as|async|await|Array|Object|Math|Promise|Symbol|document|window|navigator|location|history|localStorage|sessionStorage|FormData|JSON|URLSearchParams|URL|Blob|setTimeout|setInterval|clearTimeout|clearInterval|requestAnimationFrame|IntersectionObserver|ResizeObserver|MutationObserver|alert|confirm|prompt|fetch|crypto|performance)\\b",
+    "([A-Za-z_$][\\w$]*)(?=\\s*\\()",
+    "([+\\-*/%=<>!&|?:;,.()\\[\\]{}]+)"
+  ].join("|"),"g");
+  var CLASS=["","tok-com","tok-str","tok-num","tok-kw","tok-fn","tok-op"];
+  function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  function hl(text){
+    var out="",last=0,m;
+    TOKEN_RE.lastIndex=0;
+    while((m=TOKEN_RE.exec(text))!==null){
+      out+=esc(text.slice(last,m.index));
+      var cls="";
+      for(var i=1;i<m.length;i++){if(m[i]!==undefined){cls=CLASS[i];break;}}
+      var piece=esc(m[0]);
+      out+=cls?'<span class="'+cls+'">'+piece+"</span>":piece;
+      last=m.index+m[0].length;
+      if(m[0].length===0){TOKEN_RE.lastIndex++;}
+    }
+    out+=esc(text.slice(last));
+    return out;
+  }
+  var codes=document.querySelectorAll(".fig-code pre code");
+  for(var i=0;i<codes.length;i++){
+    codes[i].innerHTML=hl(codes[i].textContent);
+  }
+})();
+</script>
+</body>
+</html>

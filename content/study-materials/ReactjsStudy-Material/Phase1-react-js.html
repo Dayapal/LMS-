@@ -1,0 +1,2870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>React JS — Phase 1: React Foundations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Kalam:wght@300;400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#22303c;
+  --ink-soft:#4a5a68;
+  --blue:#2b5fd9;
+  --blue-dark:#1b3f96;
+  --blue-soft:#e8efff;
+  --pink:#e8558a;
+  --yellow:#ffe680;
+  --green:#3fa66a;
+  --red:#d94a4a;
+  --line:#c9d6e6;
+  --code-bg:#1b1e2b;
+  --code-ink:#e7e9f5;
+  --paper:#fffdf6;
+}
+
+*{box-sizing:border-box;}
+
+html,body{margin:0;padding:0;}
+
+body{
+  font-family:'Kalam','Comic Sans MS',cursive;
+  font-size:16.5px;
+  line-height:1.72;
+  color:var(--ink);
+  background:#e9e2d2;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+}
+
+/* ============ PAGE / PAPER ============ */
+.page{
+  position:relative;
+  max-width:880px;
+  margin:34px auto;
+  padding:56px 58px 64px 84px;
+  background-color:var(--paper);
+  background-image:radial-gradient(#e8e2d2 1.2px, transparent 1.2px);
+  background-size:22px 22px;
+  box-shadow:0 14px 46px rgba(0,0,0,.18);
+  border-radius:6px;
+  overflow:hidden;
+}
+.page::before{
+  content:"";
+  position:absolute;
+  top:0;bottom:0;left:62px;
+  width:2px;
+  background:repeating-linear-gradient(to bottom,#f2adad 0 14px, transparent 14px 24px);
+  opacity:.85;
+}
+
+/* ============ COVER ============ */
+.cover{
+  text-align:center;
+  padding:70px 40px 80px;
+  background:
+    radial-gradient(circle at 12% 12%, #fff4c9 0 8px, transparent 9px),
+    radial-gradient(circle at 88% 82%, #d8e8ff 0 10px, transparent 11px),
+    linear-gradient(160deg,#fffdf6 0%, #fdf7e6 55%, #f3f7ff 100%);
+}
+.cover .badge{
+  display:inline-block;
+  font-family:'Caveat',cursive;
+  font-size:22px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:#fff;
+  background:var(--blue);
+  padding:8px 26px;
+  border-radius:40px;
+  box-shadow:0 5px 0 var(--blue-dark);
+  transform:rotate(-1.4deg);
+}
+.cover h1{
+  font-family:'Caveat',cursive;
+  font-size:78px;
+  line-height:1;
+  margin:34px 0 6px;
+  color:#16233a;
+  text-shadow:3px 3px 0 #ffe680;
+  transform:rotate(-.7deg);
+}
+.cover h2{
+  font-family:'Caveat',cursive;
+  font-size:46px;
+  margin:0 0 26px;
+  color:var(--blue);
+  font-weight:600;
+}
+.cover .sub{
+  font-size:19px;
+  color:var(--ink-soft);
+  max-width:520px;
+  margin:0 auto 30px;
+}
+.cover .doodle{
+  font-size:30px;
+  letter-spacing:14px;
+  color:#c9b26a;
+  margin:18px 0;
+}
+.cover .tape{
+  display:inline-block;
+  background:rgba(255,230,128,.65);
+  border-left:2px dashed #d9bd55;
+  border-right:2px dashed #d9bd55;
+  padding:10px 34px;
+  font-family:'Caveat',cursive;
+  font-size:24px;
+  color:#8a6d16;
+  transform:rotate(1deg);
+  margin-top:14px;
+}
+.cover .sticker{
+  display:inline-block;
+  margin-top:34px;
+  border:3px dashed var(--pink);
+  border-radius:50%;
+  width:150px;height:150px;
+  line-height:1.15;
+  padding-top:34px;
+  font-family:'Caveat',cursive;
+  font-size:26px;
+  color:var(--pink);
+  transform:rotate(-8deg);
+}
+
+/* ============ HEADINGS ============ */
+h1,h2,h3,h4{
+  font-family:'Caveat',cursive;
+  color:#16233a;
+  line-height:1.14;
+  margin:0 0 .35em;
+  font-weight:700;
+}
+h2{font-size:40px;}
+h3{font-size:29px;color:var(--blue-dark);margin-top:1.5em;}
+h4{font-size:24px;color:#3b4c63;margin-top:1.3em;}
+
+p{margin:0 0 .95em;}
+
+.hl{
+  background:linear-gradient(transparent 58%, #ffe680 58%);
+  padding:0 3px;
+  border-radius:2px;
+}
+
+/* ============ TOPIC HEADER ============ */
+.topic{break-before:page;}
+.topic-head{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  margin:0 0 26px;
+  padding-bottom:12px;
+  border-bottom:3px solid var(--blue);
+}
+.tnum{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:56px;height:56px;
+  border-radius:50%;
+  background:var(--blue);
+  color:#fff;
+  font-family:'Caveat',cursive;
+  font-size:27px;
+  box-shadow:0 4px 0 var(--blue-dark);
+}
+.topic-head h2{margin:0;font-size:38px;}
+
+/* ============ CODE BLOCKS ============ */
+pre.code{
+  position:relative;
+  background:var(--code-bg);
+  color:var(--code-ink);
+  font-family:'Fira Code',ui-monospace,Consolas,monospace;
+  font-size:13.2px;
+  line-height:1.66;
+  border-radius:14px;
+  padding:0 18px 16px;
+  margin:20px 0;
+  white-space:pre-wrap;
+  word-break:break-word;
+  box-shadow:0 10px 24px rgba(20,25,50,.28), inset 0 0 0 1px rgba(255,255,255,.05);
+  break-inside:avoid;
+}
+pre.code::before{
+  content:attr(data-file);
+  display:block;
+  margin:0 -18px 14px;
+  padding:9px 16px 9px 80px;
+  background:linear-gradient(180deg,#2b3048,#232739);
+  color:#aab3d6;
+  font-family:'Fira Code',monospace;
+  font-size:11.5px;
+  letter-spacing:.06em;
+  border-radius:14px 14px 0 0;
+  border-bottom:1px solid #12141f;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+pre.code::after{
+  content:"";
+  position:absolute;
+  top:15px;left:18px;
+  width:10px;height:10px;
+  border-radius:50%;
+  background:#ff5f57;
+  box-shadow:17px 0 0 #ffbd2e, 34px 0 0 #27c93f;
+}
+pre.code code{
+  background:none;border:0;padding:0;color:inherit;font-size:inherit;
+}
+pre.bad::before{
+  background:linear-gradient(180deg,#5c1f26,#3d1418);
+  color:#ffb3b3;
+}
+pre.good::before{
+  background:linear-gradient(180deg,#1e4d30,#14361f);
+  color:#a8e6b8;
+}
+
+/* light blocks: output, structure, terminal */
+pre.tree{
+  background:#f4f7fd;
+  border:1.6px dashed #b9c6d8;
+  border-radius:12px;
+  padding:14px 18px;
+  font-family:'Fira Code',ui-monospace,monospace;
+  font-size:13px;
+  line-height:1.68;
+  color:#33475b;
+  margin:18px 0;
+  white-space:pre-wrap;
+  word-break:break-word;
+  break-inside:avoid;
+}
+pre.tree::before{
+  content:attr(data-file);
+  display:block;
+  font-family:'Caveat',cursive;
+  font-size:20px;
+  color:var(--blue);
+  margin-bottom:6px;
+  letter-spacing:.02em;
+}
+
+/* inline code */
+code{
+  font-family:'Fira Code',ui-monospace,monospace;
+  font-size:.85em;
+  background:#eef1f8;
+  color:#b03a6b;
+  padding:2px 6px;
+  border-radius:6px;
+  border:1px solid #dde3ef;
+}
+
+/* ============ BOXES ============ */
+.box{
+  border:2px dashed #b9c6d8;
+  border-radius:16px;
+  padding:16px 22px 14px;
+  margin:22px 0;
+  background:#f6faff;
+  break-inside:avoid;
+}
+.box .bt{
+  display:block;
+  font-family:'Caveat',cursive;
+  font-size:23px;
+  color:var(--blue);
+  margin-bottom:4px;
+}
+.analogy{background:#fdf6ff;border-color:#d9bdf0;}
+.analogy .bt{color:#8b47c9;}
+
+.remember{
+  background:#fff8cf;
+  border-left:7px solid #ffd21f;
+  border-radius:4px 14px 14px 4px;
+  padding:14px 22px;
+  margin:24px 0;
+  box-shadow:5px 7px 0 rgba(0,0,0,.06);
+  transform:rotate(-.35deg);
+  break-inside:avoid;
+}
+.remember::before{
+  content:"📌 Remember";
+  display:block;
+  font-family:'Caveat',cursive;
+  font-size:23px;
+  color:#a67c00;
+  margin-bottom:2px;
+}
+.remember p:last-child{margin-bottom:0;}
+
+.tip{
+  background:#e8f8ee;
+  border-left:7px solid var(--green);
+  border-radius:4px 14px 14px 4px;
+  padding:14px 22px;
+  margin:22px 0;
+  break-inside:avoid;
+}
+.tip::before{
+  content:"✎ Note";
+  display:block;
+  font-family:'Caveat',cursive;
+  font-size:22px;
+  color:#2f7d51;
+  margin-bottom:2px;
+}
+.tip p:last-child{margin-bottom:0;}
+
+.warn{
+  background:#fdeeee;
+  border-left:7px solid var(--red);
+  border-radius:4px 14px 14px 4px;
+  padding:14px 22px;
+  margin:22px 0;
+  break-inside:avoid;
+}
+.warn::before{
+  content:"⚠ Watch out";
+  display:block;
+  font-family:'Caveat',cursive;
+  font-size:22px;
+  color:#b03232;
+  margin-bottom:2px;
+}
+.warn p:last-child{margin-bottom:0;}
+
+/* ============ LISTS ============ */
+ul{
+  list-style:none;
+  padding-left:0;
+  margin:0 0 1em;
+}
+ul li{
+  position:relative;
+  padding-left:26px;
+  margin-bottom:.34em;
+}
+ul li::before{
+  content:"➜";
+  position:absolute;
+  left:0;
+  top:0;
+  color:var(--blue);
+  font-size:14px;
+}
+ol{
+  padding-left:24px;
+  margin:0 0 1em;
+}
+ol li{margin-bottom:.34em;}
+ol li::marker{
+  color:var(--blue);
+  font-weight:700;
+  font-family:'Caveat',cursive;
+  font-size:19px;
+}
+
+.checklist{list-style:none;padding-left:0;}
+.checklist li{
+  position:relative;
+  padding-left:34px;
+  margin-bottom:.55em;
+}
+.checklist li::before{
+  content:"☐";
+  position:absolute;
+  left:0;top:-1px;
+  font-size:20px;
+  color:var(--blue);
+}
+
+/* ============ TABLES ============ */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:22px 0;
+  font-size:15.5px;
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 4px 14px rgba(40,60,90,.08);
+  break-inside:avoid;
+}
+th{
+  background:var(--blue-soft);
+  font-family:'Caveat',cursive;
+  font-size:20px;
+  color:var(--blue-dark);
+  text-align:left;
+}
+th,td{
+  border:1.5px solid var(--line);
+  padding:9px 13px;
+  vertical-align:top;
+}
+
+/* ============ MISC ============ */
+.lead{
+  font-size:18px;
+  color:#2d3d4d;
+}
+.divider{
+  text-align:center;
+  color:#c9b26a;
+  letter-spacing:12px;
+  margin:34px 0;
+  font-size:20px;
+}
+strong{color:#16233a;}
+.kw{color:var(--pink);font-weight:700;}
+
+/* ============ PRINT ============ */
+@page{
+  size:A4;
+  margin:12mm 10mm;
+}
+@media print{
+  body{background:#fff;font-size:12.4pt;}
+  .page{
+    max-width:none;
+    margin:0;
+    padding:0 0 0 14mm;
+    box-shadow:none;
+    border-radius:0;
+    background-color:#fffdf6;
+    background-image:radial-gradient(#ece7d8 1px, transparent 1px);
+    background-size:18px 18px;
+  }
+  .page::before{left:6mm;}
+  .cover{break-after:page;min-height:250mm;padding-top:60mm;}
+  .cover h1{font-size:64px;}
+  h2{font-size:32px;}
+  h3{font-size:23px;}
+  pre.code{font-size:10pt;box-shadow:none;}
+  pre.tree{font-size:10pt;}
+  .remember{transform:none;box-shadow:none;}
+  a{color:var(--blue);text-decoration:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= COVER ================= -->
+<section class="page cover">
+  <span class="badge">React JS</span>
+  <h1>Phase 1</h1>
+  <h2>React Foundations</h2>
+  <div class="doodle">✦ ✎ ⚛ ★ ✦</div>
+  <p class="sub">A handwritten-style study notebook — built step by step with <strong>What</strong>, <strong>Why</strong>, <strong>Analogy</strong>, <strong>How</strong>, <strong>Code Explanation</strong> and <strong>Practice</strong>.</p>
+  <div class="tape">Learn &nbsp;•&nbsp; Practice &nbsp;•&nbsp; Grow</div>
+  <br />
+  <div class="sticker">My React<br />Notebook</div>
+</section>
+
+<!-- ================= HOW TO STUDY ================= -->
+<section class="page">
+  <div class="topic-head">
+    <span class="tnum">★</span>
+    <h2>How to Study This Material</h2>
+  </div>
+
+  <p class="lead">For every topic, follow this sequence:</p>
+
+  <ol>
+    <li><strong>What:</strong> Understand what the concept means.</li>
+    <li><strong>Why:</strong> Understand why React developers use it.</li>
+    <li><strong>Analogy:</strong> Connect the concept to something familiar.</li>
+    <li><strong>How:</strong> Learn the syntax and implementation.</li>
+    <li><strong>Code explanation:</strong> Understand what each important line does.</li>
+    <li><strong>Practice:</strong> Try writing the example yourself without looking at the answer.</li>
+  </ol>
+
+  <div class="tip">
+    <p>By the end, you should be able to create a React project, write JSX, build reusable functional components, pass props, use <code>children</code>, explain rendering and the virtual DOM, and inspect components using React Developer Tools.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ TOPIC 1 ============ -->
+  <div class="topic-head">
+    <span class="tnum">01</span>
+    <h2>Topic 1: What Is React and Why Is It Used?</h2>
+  </div>
+
+  <h3>1.1 What is React?</h3>
+  <p>React is a <strong>JavaScript library for building user interfaces (UIs)</strong>.</p>
+  <p>A user interface is the part of an application a user sees and interacts with, including buttons, forms, navigation bars, product cards, dashboards, and profile sections.</p>
+  <p>React allows us to divide a large interface into small, reusable pieces called <strong>components</strong>.</p>
+  <p>For example, consider an education website containing:</p>
+  <ul>
+    <li>A navigation bar</li>
+    <li>A course list</li>
+    <li>Course cards</li>
+    <li>A student profile</li>
+    <li>A footer</li>
+  </ul>
+  <p>Instead of writing the entire interface as one large block of code, we can create separate components for the navbar, course cards, profile, and footer.</p>
+
+  <h3>1.2 Analogy: Building a House</h3>
+  <div class="box analogy">
+    <span class="bt">Analogy — A House</span>
+    <p>Imagine you are constructing a house.</p>
+    <p>A house contains different parts:</p>
+    <ul>
+      <li>Doors</li>
+      <li>Windows</li>
+      <li>Walls</li>
+      <li>Rooms</li>
+      <li>A kitchen</li>
+      <li>A bathroom</li>
+    </ul>
+    <p>You do not need to invent an entirely new type of door for every room. You can reuse a common design wherever appropriate.</p>
+    <p>React follows a similar idea.</p>
+  </div>
+
+  <table>
+    <tr><th>House</th><th>React</th></tr>
+    <tr><td>Door</td><td>Button component</td></tr>
+    <tr><td>Window</td><td>Image component</td></tr>
+    <tr><td>Room</td><td>Page section component</td></tr>
+    <tr><td>Reusable room design</td><td>Reusable UI component</td></tr>
+    <tr><td>Complete house</td><td>Complete application</td></tr>
+  </table>
+
+  <p><strong>Main idea:</strong> React helps us build a large user interface using smaller pieces that can be maintained and reused.</p>
+
+  <h3>1.3 Why Do We Need React?</h3>
+  <p>First, consider how we might build a simple interface using HTML.</p>
+
+<pre class="code" data-file="index.html"><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Welcome to My Website&lt;/h1&gt;
+    &lt;p&gt;Learn web development.&lt;/p&gt;
+    &lt;button&gt;Explore Courses&lt;/button&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+  <p>This code creates a heading, paragraph, and button.</p>
+  <p>For a small static page, HTML is sufficient. However, a modern application may contain hundreds of interface elements and frequently changing information.</p>
+  <p>For example, an online shopping website may need to display product cards, shopping cart details, filters, search results, and user information.</p>
+  <p>As an application grows, organizing and updating its interface manually can become complicated.</p>
+  <p>React helps by providing several useful capabilities.</p>
+
+  <h4>A. Component-based development</h4>
+  <p>We can separate the interface into manageable components.</p>
+
+<pre class="code" data-file="Welcome.jsx"><code>function Welcome() {
+  return &lt;h1&gt;Welcome to React!&lt;/h1&gt;;
+}</code></pre>
+
+  <p>Here, <code>Welcome</code> is a component that describes a small part of the interface.</p>
+
+  <h4>B. Reusability</h4>
+  <p>We can use the same component multiple times.</p>
+
+<pre class="code" data-file="App.jsx"><code>function CourseCard() {
+  return &lt;article&gt;React Fundamentals&lt;/article&gt;;
+}
+
+function App() {
+  return (
+    &lt;main&gt;
+      &lt;CourseCard /&gt;
+      &lt;CourseCard /&gt;
+      &lt;CourseCard /&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+
+  <p>The <code>CourseCard</code> component is defined once but used three times.</p>
+
+  <h4>C. JavaScript integration</h4>
+  <p>React lets us combine JavaScript expressions with UI descriptions.</p>
+
+<pre class="code" data-file="Welcome.jsx"><code>function Welcome() {
+  const studentName = "Rahul";
+
+  return &lt;h1&gt;Welcome, {studentName}!&lt;/h1&gt;;
+}
+
+export default Welcome;</code></pre>
+
+  <p>Output:</p>
+
+<pre class="tree" data-file="Output">Welcome, Rahul!</pre>
+
+  <p>The value of <code>studentName</code> is inserted into the interface using curly braces.</p>
+
+  <h4>D. Easier interface updates</h4>
+  <p>React manages how the UI is updated when the output of a component changes.</p>
+  <p>You describe what the interface should look like. React then coordinates the necessary updates to the browser's DOM.</p>
+  <p>We will study rendering in Topic 12.</p>
+
+  <h3>1.4 When Is React Useful?</h3>
+  <p>React is commonly used to build:</p>
+  <ul>
+    <li>Admin dashboards and CRM applications</li>
+    <li>E-commerce websites</li>
+    <li>Social media interfaces</li>
+    <li>Learning management systems</li>
+    <li>Booking applications</li>
+    <li>Interactive forms and portals</li>
+  </ul>
+  <p>A static page does not necessarily need React. React becomes especially useful when an application has a complex interface, repeated UI patterns, and frequently changing content.</p>
+
+  <div class="remember">
+    <p>React is a library, not a programming language. You use JavaScript to write React applications.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ TOPIC 2 ============ -->
+  <div class="topic-head">
+    <span class="tnum">02</span>
+    <h2>Topic 2: SPA, Client-Side Rendering, and React's Role</h2>
+  </div>
+
+  <p>Before learning how React creates interfaces, we need to understand how websites display pages.</p>
+
+  <h3>2.1 What Is a Traditional Multi-Page Application?</h3>
+  <p>In a traditional multi-page website, clicking a link often causes the browser to request a new HTML document from the server.</p>
+  <p>Imagine visiting an institute website:</p>
+  <ol>
+    <li>You open the home page.</li>
+    <li>You click About Us.</li>
+    <li>The browser requests and loads the About Us page.</li>
+    <li>You click Courses.</li>
+    <li>The browser requests and loads the Courses page.</li>
+  </ol>
+  <p>Each navigation may involve loading a new document from the server.</p>
+  <p>This approach is still used by many websites and can work very well.</p>
+
+  <h3>2.2 What Is a Single-Page Application (SPA)?</h3>
+  <p>A <strong>Single-Page Application (SPA)</strong> is an application that loads an initial HTML document and then updates the displayed interface as the user interacts with it, without requiring a complete document reload for every internal navigation.</p>
+  <p>Think about using an application such as an email dashboard.</p>
+  <p>You might switch between Inbox, Sent, and Drafts while the main application remains loaded.</p>
+  <p>A SPA can replace the content of the current interface instead of loading a completely new HTML document for each navigation.</p>
+
+  <div class="box analogy">
+    <span class="bt">Analogy — A Restaurant</span>
+    <p>Imagine a restaurant with one dining area.</p>
+    <p>You can change your table arrangement, update a menu, or replace a dish without rebuilding the entire restaurant every time.</p>
+    <p>A SPA works in a similar way: the application remains in place while parts of the interface change.</p>
+  </div>
+
+  <h3>2.3 What Is Client-Side Rendering (CSR)?</h3>
+  <p><strong>Client-side rendering</strong> means that the browser executes JavaScript to produce or update the user interface.</p>
+  <p>In a typical React SPA, the process looks like this:</p>
+  <ol>
+    <li>The browser requests the website.</li>
+    <li>The server sends the initial HTML, JavaScript, and other required assets.</li>
+    <li>The browser downloads and executes the JavaScript.</li>
+    <li>React creates the interface and displays it.</li>
+    <li>React updates the interface as the application runs.</li>
+  </ol>
+  <p>A typical client-rendered React application starts with an HTML file containing a root element.</p>
+
+<pre class="code" data-file="index.html"><code>&lt;div id="root"&gt;&lt;/div&gt;</code></pre>
+
+  <p>Initially, this element is the container into which React will render the application.</p>
+  <p>React connects to the element and displays the interface inside it.</p>
+
+  <h3>2.4 How Does React Fit Into This Process?</h3>
+  <p>Imagine building a student dashboard.</p>
+  <p>The browser provides the environment, JavaScript executes in that environment, and React manages the UI described by your components.</p>
+
+<pre class="code" data-file="StudentDashboard.jsx"><code>function StudentDashboard() {
+  return (
+    &lt;main&gt;
+      &lt;h1&gt;Student Dashboard&lt;/h1&gt;
+      &lt;p&gt;Welcome to your learning portal.&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default StudentDashboard;</code></pre>
+
+  <p>This component describes the dashboard's interface. It does not, by itself, tell the browser where the application should be mounted. The React entry point performs that task.</p>
+  <p>A typical entry point looks like this:</p>
+
+<pre class="code" data-file="main.jsx"><code>import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
+
+createRoot(document.getElementById("root")).render(
+  &lt;App /&gt;
+);</code></pre>
+
+  <p>What happens here?</p>
+  <ul>
+    <li><code>createRoot</code> creates a React root attached to the HTML element.</li>
+    <li><code>document.getElementById("root")</code> finds the HTML container.</li>
+    <li><code>&lt;App /&gt;</code> represents the root application component.</li>
+    <li><code>.render()</code> asks React to render that component into the container.</li>
+  </ul>
+  <p>We will examine the Vite project files in Topics 3 and 4.</p>
+
+  <h3>2.5 Is Every React Application a SPA?</h3>
+  <p>No.</p>
+  <p>React is a UI library. It can be used in a client-rendered SPA, but it can also be used with server rendering and other architectures.</p>
+  <p>A typical Vite React project is commonly configured as a client-rendered application. Frameworks such as Next.js can support server rendering and other rendering strategies.</p>
+  <p>For now, focus on this distinction:</p>
+
+  <table>
+    <tr><th>Term</th><th>Meaning</th></tr>
+    <tr><td>React</td><td>A JavaScript library for creating interfaces</td></tr>
+    <tr><td>SPA</td><td>An application model that updates views without a full document reload for every internal navigation</td></tr>
+    <tr><td>CSR</td><td>Rendering or updating the UI in the browser using JavaScript</td></tr>
+    <tr><td>Vite</td><td>A development and build tool used to set up React projects and other frontend applications</td></tr>
+  </table>
+
+  <div class="remember">
+    <p>SPA and CSR are related, but they are not the same thing. An SPA describes an application structure and navigation experience; CSR describes where rendering work takes place.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ TOPIC 3 ============ -->
+  <div class="topic-head">
+    <span class="tnum">03</span>
+    <h2>Topic 3: Create a React Project Using Vite</h2>
+  </div>
+
+  <h3>3.1 What Is Vite?</h3>
+  <p>Vite is a frontend development tool that helps you start and build modern web projects.</p>
+  <p>It provides a development server, fast feedback while coding, and a production build process.</p>
+
+  <div class="box analogy">
+    <span class="bt">Analogy — Setting Up a Classroom</span>
+    <p>Imagine you want to teach a class.</p>
+    <p>You could build the classroom, arrange the furniture, install lights, and prepare every item yourself.</p>
+    <p>Or you could use an already equipped classroom and start teaching.</p>
+    <p>Vite provides a ready-to-use project setup so you can focus on learning React instead of configuring every tool manually.</p>
+  </div>
+
+  <h3>3.2 Step 1: Check Node.js and npm</h3>
+  <p>Vite requires Node.js to run its development tools.</p>
+  <p>Open your terminal, Command Prompt, or VS Code terminal and execute:</p>
+
+<pre class="code" data-file="Terminal"><code>node -v
+npm -v</code></pre>
+
+  <p>The first command displays your Node.js version. The second displays your npm version.</p>
+  <p>Use a Node.js version compatible with the current Vite requirements. Check the official Vite guide if you receive a version warning.</p>
+
+  <h3>3.3 Step 2: Create the Project</h3>
+  <p>Run:</p>
+
+<pre class="code" data-file="Terminal"><code>npm create vite@latest</code></pre>
+
+  <p>Vite asks you to enter or select the project name, framework, and variant.</p>
+  <p>Choose:</p>
+  <ul>
+    <li>Project name: <code>react-foundations</code></li>
+    <li>Framework: <code>React</code></li>
+    <li>Variant: <code>JavaScript</code></li>
+  </ul>
+  <p>Choose JavaScript rather than TypeScript for this phase, because these lessons focus on React fundamentals using JavaScript.</p>
+  <p>You can also create the project directly with a command:</p>
+
+<pre class="code" data-file="Terminal"><code>npm create vite@latest react-foundations -- --template react</code></pre>
+
+  <p>Explanation:</p>
+  <ul>
+    <li><code>npm create vite@latest</code> runs the Vite project scaffolding tool.</li>
+    <li><code>react-foundations</code> is the project directory name.</li>
+    <li><code>--template react</code> selects the React JavaScript template.</li>
+  </ul>
+
+  <h3>3.4 Step 3: Enter the Project Directory</h3>
+
+<pre class="code" data-file="Terminal"><code>cd react-foundations</code></pre>
+
+  <p>The <code>cd</code> command changes the current terminal directory to the newly created project.</p>
+
+  <h3>3.5 Step 4: Install Dependencies</h3>
+
+<pre class="code" data-file="Terminal"><code>npm install</code></pre>
+
+  <p>This installs the packages required by your project.</p>
+  <p>The project dependencies are declared in <code>package.json</code>. npm downloads the packages and creates a <code>node_modules</code> directory.</p>
+
+  <h3>3.6 Step 5: Start the Development Server</h3>
+
+<pre class="code" data-file="Terminal"><code>npm run dev</code></pre>
+
+  <p>Vite starts a local development server and displays a local URL, usually something similar to:</p>
+
+<pre class="tree" data-file="Local URL">http://localhost:5173/</pre>
+
+  <p>Open the URL in your browser to view your React application.</p>
+  <p>The exact port can differ if another application is already using the default port.</p>
+
+  <h3>3.7 Step 6: Make Your First Change</h3>
+  <p>Open <code>src/App.jsx</code> and replace its contents with:</p>
+
+<pre class="code" data-file="App.jsx"><code>function App() {
+  return (
+    &lt;main&gt;
+      &lt;h1&gt;My First React Application&lt;/h1&gt;
+      &lt;p&gt;I am learning React step by step.&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+
+  <p>Save the file.</p>
+  <p>You should see the new heading and paragraph in the browser. Vite's development server supports hot updates, so you usually do not need to manually refresh the page after editing a source file.</p>
+
+  <h3>3.8 What Did You Just Build?</h3>
+  <p>You created a React project that uses:</p>
+  <ul>
+    <li>Vite to run the development environment.</li>
+    <li>React to define and render the interface.</li>
+    <li>JSX to describe HTML-like UI structures.</li>
+    <li>A browser to display the resulting interface.</li>
+  </ul>
+
+  <div class="warn">
+    <p><strong>Common Setup Errors</strong></p>
+    <p><strong>Error: <code>node</code> or <code>npm</code> is not recognized.</strong><br />Node.js may not be installed, or your terminal may not have the correct PATH configuration.</p>
+    <p><strong>Error: <code>Missing script: "dev"</code>.</strong><br />You may be in the wrong directory. Check that the current folder contains the project's <code>package.json</code>.</p>
+    <p><strong>The browser shows an error instead of your app.</strong><br />Read the terminal and browser console errors. A misspelled import, missing file, or invalid JSX may prevent the project from running.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ TOPIC 4 ============ -->
+  <div class="topic-head">
+    <span class="tnum">04</span>
+    <h2>Topic 4: Understand the React Project Structure</h2>
+  </div>
+
+  <p>When Vite creates a React project, it generates several files and directories.</p>
+  <p>A simplified structure looks like this:</p>
+
+<pre class="tree" data-file="Project Structure">react-foundations/
+│
+├── node_modules/
+│
+├── public/
+│
+├── src/
+│   ├── assets/
+│   ├── App.css
+│   ├── App.jsx
+│   ├── index.css
+│   └── main.jsx
+│
+├── .gitignore
+├── index.html
+├── package.json
+├── package-lock.json
+└── vite.config.js</pre>
+
+  <p>The exact structure may vary slightly with template versions.</p>
+
+  <h3>4.1 The <code>src</code> Directory</h3>
+  <p><code>src</code> stands for source. It contains the code you normally work with while developing the application.</p>
+
+  <h4><code>App.jsx</code></h4>
+  <p>This file commonly contains the main application component.</p>
+
+<pre class="code" data-file="App.jsx"><code>function App() {
+  return &lt;h1&gt;Hello, React!&lt;/h1&gt;;
+}
+
+export default App;</code></pre>
+
+  <p><code>App</code> describes a UI element that the application can render.</p>
+
+  <h4><code>main.jsx</code></h4>
+  <p>This is usually the entry point of a Vite React application.</p>
+  <p>Example:</p>
+
+<pre class="code" data-file="main.jsx"><code>import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
+
+createRoot(document.getElementById("root")).render(
+  &lt;StrictMode&gt;
+    &lt;App /&gt;
+  &lt;/StrictMode&gt;
+);</code></pre>
+
+  <p>Explanation:</p>
+  <ul>
+    <li>The imports bring in React tools and the <code>App</code> component.</li>
+    <li><code>document.getElementById("root")</code> finds the mounting element from <code>index.html</code>.</li>
+    <li><code>createRoot(...)</code> creates the React root.</li>
+    <li><code>.render(...)</code> renders the component tree.</li>
+    <li><code>StrictMode</code> enables additional development checks. It does not create a visible UI element of its own.</li>
+  </ul>
+  <p>Notice that <code>App</code> is imported from <code>App.jsx</code>. This is how components can be defined in one file and used in another.</p>
+
+  <h4><code>App.css</code></h4>
+  <p>This file is commonly used for styling the application component.</p>
+
+<pre class="code" data-file="App.css"><code>h1 {
+  color: royalblue;
+  text-align: center;
+}</code></pre>
+
+  <p>The CSS changes the appearance of matching headings.</p>
+
+  <h4><code>index.css</code></h4>
+  <p>This file often contains global styles, such as the page background, body font, and default margins.</p>
+
+<pre class="code" data-file="index.css"><code>body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}</code></pre>
+
+  <h4><code>assets/</code></h4>
+  <p>This directory is commonly used for assets imported by source code, such as images and other frontend resources.</p>
+
+  <h3>4.2 The <code>public</code> Directory</h3>
+  <p>The <code>public</code> directory is for static assets that need to be served directly.</p>
+  <p>For example, you might keep a file here:</p>
+
+<pre class="tree" data-file="File Path">public/logo.png</pre>
+
+  <p>It can usually be referenced through the public URL:</p>
+
+<pre class="code" data-file="Logo.jsx"><code>function Logo() {
+  return &lt;img src="/logo.png" alt="Institute logo" /&gt;;
+}</code></pre>
+
+  <p>For source assets that you import into components, the <code>src/assets</code> directory is commonly appropriate.</p>
+
+  <h3>4.3 The <code>index.html</code> File</h3>
+  <p>Vite's <code>index.html</code> is the HTML entry point.</p>
+  <p>A simplified example:</p>
+
+<pre class="code" data-file="index.html"><code>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+    &lt;title&gt;React Foundations&lt;/title&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+    &lt;script type="module" src="/src/main.jsx"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+  <p>The important parts are:</p>
+
+<pre class="code" data-file="index.html"><code>&lt;div id="root"&gt;&lt;/div&gt;</code></pre>
+
+  <p>This element provides the container for the React application.</p>
+
+<pre class="code" data-file="index.html"><code>&lt;script type="module" src="/src/main.jsx"&gt;&lt;/script&gt;</code></pre>
+
+  <p>This tells the browser to load the JavaScript module that initializes React.</p>
+
+  <h3>4.4 <code>package.json</code></h3>
+  <p>This file stores project information, dependencies, and scripts.</p>
+  <p>A simplified example:</p>
+
+<pre class="code" data-file="package.json"><code>{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}</code></pre>
+
+  <p>These scripts allow you to use:</p>
+
+<pre class="code" data-file="Terminal"><code>npm run dev
+npm run build
+npm run preview</code></pre>
+
+  <ul>
+    <li><code>dev</code> starts the development server.</li>
+    <li><code>build</code> creates a production build.</li>
+    <li><code>preview</code> serves the production build locally for inspection.</li>
+  </ul>
+  <p>The complete generated <code>package.json</code> contains additional information and dependencies.</p>
+
+  <h3>4.5 <code>node_modules/</code></h3>
+  <p>This directory contains installed dependencies used by the project.</p>
+  <p>Do not normally edit package files directly inside <code>node_modules</code>. Manage dependencies through npm instead.</p>
+
+  <h3>4.6 <code>vite.config.js</code></h3>
+  <p>This file is used to configure Vite. You may not need to edit it during your first React lessons.</p>
+
+  <div class="box">
+    <span class="bt">Understand the Complete Flow</span>
+    <p>The relationship among the main files can be summarized as:</p>
+  </div>
+
+<pre class="tree" data-file="Flow">index.html
+    |
+    | loads
+    v
+main.jsx
+    |
+    | renders
+    v
+App.jsx
+    |
+    | contains
+    v
+Other React components
+    |
+    v
+Visible interface in the browser</pre>
+
+  <div class="remember">
+    <p><code>index.html</code> provides the root container, <code>main.jsx</code> initializes React, and <code>App.jsx</code> commonly describes the main application UI.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ TOPIC 5 ============ -->
+  <div class="topic-head">
+    <span class="tnum">05</span>
+    <h2>Topic 5: JSX Syntax and Expressions</h2>
+  </div>
+
+  <h3>5.1 What Is JSX?</h3>
+  <p>JSX stands for <strong>JavaScript XML</strong>.</p>
+  <p>It is a syntax extension for JavaScript that lets you write HTML-like markup inside JavaScript code.</p>
+  <p>Without JSX, creating React elements involves more function calls.</p>
+  <p>With JSX, the interface is easier to read and write.</p>
+  <p>For example:</p>
+
+<pre class="code" data-file="JSX"><code>const heading = &lt;h1&gt;Hello, React!&lt;/h1&gt;;</code></pre>
+
+  <p>The markup looks similar to HTML, but it is JSX written within JavaScript.</p>
+  <p>JSX is transformed by the build tools into JavaScript that React can understand.</p>
+
+  <h3>5.2 Why Do We Use JSX?</h3>
+  <p>Imagine building an interface with many elements, including headings, images, paragraphs, and buttons.</p>
+  <p>Writing the interface using nested function calls would become difficult to read.</p>
+  <p>JSX lets us keep the UI structure close to the JavaScript logic that produces it.</p>
+
+  <div class="box analogy">
+    <span class="bt">Analogy — A Recipe</span>
+    <p>A recipe describes the ingredients and arrangement needed to make a dish.</p>
+    <p>JSX describes the UI elements and how they should be arranged.</p>
+    <p>For example:</p>
+  </div>
+
+<pre class="code" data-file="Profile.jsx"><code>function Profile() {
+  return (
+    &lt;section&gt;
+      &lt;h1&gt;Student Profile&lt;/h1&gt;
+      &lt;p&gt;Name: Rahul&lt;/p&gt;
+    &lt;/section&gt;
+  );
+}</code></pre>
+
+  <p>The JSX describes a section containing a heading and a paragraph.</p>
+
+  <h3>5.3 Basic JSX Syntax</h3>
+
+<pre class="code" data-file="App.jsx"><code>function App() {
+  return &lt;h1&gt;Welcome to React&lt;/h1&gt;;
+}
+
+export default App;</code></pre>
+
+  <p>Explanation:</p>
+  <ul>
+    <li><code>function App()</code> declares a JavaScript function.</li>
+    <li><code>return</code> specifies the value that the function returns.</li>
+    <li><code>&lt;h1&gt;Welcome to React&lt;/h1&gt;</code> is JSX.</li>
+    <li><code>export default App</code> makes the component available to other modules as the default export.</li>
+  </ul>
+  <p>When React renders this component, the browser displays the heading.</p>
+
+  <h3>5.4 JSX Can Contain Nested Elements</h3>
+
+<pre class="code" data-file="Course.jsx"><code>function Course() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;React Fundamentals&lt;/h1&gt;
+      &lt;p&gt;Learn components and props.&lt;/p&gt;
+      &lt;button&gt;Start Learning&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default Course;</code></pre>
+
+  <p>The <code>div</code> is the parent element. The heading, paragraph, and button are its children.</p>
+  <p>The parentheses allow you to format a multiline JSX expression across several lines when necessary. Parentheses do not create the UI themselves.</p>
+
+  <h3>5.5 JSX Is Not Exactly HTML</h3>
+  <p>JSX looks like HTML, but there are differences.</p>
+
+  <h4>Use <code>className</code> instead of <code>class</code></h4>
+
+<pre class="code" data-file="App.jsx"><code>function App() {
+  return &lt;h1 className="title"&gt;Hello React&lt;/h1&gt;;
+}</code></pre>
+
+  <p>In JSX, use <code>className</code> to specify a CSS class.</p>
+
+  <h4>Use <code>htmlFor</code> instead of <code>for</code></h4>
+
+<pre class="code" data-file="LoginForm.jsx"><code>function LoginForm() {
+  return (
+    &lt;div&gt;
+      &lt;label htmlFor="email"&gt;Email address&lt;/label&gt;
+      &lt;input id="email" type="email" /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <p>Here, <code>htmlFor</code> associates the label with the input whose ID is <code>email</code>.</p>
+
+  <h4>Close elements properly</h4>
+
+<pre class="code" data-file="Example.jsx"><code>function Example() {
+  return (
+    &lt;div&gt;
+      &lt;img src="/logo.png" alt="Logo" /&gt;
+      &lt;input type="text" /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <p>The <code>img</code> and <code>input</code> elements are self-closing in JSX.</p>
+
+  <h4>Use camelCase for many JSX attributes</h4>
+
+<pre class="code" data-file="Button.jsx"><code>&lt;button onClick={handleClick}&gt;Click Me&lt;/button&gt;</code></pre>
+
+  <p><code>onClick</code> uses camelCase. In this example, <code>handleClick</code> would need to be a function defined within scope.</p>
+  <p>Event handling will be studied separately in a later phase; here, this is simply an illustration of JSX syntax.</p>
+
+  <h3>5.6 Embedding JavaScript Expressions in JSX</h3>
+  <p>One of JSX's most useful features is the ability to embed JavaScript expressions using curly braces <code>{}</code>.</p>
+
+<pre class="code" data-file="App.jsx"><code>function App() {
+  const studentName = "Priya";
+  const age = 21;
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Hello, {studentName}&lt;/h1&gt;
+      &lt;p&gt;Age: {age}&lt;/p&gt;
+      &lt;p&gt;Next year: {age + 1}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+
+  <p>Output:</p>
+
+<pre class="tree" data-file="Output">Hello, Priya
+Age: 21
+Next year: 22</pre>
+
+  <p>Explanation:</p>
+  <ul>
+    <li><code>{studentName}</code> displays the string stored in the variable.</li>
+    <li><code>{age}</code> displays the age.</li>
+    <li><code>{age + 1}</code> evaluates the JavaScript arithmetic expression and displays its result.</li>
+  </ul>
+  <p>The key rule is that curly braces let you use JavaScript expressions within JSX.</p>
+
+  <h3>5.7 JavaScript Expressions vs. Statements</h3>
+  <p>An expression produces a value.</p>
+  <p>Examples:</p>
+
+<pre class="code" data-file="JSX Expressions"><code>{10 + 5}
+{studentName}
+{age &gt;= 18}</code></pre>
+
+  <p>A statement performs an action or controls program execution.</p>
+  <p>Examples:</p>
+
+<pre class="code" data-file="JavaScript"><code>const age = 21;
+
+if (age &gt;= 18) {
+  console.log("Adult");
+}</code></pre>
+
+  <p>You cannot put a standard <code>if</code> statement directly inside JSX curly braces.</p>
+  <p>Instead, you can use an expression such as a ternary operator.</p>
+
+<pre class="code" data-file="AgeMessage.jsx"><code>function AgeMessage() {
+  const age = 21;
+
+  return (
+    &lt;p&gt;
+      {age &gt;= 18 ? "You are an adult." : "You are a minor."}
+    &lt;/p&gt;
+  );
+}</code></pre>
+
+  <p>The ternary expression evaluates to one of two strings.</p>
+
+  <h3>5.8 JSX Can Be Stored in Variables</h3>
+
+<pre class="code" data-file="App.jsx"><code>function App() {
+  const heading = &lt;h1&gt;Welcome to React&lt;/h1&gt;;
+
+  return (
+    &lt;main&gt;
+      {heading}
+      &lt;p&gt;Let's begin learning.&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+
+  <p>The <code>heading</code> variable stores a JSX element, and <code>{heading}</code> places that element in the returned JSX.</p>
+
+  <div class="remember">
+    <p>JSX is the syntax used to describe the interface. Curly braces let you insert JavaScript expressions into that interface.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ TOPIC 6 ============ -->
+  <div class="topic-head">
+    <span class="tnum">06</span>
+    <h2>Topic 6: Embedding JavaScript in JSX</h2>
+  </div>
+
+  <p>Topic 5 introduced JSX. Now let's focus on the different kinds of JavaScript values and expressions that you can display inside it.</p>
+
+  <h3>6.1 Displaying Variables</h3>
+
+<pre class="code" data-file="Student.jsx"><code>function Student() {
+  const name = "Aarav";
+  const course = "Full Stack Development";
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;{name}&lt;/h1&gt;
+      &lt;p&gt;Course: {course}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <p>The curly braces insert the values of <code>name</code> and <code>course</code> into the JSX.</p>
+  <p>This avoids hardcoding the same values directly into the UI.</p>
+
+  <h3>6.2 Using Arithmetic Expressions</h3>
+
+<pre class="code" data-file="Price.jsx"><code>function Price() {
+  const price = 1000;
+  const tax = 180;
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Price: ₹{price}&lt;/p&gt;
+      &lt;p&gt;Tax: ₹{tax}&lt;/p&gt;
+      &lt;p&gt;Total: ₹{price + tax}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <p>The expression <code>price + tax</code> evaluates to <code>1180</code>.</p>
+  <p>This demonstrates that JSX can display the results of JavaScript calculations.</p>
+
+  <h3>6.3 Calling Functions Inside JSX</h3>
+  <p>A JavaScript function can calculate a value that is inserted into JSX.</p>
+
+<pre class="code" data-file="App.jsx"><code>function getGreeting() {
+  return "Good morning!";
+}
+
+function App() {
+  return &lt;h1&gt;{getGreeting()}&lt;/h1&gt;;
+}
+
+export default App;</code></pre>
+
+  <p>Explanation:</p>
+  <ul>
+    <li><code>getGreeting()</code> returns a string.</li>
+    <li><code>{getGreeting()}</code> calls the function.</li>
+    <li>React renders the returned string as text within the heading.</li>
+  </ul>
+  <p>The function should be safe to call during rendering. Components and functions used to calculate rendered output should not perform unrelated side effects.</p>
+
+  <h3>6.4 Displaying Object Properties</h3>
+  <p>Since React is built around JavaScript, you can use ordinary object properties.</p>
+
+<pre class="code" data-file="StudentProfile.jsx"><code>function StudentProfile() {
+  const student = {
+    name: "Meera",
+    course: "React",
+    city: "Rajkot"
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;{student.name}&lt;/h2&gt;
+      &lt;p&gt;Course: {student.course}&lt;/p&gt;
+      &lt;p&gt;City: {student.city}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <p>Output:</p>
+
+<pre class="tree" data-file="Output">Meera
+Course: React
+City: Rajkot</pre>
+
+  <p>You are inserting individual string values from the object. You generally cannot place an ordinary object directly into JSX and expect React to display it as readable text.</p>
+  <p>For example, <code>{student}</code> is not an appropriate way to display the entire object.</p>
+
+  <h3>6.5 Conditional Output with a Ternary Operator</h3>
+  <p>A ternary operator has this structure:</p>
+
+<pre class="code" data-file="Ternary Pattern"><code>condition ? valueIfTrue : valueIfFalse</code></pre>
+
+  <p>Example:</p>
+
+<pre class="code" data-file="AdmissionStatus.jsx"><code>function AdmissionStatus() {
+  const isAdmitted = true;
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Admission Status&lt;/h2&gt;
+      &lt;p&gt;
+        {isAdmitted ? "Admission confirmed" : "Admission pending"}
+      &lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <p>Since <code>isAdmitted</code> is <code>true</code>, the displayed message is <code>Admission confirmed</code>.</p>
+  <p>This is useful for choosing what text or element to display based on a value.</p>
+
+  <h3>6.6 Conditional Output with Logical AND (<code>&amp;&amp;</code>)</h3>
+  <p>The logical AND operator can show something when a condition is true.</p>
+
+<pre class="code" data-file="Notice.jsx"><code>function Notice() {
+  const showNotice = true;
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Student Portal&lt;/h1&gt;
+      {showNotice &amp;&amp; &lt;p&gt;Your classes begin on Monday.&lt;/p&gt;}
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <p>When <code>showNotice</code> is <code>true</code>, the paragraph is included in the rendered output. When it is <code>false</code>, it is not shown.</p>
+
+  <div class="warn">
+    <p>Be careful when using numbers with <code>&amp;&amp;</code>. For example, <code>{0 &amp;&amp; &lt;p&gt;Notice&lt;/p&gt;}</code> evaluates to <code>0</code>, and React displays that number. If the intention is to show a message only when a number is positive, use a condition such as <code>{count &gt; 0 &amp;&amp; &lt;p&gt;Notice&lt;/p&gt;}</code>.</p>
+  </div>
+
+  <h3>6.7 Understanding Values That Don't Display as You Might Expect</h3>
+  <p>React does not render every JavaScript value as visible text.</p>
+  <p>Commonly:</p>
+  <ul>
+    <li>A string displays as text.</li>
+    <li>A number displays as text.</li>
+    <li>A boolean by itself does not display visible text.</li>
+    <li><code>null</code> and <code>undefined</code> do not display visible content.</li>
+    <li>A normal JavaScript object cannot be displayed directly as a React child.</li>
+  </ul>
+  <p>Example:</p>
+
+<pre class="code" data-file="Values.jsx"><code>function Values() {
+  return (
+    &lt;div&gt;
+      &lt;p&gt;{"React"}&lt;/p&gt;
+      &lt;p&gt;{100}&lt;/p&gt;
+      &lt;p&gt;{true}&lt;/p&gt;
+      &lt;p&gt;{null}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <p>Visible output:</p>
+
+<pre class="tree" data-file="Visible Output">React
+100</pre>
+
+  <p>The boolean <code>true</code> and <code>null</code> do not create visible text.</p>
+
+  <div class="remember">
+    <p>You can use JavaScript variables, arithmetic, function calls, object properties, and conditional expressions inside JSX. The expression must produce a valid renderable result.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ TOPIC 7 ============ -->
+  <div class="topic-head">
+    <span class="tnum">07</span>
+    <h2>Topic 7: Fragments and JSX Rules</h2>
+  </div>
+
+  <h3>7.1 What Is a React Fragment?</h3>
+  <p>A Fragment lets you group multiple JSX elements without adding an extra DOM element solely for the grouping.</p>
+  <p>React's shorthand syntax is:</p>
+
+<pre class="code" data-file="Fragment Shorthand"><code>&lt;&gt;
+  {/* JSX elements */}
+&lt;/&gt;</code></pre>
+
+  <p>The longer syntax is:</p>
+
+<pre class="code" data-file="Fragment (long form)"><code>import { Fragment } from "react";
+
+&lt;Fragment&gt;
+  {/* JSX elements */}
+&lt;/Fragment&gt;</code></pre>
+
+  <p>For ordinary grouping, the shorthand is usually sufficient.</p>
+
+  <h3>7.2 Why Do We Need Fragments?</h3>
+  <p>Consider this component:</p>
+
+<pre class="code bad" data-file="❌ Invalid JSX"><code>function StudentInfo() {
+  return (
+    &lt;h1&gt;Student Profile&lt;/h1&gt;
+    &lt;p&gt;Name: Rahul&lt;/p&gt;
+  );
+}</code></pre>
+
+  <p>This is invalid JSX because a component cannot directly return two adjacent JSX elements without a shared enclosing structure.</p>
+  <p>One solution is to use a <code>div</code>:</p>
+
+<pre class="code" data-file="StudentInfo.jsx"><code>function StudentInfo() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Student Profile&lt;/h1&gt;
+      &lt;p&gt;Name: Rahul&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <p>However, that creates an extra <code>div</code> in the DOM.</p>
+  <p>Another solution is a Fragment:</p>
+
+<pre class="code good" data-file="✅ StudentInfo.jsx"><code>function StudentInfo() {
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Student Profile&lt;/h1&gt;
+      &lt;p&gt;Name: Rahul&lt;/p&gt;
+    &lt;/&gt;
+  );
+}</code></pre>
+
+  <p>This groups both elements without adding a wrapper element to the DOM.</p>
+
+  <div class="box analogy">
+    <span class="bt">Analogy — A Transparent Folder</span>
+    <p>Imagine putting two documents into a transparent folder.</p>
+    <p>The folder helps you group them, but it does not change the documents themselves.</p>
+    <p>A Fragment groups multiple JSX elements without creating an additional HTML wrapper.</p>
+  </div>
+
+  <h3>7.3 Rule 1: Return One Enclosing JSX Structure</h3>
+  <p>Incorrect:</p>
+
+<pre class="code bad" data-file="❌ Incorrect"><code>function App() {
+  return (
+    &lt;h1&gt;Hello&lt;/h1&gt;
+    &lt;p&gt;Welcome&lt;/p&gt;
+  );
+}</code></pre>
+
+  <p>Correct:</p>
+
+<pre class="code good" data-file="✅ Correct"><code>function App() {
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Hello&lt;/h1&gt;
+      &lt;p&gt;Welcome&lt;/p&gt;
+    &lt;/&gt;
+  );
+}</code></pre>
+
+  <h3>7.4 Rule 2: Close All Elements</h3>
+  <p>Incorrect:</p>
+
+<pre class="code bad" data-file="❌ Incorrect"><code>function App() {
+  return &lt;div&gt;&lt;h1&gt;Hello&lt;/div&gt;;
+}</code></pre>
+
+  <p>Correct:</p>
+
+<pre class="code good" data-file="✅ Correct"><code>function App() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Hello&lt;/h1&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <p>Every opening element must have a matching closing tag, except self-closing elements.</p>
+
+  <h3>7.5 Rule 3: Self-Close Empty Elements</h3>
+
+<pre class="code" data-file="App.jsx"><code>function App() {
+  return (
+    &lt;div&gt;
+      &lt;img src="/logo.png" alt="Logo" /&gt;
+      &lt;input type="text" /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <p>The <code>img</code> and <code>input</code> elements do not wrap other content, so they are written using self-closing syntax in JSX.</p>
+
+  <h3>7.6 Rule 4: Use <code>className</code></h3>
+
+<pre class="code" data-file="App.jsx"><code>function App() {
+  return &lt;h1 className="main-heading"&gt;React Learning&lt;/h1&gt;;
+}</code></pre>
+
+  <p>The <code>className</code> attribute specifies the CSS class.</p>
+
+  <h3>7.7 Rule 5: Put JavaScript Expressions Inside Curly Braces</h3>
+
+<pre class="code" data-file="App.jsx"><code>function App() {
+  const name = "Aarav";
+
+  return &lt;h1&gt;Hello, {name}!&lt;/h1&gt;;
+}</code></pre>
+
+  <p>Without curly braces, React would treat the variable name as ordinary text.</p>
+
+  <h3>7.8 Rule 6: Use Parentheses for Readable Multiline JSX</h3>
+
+<pre class="code" data-file="App.jsx"><code>function App() {
+  return (
+    &lt;main&gt;
+      &lt;h1&gt;Learning React&lt;/h1&gt;
+      &lt;p&gt;One concept at a time.&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+
+  <p>The parentheses make the multiline return easier to read.</p>
+
+  <h3>7.9 When Should You Use a Fragment or a <code>div</code>?</h3>
+  <p>Use a Fragment when you only need to group multiple JSX elements.</p>
+  <p>Use a <code>div</code> or an appropriate semantic element such as <code>main</code>, <code>section</code>, or <code>article</code> when the wrapper represents a real structure in your page or needs to carry attributes or styling.</p>
+
+  <div class="remember">
+    <p>Fragments help keep your DOM clean. JSX must have valid nesting, properly closed tags, and one enclosing structure for adjacent returned elements.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ TOPIC 8 ============ -->
+  <div class="topic-head">
+    <span class="tnum">08</span>
+    <h2>Topic 8: Functional Components</h2>
+  </div>
+
+  <h3>8.1 What Is a Functional Component?</h3>
+  <p>A functional component is a JavaScript function that returns React-renderable content, usually JSX.</p>
+  <p>Example:</p>
+
+<pre class="code" data-file="Welcome.jsx"><code>function Welcome() {
+  return &lt;h1&gt;Welcome to React!&lt;/h1&gt;;
+}</code></pre>
+
+  <p>Here, <code>Welcome</code> is a React component.</p>
+  <p>Components are the building blocks of React applications.</p>
+
+  <h3>8.2 Why Do We Need Components?</h3>
+  <p>Imagine creating a page that contains a navbar, a profile, a course list, and a footer.</p>
+  <p>Writing the entire interface in one enormous component can make the code hard to understand and maintain.</p>
+  <p>By creating separate components, you can divide the interface according to its responsibilities.</p>
+  <p>For example:</p>
+
+<pre class="code" data-file="App.jsx"><code>function Navbar() {
+  return &lt;nav&gt;My Institute&lt;/nav&gt;;
+}
+
+function Profile() {
+  return &lt;h2&gt;Student Profile&lt;/h2&gt;;
+}
+
+function Footer() {
+  return &lt;footer&gt;© 2026 My Institute&lt;/footer&gt;;
+}
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Navbar /&gt;
+      &lt;Profile /&gt;
+      &lt;Footer /&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+
+  <p>The <code>App</code> component combines the three smaller components.</p>
+
+  <h3>8.3 Analogy: A Teaching Team</h3>
+  <div class="box analogy">
+    <span class="bt">Analogy — A Teaching Team</span>
+    <p>Imagine an institute where:</p>
+    <ul>
+      <li>One teacher handles React.</li>
+      <li>Another handles JavaScript.</li>
+      <li>Another manages student assignments.</li>
+    </ul>
+    <p>Each teacher has a defined responsibility, but their combined work supports the institute.</p>
+    <p>Components work similarly. Smaller components can handle specific parts of an interface, while the main component combines them to create a complete page.</p>
+  </div>
+
+  <h3>8.4 Component Naming Rules</h3>
+  <p>React components should generally use PascalCase.</p>
+  <p>Correct:</p>
+
+<pre class="code good" data-file="✅ Correct"><code>function StudentProfile() {
+  return &lt;h1&gt;Student Profile&lt;/h1&gt;;
+}</code></pre>
+
+  <p>Then use the component as:</p>
+
+<pre class="code" data-file="JSX"><code>&lt;StudentProfile /&gt;</code></pre>
+
+  <p>Avoid defining your own component using a lowercase name such as <code>studentProfile</code> and expecting JSX to identify it as a React component.</p>
+  <p>In JSX, lowercase tags such as <code>&lt;div&gt;</code> refer to built-in HTML elements, while names such as <code>&lt;StudentProfile /&gt;</code> refer to components.</p>
+
+  <h3>8.5 Components Can Be Stored in Separate Files</h3>
+  <p>For example, create a file named <code>Header.jsx</code>.</p>
+
+<pre class="code" data-file="Header.jsx"><code>function Header() {
+  return &lt;h1&gt;My Learning Portal&lt;/h1&gt;;
+}
+
+export default Header;</code></pre>
+
+  <p>Then use it inside <code>App.jsx</code>:</p>
+
+<pre class="code" data-file="App.jsx"><code>import Header from "./Header.jsx";
+
+function App() {
+  return (
+    &lt;main&gt;
+      &lt;Header /&gt;
+      &lt;p&gt;Welcome to the portal.&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+
+  <p>The <code>import</code> statement brings in the exported component. The <code>&lt;Header /&gt;</code> expression tells React to render it at that position in the component tree.</p>
+  <p>This is a common way to organize larger projects.</p>
+
+  <h3>8.6 A Component Is Not the Same as Calling an Ordinary Function</h3>
+  <p>You might be tempted to call a component like this:</p>
+
+<pre class="code" data-file="Not the usual way"><code>function Welcome() {
+  return &lt;h1&gt;Welcome&lt;/h1&gt;;
+}
+
+function App() {
+  return &lt;main&gt;{Welcome()}&lt;/main&gt;;
+}</code></pre>
+
+  <p>Although this can evaluate the function's returned JSX in a simple example, it is not the usual way to use React components.</p>
+  <p>The normal approach is:</p>
+
+<pre class="code good" data-file="✅ Normal approach"><code>function App() {
+  return (
+    &lt;main&gt;
+      &lt;Welcome /&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+
+  <p>Using <code>&lt;Welcome /&gt;</code> lets React manage the component as part of its component tree and rendering process.</p>
+
+  <h3>8.7 Components Should Describe Their Output</h3>
+  <p>A functional component should normally calculate and return its UI rather than manually manipulating the DOM.</p>
+
+<pre class="code" data-file="CourseTitle.jsx"><code>function CourseTitle() {
+  const title = "React Fundamentals";
+
+  return &lt;h2&gt;{title}&lt;/h2&gt;;
+}</code></pre>
+
+  <p>The component describes what should appear. React handles displaying the resulting UI.</p>
+
+  <div class="remember">
+    <p>A functional component is a reusable unit of UI defined using a JavaScript function. Use PascalCase names and render components with JSX syntax such as <code>&lt;Welcome /&gt;</code>.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ TOPIC 9 ============ -->
+  <div class="topic-head">
+    <span class="tnum">09</span>
+    <h2>Topic 9: Component Composition and Reuse</h2>
+  </div>
+
+  <h3>9.1 What Is Component Composition?</h3>
+  <p>Component composition means combining smaller components to create a larger interface.</p>
+  <p>A component can include other components inside its JSX. The result forms a component tree.</p>
+  <p>For example:</p>
+
+<pre class="tree" data-file="Component Tree">App
+├── Navbar
+├── MainContent
+│   ├── CourseCard
+│   ├── CourseCard
+│   └── CourseCard
+└── Footer</pre>
+
+  <p>The main <code>App</code> component combines the navbar, main content, and footer. The main content combines multiple course cards.</p>
+
+  <h3>9.2 Why Is Composition Useful?</h3>
+  <p>Composition helps us:</p>
+  <ul>
+    <li>Break large interfaces into smaller parts.</li>
+    <li>Reuse existing components.</li>
+    <li>Make code easier to understand.</li>
+    <li>Update one reusable design without duplicating it everywhere.</li>
+    <li>Give each component a clear purpose.</li>
+  </ul>
+
+  <h3>9.3 Example: Build a Course Card</h3>
+  <p>First, create a reusable <code>CourseCard</code> component.</p>
+
+<pre class="code" data-file="CourseCard.jsx"><code>function CourseCard() {
+  return (
+    &lt;article&gt;
+      &lt;h2&gt;React Fundamentals&lt;/h2&gt;
+      &lt;p&gt;Learn the basics of React.&lt;/p&gt;
+      &lt;button&gt;View Course&lt;/button&gt;
+    &lt;/article&gt;
+  );
+}</code></pre>
+
+  <p>Next, create a component that uses it several times.</p>
+
+<pre class="code" data-file="CourseSection.jsx"><code>function CourseSection() {
+  return (
+    &lt;section&gt;
+      &lt;h1&gt;Available Courses&lt;/h1&gt;
+
+      &lt;CourseCard /&gt;
+      &lt;CourseCard /&gt;
+      &lt;CourseCard /&gt;
+    &lt;/section&gt;
+  );
+}</code></pre>
+
+  <p>Finally, use the section inside <code>App</code>.</p>
+
+<pre class="code" data-file="App.jsx"><code>function App() {
+  return (
+    &lt;main&gt;
+      &lt;CourseSection /&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+
+  <p>The component tree looks like:</p>
+
+<pre class="tree" data-file="Component Tree">App
+└── CourseSection
+    ├── CourseCard
+    ├── CourseCard
+    └── CourseCard</pre>
+
+  <p>The <code>CourseCard</code> is written once but composed into the page three times.</p>
+  <p>All three currently display the same content. We will make the content different using props in Topic 10.</p>
+
+  <h3>9.4 Composition Does Not Require Repeating the Same Layout</h3>
+  <p>A component can contain several different components.</p>
+
+<pre class="code" data-file="App.jsx"><code>function Navbar() {
+  return &lt;nav&gt;My Institute&lt;/nav&gt;;
+}
+
+function WelcomeMessage() {
+  return &lt;h1&gt;Welcome, Student!&lt;/h1&gt;;
+}
+
+function Footer() {
+  return &lt;footer&gt;Keep Learning&lt;/footer&gt;;
+}
+
+function App() {
+  return (
+    &lt;&gt;
+      &lt;Navbar /&gt;
+      &lt;WelcomeMessage /&gt;
+      &lt;Footer /&gt;
+    &lt;/&gt;
+  );
+}</code></pre>
+
+  <p>The page is assembled from three components.</p>
+
+  <h3>9.5 How Composition Helps in Real Projects</h3>
+  <p>For a CRM dashboard, you might divide the page into:</p>
+  <ul>
+    <li><code>Sidebar</code></li>
+    <li><code>Topbar</code></li>
+    <li><code>DashboardSummary</code></li>
+    <li><code>LeadCard</code></li>
+    <li><code>LeadTable</code></li>
+    <li><code>Footer</code></li>
+  </ul>
+  <p>You can reuse small components wherever appropriate rather than copying their markup into multiple screens.</p>
+  <p>However, not every line of JSX needs to become its own component. Create components when they represent a useful unit of interface or behavior.</p>
+
+  <div class="remember">
+    <p>Composition is the practice of combining components. Reuse is the practice of using a component more than once. Both are fundamental to structuring maintainable React applications.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ TOPIC 10 ============ -->
+  <div class="topic-head">
+    <span class="tnum">10</span>
+    <h2>Topic 10: Props and One-Way Data Flow</h2>
+  </div>
+
+  <h3>10.1 What Are Props?</h3>
+  <p>Props are short for <strong>properties</strong>.</p>
+  <p>Props allow a parent component to pass information to a child component.</p>
+  <p>They are similar to the attributes you write in HTML, but React props can also contain JavaScript values such as numbers, arrays, objects, and functions.</p>
+  <p>Consider this component:</p>
+
+<pre class="code" data-file="StudentCard.jsx"><code>function StudentCard(props) {
+  return &lt;h2&gt;{props.name}&lt;/h2&gt;;
+}</code></pre>
+
+  <p>The component receives a parameter called <code>props</code>. React supplies the props passed to that component.</p>
+  <p>Now use it:</p>
+
+<pre class="code" data-file="App.jsx"><code>function App() {
+  return &lt;StudentCard name="Rahul" /&gt;;
+}
+
+export default App;</code></pre>
+
+  <p>Output:</p>
+
+<pre class="tree" data-file="Output">Rahul</pre>
+
+  <p>The parent passes the string <code>"Rahul"</code> through the <code>name</code> prop. The child reads it using <code>props.name</code>.</p>
+
+  <h3>10.2 Analogy: An Order Form</h3>
+  <div class="box analogy">
+    <span class="bt">Analogy — An Order Form</span>
+    <p>Imagine a restaurant order form.</p>
+    <p>The customer provides information:</p>
+    <ul>
+      <li>Customer name</li>
+      <li>Food item</li>
+      <li>Quantity</li>
+    </ul>
+    <p>The kitchen receives that information and prepares the requested food.</p>
+    <p>Similarly, a parent component provides values through props, and the child component uses them to determine its output.</p>
+  </div>
+
+  <h3>10.3 Why Do We Need Props?</h3>
+  <p>Without props, a reusable component might always display the same information.</p>
+  <p>For example:</p>
+
+<pre class="code" data-file="StudentCard.jsx"><code>function StudentCard() {
+  return &lt;h2&gt;Rahul&lt;/h2&gt;;
+}</code></pre>
+
+  <p>Every time you use this component, it displays Rahul.</p>
+  <p>Props let you reuse the same structure with different values.</p>
+
+<pre class="code" data-file="App.jsx"><code>function StudentCard(props) {
+  return &lt;h2&gt;{props.name}&lt;/h2&gt;;
+}
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;StudentCard name="Rahul" /&gt;
+      &lt;StudentCard name="Priya" /&gt;
+      &lt;StudentCard name="Aarav" /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+  <p>The output contains three different names.</p>
+
+  <h3>10.4 Passing Multiple Props</h3>
+
+<pre class="code" data-file="App.jsx"><code>function StudentCard(props) {
+  return (
+    &lt;article&gt;
+      &lt;h2&gt;{props.name}&lt;/h2&gt;
+      &lt;p&gt;Course: {props.course}&lt;/p&gt;
+      &lt;p&gt;City: {props.city}&lt;/p&gt;
+    &lt;/article&gt;
+  );
+}
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;StudentCard
+        name="Rahul"
+        course="React"
+        city="Rajkot"
+      /&gt;
+
+      &lt;StudentCard
+        name="Priya"
+        course="JavaScript"
+        city="Ahmedabad"
+      /&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+
+  <p>Explanation:</p>
+  <ul>
+    <li>The first card receives Rahul, React, and Rajkot.</li>
+    <li>The second receives Priya, JavaScript, and Ahmedabad.</li>
+    <li>Both cards use the same component structure but display different content.</li>
+  </ul>
+
+  <h3>10.5 Destructuring Props</h3>
+  <p>You can read props using ordinary JavaScript destructuring.</p>
+  <p>Instead of:</p>
+
+<pre class="code" data-file="StudentCard.jsx"><code>function StudentCard(props) {
+  return &lt;h2&gt;{props.name}&lt;/h2&gt;;
+}</code></pre>
+
+  <p>You can write:</p>
+
+<pre class="code good" data-file="✅ Destructured"><code>function StudentCard({ name }) {
+  return &lt;h2&gt;{name}&lt;/h2&gt;;
+}</code></pre>
+
+  <p>The object passed to the function is destructured, and the <code>name</code> property becomes a local variable.</p>
+  <p>For multiple props:</p>
+
+<pre class="code" data-file="StudentCard.jsx"><code>function StudentCard({ name, course, city }) {
+  return (
+    &lt;article&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;Course: {course}&lt;/p&gt;
+      &lt;p&gt;City: {city}&lt;/p&gt;
+    &lt;/article&gt;
+  );
+}</code></pre>
+
+  <p>Destructuring changes how you access the properties, not how props work.</p>
+
+  <h3>10.6 Passing Numbers and Boolean Values</h3>
+  <p>A string prop can use quotation marks:</p>
+
+<pre class="code" data-file="JSX"><code>&lt;StudentCard name="Rahul" /&gt;</code></pre>
+
+  <p>To pass a number or a boolean, use curly braces:</p>
+
+<pre class="code" data-file="App.jsx"><code>function CourseCard({ title, duration, available }) {
+  return (
+    &lt;article&gt;
+      &lt;h2&gt;{title}&lt;/h2&gt;
+      &lt;p&gt;Duration: {duration} months&lt;/p&gt;
+      &lt;p&gt;{available ? "Available" : "Unavailable"}&lt;/p&gt;
+    &lt;/article&gt;
+  );
+}
+
+function App() {
+  return (
+    &lt;CourseCard
+      title="React"
+      duration={3}
+      available={true}
+    /&gt;
+  );
+}
+
+export default App;</code></pre>
+
+  <p>The value <code>3</code> is passed as a number, and <code>true</code> is passed as a boolean. These are not the same as the strings <code>"3"</code> and <code>"true"</code>.</p>
+
+  <h3>10.7 What Is One-Way Data Flow?</h3>
+  <p>In normal React component relationships, data is passed from a parent to a child through props.</p>
+
+<pre class="tree" data-file="One-Way Data Flow">Parent Component
+       |
+       | passes props
+       v
+Child Component
+       |
+       v
+Uses values to describe its UI</pre>
+
+  <p>For example:</p>
+
+<pre class="code" data-file="App.jsx"><code>function Greeting({ name }) {
+  return &lt;h1&gt;Hello, {name}!&lt;/h1&gt;;
+}
+
+function App() {
+  const studentName = "Meera";
+
+  return &lt;Greeting name={studentName} /&gt;;
+}
+
+export default App;</code></pre>
+
+  <p>The parent component provides the value of <code>studentName</code>. The child receives it as <code>name</code>.</p>
+  <p>This is called one-way data flow because information is passed down through the component hierarchy.</p>
+
+  <h3>10.8 Props Should Be Treated as Read-Only</h3>
+  <p>A child should not directly change the props it receives.</p>
+  <p>Incorrect:</p>
+
+<pre class="code bad" data-file="❌ Incorrect"><code>function Greeting(props) {
+  props.name = "Priya";
+
+  return &lt;h1&gt;Hello, {props.name}&lt;/h1&gt;;
+}</code></pre>
+
+  <p>You should not mutate props. They are inputs provided by the parent.</p>
+  <p>Correct:</p>
+
+<pre class="code good" data-file="✅ Correct"><code>function Greeting({ name }) {
+  return &lt;h1&gt;Hello, {name}!&lt;/h1&gt;;
+}</code></pre>
+
+  <p>If an application needs to change shared information, React provides patterns for coordinating data and interactions between components. Those patterns will be covered in a later phase when you study state and event handling.</p>
+  <p>For now, remember that props provide input; a component uses that input to describe its output.</p>
+
+  <div class="remember">
+    <p>Props make components customizable. Data normally flows from parent to child, and child components should treat received props as read-only.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ TOPIC 11 ============ -->
+  <div class="topic-head">
+    <span class="tnum">11</span>
+    <h2>Topic 11: The <code>children</code> Prop</h2>
+  </div>
+
+  <h3>11.1 What Is the <code>children</code> Prop?</h3>
+  <p>The special <code>children</code> prop represents the content placed between a component's opening and closing tags.</p>
+  <p>For example:</p>
+
+<pre class="code" data-file="App.jsx"><code>function Card({ children }) {
+  return &lt;div className="card"&gt;{children}&lt;/div&gt;;
+}
+
+function App() {
+  return (
+    &lt;Card&gt;
+      &lt;h2&gt;React Fundamentals&lt;/h2&gt;
+      &lt;p&gt;Learn the basics of React.&lt;/p&gt;
+    &lt;/Card&gt;
+  );
+}
+
+export default App;</code></pre>
+
+  <p>The <code>Card</code> component receives the heading and paragraph as <code>children</code>.</p>
+  <p>They are rendered inside the card's <code>div</code>.</p>
+
+  <h3>11.2 Analogy: A Reusable Container</h3>
+  <div class="box analogy">
+    <span class="bt">Analogy — A Reusable Container</span>
+    <p>Imagine a box that can hold different objects.</p>
+    <p>The box has a consistent shape, but the contents may change.</p>
+    <p>The component is the reusable container. Its <code>children</code> are the contents placed inside it.</p>
+    <p>The same pattern works for cards, layouts, panels, and page sections.</p>
+  </div>
+
+  <h3>11.3 Why Do We Need <code>children</code>?</h3>
+  <p>Suppose you want to create several cards with the same border, padding, and background but different content.</p>
+  <p>Without <code>children</code>, you might need to add specific props for every possible type of content.</p>
+  <p>With <code>children</code>, you can pass different JSX structures into the same component.</p>
+
+<pre class="code" data-file="App.jsx"><code>function Panel({ children }) {
+  return (
+    &lt;section className="panel"&gt;
+      {children}
+    &lt;/section&gt;
+  );
+}
+
+function App() {
+  return (
+    &lt;main&gt;
+      &lt;Panel&gt;
+        &lt;h2&gt;Student Details&lt;/h2&gt;
+        &lt;p&gt;Name: Rahul&lt;/p&gt;
+      &lt;/Panel&gt;
+
+      &lt;Panel&gt;
+        &lt;h2&gt;Course Details&lt;/h2&gt;
+        &lt;p&gt;Course: React Fundamentals&lt;/p&gt;
+      &lt;/Panel&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+
+  <p>Both panels share the same wrapper, but each contains different JSX.</p>
+
+  <h3>11.4 How Does <code>children</code> Get Its Value?</h3>
+  <p>Consider:</p>
+
+<pre class="code" data-file="JSX"><code>&lt;Card&gt;
+  &lt;h2&gt;Welcome&lt;/h2&gt;
+  &lt;p&gt;Learn React.&lt;/p&gt;
+&lt;/Card&gt;</code></pre>
+
+  <p>React makes the nested content available to the <code>Card</code> component through the <code>children</code> prop.</p>
+  <p>You can access it with destructuring:</p>
+
+<pre class="code" data-file="Card.jsx"><code>function Card({ children }) {
+  return &lt;div&gt;{children}&lt;/div&gt;;
+}</code></pre>
+
+  <p>The <code>children</code> variable holds the nested content supplied to the component.</p>
+
+  <h3>11.5 Props vs. Children</h3>
+  <p>Compare the two approaches.</p>
+
+  <h4>Passing content using a named prop</h4>
+
+<pre class="code" data-file="App.jsx"><code>function Message({ text }) {
+  return &lt;p&gt;{text}&lt;/p&gt;;
+}
+
+function App() {
+  return &lt;Message text="Welcome to React!" /&gt;;
+}</code></pre>
+
+  <p>Here, the parent explicitly passes the content through the <code>text</code> prop.</p>
+
+  <h4>Passing content using <code>children</code></h4>
+
+<pre class="code" data-file="App.jsx"><code>function Message({ children }) {
+  return &lt;div&gt;{children}&lt;/div&gt;;
+}
+
+function App() {
+  return (
+    &lt;Message&gt;
+      &lt;h2&gt;Welcome to React!&lt;/h2&gt;
+      &lt;p&gt;Start learning today.&lt;/p&gt;
+    &lt;/Message&gt;
+  );
+}</code></pre>
+
+  <p>Here, the parent places the desired content between the component's opening and closing tags.</p>
+  <p>Both patterns are useful.</p>
+  <p>Use named props when a value has a specific meaning, such as <code>name</code>, <code>title</code>, or <code>price</code>. Use <code>children</code> when the component should wrap or display content supplied by its parent.</p>
+
+  <div class="remember">
+    <p><code>children</code> is a prop that gives a component access to nested content. It makes reusable layout components much more flexible.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ TOPIC 12 ============ -->
+  <div class="topic-head">
+    <span class="tnum">12</span>
+    <h2>Topic 12: Rendering and the Virtual DOM Concept</h2>
+  </div>
+
+  <p>This topic explains how your React components become visible on the screen.</p>
+
+  <h3>12.1 What Is Rendering?</h3>
+  <p>In React, rendering means React calls your components to determine what should appear in the UI.</p>
+  <p>Consider this component:</p>
+
+<pre class="code" data-file="Welcome.jsx"><code>function Welcome() {
+  return &lt;h1&gt;Hello, React!&lt;/h1&gt;;
+}</code></pre>
+
+  <p>The function describes the element structure React should display.</p>
+  <p>However, declaring the function does not automatically put it into the browser. React must render it through a React root.</p>
+
+  <h3>12.2 How Does React Render a Component?</h3>
+  <p>A typical Vite React application contains the following code in <code>main.jsx</code>:</p>
+
+<pre class="code" data-file="main.jsx"><code>import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
+
+const rootElement = document.getElementById("root");
+const root = createRoot(rootElement);
+
+root.render(&lt;App /&gt;);</code></pre>
+
+  <p>Let's examine each line.</p>
+
+  <h4>Line 1</h4>
+
+<pre class="code" data-file="main.jsx"><code>import { createRoot } from "react-dom/client";</code></pre>
+
+  <p>This imports the function used to create a React root for a DOM container.</p>
+
+  <h4>Line 2</h4>
+
+<pre class="code" data-file="main.jsx"><code>import App from "./App.jsx";</code></pre>
+
+  <p>This imports the application's root component.</p>
+
+  <h4>Line 3</h4>
+
+<pre class="code" data-file="main.jsx"><code>const rootElement = document.getElementById("root");</code></pre>
+
+  <p>This asks the browser to locate the HTML element with the ID <code>root</code>.</p>
+
+  <h4>Line 4</h4>
+
+<pre class="code" data-file="main.jsx"><code>const root = createRoot(rootElement);</code></pre>
+
+  <p>This creates the React root associated with that element.</p>
+
+  <h4>Line 5</h4>
+
+<pre class="code" data-file="main.jsx"><code>root.render(&lt;App /&gt;);</code></pre>
+
+  <p>This tells React to render the <code>App</code> component into the root container.</p>
+  <p>The browser can then display the resulting UI.</p>
+
+  <h3>12.3 Three Stages: Trigger, Render, and Commit</h3>
+  <p>React's rendering process can be understood through three stages.</p>
+
+  <h4>Stage 1: Trigger</h4>
+  <p>Something causes React to perform a render.</p>
+  <p>The initial render happens when the application starts. Later renders may happen when component state or other relevant inputs change.</p>
+  <p>State is outside the current phase, but it is important to know that rendering can occur more than once.</p>
+
+  <h4>Stage 2: Render</h4>
+  <p>React calls the relevant components to calculate what the UI should look like.</p>
+  <p>For example:</p>
+
+<pre class="code" data-file="App.jsx"><code>function App() {
+  return (
+    &lt;main&gt;
+      &lt;h1&gt;Student Dashboard&lt;/h1&gt;
+      &lt;p&gt;Welcome back!&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+
+  <p>React evaluates the component and its JSX to determine the UI structure.</p>
+
+  <h4>Stage 3: Commit</h4>
+  <p>React applies necessary changes to the browser's DOM.</p>
+  <p>On the first render, it creates and inserts the required DOM elements. On subsequent renders, React applies the necessary changes rather than rebuilding the entire DOM tree without regard to what changed.</p>
+  <p>The browser then paints the resulting interface.</p>
+
+  <h3>12.4 What Is the DOM?</h3>
+  <p>DOM stands for <strong>Document Object Model</strong>.</p>
+  <p>The browser represents an HTML document as a structured tree of nodes that JavaScript can inspect and modify.</p>
+  <p>For this HTML:</p>
+
+<pre class="code" data-file="index.html"><code>&lt;main&gt;
+  &lt;h1&gt;Student Dashboard&lt;/h1&gt;
+  &lt;p&gt;Welcome back!&lt;/p&gt;
+&lt;/main&gt;</code></pre>
+
+  <p>The DOM has a structure similar to:</p>
+
+<pre class="tree" data-file="DOM Tree">main
+├── h1
+│   └── "Student Dashboard"
+└── p
+    └── "Welcome back!"</pre>
+
+  <p>JavaScript can interact with the DOM using browser APIs. React provides a declarative way to describe the desired UI and manages the associated DOM updates.</p>
+
+  <h3>12.5 What Is the Virtual DOM?</h3>
+  <p>The <strong>virtual DOM</strong> is a commonly used term for React's in-memory representation of the UI.</p>
+  <p>Instead of asking you to manually create and update every browser DOM node, React lets you describe your interface using components and JSX.</p>
+  <p>React uses the resulting UI representation to work out which changes need to be committed to the actual DOM.</p>
+  <p>The virtual DOM is a conceptual model; modern React uses internal data structures and rendering mechanisms to coordinate this work. You do not need to implement a virtual DOM yourself.</p>
+
+  <div class="box analogy">
+    <span class="bt">Analogy — Editing a Document</span>
+    <p>Imagine you have a long document and need to correct one sentence.</p>
+    <p>You would usually change that sentence rather than rewrite the entire document from scratch.</p>
+    <p>React follows a comparable goal: it determines the necessary UI changes and applies them to the DOM.</p>
+    <p>The analogy is useful, but do not interpret it to mean that every React update changes only one element. The number of DOM operations depends on what changed in the rendered tree.</p>
+  </div>
+
+  <h3>12.6 How Does React Use This Idea?</h3>
+  <p>Suppose you have a component:</p>
+
+<pre class="code" data-file="StudentProfile.jsx"><code>function StudentProfile() {
+  return (
+    &lt;section&gt;
+      &lt;h1&gt;Rahul&lt;/h1&gt;
+      &lt;p&gt;Course: React&lt;/p&gt;
+      &lt;p&gt;Institute: BR TECHGEEKS&lt;/p&gt;
+    &lt;/section&gt;
+  );
+}</code></pre>
+
+  <p>React renders this structure.</p>
+  <p>If a later render produces different content, React compares the latest output with the previous result to determine the required DOM changes.</p>
+  <p>If the institute name remains the same, React generally does not need to replace that paragraph simply because another part of the output changed.</p>
+  <p>The important point is that React manages these updates; you do not manually rebuild the complete interface each time.</p>
+
+  <h3>12.7 Virtual DOM Does Not Mean Every React App Is Automatically Faster</h3>
+  <p>The virtual DOM is part of React's rendering architecture. It is not a guarantee that every React application will outperform every manually written JavaScript application.</p>
+  <p>Actual performance depends on the application structure, the work performed during rendering, and the DOM updates required.</p>
+  <p>React's main benefit at this stage is that it gives you a structured and declarative way to build and manage interfaces.</p>
+
+  <div class="remember">
+    <p>Rendering calculates what the UI should look like. Committing applies the required DOM changes. The virtual DOM concept helps explain how React coordinates updates, but it should not be treated as a guarantee of universal performance improvements.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ TOPIC 13 ============ -->
+  <div class="topic-head">
+    <span class="tnum">13</span>
+    <h2>Topic 13: React Developer Tools</h2>
+  </div>
+
+  <h3>13.1 What Are React Developer Tools?</h3>
+  <p>React Developer Tools is a debugging tool for React applications.</p>
+  <p>It is available as a browser extension and provides two especially useful panels:</p>
+  <ul>
+    <li><strong>Components:</strong> Inspect the React component tree and examine component props and other available information.</li>
+    <li><strong>Profiler:</strong> Record rendering activity to help investigate performance.</li>
+  </ul>
+  <p>It complements the browser's normal Developer Tools.</p>
+
+  <h3>13.2 Why Do We Need It?</h3>
+  <p>Imagine your application has this structure:</p>
+
+<pre class="tree" data-file="Component Tree">App
+├── Navbar
+├── StudentProfile
+└── CourseSection
+    ├── CourseCard
+    └── CourseCard</pre>
+
+  <p>When a page becomes complicated, it may be difficult to understand which component is responsible for a specific section.</p>
+  <p>React Developer Tools lets you inspect the component hierarchy instead of relying only on the browser's HTML elements panel.</p>
+  <p>This is helpful when debugging props, understanding component composition, and investigating rendering performance.</p>
+
+  <h3>13.3 Install the Browser Extension</h3>
+  <p>Use the official React Developer Tools page:</p>
+  <p>https://react.dev/learn/react-developer-tools</p>
+  <p>From there, choose the supported browser extension for your browser.</p>
+  <p>For Chrome, the installation process generally involves:</p>
+  <ol>
+    <li>Open the Chrome Web Store from the official React Developer Tools instructions.</li>
+    <li>Find the React Developer Tools extension.</li>
+    <li>Install it.</li>
+    <li>Open or refresh your Vite React application.</li>
+    <li>Open browser Developer Tools.</li>
+  </ol>
+  <p>You should see React-specific panels when the extension recognizes a React application.</p>
+
+  <h3>13.4 Inspect a Component</h3>
+  <p>Use this example in <code>App.jsx</code>:</p>
+
+<pre class="code" data-file="App.jsx"><code>function StudentCard({ name, course }) {
+  return (
+    &lt;article&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;Course: {course}&lt;/p&gt;
+    &lt;/article&gt;
+  );
+}
+
+function App() {
+  return (
+    &lt;main&gt;
+      &lt;StudentCard name="Rahul" course="React" /&gt;
+      &lt;StudentCard name="Priya" course="JavaScript" /&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+
+  <p>When you open the Components panel, you can inspect the rendered component tree.</p>
+  <p>You should be able to locate <code>App</code> and its <code>StudentCard</code> children.</p>
+  <p>Selecting a <code>StudentCard</code> lets you examine the props being passed to that instance.</p>
+  <p>For example, the first card receives:</p>
+
+<pre class="tree" data-file="Props of first card">name = "Rahul"
+course = "React"</pre>
+
+  <p>The second receives:</p>
+
+<pre class="tree" data-file="Props of second card">name = "Priya"
+course = "JavaScript"</pre>
+
+  <p>This helps you verify that the parent is passing the expected information.</p>
+
+  <h3>13.5 Understanding the Components Panel</h3>
+  <p>The Components panel is useful for questions such as:</p>
+  <ul>
+    <li>Which component renders this section?</li>
+    <li>What props did the parent pass?</li>
+    <li>How are the components nested?</li>
+    <li>Which part of the component tree should I inspect while debugging?</li>
+  </ul>
+  <p>The panel shows React's component structure, which is different from the raw HTML DOM tree.</p>
+
+  <h3>13.6 Understanding the Profiler Panel</h3>
+  <p>The Profiler helps record rendering activity.</p>
+  <p>For example, a large dashboard may contain many components. If a performance problem occurs, profiling can help you investigate which components rendered and how much time was associated with that work.</p>
+  <p>Do not worry about advanced performance optimization yet. For Week 1, learn where the Profiler is and what problem it is designed to help diagnose.</p>
+
+  <h3>13.7 React Developer Tools vs. Browser Developer Tools</h3>
+
+  <table>
+    <tr><th>Feature</th><th>Browser Developer Tools</th><th>React Developer Tools</th></tr>
+    <tr><td>Inspect HTML DOM</td><td>Yes</td><td>Not its primary purpose</td></tr>
+    <tr><td>Inspect CSS styles</td><td>Yes</td><td>Not its primary purpose</td></tr>
+    <tr><td>Inspect React component hierarchy</td><td>Limited</td><td>Yes</td></tr>
+    <tr><td>Inspect React component props</td><td>Not directly in component terms</td><td>Yes</td></tr>
+    <tr><td>Investigate React rendering performance</td><td>General browser tools are useful</td><td>React Profiler is specialized for React</td></tr>
+  </table>
+
+  <p>Both tools are useful, and they complement each other.</p>
+
+  <div class="remember">
+    <p>Use the Components panel to understand your React component hierarchy and props. Use the Profiler when you need to investigate React rendering performance.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ PROJECT ============ -->
+  <div class="topic-head">
+    <span class="tnum">✎</span>
+    <h2>Practical Project: Build a Student Learning Portal</h2>
+  </div>
+
+  <p>Now combine the fundamentals into one small React application.</p>
+  <p>This project uses only concepts covered in this guide:</p>
+  <ul>
+    <li>JSX</li>
+    <li>JavaScript expressions</li>
+    <li>Functional components</li>
+    <li>Component composition</li>
+    <li>Props</li>
+    <li>One-way data flow</li>
+    <li>The <code>children</code> prop</li>
+  </ul>
+  <p>It does not require React state, effects, routing, API calls, or other later-phase topics.</p>
+
+  <h3>Step 1: Create the Components</h3>
+  <p>Inside the <code>src</code> directory, create a folder named <code>components</code>.</p>
+  <p>Your structure should now look like:</p>
+
+<pre class="tree" data-file="Project Structure">src/
+├── components/
+│   ├── Header.jsx
+│   ├── StudentCard.jsx
+│   └── InfoPanel.jsx
+├── App.jsx
+├── App.css
+├── index.css
+└── main.jsx</pre>
+
+  <h3>Step 2: Create <code>Header.jsx</code></h3>
+
+<pre class="code" data-file="components/Header.jsx"><code>function Header() {
+  return (
+    &lt;header&gt;
+      &lt;h1&gt;My Learning Portal&lt;/h1&gt;
+      &lt;p&gt;Learn. Practice. Grow.&lt;/p&gt;
+    &lt;/header&gt;
+  );
+}
+
+export default Header;</code></pre>
+
+  <p>Explanation:</p>
+  <ul>
+    <li><code>Header</code> is a functional component.</li>
+    <li>It returns JSX describing a header.</li>
+    <li><code>export default Header</code> allows the component to be imported elsewhere.</li>
+  </ul>
+
+  <h3>Step 3: Create <code>StudentCard.jsx</code></h3>
+
+<pre class="code" data-file="components/StudentCard.jsx"><code>function StudentCard({ name, course, city }) {
+  return (
+    &lt;article&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;Course: {course}&lt;/p&gt;
+      &lt;p&gt;City: {city}&lt;/p&gt;
+    &lt;/article&gt;
+  );
+}
+
+export default StudentCard;</code></pre>
+
+  <p>Explanation:</p>
+  <ul>
+    <li>The component accepts three props.</li>
+    <li>Destructuring makes <code>name</code>, <code>course</code>, and <code>city</code> available as local variables.</li>
+    <li>The JSX displays those values.</li>
+    <li>The same component can display different students without changing its source code.</li>
+  </ul>
+
+  <h3>Step 4: Create <code>InfoPanel.jsx</code></h3>
+
+<pre class="code" data-file="components/InfoPanel.jsx"><code>function InfoPanel({ children }) {
+  return (
+    &lt;section&gt;
+      {children}
+    &lt;/section&gt;
+  );
+}
+
+export default InfoPanel;</code></pre>
+
+  <p>Explanation:</p>
+  <p><code>InfoPanel</code> is a reusable wrapper. Whatever JSX is nested inside it becomes its <code>children</code> and is rendered inside the <code>section</code>.</p>
+
+  <h3>Step 5: Compose Everything in <code>App.jsx</code></h3>
+
+<pre class="code" data-file="App.jsx"><code>import Header from "./components/Header.jsx";
+import StudentCard from "./components/StudentCard.jsx";
+import InfoPanel from "./components/InfoPanel.jsx";
+
+function App() {
+  const instituteName = "BR TECHGEEKS";
+
+  return (
+    &lt;main&gt;
+      &lt;Header /&gt;
+
+      &lt;h2&gt;Student Directory&lt;/h2&gt;
+
+      &lt;StudentCard
+        name="Rahul"
+        course="React Fundamentals"
+        city="Rajkot"
+      /&gt;
+
+      &lt;StudentCard
+        name="Priya"
+        course="JavaScript"
+        city="Ahmedabad"
+      /&gt;
+
+      &lt;InfoPanel&gt;
+        &lt;h2&gt;About Our Institute&lt;/h2&gt;
+        &lt;p&gt;We learn through practical projects.&lt;/p&gt;
+      &lt;/InfoPanel&gt;
+
+      &lt;p&gt;Institute: {instituteName}&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+
+  <div class="box">
+    <span class="bt">What Is Happening Here?</span>
+    <ol>
+      <li>The <code>Header</code>, <code>StudentCard</code>, and <code>InfoPanel</code> components are imported.</li>
+      <li>The <code>instituteName</code> variable stores a string.</li>
+      <li><code>&lt;Header /&gt;</code> renders the reusable header component.</li>
+      <li>Two <code>StudentCard</code> instances receive different props.</li>
+      <li><code>InfoPanel</code> receives a heading and paragraph as its children.</li>
+      <li><code>{instituteName}</code> embeds the variable's value in JSX.</li>
+    </ol>
+    <p>This is a small example of a component-based interface in which parent components compose child components and pass information downward.</p>
+  </div>
+
+  <h3>Step 6: Add a Little Styling in <code>App.css</code></h3>
+
+<pre class="code" data-file="App.css"><code>main {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  padding: 24px;
+  background: #e3f2fd;
+  border-radius: 12px;
+}
+
+article,
+section {
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px solid #90caf9;
+  border-radius: 10px;
+}
+
+h1,
+h2 {
+  color: #0d47a1;
+}</code></pre>
+
+  <p>Make sure <code>App.jsx</code> imports the stylesheet at its top:</p>
+
+<pre class="code" data-file="App.jsx"><code>import "./App.css";</code></pre>
+
+  <p>The CSS styles the header, cards, and information panel. It does not change how the React components receive props or compose their content.</p>
+
+  <h3>Step 7: Run and Verify the Project</h3>
+  <p>Run:</p>
+
+<pre class="code" data-file="Terminal"><code>npm run dev</code></pre>
+
+  <p>Open the local URL displayed in the terminal.</p>
+  <p>You should see the learning portal with:</p>
+  <ul>
+    <li>A header</li>
+    <li>A student directory</li>
+    <li>Two student cards with different information</li>
+    <li>An information panel</li>
+    <li>The institute name</li>
+  </ul>
+
+  <h3>What Have You Practised?</h3>
+
+  <table>
+    <tr><th>React concept</th><th>Where it appears</th></tr>
+    <tr><td>JSX</td><td>All component return values</td></tr>
+    <tr><td>JavaScript expressions</td><td><code>{instituteName}</code></td></tr>
+    <tr><td>Functional components</td><td><code>Header</code>, <code>StudentCard</code>, <code>InfoPanel</code>, <code>App</code></td></tr>
+    <tr><td>Composition</td><td><code>App</code> combines the smaller components</td></tr>
+    <tr><td>Reuse</td><td><code>StudentCard</code> is used twice</td></tr>
+    <tr><td>Props</td><td><code>name</code>, <code>course</code>, and <code>city</code></td></tr>
+    <tr><td>One-way data flow</td><td><code>App</code> passes information to <code>StudentCard</code></td></tr>
+    <tr><td><code>children</code></td><td><code>InfoPanel</code> receives nested JSX</td></tr>
+    <tr><td>Rendering</td><td><code>main.jsx</code> renders <code>&lt;App /&gt;</code></td></tr>
+    <tr><td>Developer Tools</td><td>Inspect the project in the Components panel</td></tr>
+  </table>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ MISTAKES ============ -->
+  <div class="topic-head">
+    <span class="tnum">!</span>
+    <h2>Common Beginner Mistakes</h2>
+  </div>
+
+  <h3>Mistake 1: Using <code>class</code> Instead of <code>className</code></h3>
+  <p>Incorrect:</p>
+
+<pre class="code bad" data-file="❌ Incorrect"><code>&lt;div class="card"&gt;Hello&lt;/div&gt;</code></pre>
+
+  <p>Correct:</p>
+
+<pre class="code good" data-file="✅ Correct"><code>&lt;div className="card"&gt;Hello&lt;/div&gt;</code></pre>
+
+  <h3>Mistake 2: Returning Multiple Adjacent JSX Elements</h3>
+  <p>Incorrect:</p>
+
+<pre class="code bad" data-file="❌ Incorrect"><code>return (
+  &lt;h1&gt;Hello&lt;/h1&gt;
+  &lt;p&gt;Welcome&lt;/p&gt;
+);</code></pre>
+
+  <p>Correct:</p>
+
+<pre class="code good" data-file="✅ Correct"><code>return (
+  &lt;&gt;
+    &lt;h1&gt;Hello&lt;/h1&gt;
+    &lt;p&gt;Welcome&lt;/p&gt;
+  &lt;/&gt;
+);</code></pre>
+
+  <h3>Mistake 3: Forgetting Curly Braces for Variables</h3>
+  <p>Incorrect:</p>
+
+<pre class="code bad" data-file="❌ Incorrect"><code>function App() {
+  const name = "Rahul";
+  return &lt;h1&gt;name&lt;/h1&gt;;
+}</code></pre>
+
+  <p>This displays the literal word <code>name</code>.</p>
+  <p>Correct:</p>
+
+<pre class="code good" data-file="✅ Correct"><code>function App() {
+  const name = "Rahul";
+  return &lt;h1&gt;{name}&lt;/h1&gt;;
+}</code></pre>
+
+  <h3>Mistake 4: Using a Component Name with a Lowercase First Letter</h3>
+  <p>Prefer:</p>
+
+<pre class="code good" data-file="✅ Correct"><code>function StudentCard() {
+  return &lt;article&gt;Student&lt;/article&gt;;
+}</code></pre>
+
+  <p>Use it as:</p>
+
+<pre class="code" data-file="JSX"><code>&lt;StudentCard /&gt;</code></pre>
+
+  <p>React interprets JSX tags beginning with lowercase letters as built-in HTML elements.</p>
+
+  <h3>Mistake 5: Passing a Number as a String Accidentally</h3>
+
+<pre class="code" data-file="String"><code>&lt;StudentCard duration="3" /&gt;</code></pre>
+
+  <p>Here, <code>duration</code> is a string.</p>
+
+<pre class="code" data-file="Number"><code>&lt;StudentCard duration={3} /&gt;</code></pre>
+
+  <p>Here, <code>duration</code> is a number.</p>
+  <p>Use the type appropriate to the data you need.</p>
+
+  <h3>Mistake 6: Trying to Modify Props</h3>
+  <p>Props are inputs supplied by a parent. Do not assign new values to <code>props.name</code> or mutate received props.</p>
+  <p>Instead, use the value received by the component to describe the UI.</p>
+
+  <h3>Mistake 7: Confusing JSX with HTML</h3>
+  <p>JSX looks similar to HTML, but it is syntax used inside JavaScript. It has its own rules, including <code>className</code>, <code>htmlFor</code>, and the requirement to close elements correctly.</p>
+
+  <h3>Mistake 8: Editing the Wrong File</h3>
+  <p>If you change <code>App.jsx</code>, your root component output should change. If the browser still displays the old page, inspect the terminal and browser console and confirm that you are editing the correct project directory.</p>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ REVISION ============ -->
+  <div class="topic-head">
+    <span class="tnum">↻</span>
+    <h2>Revision Notes</h2>
+  </div>
+
+  <p>Before moving to the next phase, make sure you can explain each of these points in your own words.</p>
+
+  <p><strong>React:</strong> A JavaScript library used to build user interfaces with reusable components.</p>
+  <p><strong>SPA:</strong> An application structure where internal navigation and UI updates can happen without reloading the entire HTML document on each navigation.</p>
+  <p><strong>CSR:</strong> A rendering approach in which browser-side JavaScript creates or updates the UI.</p>
+  <p><strong>Vite:</strong> A tool used to scaffold, develop, and build frontend applications.</p>
+  <p><strong>JSX:</strong> HTML-like syntax embedded in JavaScript for describing React interfaces.</p>
+  <p><strong>JavaScript expressions in JSX:</strong> Curly braces allow variables, calculations, and other suitable JavaScript expressions to be used inside JSX.</p>
+  <p><strong>Fragment:</strong> A way to group multiple JSX elements without creating an extra wrapper element in the DOM.</p>
+  <p><strong>Functional component:</strong> A JavaScript function that returns UI content.</p>
+  <p><strong>Composition:</strong> Combining smaller components to build a larger interface.</p>
+  <p><strong>Props:</strong> Inputs passed from a parent component to a child component.</p>
+  <p><strong>One-way data flow:</strong> The normal pattern in which data is passed down through the component hierarchy.</p>
+  <p><strong>Children:</strong> The nested content supplied between a component's opening and closing tags.</p>
+  <p><strong>Rendering:</strong> React calling components to calculate the UI they describe.</p>
+  <p><strong>Virtual DOM:</strong> A common term for React's in-memory representation of the UI, used as part of its rendering and update process.</p>
+  <p><strong>React Developer Tools:</strong> A browser tool for inspecting React components, their props, and rendering performance.</p>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ EXERCISES ============ -->
+  <div class="topic-head">
+    <span class="tnum">✔</span>
+    <h2>Practice Exercises</h2>
+  </div>
+
+  <p>Try these exercises after studying the examples. They are designed to test only the concepts covered in Phase 1.</p>
+
+  <h3>Easy Level</h3>
+  <ol class="checklist">
+    <li>Create a component named <code>Welcome</code> that displays <code>Welcome to React</code>.</li>
+    <li>Create a component named <code>StudentInfo</code> that displays your name, course, and city.</li>
+    <li>Create a component named <code>Footer</code> and render it inside <code>App</code>.</li>
+    <li>Display a JavaScript variable inside an <code>h1</code> element using JSX.</li>
+    <li>Create a <code>CourseCard</code> component and use it three times.</li>
+    <li>Build a <code>Card</code> component that uses <code>children</code> to display nested JSX.</li>
+    <li>Correct a JSX example that contains an unclosed <code>img</code> or <code>input</code> element.</li>
+    <li>Explain the roles of <code>App.jsx</code>, <code>main.jsx</code>, and <code>index.html</code>.</li>
+  </ol>
+
+  <h3>Medium Level</h3>
+  <ol class="checklist" start="9">
+    <li>Create a reusable <code>StudentCard</code> component that accepts <code>name</code>, <code>course</code>, and <code>city</code> props. Render three students with different values.</li>
+    <li>Create a <code>CourseInfo</code> component that accepts <code>title</code> and <code>duration</code> props, and displays a ternary-based message using a boolean prop called <code>available</code>.</li>
+    <li>Create a page containing <code>Header</code>, <code>MainContent</code>, and <code>Footer</code> components. Compose all three inside <code>App</code>.</li>
+    <li>Create a reusable <code>InfoPanel</code> component that accepts several nested JSX elements using <code>children</code>.</li>
+    <li>Explain the difference between SPA, CSR, and React. Include one example of each concept in the context of a web application.</li>
+    <li>Explain the three stages of rendering: trigger, render, and commit. Then describe the purpose of the virtual DOM.</li>
+    <li>Use React Developer Tools to inspect your student portal. Identify the <code>App</code> component, inspect its child components, and examine the props passed to each <code>StudentCard</code>.</li>
+  </ol>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ SELF ASSESSMENT ============ -->
+  <div class="topic-head">
+    <span class="tnum">★</span>
+    <h2>Final Self-Assessment</h2>
+  </div>
+
+  <p>You are ready to move on when you can do the following without copying a tutorial:</p>
+
+  <ul class="checklist">
+    <li>Create and run a Vite React project.</li>
+    <li>Explain the important files in the project structure.</li>
+    <li>Write valid JSX and embed JavaScript expressions.</li>
+    <li>Use Fragments when multiple elements need grouping.</li>
+    <li>Define functional components and compose them into a page.</li>
+    <li>Pass props from parent to child and treat props as read-only.</li>
+    <li>Use <code>children</code> to build a flexible wrapper component.</li>
+    <li>Explain the difference between rendering and committing DOM updates.</li>
+    <li>Describe the virtual DOM concept accurately.</li>
+    <li>Inspect your component tree using React Developer Tools.</li>
+  </ul>
+
+  <h3>Official Documentation for Further Reading</h3>
+  <ul>
+    <li>React — <a href="https://react.dev/learn">Quick Start</a></li>
+    <li>React — <a href="https://react.dev/learn/writing-markup-with-jsx">Writing Markup with JSX</a></li>
+    <li>React — <a href="https://react.dev/learn/passing-props-to-a-component">Passing Props to a Component</a></li>
+    <li>React — <a href="https://react.dev/learn/render-and-commit">Render and Commit</a></li>
+    <li>React — <a href="https://react.dev/learn/react-developer-tools">React Developer Tools</a></li>
+    <li>Vite — <a href="https://vite.dev/guide/">Getting Started</a></li>
+  </ul>
+
+  <div class="remember">
+    <p><strong>Your Phase 1 goal:</strong> Understand the React component model, build and run a small application, and become comfortable reading and writing JSX. Do not worry about hooks, state, event handling, routing, APIs, or advanced optimization yet. Those concepts will build on the foundation established here.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <p style="text-align:center;font-family:'Caveat',cursive;font-size:26px;color:#b9a45f;margin-top:30px;">
+    ~ End of Phase 1 ~
+  </p>
+</section>
+
+</body>
+</html>

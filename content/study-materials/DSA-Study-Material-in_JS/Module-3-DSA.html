@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Module 3 — Sorting Algorithms | Handmade Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Kalam:wght@300;400;700&family=Patrick+Hand&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THE HANDMADE NOTEBOOK — premium paper + ink styling
+   ============================================================ */
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  padding: 34px 14px 70px;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(214,197,166,.55), transparent 46%),
+    radial-gradient(circle at 84% 78%, rgba(198,181,150,.5), transparent 52%),
+    repeating-linear-gradient(115deg, rgba(140,115,80,.05) 0 3px, transparent 3px 7px),
+    #c8b295;
+  font-family: 'Patrick Hand', 'Kalam', cursive;
+  color: #21304a;
+  font-size: 18px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+
+.book { max-width: 900px; margin: 0 auto; }
+
+/* ---------- the "sheet of paper" ---------- */
+.page {
+  position: relative;
+  background-color: #fdfaf1;
+  background-image:
+    repeating-linear-gradient(to bottom,
+      transparent 0px, transparent 30px,
+      #c9d6ea 30px, #c9d6ea 31px),
+    repeating-linear-gradient(90deg, rgba(160,140,110,.035) 0 1px, transparent 1px 5px);
+  border-radius: 3px 10px 10px 3px;
+  box-shadow:
+    0 1px 0 #e8e0cd inset,
+    0 18px 34px -14px rgba(40,25,10,.55),
+    0 3px 0 rgba(255,255,255,.35) inset;
+  padding: 46px 46px 62px 96px;
+  margin: 0 0 40px;
+  overflow: hidden;
+}
+
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 74px;
+  width: 2px;
+  background: linear-gradient(to bottom,
+    rgba(203,78,78,.15), rgba(203,78,78,.75) 6%,
+    rgba(203,78,78,.75) 94%, rgba(203,78,78,.15));
+}
+
+.page::after {
+  content: "";
+  position: absolute;
+  left: 24px; top: 0; bottom: 0;
+  width: 24px;
+  background-image: radial-gradient(circle at 50% 50%, #cdbca0 0 8px, rgba(0,0,0,.12) 8px 9px, transparent 10px);
+  background-size: 24px 150px;
+  background-repeat: repeat-y;
+  background-position: 0 40px;
+  opacity: .85;
+}
+
+/* ---------- headings ---------- */
+h1, h2, h3, h4 {
+  font-family: 'Caveat', cursive;
+  color: #1b2a45;
+  margin: 0 0 .35em;
+  line-height: 1.15;
+}
+
+.cover h1 {
+  font-size: clamp(44px, 8.5vw, 80px);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: center;
+  margin: 0;
+  text-shadow: 2px 2px 0 rgba(255,241,118,.85), 4px 4px 0 rgba(0,0,0,.07);
+}
+.cover .sub {
+  text-align: center;
+  font-family: 'Caveat', cursive;
+  font-size: 30px;
+  color: #b3372f;
+  margin-top: 6px;
+}
+
+h2.section {
+  font-size: 46px;
+  display: inline-block;
+  padding: 2px 16px 6px;
+  margin-bottom: 4px;
+  transform: rotate(-1.2deg);
+}
+
+h3 {
+  font-size: 29px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+  border-bottom: 1.5px dashed #b9c6dc;
+  padding-bottom: 4px;
+}
+h4 { font-size: 23px; color: #2b3d5e; margin-top: 20px; }
+
+/* number badge */
+.qnum {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 26px;
+  color: #b3372f;
+  border: 2.2px solid #b3372f;
+  border-radius: 50%;
+  min-width: 54px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 9px;
+  flex: 0 0 auto;
+  transform: rotate(-3deg);
+  background: rgba(255,255,255,.6);
+}
+
+/* ---------- highlighters ---------- */
+.hl-y, .hl-p, .hl-g, .hl-b, .hl-o {
+  padding: 0 3px;
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.hl-y { background: linear-gradient(100deg, rgba(255,241,118,0) 0%, rgba(255,238,88,.85) 2%, rgba(255,238,88,.85) 97%, rgba(255,241,118,0) 100%); }
+.hl-p { background: linear-gradient(100deg, rgba(255,190,215,0) 0%, rgba(255,183,208,.8) 2%, rgba(255,183,208,.8) 97%, rgba(255,190,215,0) 100%); }
+.hl-g { background: linear-gradient(100deg, rgba(178,240,180,0) 0%, rgba(167,238,170,.85) 2%, rgba(167,238,170,.85) 97%, rgba(178,240,180,0) 100%); }
+.hl-b { background: linear-gradient(100deg, rgba(175,220,255,0) 0%, rgba(163,214,255,.8) 2%, rgba(163,214,255,.8) 97%, rgba(175,220,255,0) 100%); }
+.hl-o { background: linear-gradient(100deg, rgba(255,214,150,0) 0%, rgba(255,209,138,.85) 2%, rgba(255,209,138,.85) 97%, rgba(255,214,150,0) 100%); }
+
+/* red-pen emphasis */
+.red { color: #b3372f; }
+.blue { color: #1f4e8c; }
+.green { color: #2f6b3a; }
+.pen-underline { border-bottom: 2.5px solid #b3372f; padding-bottom: 1px; }
+.wavy { text-decoration: underline wavy #b3372f; text-underline-offset: 4px; }
+.scribble-out { text-decoration: line-through; color: #8a8a8a; }
+
+/* ---------- code blocks ---------- */
+pre.code {
+  font-family: 'Kalam', cursive;
+  font-size: 16.5px;
+  line-height: 1.75;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 26px, rgba(160,185,220,.35) 26px 27px),
+    #f4f8ff;
+  border: 1.6px solid #b9c9e2;
+  border-left: 6px solid #8fb3e0;
+  border-radius: 4px 8px 8px 4px;
+  padding: 14px 16px 16px 18px;
+  margin: 14px 0 12px;
+  overflow-x: auto;
+  color: #1c2b47;
+  white-space: pre;
+  box-shadow: 2px 3px 0 rgba(120,150,190,.22);
+  position: relative;
+}
+pre.code::before {
+  content: "java";
+  position: absolute;
+  top: -12px; right: 12px;
+  font-family: 'Caveat', cursive;
+  font-size: 17px;
+  color: #6d8db8;
+  background: #fdfaf1;
+  padding: 0 7px;
+  transform: rotate(3deg);
+}
+.cm { color: #2e8b57; font-style: italic; }
+
+code.inline {
+  font-family: 'Kalam', cursive;
+  background: rgba(180,210,245,.32);
+  border-radius: 3px;
+  padding: 0 5px;
+  font-size: .95em;
+  color: #14315c;
+}
+
+/* ---------- callouts ---------- */
+.note, .warn, .tip, .complexity, .dryrun, .trap {
+  position: relative;
+  border-radius: 5px;
+  padding: 12px 16px 12px 18px;
+  margin: 14px 0;
+  font-size: 17px;
+}
+
+.dryrun {
+  background: linear-gradient(180deg, rgba(255,246,196,.75), rgba(255,240,160,.5));
+  border-left: 6px solid #e3b93c;
+  box-shadow: 2px 3px 0 rgba(200,160,40,.18);
+}
+.dryrun b:first-child { color: #a5761a; }
+
+.complexity {
+  background: linear-gradient(180deg, rgba(200,240,205,.7), rgba(175,232,182,.45));
+  border-left: 6px solid #4e9b5b;
+  box-shadow: 2px 3px 0 rgba(70,150,85,.16);
+  font-family: 'Kalam', cursive;
+}
+.complexity b:first-child { color: #2f6b3a; }
+
+.note {
+  background: linear-gradient(180deg, rgba(205,228,255,.7), rgba(180,212,250,.45));
+  border-left: 6px solid #4a7fbf;
+  box-shadow: 2px 3px 0 rgba(70,120,180,.16);
+}
+
+.warn, .trap {
+  background: linear-gradient(180deg, rgba(255,215,215,.8), rgba(255,190,190,.5));
+  border-left: 6px solid #c0403a;
+  box-shadow: 2px 3px 0 rgba(180,60,55,.16);
+}
+.warn b:first-child, .trap b:first-child { color: #9c2f2a; }
+
+/* ---------- sticky notes ---------- */
+.sticky {
+  background: #fff8a8;
+  background-image: linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%);
+  padding: 18px 20px;
+  margin: 22px 0;
+  border-radius: 2px;
+  box-shadow: 3px 6px 14px -6px rgba(90,70,20,.55);
+  transform: rotate(-.8deg);
+  font-family: 'Caveat', cursive;
+  font-size: 23px;
+  line-height: 1.4;
+  color: #4a3d10;
+  position: relative;
+}
+.sticky.pink { background: #ffd6e8; color: #6b2447; transform: rotate(1deg); }
+.sticky.green { background: #d3f7cf; color: #23502a; transform: rotate(-1.4deg); }
+.sticky.blue { background: #cfe6ff; color: #17375f; transform: rotate(.6deg); }
+
+/* tape */
+.tape {
+  position: absolute;
+  width: 108px; height: 28px;
+  background: rgba(255,255,255,.55);
+  border-left: 1px dashed rgba(0,0,0,.12);
+  border-right: 1px dashed rgba(0,0,0,.12);
+  box-shadow: 0 2px 5px rgba(0,0,0,.12);
+  top: -14px; left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+}
+
+/* ---------- lists ---------- */
+ul.ticks { list-style: none; padding-left: 4px; }
+ul.ticks li { position: relative; padding-left: 30px; margin-bottom: 6px; }
+ul.ticks li::before { content: "✔"; position: absolute; left: 0; top: -1px; color: #3f8f4f; font-size: 19px; }
+
+ul.arrows { list-style: none; padding-left: 4px; }
+ul.arrows li { position: relative; padding-left: 28px; margin-bottom: 5px; }
+ul.arrows li::before { content: "➜"; position: absolute; left: 0; top: -1px; color: #b3372f; font-size: 17px; }
+
+ol.steps { list-style: none; counter-reset: s; padding-left: 0; margin: 16px 0; }
+ol.steps li {
+  counter-increment: s;
+  position: relative;
+  padding: 10px 14px 10px 58px;
+  margin-bottom: 10px;
+  background: rgba(255,255,255,.5);
+  border-radius: 6px;
+  border-left: 5px solid #4a7fbf;
+}
+ol.steps li::before {
+  content: counter(s);
+  position: absolute; left: 14px; top: 9px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #4a7fbf; color: #fff;
+  font-family: 'Caveat', cursive; font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ---------- dry-run tables ---------- */
+table.dry {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+  font-family: 'Kalam', cursive;
+  font-size: 16.5px;
+  background: rgba(255,255,255,.55);
+  box-shadow: 2px 3px 0 rgba(120,150,190,.16);
+}
+table.dry caption {
+  font-family: 'Caveat', cursive;
+  font-size: 23px;
+  color: #b3372f;
+  text-align: left;
+  padding-bottom: 6px;
+}
+table.dry th, table.dry td {
+  border: 1.6px solid #8fa8c9;
+  padding: 6px 10px;
+  text-align: left;
+}
+table.dry th { background: rgba(200,222,250,.6); font-weight: 700; color: #17335c; }
+table.dry tr:nth-child(even) td { background: rgba(240,246,255,.55); }
+table.dry td.yes { color: #2f6b3a; font-weight: 700; }
+table.dry td.no  { color: #9c2f2a; }
+
+/* ---------- pattern cards ---------- */
+.pattern-card {
+  position: relative;
+  border: 2px dashed #8fa8c9;
+  border-radius: 10px;
+  padding: 20px 18px 18px;
+  margin: 26px 0;
+  background: rgba(255,255,255,.45);
+}
+.pattern-card::before {
+  content: "PATTERN";
+  position: absolute; top: -13px; left: 18px;
+  background: #fdfaf1; padding: 0 8px;
+  font-family: 'Caveat', cursive; font-size: 19px;
+  color: #4a7fbf; letter-spacing: 2px;
+}
+
+.trigger {
+  display: inline-block;
+  background: #b3372f;
+  color: #fff;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  padding: 1px 14px 3px;
+  border-radius: 20px;
+  transform: rotate(-1.5deg);
+  box-shadow: 2px 2px 0 rgba(0,0,0,.15);
+}
+
+/* ---------- banner ---------- */
+.banner {
+  background: linear-gradient(120deg, #1b2a45, #2f4a76);
+  color: #fdfaf1;
+  padding: 22px 28px;
+  border-radius: 4px;
+  box-shadow: 0 12px 22px -12px rgba(20,30,50,.8), 3px 4px 0 rgba(0,0,0,.15);
+  margin-bottom: 26px;
+  transform: rotate(-.4deg);
+  position: relative;
+}
+.banner h2 { color: #fdfaf1; margin: 0; font-size: 42px; }
+.banner p { margin: 4px 0 0; font-family: 'Kalam', cursive; font-size: 16px; opacity: .9; }
+.banner .hl-y { color: #21304a; }
+
+/* ---------- misc ---------- */
+.pnum {
+  position: absolute;
+  right: 26px; bottom: 16px;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  color: #8a9bb5;
+}
+.pnum::before { content: "— "; }
+.pnum::after { content: " —"; }
+
+hr.hand {
+  border: none;
+  height: 2px;
+  background: repeating-linear-gradient(to right, #b9c6dc 0 10px, transparent 10px 18px);
+  margin: 26px 0;
+}
+
+.mini { font-size: 15px; color: #6c7d97; font-family: 'Kalam', cursive; }
+.center { text-align: center; }
+.stamp {
+  display: inline-block;
+  border: 3px double #b3372f;
+  color: #b3372f;
+  font-family: 'Caveat', cursive;
+  font-size: 24px;
+  padding: 4px 16px;
+  border-radius: 6px;
+  transform: rotate(-6deg);
+  opacity: .85;
+}
+.doodle-stars { font-size: 26px; letter-spacing: 12px; color: #d9a441; text-align: center; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+@media (max-width: 660px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .page { padding: 36px 20px 54px 60px; }
+  .page::before { left: 44px; }
+  .page::after { display: none; }
+  body { font-size: 17px; }
+  pre.code { font-size: 15px; }
+  table.dry { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+
+<div class="book">
+
+<!-- ============================ COVER ============================ -->
+<section class="page cover">
+  <div class="tape"></div>
+  <div class="doodle-stars">✦ ✧ ✦ ✧ ✦</div>
+
+  <h1>DSA MODULE 3</h1>
+  <div class="sub">Sorting Algorithms — Simple, Merge, Quick &amp; Counting</div>
+
+  <p class="center" style="font-family:'Caveat',cursive;font-size:25px;margin-top:14px;">
+    <span class="hl-y">Handmade Solutions, Dry-Runs &amp; Pattern Notes</span>
+  </p>
+
+  <p class="center mini" style="margin-top:6px;">
+    Six sorting algorithms · Recursion · Divide and conquer · Java
+  </p>
+
+  <hr class="hand">
+
+  <h2 style="font-size:36px;transform:rotate(-1deg);">📘 What is inside</h2>
+  <ul class="ticks">
+    <li><b>Sorting basics</b> — stability, in-place, comparison table</li>
+    <li><b>Bubble, selection, insertion sort</b> — code &amp; full dry runs</li>
+    <li><b>Merge sort</b> — recursion primer, split/merge tree, O(n log n) proof</li>
+    <li><b>Quick sort</b> — Lomuto partition, worst case, random pivot fix</li>
+    <li><b>Counting sort</b> — non-comparison, O(n + k)</li>
+    <li><b>Sorting in Java</b> — comparators, multi-key, Integer.compare trap</li>
+    <li><b>Sorting patterns</b> — Merge Intervals, Count Inversions</li>
+    <li><b>Practice bank</b> — 20 problems across 3 levels</li>
+  </ul>
+
+  <div class="sticky pink" style="margin-top:34px;">
+    <b>My note to self:</b><br>
+    In interviews you rarely write a sort — but <u>merge sort and quick sort ideas</u>
+    reappear constantly: inversions, k-th smallest, intervals. ✍️
+  </div>
+
+  <div class="center" style="margin-top:30px;">
+    <span class="stamp">HANDMADE NOTES</span>
+  </div>
+
+  <div class="pnum">cover</div>
+</section>
+
+<!-- ============================ HOW TO USE ============================ -->
+<section class="page">
+  <h2 class="section hl-y">How to Use This Module</h2>
+
+  <p>This module teaches <b>six sorting algorithms</b> and, more importantly, the
+  <b>two big ideas behind the fast ones</b>: <span class="hl-y">recursion</span> and
+  <span class="hl-g">divide and conquer</span>. Plan about <b>2 weeks</b>; in interviews
+  you rarely write a sort, but <b>merge sort</b> and <b>quick sort ideas</b> reappear
+  constantly (inversions, k-th smallest, intervals).</p>
+
+  <div class="note">
+    <b>Prerequisites:</b> Module 1 (complexity, two pointers), Module 2 (binary search
+    needs sorted input). Basic recursion (a function calling itself) is reviewed in
+    <b>section 3</b>.
+  </div>
+
+  <div class="note">
+    <b>Code language:</b> Java, same as Modules 1–2.
+  </div>
+
+  <hr class="hand">
+
+  <h2 style="font-size:36px;">🗺️ Roadmap <span class="mini">(do in order)</span></h2>
+  <ul class="arrows">
+    <li><b>1.</b> Sorting basics and the comparison table — <span class="hl-y">half a day</span></li>
+    <li><b>2.</b> Bubble, selection, insertion sort — <span class="hl-b">2 days</span></li>
+    <li><b>3.</b> Merge sort (+ recursion primer) — <span class="hl-g">2–3 days</span></li>
+    <li><b>4.</b> Quick sort and counting sort — <span class="hl-o">2 days</span></li>
+    <li><b>5.</b> Sorting in Java with comparators — <span class="hl-p">1 day</span></li>
+    <li><b>6.</b> Sorting-based patterns — <span class="hl-y">2–3 days</span></li>
+    <li><b>7.</b> Practice bank — <span class="red">ongoing</span></li>
+  </ul>
+
+  <hr class="hand">
+
+  <h2 style="font-size:36px;">📖 How to study a sorting algorithm</h2>
+
+  <ol class="steps">
+    <li>Read the <b>one-line idea</b> and say it out loud.</li>
+    <li>Trace the <b>dry-run table</b> with a pencil, writing the array after every step.</li>
+    <li>Close the doc and write the <b>code from memory</b>.</li>
+    <li>Run it on: <b>empty array, one element, already sorted, reverse sorted, all duplicates</b>.</li>
+    <li>State <b>best, average and worst complexity</b>, and whether it is
+        <b>stable</b> and <b>in-place</b>.</li>
+  </ol>
+
+  <div class="pnum">2</div>
+</section>
+
+<!-- ============================ SECTION 1 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>1. Sorting Basics</h2>
+    <p>Half a day &nbsp;•&nbsp; <span class="hl-y">Key terms · Comparison table · Which one when</span></p>
+  </div>
+
+  <p>The <b>simple sorts</b> (bubble, selection, insertion) are <b>O(n²)</b> and fine up to
+  about <b>10⁴</b> elements; <b>merge sort</b> and <b>quick sort</b> are <b>O(n log n)</b>
+  and handle <b>10⁶</b> easily. Two properties decide which one to use besides speed:
+  <span class="hl-y">stability</span> and <span class="hl-b">in-place</span>.</p>
+
+  <h3><span class="qnum">1.1</span> <span class="hl-y">Key terms</span></h3>
+
+  <ul class="arrows">
+    <li><b>In-place:</b> uses only <b>O(1)</b> (or <b>O(log n)</b> stack) extra memory;
+        sorts inside the <b>same array</b>.</li>
+    <li><b>Stable:</b> equal elements keep their <b>original relative order</b>.
+        Example: sort students [(Ravi, 80), (Asha, 90), (Neha, 80)] by marks.
+        A <b>stable</b> sort always gives <b>Ravi before Neha</b>; an unstable one
+        may swap them. This matters when you sort by one key after another.</li>
+    <li><b>Comparison sort:</b> decides order only by <b>comparing two elements</b>.
+        No comparison sort can beat <b>O(n log n)</b> in the worst case.</li>
+    <li><b>Non-comparison sort:</b> uses the <b>values themselves</b> (e.g. counting sort),
+        can be <b>O(n + k)</b> when values lie in a small range k.</li>
+  </ul>
+
+  <h3><span class="qnum">1.2</span> <span class="hl-g">Comparison table — memorize this</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr>
+        <th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th>
+        <th>Extra space</th><th>Stable</th><th>In-place</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Bubble (optimized)</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+      <tr><td>Selection</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td class="no">No</td><td class="yes">Yes</td></tr>
+      <tr><td>Insertion</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+      <tr><td>Merge</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td class="yes">Yes</td><td class="no">No</td></tr>
+      <tr><td>Quick</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n) stack</td><td class="no">No</td><td class="yes">Yes</td></tr>
+      <tr><td>Counting</td><td>O(n + k)</td><td>O(n + k)</td><td>O(n + k)</td><td>O(k)</td><td class="yes">Yes (careful version)</td><td class="no">No</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">1.3</span> <span class="hl-o">Which one when?</span></h3>
+
+  <table class="dry">
+    <thead><tr><th>Situation</th><th>Best choice</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Nearly sorted data</td><td><b>Insertion sort</b></td><td>Runs close to O(n)</td></tr>
+      <tr><td>Need guaranteed O(n log n), stability</td><td><b>Merge sort</b></td><td>Same speed on every input</td></tr>
+      <tr><td>General-purpose, memory tight</td><td><b>Quick sort</b></td><td>Fast in practice, in-place</td></tr>
+      <tr><td>Integers in a small range (e.g. marks 0–100)</td><td><b>Counting sort</b></td><td>O(n + k), no comparisons</td></tr>
+      <tr><td>Fewest swaps (writes are costly)</td><td><b>Selection sort</b></td><td>At most n − 1 swaps</td></tr>
+      <tr><td>In real code</td><td><b>Arrays.sort</b></td><td>Already tuned (section 5)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sticky blue">
+    <b>Two properties beyond speed 🧠</b><br>
+    <b>Stable</b> — ties keep original order.<br>
+    <b>In-place</b> — no O(n) extra memory.
+  </div>
+
+  <div class="pnum">3</div>
+</section>
+
+<!-- ============================ SECTION 2 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>2. Simple Sorts</h2>
+    <p>2 days &nbsp;•&nbsp; <span class="hl-b">Bubble · Selection · Insertion</span></p>
+  </div>
+
+  <p>All three are <b>O(n²)</b> and <b>in-place</b>. Learn them for the ideas —
+  <i>"bubble the largest to the end"</i>, <i>"select the smallest"</i>,
+  <i>"insert into the sorted part"</i> — because those ideas show up inside harder problems.</p>
+
+  <h3><span class="qnum">2.1</span> <span class="hl-y">Bubble sort</span></h3>
+  <p><b>Idea:</b> compare neighbours and swap if out of order. After pass <b>i</b>,
+  the largest remaining element has "bubbled" to the end. If a pass makes no swaps,
+  the array is already sorted — <b>stop early</b>.</p>
+
+<pre class="code">static void bubbleSort(int[] arr) {
+  int n = arr.length;
+  for (int i = 0; i &lt; n - 1; i++) {
+    boolean swapped = false;
+    for (int j = 0; j &lt; n - 1 - i; j++) {  // last i are already in place
+      if (arr[j] &gt; arr[j + 1]) {
+        int t = arr[j];
+        arr[j] = arr[j + 1];
+        arr[j + 1] = t;
+        swapped = true;
+      }
+    }
+    if (!swapped) break;  // optimization: O(n) on sorted input
+  }
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run on [5, 1, 4, 2, 8]</caption>
+    <thead>
+      <tr><th>Pass</th><th>j</th><th>Compare</th><th>Swap?</th><th>Array after</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>0</td><td>5, 1</td><td class="yes">Yes</td><td>[1, 5, 4, 2, 8]</td></tr>
+      <tr><td>1</td><td>1</td><td>5, 4</td><td class="yes">Yes</td><td>[1, 4, 5, 2, 8]</td></tr>
+      <tr><td>1</td><td>2</td><td>5, 2</td><td class="yes">Yes</td><td>[1, 4, 2, 5, 8]</td></tr>
+      <tr><td>1</td><td>3</td><td>5, 8</td><td class="no">No</td><td>[1, 4, 2, 5, 8]</td></tr>
+      <tr><td>2</td><td>0</td><td>1, 4</td><td class="no">No</td><td>[1, 4, 2, 5, 8]</td></tr>
+      <tr><td>2</td><td>1</td><td>4, 2</td><td class="yes">Yes</td><td>[1, 2, 4, 5, 8]</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity"><b>Complexity:</b> O(n²) worst and average; <b>O(n)</b> best
+  (optimized version, already-sorted input). Stable, in-place.</div>
+
+  <div class="pnum">4</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">2.2</span> <span class="hl-b">Selection sort</span></h3>
+  <p><b>Idea:</b> for each position i, find the <b>minimum of the unsorted part</b>
+  <code class="inline">arr[i..n−1]</code> and swap it into position i.</p>
+
+<pre class="code">static void selectionSort(int[] arr) {
+  int n = arr.length;
+  for (int i = 0; i &lt; n - 1; i++) {
+    int minIdx = i;
+    for (int j = i + 1; j &lt; n; j++)
+      if (arr[j] &lt; arr[minIdx]) minIdx = j;
+    int t = arr[i];
+    arr[i] = arr[minIdx];
+    arr[minIdx] = t;
+  }
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run on [64, 25, 12, 22, 11]</caption>
+    <thead>
+      <tr><th>i</th><th>Unsorted part</th><th>Min (index)</th><th>Swap</th><th>Array after</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>[64, 25, 12, 22, 11]</td><td>11 (4)</td><td>arr[0] ↔ arr[4]</td><td>[11, 25, 12, 22, 64]</td></tr>
+      <tr><td>1</td><td>[25, 12, 22, 64]</td><td>12 (2)</td><td>arr[1] ↔ arr[2]</td><td>[11, 12, 25, 22, 64]</td></tr>
+      <tr><td>2</td><td>[25, 22, 64]</td><td>22 (3)</td><td>arr[2] ↔ arr[3]</td><td>[11, 12, 22, 25, 64]</td></tr>
+      <tr><td>3</td><td>[25, 64]</td><td>25 (3)</td><td>none</td><td>[11, 12, 22, 25, 64]</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity"><b>Complexity:</b> Always <b>O(n²)</b> comparisons, even on
+  sorted input, but only <b>n − 1 swaps</b>.</div>
+
+  <div class="warn"><b>Not stable:</b> [4a, 4b, 1] → swapping 4a with 1 gives
+  <b>[1, 4b, 4a]</b>.</div>
+
+  <h3><span class="qnum">2.3</span> <span class="hl-g">Insertion sort</span></h3>
+  <p><b>Idea:</b> like sorting <b>playing cards in your hand</b>. Keep
+  <code class="inline">arr[0..i−1]</code> sorted; take <b>key = arr[i]</b>,
+  shift bigger elements one step right, and drop key into the gap.</p>
+
+<pre class="code">static void insertionSort(int[] arr) {
+  for (int i = 1; i &lt; arr.length; i++) {
+    int key = arr[i];
+    int j = i - 1;
+    while (j &gt;= 0 &amp;&amp; arr[j] &gt; key) {
+      arr[j + 1] = arr[j];   // shift right
+      j--;
+    }
+    arr[j + 1] = key;
+  }
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run on [5, 2, 4, 6, 1, 3]</caption>
+    <thead>
+      <tr><th>i</th><th>key</th><th>Elements shifted right</th><th>Array after</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>2</td><td>5</td><td>[2, 5, 4, 6, 1, 3]</td></tr>
+      <tr><td>2</td><td>4</td><td>5</td><td>[2, 4, 5, 6, 1, 3]</td></tr>
+      <tr><td>3</td><td>6</td><td>none</td><td>[2, 4, 5, 6, 1, 3]</td></tr>
+      <tr><td>4</td><td>1</td><td>6, 5, 4, 2</td><td>[1, 2, 4, 5, 6, 3]</td></tr>
+      <tr><td>5</td><td>3</td><td>6, 5, 4</td><td>[1, 2, 3, 4, 5, 6]</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">On <b>already-sorted</b> input the while loop <b>never runs</b> ⇒
+  <b>O(n)</b>. That's why insertion sort is used for small or nearly sorted arrays,
+  and inside Java's own <b>TimSort</b>.</div>
+
+  <h3><span class="qnum">2.4</span> <span class="hl-o">Self-check</span></h3>
+  <ol>
+    <li>How many passes does optimized bubble sort need for [1, 2, 3, 4]?</li>
+    <li>Which of the three makes the <b>fewest swaps</b>?</li>
+    <li>Which of the three is <b>not stable</b>?</li>
+  </ol>
+  <div class="dryrun"><b>Answers:</b> 1) One pass (no swaps ⇒ stop). 2) Selection sort
+  (≤ n − 1). 3) Selection sort.</div>
+
+  <div class="pnum">5</div>
+</section>
+
+<!-- ============================ SECTION 3 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>3. Merge Sort</h2>
+    <p>2–3 days &nbsp;•&nbsp; <span class="hl-g">Recursion primer · Divide &amp; conquer · Split/merge tree</span></p>
+  </div>
+
+  <p>Merge sort <b>splits the array in half</b>, sorts each half recursively, then
+  <b>merges</b> the two sorted halves. It is <b>O(n log n) on every input</b> and
+  <b>stable</b>, at the cost of <b>O(n) extra space</b>.</p>
+
+  <h3><span class="qnum">3.1</span> <span class="hl-y">Recursion primer <span class="mini">(5 minutes)</span></span></h3>
+  <p>A <b>recursive function</b> solves a problem by calling <b>itself on a smaller version</b>,
+  and stops at a <b>base case</b>. Every recursive function needs <b>both</b>,
+  or it runs forever (<span class="red">StackOverflowError</span>).</p>
+
+<pre class="code">static int fact(int n) {
+  if (n &lt;= 1) return 1;     // base case
+  return n * fact(n - 1);   // smaller problem
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run of fact(4) — calls go down, answers come back up</caption>
+    <thead><tr><th>Call</th><th>Waits for</th><th>Returns</th></tr></thead>
+    <tbody>
+      <tr><td>fact(4)</td><td>4 × fact(3)</td><td>4 × 6 = 24</td></tr>
+      <tr><td>fact(3)</td><td>3 × fact(2)</td><td>3 × 2 = 6</td></tr>
+      <tr><td>fact(2)</td><td>2 × fact(1)</td><td>2 × 1 = 2</td></tr>
+      <tr><td>fact(1)</td><td>base case</td><td>1</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">Read the table <b>top-down for the calls</b> and
+  <b>bottom-up for the returns</b>. Merge sort works exactly this way, but each call
+  makes <b>two</b> smaller calls.</div>
+
+  <h3><span class="qnum">3.2</span> <span class="hl-b">Divide and conquer</span></h3>
+  <ol class="steps">
+    <li><b>Divide:</b> split [low..high] at mid.</li>
+    <li><b>Conquer:</b> sort both halves recursively. Base case: a range of
+        <b>1 element</b> is already sorted.</li>
+    <li><b>Combine:</b> merge two sorted halves into one sorted range —
+        the <b>only step with real work</b>.</li>
+  </ol>
+
+  <h3><span class="qnum">3.3</span> <span class="hl-g">Code</span></h3>
+
+<pre class="code">static void mergeSort(int[] arr, int low, int high) {
+  if (low &gt;= high) return;              // 0 or 1 element
+  int mid = low + (high - low) / 2;
+  mergeSort(arr, low, mid);
+  mergeSort(arr, mid + 1, high);
+  merge(arr, low, mid, high);
+}
+
+static void merge(int[] arr, int low, int mid, int high) {
+  int[] temp = new int[high - low + 1];
+  int i = low, j = mid + 1, k = 0;
+  while (i &lt;= mid &amp;&amp; j &lt;= high) {
+    if (arr[i] &lt;= arr[j]) temp[k++] = arr[i++];  // &lt;= keeps it stable
+    else temp[k++] = arr[j++];
+  }
+  while (i &lt;= mid)  temp[k++] = arr[i++];        // leftovers from left
+  while (j &lt;= high) temp[k++] = arr[j++];        // leftovers from right
+  for (int x = 0; x &lt; temp.length; x++) arr[low + x] = temp[x];
+}
+// call: mergeSort(arr, 0, arr.length - 1);</pre>
+
+  <div class="pnum">6</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">3.4</span> <span class="hl-o">Dry run — the split and merge tree</span></h3>
+  <p>Input <b>[38, 27, 43, 3, 9, 82, 10]</b>:</p>
+
+<pre class="code">DIVIDE (going down)
+              [38, 27, 43, 3, 9, 82, 10]
+              /                        \
+     [38, 27, 43, 3]              [9, 82, 10]
+      /          \                 /       \
+  [38, 27]    [43, 3]          [9, 82]    [10]
+   /   \       /   \            /   \
+ [38] [27]  [43]  [3]         [9]  [82]
+
+MERGE (coming back up)
+  [27, 38]    [3, 43]          [9, 82]   [10]
+       \       /                    \     /
+    [3, 27, 38, 43]              [9, 10, 82]
+                \                  /
+          [3, 9, 10, 27, 38, 43, 82]</pre>
+
+  <h3><span class="qnum">3.5</span> <span class="hl-p">Dry run — the final merge step</span></h3>
+  <p>Left = <b>[3, 27, 38, 43]</b>, Right = <b>[9, 10, 82]</b>.
+  Pointer <b>i</b> walks Left, <b>j</b> walks Right; take the <b>smaller</b> each time.</p>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Step</th><th>Left[i]</th><th>Right[j]</th><th>Take</th><th>temp so far</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>3</td><td>9</td><td>3 (i++)</td><td>[3]</td></tr>
+      <tr><td>2</td><td>27</td><td>9</td><td>9 (j++)</td><td>[3, 9]</td></tr>
+      <tr><td>3</td><td>27</td><td>10</td><td>10 (j++)</td><td>[3, 9, 10]</td></tr>
+      <tr><td>4</td><td>27</td><td>82</td><td>27 (i++)</td><td>[3, 9, 10, 27]</td></tr>
+      <tr><td>5</td><td>38</td><td>82</td><td>38 (i++)</td><td>[3, 9, 10, 27, 38]</td></tr>
+      <tr><td>6</td><td>43</td><td>82</td><td>43 (i++)</td><td>[3, 9, 10, 27, 38, 43]</td></tr>
+      <tr><td>7</td><td>done</td><td>82</td><td>copy leftover 82</td><td>[3, 9, 10, 27, 38, 43, 82]</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">A merge of n total elements takes <b>O(n)</b>: each element is taken
+  <b>exactly once</b>. This is the same <b>two-pointer idea</b> as "Merge Sorted Array"
+  from Module 1.</div>
+
+  <h3><span class="qnum">3.6</span> <span class="hl-y">Why O(n log n)?</span></h3>
+  <p>The array is <b>halved until size 1</b>, so the tree has about
+  <b>log₂n levels</b>. On each level, all merges together touch <b>n elements</b>.
+  Total = <b>n × log n</b>.</p>
+
+  <div class="dryrun"><b>For n = 8:</b> 3 levels × 8 = <b>24 element moves</b>,
+  versus up to 8 × 8 = 64 comparisons for an O(n²) sort.</div>
+
+  <div class="complexity"><b>Space:</b> O(n) for the temp arrays + O(log n) recursion stack.
+  <b>Time:</b> O(n log n) on every input. <b>Stable:</b> yes.
+  <b>In-place:</b> no.</div>
+
+  <div class="sticky green">
+    <b>Merge sort in one line 🌳</b><br>
+    Split until size 1, then <u>merge sorted halves</u> — the merge is where all the work happens.
+  </div>
+
+  <div class="pnum">7</div>
+</section>
+
+<!-- ============================ SECTION 4 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>4. Quick Sort &amp; Counting Sort</h2>
+    <p>2 days &nbsp;•&nbsp; <span class="hl-o">Lomuto partition · Worst case · O(n + k)</span></p>
+  </div>
+
+  <p>Quick sort picks a <b>pivot</b>, moves smaller elements to its left and larger to its
+  right (<b>partition</b>), then recurses on both sides. It does all its work
+  <b>before</b> recursing, while merge sort does it <b>after</b>.</p>
+
+  <h3><span class="qnum">4.1</span> <span class="hl-y">Quick sort code <span class="mini">(Lomuto partition, last element as pivot)</span></span></h3>
+
+<pre class="code">static void quickSort(int[] arr, int low, int high) {
+  if (low &gt;= high) return;
+  int p = partition(arr, low, high);  // pivot lands at its final index p
+  quickSort(arr, low, p - 1);
+  quickSort(arr, p + 1, high);
+}
+
+static int partition(int[] arr, int low, int high) {
+  int pivot = arr[high];
+  int i = low - 1;                    // end of the "smaller than pivot" zone
+  for (int j = low; j &lt; high; j++) {
+    if (arr[j] &lt; pivot) {
+      i++;
+      swap(arr, i, j);
+    }
+  }
+  swap(arr, i + 1, high);             // put pivot right after the smaller zone
+  return i + 1;
+}</pre>
+
+  <h3><span class="qnum">4.2</span> <span class="hl-b">Dry run — one partition</span></h3>
+  <p>Input <b>[10, 80, 30, 90, 40, 50, 70]</b>, pivot = 70, i starts at −1.</p>
+
+  <table class="dry">
+    <thead>
+      <tr><th>j</th><th>arr[j]</th><th>&lt; 70?</th><th>i after</th><th>Swap</th><th>Array after</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>10</td><td class="yes">Yes</td><td>0</td><td>(0, 0)</td><td>[10, 80, 30, 90, 40, 50, 70]</td></tr>
+      <tr><td>1</td><td>80</td><td class="no">No</td><td>0</td><td>—</td><td>[10, 80, 30, 90, 40, 50, 70]</td></tr>
+      <tr><td>2</td><td>30</td><td class="yes">Yes</td><td>1</td><td>(1, 2)</td><td>[10, 30, 80, 90, 40, 50, 70]</td></tr>
+      <tr><td>3</td><td>90</td><td class="no">No</td><td>1</td><td>—</td><td>[10, 30, 80, 90, 40, 50, 70]</td></tr>
+      <tr><td>4</td><td>40</td><td class="yes">Yes</td><td>2</td><td>(2, 4)</td><td>[10, 30, 40, 90, 80, 50, 70]</td></tr>
+      <tr><td>5</td><td>50</td><td class="yes">Yes</td><td>3</td><td>(3, 5)</td><td>[10, 30, 40, 50, 80, 90, 70]</td></tr>
+      <tr><td>end</td><td>—</td><td>—</td><td>—</td><td>pivot (4, 6)</td><td>[10, 30, 40, 50, 70, 90, 80]</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">Pivot 70 is now at index <b>4</b> — its <b>final sorted position</b>.
+  Everything left is smaller, everything right is larger.</div>
+
+  <h3><span class="qnum">4.3</span> <span class="hl-g">Complexity and the worst case</span></h3>
+  <ul class="arrows">
+    <li><b>Average O(n log n):</b> a pivot near the middle splits the array roughly in half,
+        giving about <b>log n levels</b>.</li>
+    <li><b>Worst O(n²):</b> an <b>already sorted array with last-element pivot</b> —
+        each partition removes only the pivot, so <b>n levels of n work</b>.</li>
+    <li><b>Fix:</b> pick a <b>random pivot</b> (swap a random index with high before
+        partitioning) or the <b>median of first, middle, last</b>.</li>
+    <li><b>Space:</b> O(log n) recursion stack on average; <b>in-place</b>,
+        <b>not stable</b>.</li>
+  </ul>
+
+  <div class="pnum">8</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">4.4</span> <span class="hl-p">Merge sort vs quick sort</span></h3>
+
+  <table class="dry">
+    <thead><tr><th></th><th>Merge sort</th><th>Quick sort</th></tr></thead>
+    <tbody>
+      <tr><td><b>Work happens</b></td><td>After recursion (merge)</td><td>Before recursion (partition)</td></tr>
+      <tr><td><b>Worst case</b></td><td>O(n log n)</td><td>O(n²), rare with random pivot</td></tr>
+      <tr><td><b>Extra space</b></td><td>O(n)</td><td>O(log n)</td></tr>
+      <tr><td><b>Stable</b></td><td class="yes">Yes</td><td class="no">No</td></tr>
+      <tr><td><b>Best for</b></td><td>Linked lists, stability, external sorting</td><td>Arrays in memory, speed in practice</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">4.5</span> <span class="hl-o">Counting sort <span class="mini">(non-comparison)</span></span></h3>
+  <p><b>Idea:</b> when values are <b>small integers 0..k</b>, count how many times each
+  value appears, then write them back in order. <b>No comparisons</b> →
+  <b>O(n + k)</b>.</p>
+
+<pre class="code">static void countingSort(int[] arr, int k) {  // values in 0..k
+  int[] count = new int[k + 1];
+  for (int x : arr) count[x]++;
+
+  int idx = 0;
+  for (int v = 0; v &lt;= k; v++)
+    while (count[v]-- &gt; 0) arr[idx++] = v;
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run on [4, 2, 2, 8, 3, 3, 1], k = 8</caption>
+    <thead>
+      <tr><th>Value</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><b>Count</b></td><td>0</td><td>1</td><td>2</td><td>2</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+    </tbody>
+  </table>
+
+  <div class="dryrun"><b>Write back left to right:</b> 1, 2, 2, 3, 3, 4, 8 →
+  <b>[1, 2, 2, 3, 3, 4, 8]</b>.</div>
+
+  <div class="warn">
+    <b>Use it only when k is small compared to n</b> (marks 0–100, ages, letters a–z).
+    For values up to 10⁹ the count array would be impossibly large.
+    <b>For negatives, shift every value by −min first.</b>
+  </div>
+
+  <div class="sticky blue">
+    <b>Sorting cheat strip 📌</b><br>
+    Nearly sorted → <b>Insertion</b>.<br>
+    Guaranteed O(n log n) + stable → <b>Merge</b>.<br>
+    Fast in practice + in-place → <b>Quick</b>.<br>
+    Small integer range → <b>Counting</b>.
+  </div>
+
+  <div class="pnum">9</div>
+</section>
+
+<!-- ============================ SECTION 5 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>5. Sorting in Java</h2>
+    <p>1 day &nbsp;•&nbsp; <span class="hl-p">Library sorts · Comparators · Multi-key</span></p>
+  </div>
+
+  <p>In real problems, <b>call the library sort</b> and spend your effort on the
+  <b>comparator</b>. Primitive arrays use a <b>Dual-Pivot Quicksort</b> (not stable);
+  object arrays and Lists use <b>TimSort</b> (stable, O(n log n)).</p>
+
+  <h3><span class="qnum">5.1</span> <span class="hl-y">The calls you need</span></h3>
+
+  <table class="dry">
+    <thead><tr><th>Goal</th><th>Code</th></tr></thead>
+    <tbody>
+      <tr><td>Sort <code class="inline">int[]</code> ascending</td><td><code class="inline">Arrays.sort(arr);</code></td></tr>
+      <tr><td>Sort part of an array [from, to]</td><td><code class="inline">Arrays.sort(arr, 2, 6);</code></td></tr>
+      <tr><td>Sort <code class="inline">Integer[]</code> descending</td><td><code class="inline">Arrays.sort(boxed, Collections.reverseOrder());</code></td></tr>
+      <tr><td>Sort a <code class="inline">List</code></td><td><code class="inline">Collections.sort(list);</code> or <code class="inline">list.sort(null);</code></td></tr>
+      <tr><td>Sort List descending</td><td><code class="inline">list.sort(Collections.reverseOrder());</code></td></tr>
+      <tr><td>Sort Strings by length</td><td><code class="inline">Arrays.sort(words, (a, b) -&gt; a.length() - b.length());</code></td></tr>
+    </tbody>
+  </table>
+
+  <div class="trap">
+    <b>Trap:</b> <code class="inline">Collections.reverseOrder()</code> does
+    <span class="red">not work</span> on <code class="inline">int[]</code> (primitives).
+    Either sort ascending and read backwards, or use <code class="inline">Integer[]</code>.
+  </div>
+
+  <h3><span class="qnum">5.2</span> <span class="hl-b">Comparators: the rule</span></h3>
+  <p>A comparator <code class="inline">(a, b) -&gt;</code> returns
+  <b>negative</b> if <b>a</b> should come first, <b>positive</b> if <b>b</b> should come
+  first, <b>0</b> if equal.</p>
+
+<pre class="code">// Sort intervals by start time
+int[][] iv = {{8, 10}, {1, 3}, {15, 18}, {2, 6}};
+Arrays.sort(iv, (a, b) -&gt; Integer.compare(a[0], b[0]));
+// iv = {{1,3}, {2,6}, {8,10}, {15,18}}</pre>
+
+  <div class="warn">
+    Use <code class="inline">Integer.compare(x, y)</code>, <b>not</b>
+    <code class="inline">x - y</code>. With x = −2,147,483,648 and y = 1,
+    <code class="inline">x − y</code> <b>overflows</b> to a large positive number and the
+    order breaks silently.
+  </div>
+
+  <h3><span class="qnum">5.3</span> <span class="hl-g">Sorting objects by multiple keys</span></h3>
+
+<pre class="code">class Student {
+  String name;
+  int marks;
+  Student(String n, int m) { name = n; marks = m; }
+}
+
+List&lt;Student&gt; list = new ArrayList&lt;&gt;(List.of(
+  new Student("Ravi", 80),
+  new Student("Asha", 90),
+  new Student("Neha", 80)));
+
+// Marks descending, then name ascending for ties
+list.sort(Comparator.comparingInt((Student s) -&gt; s.marks).reversed()
+        .thenComparing(s -&gt; s.name));</pre>
+
+  <table class="dry">
+    <thead><tr><th>Order</th><th>Name</th><th>Marks</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Asha</td><td>90</td><td>Highest marks</td></tr>
+      <tr><td>2</td><td>Neha</td><td>80</td><td>Tie at 80 → "Neha" &lt; "Ravi" alphabetically</td></tr>
+      <tr><td>3</td><td>Ravi</td><td>80</td><td>Loses the tie-break</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">5.4</span> <span class="hl-o">Complexity of library sorts</span></h3>
+  <p>Sorting n elements costs <b>O(n log n)</b>. If a solution <b>sorts first</b>,
+  its total complexity is <b>at least O(n log n)</b>, even if the rest is O(n).
+  <span class="red">Always include it when you state your final complexity.</span></p>
+
+  <div class="pnum">10</div>
+</section>
+
+<!-- ============================ SECTION 6 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>6. Sorting-Based Problem Patterns</h2>
+    <p>2–3 days &nbsp;•&nbsp; <span class="hl-y">Sort + scan · Merge-sort counting</span></p>
+  </div>
+
+  <p>Two patterns come up <b>again and again</b>:
+  <span class="hl-y">sort first, then one linear scan</span> (intervals, meetings, pairs),
+  and <span class="hl-g">modify merge sort to count something during the merge</span>
+  (inversions, reverse pairs).</p>
+
+  <!-- 6.1 -->
+  <div class="pattern-card">
+    <h3 style="margin-top:0;border-bottom:none;">
+      <span class="qnum">6.1</span> Sort + scan — Merge Intervals (LC 56)
+    </h3>
+
+    <p><span class="trigger">Trigger</span> &nbsp;<i>"intervals"</i>,
+    <i>"meetings"</i>, <i>"overlapping"</i>.</p>
+
+    <div class="dryrun"><b>Merge all overlapping intervals.</b><br>
+    Input: [[8, 10], [1, 3], [15, 18], [2, 6]] →
+    <b>Output: [[1, 6], [8, 10], [15, 18]]</b></div>
+
+    <p><b>Brute force:</b> compare every pair repeatedly → <b>O(n²)</b>.
+    <b>Better:</b> sort by start; then overlapping intervals sit <b>next to each other</b>,
+    and one pass merges them → <b>O(n log n)</b>.</p>
+
+<pre class="code">static int[][] merge(int[][] iv) {
+  Arrays.sort(iv, (a, b) -&gt; Integer.compare(a[0], b[0]));
+  List&lt;int[]&gt; res = new ArrayList&lt;&gt;();
+  for (int[] cur : iv) {
+    if (res.isEmpty() || cur[0] &gt; res.get(res.size() - 1)[1]) {
+      res.add(cur);                                        // no overlap: new interval
+    } else {
+      int[] last = res.get(res.size() - 1);
+      last[1] = Math.max(last[1], cur[1]);                 // overlap: extend end
+    }
+  }
+  return res.toArray(new int[0][]);
+}</pre>
+
+    <div class="note">After sorting: <b>[[1, 3], [2, 6], [8, 10], [15, 18]]</b>.</div>
+
+    <table class="dry">
+      <thead><tr><th>cur</th><th>last in res</th><th>Overlap?</th><th>Action</th><th>res</th></tr></thead>
+      <tbody>
+        <tr><td>[1, 3]</td><td>—</td><td>—</td><td>add</td><td>[[1, 3]]</td></tr>
+        <tr><td>[2, 6]</td><td>[1, 3]</td><td class="yes">Yes (2 ≤ 3)</td><td>extend to [1, 6]</td><td>[[1, 6]]</td></tr>
+        <tr><td>[8, 10]</td><td>[1, 6]</td><td class="no">No (8 &gt; 6)</td><td>add</td><td>[[1, 6], [8, 10]]</td></tr>
+        <tr><td>[15, 18]</td><td>[8, 10]</td><td class="no">No (15 &gt; 10)</td><td>add</td><td>[[1, 6], [8, 10], [15, 18]]</td></tr>
+      </tbody>
+    </table>
+
+    <div class="complexity"><b>Complexity:</b> O(n log n) time (sorting dominates),
+    O(n) space for the result list.</div>
+  </div>
+
+  <div class="pnum">11</div>
+</section>
+
+<section class="page">
+  <!-- 6.2 -->
+  <div class="pattern-card">
+    <h3 style="margin-top:0;border-bottom:none;">
+      <span class="qnum">6.2</span> Merge sort + count — Count Inversions
+    </h3>
+
+    <p><span class="trigger">Trigger</span> &nbsp;<i>"count pairs i &lt; j with arr[i] &gt; arr[j]"</i>.</p>
+
+    <p><b>Idea:</b> an inversion is any pair (i, j) with i &lt; j and arr[i] &gt; arr[j].
+    During the <b>merge</b> step, whenever we take an element from the <b>right</b> half,
+    <b>every remaining element in the left half</b> forms an inversion with it.
+    So add <b>(mid − i + 1)</b> to the count at that moment.</p>
+
+<pre class="code">static long countInv(int[] arr, int low, int high) {
+  if (low &gt;= high) return 0;
+  int mid = low + (high - low) / 2;
+  return countInv(arr, low, mid) + countInv(arr, mid + 1, high)
+       + mergeCount(arr, low, mid, high);
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run on [2, 4, 1, 3, 5] — every merge that happens, bottom-up</caption>
+    <thead>
+      <tr><th>Merge</th><th>Left</th><th>Right</th><th>Taken from right while left still has…</th><th>Added</th><th>Running total</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>[2]</td><td>[4]</td><td>nothing (2 ≤ 4)</td><td>0</td><td>0</td></tr>
+      <tr><td>2</td><td>[2, 4]</td><td>[1]</td><td>1 taken while [2, 4] remain</td><td>2</td><td>2</td></tr>
+      <tr><td>3</td><td>[3]</td><td>[5]</td><td>nothing</td><td>0</td><td>2</td></tr>
+      <tr><td>4</td><td>[1, 2, 4]</td><td>[3, 5]</td><td>3 taken while [4] remains</td><td>1</td><td>3</td></tr>
+    </tbody>
+  </table>
+
+    <div class="dryrun"><b>Total 3 ✓.</b> Note the <code class="inline">&lt;=</code>:
+    <b>equal elements are not inversions</b>, so we take from the <b>left on ties</b>.</div>
+
+    <div class="complexity"><b>Complexity:</b> O(n log n) time, O(n) space (same as merge sort).</div>
+  </div>
+
+  <h3><span class="qnum">6.3</span> <span class="hl-y">Other places sorting unlocks a solution</span></h3>
+
+  <table class="dry">
+    <thead><tr><th>Problem type</th><th>After sorting…</th></tr></thead>
+    <tbody>
+      <tr><td>Pair / triplet with a sum (3Sum)</td><td>Two pointers from both ends (Module 1)</td></tr>
+      <tr><td>Duplicates, closest pair</td><td>Equal or close values become <b>neighbours</b></td></tr>
+      <tr><td>Meeting rooms, minimum platforms</td><td>Sort start and end times, <b>sweep</b> through</td></tr>
+      <tr><td>k-th smallest</td><td>Sort and index — or <b>quick select, O(n) average</b></td></tr>
+    </tbody>
+  </table>
+
+  <div class="sticky pink">
+    <b>Sorting pattern reminders 📌</b><br>
+    Intervals → <u>sort by start</u>, then scan.<br>
+    Inversions → <u>merge sort + count</u> during merge.<br>
+    Pair sum → <u>sort + two pointers</u>.
+  </div>
+
+  <div class="pnum">12</div>
+</section>
+
+<!-- ============================ SECTION 7 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>7. Practice Bank &amp; Cheat Sheet</h2>
+    <p>Ongoing &nbsp;•&nbsp; <span class="hl-y">20 problems · 3 levels</span></p>
+  </div>
+
+  <p>Start by <b>implementing all six sorts from memory</b> (Level 1), then use
+  <b>sorting as a tool</b> (Levels 2–3). About <b>20 problems over 1–2 weeks</b>.</p>
+
+  <h3><span class="qnum">7.1</span> <span class="hl-y">Cheat sheet</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th>If the problem says…</th><th>Try</th><th>Complexity</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>"sort this" in real code</td><td>Arrays.sort + comparator</td><td>O(n log n)</td></tr>
+      <tr><td>Nearly sorted input</td><td>Insertion sort</td><td>~O(n)</td></tr>
+      <tr><td>Small value range (0–100, a–z)</td><td>Counting sort / frequency array</td><td>O(n + k)</td></tr>
+      <tr><td>"intervals", "meetings", "overlapping"</td><td>Sort by start, then scan</td><td>O(n log n)</td></tr>
+      <tr><td>"count pairs i &lt; j with arr[i] &gt; arr[j]"</td><td>Merge sort + count in merge</td><td>O(n log n)</td></tr>
+      <tr><td>"k-th largest / smallest"</td><td>Sort, or quick select (partition)</td><td>O(n log n) / O(n) avg</td></tr>
+      <tr><td>"anagram", "same elements?"</td><td>Sort both and compare, or frequency array</td><td>O(n log n) / O(n)</td></tr>
+      <tr><td>Custom order ("largest number", by two keys)</td><td>Comparator</td><td>O(n log n)</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">7.2</span> <span class="hl-g">Level 1 — Implement the algorithms</span></h3>
+
+  <table class="dry">
+    <thead><tr><th>#</th><th>Task</th><th>Check</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Bubble sort (optimized)</td><td>Stops after 1 pass on sorted input</td></tr>
+      <tr><td>2</td><td>Selection sort</td><td>n − 1 swaps max</td></tr>
+      <tr><td>3</td><td>Insertion sort</td><td>Works on [5, 4, 3, 2, 1]</td></tr>
+      <tr><td>4</td><td>Merge sort</td><td>Stable on equal keys</td></tr>
+      <tr><td>5</td><td>Quick sort with random pivot</td><td>Fast on already-sorted input</td></tr>
+      <tr><td>6</td><td>Counting sort with negatives</td><td>Shift by −min</td></tr>
+      <tr><td>7</td><td>Sort an Array (LC 912)</td><td>Submit merge sort and quick sort; O(n²) sorts will time out</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">7.3</span> <span class="hl-b">Level 2 — Sorting as a tool</span></h3>
+
+  <table class="dry">
+    <thead><tr><th>#</th><th>Problem</th><th>Idea</th></tr></thead>
+    <tbody>
+      <tr><td>8</td><td>Valid Anagram (LC 242)</td><td>Sort or count letters</td></tr>
+      <tr><td>9</td><td>Height Checker (LC 1051)</td><td>Sort a copy, compare</td></tr>
+      <tr><td>10</td><td>How Many Numbers Are Smaller Than the Current Number (LC 1365)</td><td>Counting + prefix sum</td></tr>
+      <tr><td>11</td><td>Intersection of Two Arrays (LC 349)</td><td>Sort both + two pointers</td></tr>
+      <tr><td>12</td><td>Merge Intervals (LC 56)</td><td>Sort + scan</td></tr>
+      <tr><td>13</td><td>Insert Interval (LC 57)</td><td>Scan already-sorted intervals</td></tr>
+      <tr><td>14</td><td>H-Index (LC 274)</td><td>Sort descending, scan</td></tr>
+    </tbody>
+  </table>
+
+  <div class="pnum">13</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">7.4</span> <span class="hl-o">Level 3 — Stretch</span></h3>
+
+  <table class="dry">
+    <thead><tr><th>#</th><th>Problem</th><th>Idea</th></tr></thead>
+    <tbody>
+      <tr><td>15</td><td>Non-overlapping Intervals (LC 435)</td><td>Sort by end, greedy</td></tr>
+      <tr><td>16</td><td>Minimum Platforms (GFG)</td><td>Sort arrivals and departures, sweep</td></tr>
+      <tr><td>17</td><td>Largest Number (LC 179)</td><td>Comparator: compare a+b vs b+a</td></tr>
+      <tr><td>18</td><td>Kth Largest Element in an Array (LC 215)</td><td>Quick select</td></tr>
+      <tr><td>19</td><td>Count Inversions (GFG)</td><td>Merge sort + count</td></tr>
+      <tr><td>20</td><td>Reverse Pairs (LC 493)</td><td>Merge sort, count arr[i] &gt; 2 × arr[j] before merging</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">7.5</span> <span class="hl-p">Self-review after each problem</span></h3>
+
+  <ul class="ticks">
+    <li>I can state <b>best / average / worst complexity</b> of the sort I used.</li>
+    <li>I know whether my approach needs a <b>stable sort</b>.</li>
+    <li>I used <code class="inline">Integer.compare</code>, <b>not subtraction</b>,
+        in comparators.</li>
+    <li>I added the <b>O(n log n) of sorting</b> to my final complexity.</li>
+    <li>I <b>dry-ran a merge or partition step</b> on paper.</li>
+    <li>I can <b>re-solve it from scratch after 3 days</b> without looking.</li>
+  </ul>
+
+  <div class="sticky green">
+    <b>2-week plan 📅</b><br>
+    <b>Week 1:</b> basics + bubble/selection/insertion + merge sort + recursion.<br>
+    <b>Week 2:</b> quick sort + counting sort + Java comparators +
+    sorting patterns + practice bank.
+  </div>
+
+  <div class="note">
+    <b>Next module (suggested):</b> Strings — character arrays, frequency counting,
+    palindromes, and the two-pointer and sliding-window patterns applied to strings.
+  </div>
+
+  <div class="pnum">14</div>
+</section>
+
+<!-- ============================ QUICK REFERENCE ============================ -->
+<section class="page">
+  <h2 class="section hl-y">Quick Reference — One-Page Recap</h2>
+
+  <h3 style="border-bottom:none;"><span class="qnum">A</span> <span class="hl-b">Complexity table</span></h3>
+  <table class="dry">
+    <thead><tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th><th>Stable</th><th>In-place</th></tr></thead>
+    <tbody>
+      <tr><td>Bubble (opt.)</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+      <tr><td>Selection</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td class="no">No</td><td class="yes">Yes</td></tr>
+      <tr><td>Insertion</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+      <tr><td>Merge</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td class="yes">Yes</td><td class="no">No</td></tr>
+      <tr><td>Quick</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td><td class="no">No</td><td class="yes">Yes</td></tr>
+      <tr><td>Counting</td><td>O(n + k)</td><td>O(n + k)</td><td>O(n + k)</td><td>O(k)</td><td class="yes">Yes</td><td class="no">No</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="border-bottom:none;"><span class="qnum">B</span> <span class="hl-g">The two fast ideas</span></h3>
+  <div class="grid2">
+    <div class="note" style="margin:0;">
+      <b>Merge sort</b><br>
+      Work <b>after</b> recursion (merge).<br>
+      <b>O(n log n)</b> always · <b>stable</b> · O(n) extra space.<br>
+      <span class="mini">Best for linked lists, stability, external sorting.</span>
+    </div>
+    <div class="note" style="margin:0;">
+      <b>Quick sort</b><br>
+      Work <b>before</b> recursion (partition).<br>
+      <b>O(n log n)</b> avg · <b>O(n²)</b> worst · in-place · not stable.<br>
+      <span class="mini">Random pivot fixes the sorted-input worst case.</span>
+    </div>
+  </div>
+
+  <h3 style="border-bottom:none;"><span class="qnum">C</span> <span class="hl-o">Comparator rules</span></h3>
+  <ul class="arrows">
+    <li>Return <b>negative</b> if a should come first, <b>positive</b> if b should.</li>
+    <li>Use <b><code class="inline">Integer.compare(a, b)</code></b> — never
+        <code class="inline">a − b</code> (overflow).</li>
+    <li>Chain keys with <code class="inline">.thenComparing(...)</code>.</li>
+    <li>Sorting costs <b>O(n log n)</b> — include it in your final complexity.</li>
+  </ul>
+
+  <h3 style="border-bottom:none;"><span class="qnum">D</span> <span class="hl-p">Sorting patterns</span></h3>
+  <ul class="ticks">
+    <li><b>Sort + scan</b> — intervals, meetings, closest pair.</li>
+    <li><b>Merge sort + count</b> — inversions, reverse pairs.</li>
+    <li><b>Sort + two pointers</b> — pair / triplet sum.</li>
+    <li><b>Quick select</b> — k-th smallest in O(n) average.</li>
+    <li><b>Counting / frequency array</b> — small integer ranges.</li>
+  </ul>
+
+  <hr class="hand">
+
+  <div class="note">
+    <b>Reminder:</b> the dry-run table is not optional. If you can't write the array after
+    every pass of bubble sort, or after every merge of merge sort, you haven't understood
+    the algorithm yet.
+  </div>
+
+  <div class="sticky green" style="margin-top:36px;">
+    <b>You reached the end of Module 3. 🎉</b><br>
+    Close the notes, open a blank file, and re-write <u>bubble sort</u>,
+    <u>insertion sort</u>, <u>merge sort</u> and <u>quick sort</u> from memory —
+    <b>with a dry-run table for each</b>.
+  </div>
+
+  <div class="center" style="margin-top:44px;">
+    <span class="stamp">END OF MODULE 3</span>
+  </div>
+
+  <div class="doodle-stars" style="margin-top:26px;">✦ ✧ ✦ ✧ ✦</div>
+
+  <div class="pnum">15</div>
+</section>
+
+</div>
+
+<!-- ============================================================
+     Tiny script: colour "// comment" text inside code blocks
+     green, so the code looks hand-annotated.
+     ============================================================ -->
+<script>
+(function () {
+  document.querySelectorAll('pre.code').forEach(function (block) {
+    var lines = block.innerHTML.split('\n');
+    var out = lines.map(function (line) {
+      var inSingle = false, inDouble = false, inTemplate = false, idx = -1;
+      for (var i = 0; i < line.length; i++) {
+        var ch = line[i];
+        var prev = line[i - 1];
+        if (ch === "'" && !inDouble && !inTemplate && prev !== '\\') inSingle = !inSingle;
+        else if (ch === '"' && !inSingle && !inTemplate && prev !== '\\') inDouble = !inDouble;
+        else if (ch === '`' && !inSingle && !inDouble && prev !== '\\') inTemplate = !inTemplate;
+        else if (!inSingle && !inDouble && !inTemplate && ch === '/' && line[i + 1] === '/') {
+          idx = i; break;
+        }
+      }
+      if (idx > -1) {
+        return line.slice(0, idx) + '<span class="cm">' + line.slice(idx) + '</span>';
+      }
+      return line;
+    });
+    block.innerHTML = out.join('\n');
+  });
+})();
+</script>
+
+</body>
+</html>

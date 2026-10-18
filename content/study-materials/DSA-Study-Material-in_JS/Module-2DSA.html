@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Module 2 — Binary Search | Handmade Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Kalam:wght@300;400;700&family=Patrick+Hand&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THE HANDMADE NOTEBOOK — premium paper + ink styling
+   ============================================================ */
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  padding: 34px 14px 70px;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(214,197,166,.55), transparent 46%),
+    radial-gradient(circle at 84% 78%, rgba(198,181,150,.5), transparent 52%),
+    repeating-linear-gradient(115deg, rgba(140,115,80,.05) 0 3px, transparent 3px 7px),
+    #c8b295;
+  font-family: 'Patrick Hand', 'Kalam', cursive;
+  color: #21304a;
+  font-size: 18px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+
+.book { max-width: 900px; margin: 0 auto; }
+
+/* ---------- the "sheet of paper" ---------- */
+.page {
+  position: relative;
+  background-color: #fdfaf1;
+  background-image:
+    repeating-linear-gradient(to bottom,
+      transparent 0px, transparent 30px,
+      #c9d6ea 30px, #c9d6ea 31px),
+    repeating-linear-gradient(90deg, rgba(160,140,110,.035) 0 1px, transparent 1px 5px);
+  border-radius: 3px 10px 10px 3px;
+  box-shadow:
+    0 1px 0 #e8e0cd inset,
+    0 18px 34px -14px rgba(40,25,10,.55),
+    0 3px 0 rgba(255,255,255,.35) inset;
+  padding: 46px 46px 62px 96px;
+  margin: 0 0 40px;
+  overflow: hidden;
+}
+
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 74px;
+  width: 2px;
+  background: linear-gradient(to bottom,
+    rgba(203,78,78,.15), rgba(203,78,78,.75) 6%,
+    rgba(203,78,78,.75) 94%, rgba(203,78,78,.15));
+}
+
+.page::after {
+  content: "";
+  position: absolute;
+  left: 24px; top: 0; bottom: 0;
+  width: 24px;
+  background-image: radial-gradient(circle at 50% 50%, #cdbca0 0 8px, rgba(0,0,0,.12) 8px 9px, transparent 10px);
+  background-size: 24px 150px;
+  background-repeat: repeat-y;
+  background-position: 0 40px;
+  opacity: .85;
+}
+
+/* ---------- headings ---------- */
+h1, h2, h3, h4 {
+  font-family: 'Caveat', cursive;
+  color: #1b2a45;
+  margin: 0 0 .35em;
+  line-height: 1.15;
+}
+
+.cover h1 {
+  font-size: clamp(44px, 8.5vw, 80px);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: center;
+  margin: 0;
+  text-shadow: 2px 2px 0 rgba(255,241,118,.85), 4px 4px 0 rgba(0,0,0,.07);
+}
+.cover .sub {
+  text-align: center;
+  font-family: 'Caveat', cursive;
+  font-size: 30px;
+  color: #b3372f;
+  margin-top: 6px;
+}
+
+h2.section {
+  font-size: 46px;
+  display: inline-block;
+  padding: 2px 16px 6px;
+  margin-bottom: 4px;
+  transform: rotate(-1.2deg);
+}
+
+h3 {
+  font-size: 29px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+  border-bottom: 1.5px dashed #b9c6dc;
+  padding-bottom: 4px;
+}
+h4 { font-size: 23px; color: #2b3d5e; margin-top: 20px; }
+
+/* number badge */
+.qnum {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 26px;
+  color: #b3372f;
+  border: 2.2px solid #b3372f;
+  border-radius: 50%;
+  min-width: 54px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 9px;
+  flex: 0 0 auto;
+  transform: rotate(-3deg);
+  background: rgba(255,255,255,.6);
+}
+
+/* ---------- highlighters ---------- */
+.hl-y, .hl-p, .hl-g, .hl-b, .hl-o {
+  padding: 0 3px;
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.hl-y { background: linear-gradient(100deg, rgba(255,241,118,0) 0%, rgba(255,238,88,.85) 2%, rgba(255,238,88,.85) 97%, rgba(255,241,118,0) 100%); }
+.hl-p { background: linear-gradient(100deg, rgba(255,190,215,0) 0%, rgba(255,183,208,.8) 2%, rgba(255,183,208,.8) 97%, rgba(255,190,215,0) 100%); }
+.hl-g { background: linear-gradient(100deg, rgba(178,240,180,0) 0%, rgba(167,238,170,.85) 2%, rgba(167,238,170,.85) 97%, rgba(178,240,180,0) 100%); }
+.hl-b { background: linear-gradient(100deg, rgba(175,220,255,0) 0%, rgba(163,214,255,.8) 2%, rgba(163,214,255,.8) 97%, rgba(175,220,255,0) 100%); }
+.hl-o { background: linear-gradient(100deg, rgba(255,214,150,0) 0%, rgba(255,209,138,.85) 2%, rgba(255,209,138,.85) 97%, rgba(255,214,150,0) 100%); }
+
+/* red-pen emphasis */
+.red { color: #b3372f; }
+.blue { color: #1f4e8c; }
+.green { color: #2f6b3a; }
+.pen-underline { border-bottom: 2.5px solid #b3372f; padding-bottom: 1px; }
+.wavy { text-decoration: underline wavy #b3372f; text-underline-offset: 4px; }
+.scribble-out { text-decoration: line-through; color: #8a8a8a; }
+
+/* ---------- code blocks ---------- */
+pre.code {
+  font-family: 'Kalam', cursive;
+  font-size: 16.5px;
+  line-height: 1.75;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 26px, rgba(160,185,220,.35) 26px 27px),
+    #f4f8ff;
+  border: 1.6px solid #b9c9e2;
+  border-left: 6px solid #8fb3e0;
+  border-radius: 4px 8px 8px 4px;
+  padding: 14px 16px 16px 18px;
+  margin: 14px 0 12px;
+  overflow-x: auto;
+  color: #1c2b47;
+  white-space: pre;
+  box-shadow: 2px 3px 0 rgba(120,150,190,.22);
+  position: relative;
+}
+pre.code::before {
+  content: "java";
+  position: absolute;
+  top: -12px; right: 12px;
+  font-family: 'Caveat', cursive;
+  font-size: 17px;
+  color: #6d8db8;
+  background: #fdfaf1;
+  padding: 0 7px;
+  transform: rotate(3deg);
+}
+.cm { color: #2e8b57; font-style: italic; }
+
+code.inline {
+  font-family: 'Kalam', cursive;
+  background: rgba(180,210,245,.32);
+  border-radius: 3px;
+  padding: 0 5px;
+  font-size: .95em;
+  color: #14315c;
+}
+
+/* ---------- callouts ---------- */
+.note, .warn, .tip, .complexity, .dryrun, .trap {
+  position: relative;
+  border-radius: 5px;
+  padding: 12px 16px 12px 18px;
+  margin: 14px 0;
+  font-size: 17px;
+}
+
+.dryrun {
+  background: linear-gradient(180deg, rgba(255,246,196,.75), rgba(255,240,160,.5));
+  border-left: 6px solid #e3b93c;
+  box-shadow: 2px 3px 0 rgba(200,160,40,.18);
+}
+.dryrun b:first-child { color: #a5761a; }
+
+.complexity {
+  background: linear-gradient(180deg, rgba(200,240,205,.7), rgba(175,232,182,.45));
+  border-left: 6px solid #4e9b5b;
+  box-shadow: 2px 3px 0 rgba(70,150,85,.16);
+  font-family: 'Kalam', cursive;
+}
+.complexity b:first-child { color: #2f6b3a; }
+
+.note {
+  background: linear-gradient(180deg, rgba(205,228,255,.7), rgba(180,212,250,.45));
+  border-left: 6px solid #4a7fbf;
+  box-shadow: 2px 3px 0 rgba(70,120,180,.16);
+}
+
+.warn, .trap {
+  background: linear-gradient(180deg, rgba(255,215,215,.8), rgba(255,190,190,.5));
+  border-left: 6px solid #c0403a;
+  box-shadow: 2px 3px 0 rgba(180,60,55,.16);
+}
+.warn b:first-child, .trap b:first-child { color: #9c2f2a; }
+
+/* ---------- sticky notes ---------- */
+.sticky {
+  background: #fff8a8;
+  background-image: linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%);
+  padding: 18px 20px;
+  margin: 22px 0;
+  border-radius: 2px;
+  box-shadow: 3px 6px 14px -6px rgba(90,70,20,.55);
+  transform: rotate(-.8deg);
+  font-family: 'Caveat', cursive;
+  font-size: 23px;
+  line-height: 1.4;
+  color: #4a3d10;
+  position: relative;
+}
+.sticky.pink { background: #ffd6e8; color: #6b2447; transform: rotate(1deg); }
+.sticky.green { background: #d3f7cf; color: #23502a; transform: rotate(-1.4deg); }
+.sticky.blue { background: #cfe6ff; color: #17375f; transform: rotate(.6deg); }
+
+/* tape */
+.tape {
+  position: absolute;
+  width: 108px; height: 28px;
+  background: rgba(255,255,255,.55);
+  border-left: 1px dashed rgba(0,0,0,.12);
+  border-right: 1px dashed rgba(0,0,0,.12);
+  box-shadow: 0 2px 5px rgba(0,0,0,.12);
+  top: -14px; left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+}
+
+/* ---------- lists ---------- */
+ul.ticks { list-style: none; padding-left: 4px; }
+ul.ticks li { position: relative; padding-left: 30px; margin-bottom: 6px; }
+ul.ticks li::before { content: "✔"; position: absolute; left: 0; top: -1px; color: #3f8f4f; font-size: 19px; }
+
+ul.arrows { list-style: none; padding-left: 4px; }
+ul.arrows li { position: relative; padding-left: 28px; margin-bottom: 5px; }
+ul.arrows li::before { content: "➜"; position: absolute; left: 0; top: -1px; color: #b3372f; font-size: 17px; }
+
+ol.steps { list-style: none; counter-reset: s; padding-left: 0; margin: 16px 0; }
+ol.steps li {
+  counter-increment: s;
+  position: relative;
+  padding: 10px 14px 10px 58px;
+  margin-bottom: 10px;
+  background: rgba(255,255,255,.5);
+  border-radius: 6px;
+  border-left: 5px solid #4a7fbf;
+}
+ol.steps li::before {
+  content: counter(s);
+  position: absolute; left: 14px; top: 9px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #4a7fbf; color: #fff;
+  font-family: 'Caveat', cursive; font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ---------- dry-run tables ---------- */
+table.dry {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+  font-family: 'Kalam', cursive;
+  font-size: 16.5px;
+  background: rgba(255,255,255,.55);
+  box-shadow: 2px 3px 0 rgba(120,150,190,.16);
+}
+table.dry caption {
+  font-family: 'Caveat', cursive;
+  font-size: 23px;
+  color: #b3372f;
+  text-align: left;
+  padding-bottom: 6px;
+}
+table.dry th, table.dry td {
+  border: 1.6px solid #8fa8c9;
+  padding: 6px 10px;
+  text-align: left;
+}
+table.dry th { background: rgba(200,222,250,.6); font-weight: 700; color: #17335c; }
+table.dry tr:nth-child(even) td { background: rgba(240,246,255,.55); }
+table.dry td.yes { color: #2f6b3a; font-weight: 700; }
+table.dry td.no  { color: #9c2f2a; }
+
+/* ---------- pattern cards ---------- */
+.pattern-card {
+  position: relative;
+  border: 2px dashed #8fa8c9;
+  border-radius: 10px;
+  padding: 20px 18px 18px;
+  margin: 26px 0;
+  background: rgba(255,255,255,.45);
+}
+.pattern-card::before {
+  content: "PATTERN";
+  position: absolute; top: -13px; left: 18px;
+  background: #fdfaf1; padding: 0 8px;
+  font-family: 'Caveat', cursive; font-size: 19px;
+  color: #4a7fbf; letter-spacing: 2px;
+}
+
+.trigger {
+  display: inline-block;
+  background: #b3372f;
+  color: #fff;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  padding: 1px 14px 3px;
+  border-radius: 20px;
+  transform: rotate(-1.5deg);
+  box-shadow: 2px 2px 0 rgba(0,0,0,.15);
+}
+
+/* ---------- banner ---------- */
+.banner {
+  background: linear-gradient(120deg, #1b2a45, #2f4a76);
+  color: #fdfaf1;
+  padding: 22px 28px;
+  border-radius: 4px;
+  box-shadow: 0 12px 22px -12px rgba(20,30,50,.8), 3px 4px 0 rgba(0,0,0,.15);
+  margin-bottom: 26px;
+  transform: rotate(-.4deg);
+  position: relative;
+}
+.banner h2 { color: #fdfaf1; margin: 0; font-size: 42px; }
+.banner p { margin: 4px 0 0; font-family: 'Kalam', cursive; font-size: 16px; opacity: .9; }
+.banner .hl-y { color: #21304a; }
+
+/* ---------- misc ---------- */
+.pnum {
+  position: absolute;
+  right: 26px; bottom: 16px;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  color: #8a9bb5;
+}
+.pnum::before { content: "— "; }
+.pnum::after { content: " —"; }
+
+hr.hand {
+  border: none;
+  height: 2px;
+  background: repeating-linear-gradient(to right, #b9c6dc 0 10px, transparent 10px 18px);
+  margin: 26px 0;
+}
+
+.mini { font-size: 15px; color: #6c7d97; font-family: 'Kalam', cursive; }
+.center { text-align: center; }
+.stamp {
+  display: inline-block;
+  border: 3px double #b3372f;
+  color: #b3372f;
+  font-family: 'Caveat', cursive;
+  font-size: 24px;
+  padding: 4px 16px;
+  border-radius: 6px;
+  transform: rotate(-6deg);
+  opacity: .85;
+}
+.doodle-stars { font-size: 26px; letter-spacing: 12px; color: #d9a441; text-align: center; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+@media (max-width: 660px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .page { padding: 36px 20px 54px 60px; }
+  .page::before { left: 44px; }
+  .page::after { display: none; }
+  body { font-size: 17px; }
+  pre.code { font-size: 15px; }
+  table.dry { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+
+<div class="book">
+
+<!-- ============================ COVER ============================ -->
+<section class="page cover">
+  <div class="tape"></div>
+  <div class="doodle-stars">✦ ✧ ✦ ✧ ✦</div>
+
+  <h1>DSA MODULE 2</h1>
+  <div class="sub">Binary Search — Fundamentals, Boundaries &amp; Answer Space</div>
+
+  <p class="center" style="font-family:'Caveat',cursive;font-size:25px;margin-top:14px;">
+    <span class="hl-y">Handmade Solutions, Dry-Runs &amp; Pattern Notes</span>
+  </p>
+
+  <p class="center mini" style="margin-top:6px;">
+    Four layers · About 2 weeks · Java (same as Module 1)
+  </p>
+
+  <hr class="hand">
+
+  <h2 style="font-size:36px;transform:rotate(-1deg);">📘 What is inside</h2>
+  <ul class="ticks">
+    <li><b>Layer 1</b> — Classic binary search: code, dry runs, common bugs</li>
+    <li><b>Layer 2</b> — Lower bound, upper bound, first / last occurrence, floor &amp; ceil</li>
+    <li><b>Layer 3</b> — Modified arrays: rotated, minimum, peak, single element</li>
+    <li><b>Layer 4</b> — Binary search on answer: sqrt, Koko, ship packages</li>
+    <li><b>Practice bank</b> — 22 problems across 3 levels</li>
+    <li><b>Pattern cheat sheet</b> — trigger words → template → loop condition</li>
+  </ul>
+
+  <div class="sticky pink" style="margin-top:34px;">
+    <b>My note to self:</b><br>
+    The <u>hard part is never the idea</u> — it's the <b>boundaries</b>.
+    Always write the <span class="wavy">low / mid / high table</span> before coding. ✍️
+  </div>
+
+  <div class="center" style="margin-top:30px;">
+    <span class="stamp">HANDMADE NOTES</span>
+  </div>
+
+  <div class="pnum">cover</div>
+</section>
+
+<!-- ============================ HOW TO USE ============================ -->
+<section class="page">
+  <h2 class="section hl-y">How to Use This Module</h2>
+
+  <p>Binary search <b>cuts the search space in half every step</b>, turning
+  <b>O(n)</b> into <b>O(log n)</b>. This module builds it in <b>four layers</b> over about
+  <b>2 weeks</b>; the hard part is never the idea, it is the
+  <span class="red">boundaries</span> — so every problem has a
+  <b>dry-run table</b>.</p>
+
+  <div class="note">
+    <b>Prerequisites from Module 1:</b> time complexity (especially <b>O(log n)</b>),
+    linear search, two-pointering.
+  </div>
+
+  <div class="note">
+    <b>Code language:</b> Java, same as Module 1.
+  </div>
+
+  <hr class="hand">
+
+  <h2 style="font-size:36px;">🗺️ Roadmap <span class="mini">(do in order)</span></h2>
+  <ul class="arrows">
+    <li><b>1.</b> Fundamentals: classic binary search — <span class="hl-y">1–2 days</span></li>
+    <li><b>2.</b> Boundary variations: lower / upper bound, first / last occurrence,
+        floor / ceil — <span class="hl-b">3 days</span></li>
+    <li><b>3.</b> Modified arrays: rotated array, peak, single element —
+        <span class="hl-g">3 days</span></li>
+    <li><b>4.</b> Binary search on answer — <span class="hl-o">4–5 days</span></li>
+    <li><b>5.</b> Practice bank — <span class="red">ongoing</span></li>
+  </ul>
+
+  <hr class="hand">
+
+  <h2 style="font-size:36px;">🖐️ The 5-step method <span class="mini">(same as Module 1, plus one binary-search question)</span></h2>
+
+  <ol class="steps">
+    <li><b>Understand</b> — normal input + edge input.</li>
+    <li><b>Brute force</b> — usually a linear scan, <b>O(n)</b>.</li>
+    <li><b>Optimize</b> — ask: is there a <span class="hl-y">monotonic property</span>?
+        (once a condition becomes true, it stays true). If yes, binary search applies.</li>
+    <li><b>Dry run</b> — table of <b>low, mid, high</b> and the decision at every step.</li>
+    <li><b>Code + test</b> — always test arrays of <b>size 1 and 2</b>, and targets
+        <b>smaller than the first</b> / <b>larger than the last</b> element.</li>
+  </ol>
+
+  <div class="sticky green">
+    <b>Edge-case checklist for binary search</b><br>
+    n = 1 · n = 2 · target &lt; arr[0] · target &gt; arr[n−1] ·
+    duplicates (all equal) · rotated arrays · single element arrays
+  </div>
+
+  <div class="pnum">2</div>
+</section>
+
+<!-- ============================ SECTION 1 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>1. Binary Search Fundamentals</h2>
+    <p>1–2 days &nbsp;•&nbsp; <span class="hl-y">Classic template · Dry runs · Common bugs</span></p>
+  </div>
+
+  <p>On a <b>sorted array</b>, compare the target with the <b>middle element</b> and
+  <b>throw away the half</b> that cannot contain it. Each step <b>halves</b> the range,
+  so n elements need at most about <b>log₂(n) + 1</b> steps.</p>
+
+  <h3><span class="qnum">1.1</span> <span class="hl-y">Why O(log n) matters</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th>n</th><th>Linear search (worst)</th><th>Binary search (worst)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>16</td><td>16</td><td>5</td></tr>
+      <tr><td>1,000</td><td>1,000</td><td>10</td></tr>
+      <tr><td>1,000,000</td><td>1,000,000</td><td>20</td></tr>
+      <tr><td>10⁹</td><td>10⁹</td><td>30</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note"><b>Doubling n adds just one step.</b> That is the meaning of
+  <b>O(log n)</b>.</div>
+
+  <h3><span class="qnum">1.2</span> <span class="hl-b">Question</span></h3>
+  <p>Given a <b>sorted array</b> <code class="inline">arr</code> (ascending, distinct) and
+  <code class="inline">target</code>, return its <b>index</b> or <b>−1</b>.</p>
+  <div class="dryrun"><b>Input:</b> arr = [3, 8, 15, 21, 30, 42, 57, 64], target = 42 →
+  <b>Output: 5</b></div>
+
+  <h3><span class="qnum">1.3</span> <span class="hl-g">Iterative code <span class="mini">(memorize this)</span></span></h3>
+
+<pre class="code">static int binarySearch(int[] arr, int target) {
+  int low = 0, high = arr.length - 1;
+  while (low &lt;= high) {                  // range [low..high] is nonempty
+    int mid = low + (high - low) / 2;  // overflow-safe
+    if (arr[mid] == target) return mid;
+    else if (arr[mid] &lt; target) low = mid + 1;  // discard left half
+    else high = mid - 1;                        // discard right half
+  }
+  return -1;
+}</pre>
+
+  <h3><span class="qnum">1.4</span> <span class="hl-o">Dry run — target found</span></h3>
+  <p><code class="inline">arr = [3, 8, 15, 21, 30, 42, 57, 64]</code>, target = <b>42</b>.</p>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Step</th><th>low</th><th>high</th><th>mid</th><th>arr[mid]</th><th>Compare</th><th>Decision</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>0</td><td>7</td><td>3</td><td>21</td><td>21 &lt; 42</td><td>low = 4</td></tr>
+      <tr><td>2</td><td>4</td><td>7</td><td>5</td><td>42</td><td class="yes">42 == 42</td><td>return 5</td></tr>
+    </tbody>
+  </table>
+
+  <div class="dryrun"><b>2 steps instead of 6 with linear search.</b></div>
+
+  <div class="pnum">3</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">1.5</span> <span class="hl-p">Dry run — target absent</span></h3>
+  <p>Same array, target = <b>10</b>.</p>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Step</th><th>low</th><th>high</th><th>mid</th><th>arr[mid]</th><th>Compare</th><th>Decision</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>0</td><td>7</td><td>3</td><td>21</td><td>21 &gt; 10</td><td>high = 2</td></tr>
+      <tr><td>2</td><td>0</td><td>2</td><td>1</td><td>8</td><td>8 &lt; 10</td><td>low = 2</td></tr>
+      <tr><td>3</td><td>2</td><td>2</td><td>2</td><td>15</td><td>15 &gt; 10</td><td>high = 1</td></tr>
+      <tr><td>stop</td><td>2</td><td>1</td><td>—</td><td>—</td><td class="no">low &gt; high</td><td>return −1</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    When the loop ends, <b>low = 2</b> is exactly <b>where 10 would be inserted</b>.
+    Section 2 builds on this fact.
+  </div>
+
+  <h3><span class="qnum">1.6</span> <span class="hl-y">Recursive version</span></h3>
+
+<pre class="code">static int bs(int[] arr, int low, int high, int target) {
+  if (low &gt; high) return -1;           // base case: empty range
+  int mid = low + (high - low) / 2;
+  if (arr[mid] == target) return mid;
+  if (arr[mid] &lt; target) return bs(arr, mid + 1, high, target);
+  return bs(arr, low, mid - 1, target);
+}</pre>
+
+  <div class="complexity"><b>Complexity:</b> Same <b>O(log n) time</b>, but
+  <b>O(log n) space</b> for the call stack. <b>Prefer the iterative version.</b></div>
+
+  <h3><span class="qnum">1.7</span> <span class="hl-g">Why low + (high − low) / 2?</span></h3>
+  <p>With <code class="inline">(low + high) / 2</code>, if low = 1,500,000,000 and
+  high = 2,000,000,000, the sum exceeds the int limit (≈ 2.147 × 10⁹) and becomes
+  <span class="red">negative</span>. <code class="inline">low + (high − low) / 2</code>
+  gives the same mid <b>without the overflow</b>.</p>
+
+  <h3><span class="qnum">1.8</span> <span class="hl-o">Common bugs</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Bug</th><th>Symptom</th><th>Fix</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="inline">while (low &lt; high)</code> with this template</td>
+        <td>Misses the last remaining element (size-1 arrays fail)</td>
+        <td>Use <code class="inline">low &lt;= high</code></td>
+      </tr>
+      <tr>
+        <td><code class="inline">low = mid</code> or <code class="inline">high = mid</code> with <code class="inline">&lt;=</code></td>
+        <td>Infinite loop when low == high</td>
+        <td>Use <code class="inline">mid + 1</code> / <code class="inline">mid − 1</code></td>
+      </tr>
+      <tr>
+        <td><code class="inline">(low + high) / 2</code></td>
+        <td>Negative mid on huge indices</td>
+        <td><code class="inline">low + (high − low) / 2</code></td>
+      </tr>
+      <tr>
+        <td>Running on unsorted data</td>
+        <td>Wrong answers, no error</td>
+        <td>Sort first, or check for a monotonic property</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="sticky blue">
+    <b>Classic template in one line 🧠</b><br>
+    <code>low &lt;= high</code> · <code>mid = low + (high − low) / 2</code> ·
+    move to <code>mid ± 1</code> on mismatch.
+  </div>
+
+  <div class="pnum">4</div>
+</section>
+
+<!-- ============================ SECTION 2 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>2. Boundary Variations</h2>
+    <p>3 days &nbsp;•&nbsp; <span class="hl-b">Lower / upper bound · First / last · Floor &amp; ceil</span></p>
+  </div>
+
+  <p>Most interview binary-search problems are one of <b>two templates</b>:
+  <b>lower bound</b> (first index with arr[i] ≥ x) and
+  <b>upper bound</b> (first index with arr[i] &gt; x).
+  <b>First / last occurrence, count, insert position, floor and ceil</b> all come from
+  these two.</p>
+
+  <div class="note">
+    <b>All dry runs below use the same array with duplicates:</b>
+  </div>
+
+  <table class="dry">
+    <thead><tr><th>Index</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr></thead>
+    <tbody>
+      <tr><td><b>Value</b></td><td>1</td><td>2</td><td>4</td><td>4</td><td>4</td><td>7</td><td>9</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">2.1</span> <span class="hl-y">Lower bound — first index with arr[i] ≥ x</span></h3>
+  <p><b>Idea:</b> when <code class="inline">arr[mid] ≥ x</code>, <b>mid might be the answer</b>:
+  record it, then keep searching <b>left</b> for an earlier one. Default answer <b>n</b> means
+  "every element is smaller".</p>
+
+<pre class="code">static int lowerBound(int[] arr, int x) {
+  int low = 0, high = arr.length - 1, ans = arr.length;
+  while (low &lt;= high) {
+    int mid = low + (high - low) / 2;
+    if (arr[mid] &gt;= x) { ans = mid; high = mid - 1; } // candidate, go left
+    else low = mid + 1;
+  }
+  return ans;
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run, x = 4</caption>
+    <thead>
+      <tr><th>Step</th><th>low</th><th>high</th><th>mid</th><th>arr[mid]</th><th>arr[mid] ≥ 4?</th><th>ans</th><th>Move</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>0</td><td>6</td><td>3</td><td>4</td><td class="yes">Yes</td><td>3</td><td>high = 2</td></tr>
+      <tr><td>2</td><td>0</td><td>2</td><td>1</td><td>2</td><td class="no">No</td><td>3</td><td>low = 2</td></tr>
+      <tr><td>3</td><td>2</td><td>2</td><td>2</td><td>4</td><td class="yes">Yes</td><td>2</td><td>high = 1</td></tr>
+      <tr><td>stop</td><td>2</td><td>1</td><td>—</td><td>—</td><td>—</td><td><b>2</b></td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note"><b>Result 2</b>: the first 4. Step 1 found a 4 at index 3, but we kept
+  going left and found an earlier one.</div>
+
+  <h3><span class="qnum">2.2</span> <span class="hl-g">Upper bound — first index with arr[i] &gt; x</span></h3>
+  <p>Only the <b>comparison changes</b>: <code class="inline">≥</code> becomes
+  <code class="inline">&gt;</code>.</p>
+
+<pre class="code">if (arr[mid] &gt; x) { ans = mid; high = mid - 1; }
+else low = mid + 1;</pre>
+
+  <table class="dry">
+    <caption>Dry run, x = 4</caption>
+    <thead>
+      <tr><th>Step</th><th>low</th><th>high</th><th>mid</th><th>arr[mid]</th><th>arr[mid] &gt; 4?</th><th>ans</th><th>Move</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>start</td><td>0</td><td>6</td><td>—</td><td>—</td><td>—</td><td>7</td><td>—</td></tr>
+      <tr><td>1</td><td>0</td><td>6</td><td>3</td><td>4</td><td class="no">No</td><td>7</td><td>low = 4</td></tr>
+      <tr><td>2</td><td>4</td><td>6</td><td>5</td><td>7</td><td class="yes">Yes</td><td>5</td><td>high = 4</td></tr>
+      <tr><td>3</td><td>4</td><td>4</td><td>4</td><td>4</td><td class="no">No</td><td>5</td><td>low = 5</td></tr>
+      <tr><td>stop</td><td>5</td><td>4</td><td>—</td><td>—</td><td>—</td><td><b>5</b></td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note"><b>Result 5</b>: index of 7, the <b>first value greater than 4</b>.</div>
+
+  <div class="pnum">5</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">2.3</span> <span class="hl-o">Everything else from these two</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Problem</th><th>Formula</th><th>x = 4 in our array</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Search insert position (LC 35)</td><td>lowerBound(x)</td><td>2</td></tr>
+      <tr><td>First occurrence</td><td>lb = lowerBound(x); valid only if lb &lt; n and arr[lb] == x, else −1</td><td>2</td></tr>
+      <tr><td>Last occurrence</td><td>upperBound(x) − 1, if first occurrence exists</td><td>4</td></tr>
+      <tr><td>Count occurrences</td><td>upperBound(x) − lowerBound(x)</td><td>5 − 2 = 3</td></tr>
+      <tr><td>Ceil (smallest value ≥ x)</td><td>arr[lowerBound(x)] if index &lt; n</td><td>4</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <b>Edge checks:</b><br>
+    x = 10 → lowerBound = 7 = n (insert at end, no ceil).<br>
+    x = 0 → lowerBound = 0.<br>
+    x = 5 → first occurrence: lb = 5 but arr[5] = 7 ≠ 5 → <b>−1</b>.
+  </div>
+
+  <h3><span class="qnum">2.4</span> <span class="hl-p">Floor — largest value ≤ x</span></h3>
+  <p><b>Idea:</b> mirror of lower bound. When <code class="inline">arr[mid] ≤ x</code>
+  it is a candidate; record it and search <b>right</b> for a bigger one.</p>
+
+<pre class="code">static int floorVal(int[] arr, int x) {
+  int low = 0, high = arr.length - 1, ans = -1;
+  while (low &lt;= high) {
+    int mid = low + (high - low) / 2;
+    if (arr[mid] &lt;= x) { ans = arr[mid]; low = mid + 1; }
+    else high = mid - 1;
+  }
+  return ans;
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run, x = 5</caption>
+    <thead>
+      <tr><th>Step</th><th>low</th><th>high</th><th>mid</th><th>arr[mid]</th><th>arr[mid] ≤ 5?</th><th>ans</th><th>Move</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>0</td><td>6</td><td>3</td><td>4</td><td class="yes">Yes</td><td>4</td><td>low = 4</td></tr>
+      <tr><td>2</td><td>4</td><td>6</td><td>5</td><td>7</td><td class="no">No</td><td>4</td><td>high = 4</td></tr>
+      <tr><td>3</td><td>4</td><td>4</td><td>4</td><td>4</td><td class="yes">Yes</td><td>4</td><td>low = 5</td></tr>
+      <tr><td>stop</td><td>5</td><td>4</td><td>—</td><td>—</td><td>—</td><td><b>4</b></td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">2.5</span> <span class="hl-y">The "record and continue" idea</span></h3>
+  <p>Every template in this section follows <b>one rule</b>:
+  when mid satisfies the condition, <b>save it</b> and keep shrinking toward the side
+  where a <b>better answer</b> could be.</p>
+
+  <div class="note">
+    <b>Decide two things before coding:</b><br>
+    ① What condition marks a <b>candidate</b>?<br>
+    ② Is "better" to the <b>left</b> or <b>right</b>?<br>
+    That decides <code class="inline">high = mid − 1</code> or
+    <code class="inline">low = mid + 1</code>.
+  </div>
+
+  <div class="sticky green">
+    <b>Boundary templates 🎯</b><br>
+    <b>Lower bound</b> → arr[mid] ≥ x → go <u>left</u><br>
+    <b>Upper bound</b> → arr[mid] &gt; x → go <u>left</u><br>
+    <b>Floor</b> → arr[mid] ≤ x → go <u>right</u><br>
+    All three <u>record ans and keep going</u>.
+  </div>
+
+  <div class="pnum">6</div>
+</section>
+
+<!-- ============================ SECTION 3 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>3. Binary Search on Modified Arrays</h2>
+    <p>3 days &nbsp;•&nbsp; <span class="hl-g">Rotated · Min · Peak · Single element</span></p>
+  </div>
+
+  <p>The array doesn't have to be <b>fully sorted</b>. Binary search works whenever, by
+  looking at <b>mid</b>, you can tell <b>which half is safe to throw away</b>.
+  All four problems below are <b>O(log n) time, O(1) space</b>.</p>
+
+  <h3><span class="qnum">3.1</span> <span class="hl-y">Search in a rotated sorted array (LC 33)</span></h3>
+  <p>A sorted array of <b>distinct values</b> was rotated at an unknown point.
+  Find the target's index or <b>−1</b>.</p>
+  <div class="dryrun"><b>Input:</b> [4, 5, 6, 7, 0, 1, 2], target = 0 →
+  <b>Output: 4</b></div>
+
+  <p><b>Key fact:</b> cut a rotated array at any mid and <b>at least one half is sorted</b>.
+  Check if the target lies inside the sorted half's range; if yes go there, otherwise go
+  to the other half.</p>
+
+<pre class="code">int low = 0, high = arr.length - 1;
+while (low &lt;= high) {
+  int mid = low + (high - low) / 2;
+  if (arr[mid] == target) return mid;
+
+  if (arr[low] &lt;= arr[mid]) {              // left half sorted
+    if (arr[low] &lt;= target &amp;&amp; target &lt; arr[mid]) high = mid - 1;
+    else low = mid + 1;
+  } else {                                  // right half sorted
+    if (arr[mid] &lt; target &amp;&amp; target &lt;= arr[high]) low = mid + 1;
+    else high = mid - 1;
+  }
+}
+return -1;</pre>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Step</th><th>low</th><th>high</th><th>mid</th><th>arr[mid]</th><th>Sorted half</th><th>Target in it?</th><th>Move</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>0</td><td>6</td><td>3</td><td>7</td><td>Left [4..7]</td><td class="no">0 in [4, 7)? No</td><td>low = 4</td></tr>
+      <tr><td>2</td><td>4</td><td>6</td><td>5</td><td>1</td><td>Left [0..1]</td><td class="yes">0 in [0, 1)? Yes</td><td>high = 4</td></tr>
+      <tr><td>3</td><td>4</td><td>4</td><td>4</td><td>0</td><td>—</td><td class="yes">found</td><td>return 4</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">3.2</span> <span class="hl-b">Minimum in a rotated sorted array (LC 153)</span></h3>
+  <div class="dryrun"><b>Input:</b> [4, 5, 6, 7, 0, 1, 2] → <b>Output: 0</b></div>
+
+  <p><b>Idea:</b> compare <b>mid with high</b>. If <code class="inline">arr[mid] &gt; arr[high]</code>,
+  the <b>drop</b> (and the minimum) is to the <b>right of mid</b>. Otherwise mid itself might
+  be the minimum, so <b>keep it</b>.</p>
+
+<pre class="code">int low = 0, high = arr.length - 1;
+while (low &lt; high) {              // stops when one element remains
+  int mid = low + (high - low) / 2;
+  if (arr[mid] &gt; arr[high]) low = mid + 1;
+  else high = mid;               // mid may be the answer
+}
+return arr[low];</pre>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Step</th><th>low</th><th>high</th><th>mid</th><th>arr[mid] vs arr[high]</th><th>Move</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>0</td><td>6</td><td>3</td><td>7 &gt; 2</td><td>low = 4</td></tr>
+      <tr><td>2</td><td>4</td><td>6</td><td>5</td><td>1 &gt; 2? No</td><td>high = 5</td></tr>
+      <tr><td>3</td><td>4</td><td>5</td><td>4</td><td>0 &gt; 1? No</td><td>high = 4</td></tr>
+      <tr><td>stop</td><td>4</td><td>4</td><td>—</td><td>—</td><td>return arr[4] = <b>0</b></td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <b>Template note:</b> <code class="inline">high = mid</code> is safe here because the loop is
+    <code class="inline">low &lt; high</code>, so mid is always &lt; high and the range always shrinks.
+    This is the <b>second binary-search template</b>: use it when you are
+    <b>converging on an answer</b> rather than checking for equality.
+  </div>
+
+  <div class="pnum">7</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">3.3</span> <span class="hl-g">Find a peak element (LC 162)</span></h3>
+  <p>A <b>peak</b> is greater than its neighbours (outside the array counts as <b>−∞</b>).
+  Return <b>any</b> peak's index.</p>
+  <div class="dryrun"><b>Input:</b> [1, 2, 1, 3, 5, 6, 4] → <b>Output: 5</b> (value 6).
+  Index 1 is also valid.</div>
+
+  <p><b>Idea:</b> if <code class="inline">arr[mid] &lt; arr[mid + 1]</code>, you are on an
+  <b>uphill slope</b>; a peak must exist to the <b>right</b>. Otherwise a peak is
+  <b>at mid or to its left</b>.</p>
+
+<pre class="code">int low = 0, high = arr.length - 1;
+while (low &lt; high) {
+  int mid = low + (high - low) / 2;
+  if (arr[mid] &lt; arr[mid + 1]) low = mid + 1;
+  else high = mid;
+}
+return low;</pre>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Step</th><th>low</th><th>high</th><th>mid</th><th>arr[mid] vs arr[mid+1]</th><th>Slope</th><th>Move</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>0</td><td>6</td><td>3</td><td>3 &lt; 5</td><td>uphill</td><td>low = 4</td></tr>
+      <tr><td>2</td><td>4</td><td>6</td><td>5</td><td>6 &gt; 4</td><td>downhill</td><td>high = 5</td></tr>
+      <tr><td>3</td><td>4</td><td>5</td><td>4</td><td>5 &lt; 6</td><td>uphill</td><td>low = 5</td></tr>
+      <tr><td>stop</td><td>5</td><td>5</td><td>—</td><td>—</td><td>—</td><td>return 5</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    The array isn't sorted at all — the <b>monotonic property is the slope direction</b>.
+  </div>
+
+  <h3><span class="qnum">3.4</span> <span class="hl-p">Single element in a sorted array (LC 540)</span></h3>
+  <p>Every element appears <b>twice</b> except one. Find it in <b>O(log n)</b>.</p>
+  <div class="dryrun"><b>Input:</b> [1, 1, 2, 3, 3, 4, 4, 8, 8] → <b>Output: 2</b></div>
+
+  <p><b>Idea:</b> <u>before</u> the single element, each pair starts at an <b>even index</b>.
+  <u>After</u> it, pairs start at <b>odd indices</b>. Look at an even mid: if
+  <code class="inline">arr[mid] == arr[mid + 1]</code>, the pattern is still intact,
+  so the single is to the <b>right</b>.</p>
+
+<pre class="code">int low = 0, high = arr.length - 1;
+while (low &lt; high) {
+  int mid = low + (high - low) / 2;
+  if (mid % 2 == 1) mid--;              // make mid even
+  if (arr[mid] == arr[mid + 1]) low = mid + 2;
+  else high = mid;
+}
+return arr[low];</pre>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Step</th><th>low</th><th>high</th><th>mid (made even)</th><th>arr[mid], arr[mid+1]</th><th>Pair intact?</th><th>Move</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>0</td><td>8</td><td>4</td><td>3, 4</td><td class="no">No</td><td>high = 4</td></tr>
+      <tr><td>2</td><td>0</td><td>4</td><td>2</td><td>2, 3</td><td class="no">No</td><td>high = 2</td></tr>
+      <tr><td>3</td><td>0</td><td>2</td><td>1 → 0</td><td>1, 1</td><td class="yes">Yes</td><td>low = 2</td></tr>
+      <tr><td>stop</td><td>2</td><td>2</td><td>—</td><td>—</td><td>—</td><td>return arr[2] = <b>2</b></td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    Brute force with <b>XOR</b> (Module 1, problem 7 of the practice bank) is <b>O(n)</b>;
+    this uses the <b>sorted order</b> to reach <b>O(log n)</b>.
+  </div>
+
+  <div class="pnum">8</div>
+</section>
+
+<!-- ============================ SECTION 4 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>4. Binary Search on Answer</h2>
+    <p>4–5 days &nbsp;•&nbsp; <span class="hl-o">Monotonic predicate · Minimize · Maximize</span></p>
+  </div>
+
+  <p>When the question asks for the <b>minimum (or maximum) value that works</b>,
+  and "works" is <b>monotonic</b> (if k works, every bigger k also works),
+  binary search over the <b>range of possible answers</b> instead of over an array.</p>
+
+  <div class="note">
+    <b>Cost:</b> O(log(range) × cost of one check).
+  </div>
+
+  <h3><span class="qnum">4.1</span> <span class="hl-y">The template</span></h3>
+
+<pre class="code">int low = smallestPossible, high = largestPossible, ans = high;
+while (low &lt;= high) {
+  int mid = low + (high - low) / 2;
+  if (isFeasible(mid)) { ans = mid; high = mid - 1; }  // works: try smaller
+  else low = mid + 1;                                  // fails: need bigger
+}
+return ans;</pre>
+
+  <div class="note">
+    <b>Three decisions for every problem:</b><br>
+    <b>1. Range:</b> what is the smallest and largest answer that could ever make sense?<br>
+    <b>2. Check:</b> given a candidate mid, can I test "does it work?" in O(n) or less?<br>
+    <b>3. Direction:</b> minimize (go <b>left</b> on success, as above) or maximize
+    (go <b>right</b> on success)?
+  </div>
+
+  <h3><span class="qnum">4.2</span> <span class="hl-b">Integer square root (LC 69)</span></h3>
+  <p>Return ⌊√x⌋ without using <code class="inline">Math.sqrt</code>.</p>
+  <div class="dryrun"><b>Input:</b> x = 28 → <b>Output: 5</b></div>
+
+  <p><b>Range</b> [1, x]. <b>Check:</b> <code class="inline">mid × mid ≤ x</code>.
+  We want the <b>largest mid that passes</b>, so go <b>right</b> on success.</p>
+
+<pre class="code">long low = 1, high = x, ans = 0;
+while (low &lt;= high) {
+  long mid = low + (high - low) / 2;
+  if (mid * mid &lt;= x) { ans = mid; low = mid + 1; }  // long avoids overflow
+  else high = mid - 1;
+}
+return (int) ans;</pre>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Step</th><th>low</th><th>high</th><th>mid</th><th>mid²</th><th>mid² ≤ 28?</th><th>ans</th><th>Move</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>1</td><td>28</td><td>14</td><td>196</td><td class="no">No</td><td>0</td><td>high = 13</td></tr>
+      <tr><td>2</td><td>1</td><td>13</td><td>7</td><td>49</td><td class="no">No</td><td>0</td><td>high = 6</td></tr>
+      <tr><td>3</td><td>1</td><td>6</td><td>3</td><td>9</td><td class="yes">Yes</td><td>3</td><td>low = 4</td></tr>
+      <tr><td>4</td><td>4</td><td>6</td><td>5</td><td>25</td><td class="yes">Yes</td><td>5</td><td>low = 6</td></tr>
+      <tr><td>5</td><td>6</td><td>6</td><td>6</td><td>36</td><td class="no">No</td><td>5</td><td>high = 5</td></tr>
+      <tr><td>stop</td><td>6</td><td>5</td><td>—</td><td>—</td><td>—</td><td><b>5</b></td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <div class="pnum">9</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">4.3</span> <span class="hl-g">Koko eating bananas (LC 875)</span></h3>
+  <p>Piles of bananas; Koko eats at speed <b>k</b> per hour, <b>one pile per hour</b>
+  (if a pile has fewer than k, she finishes it and waits). Find the <b>minimum k</b> to
+  finish within <b>h hours</b>.</p>
+  <div class="dryrun"><b>Input:</b> piles = [3, 6, 7, 11], h = 8 → <b>Output: 4</b></div>
+
+  <p><b>Range:</b> k from 1 to max(piles) = 11 (faster than the biggest pile never helps).
+  <b>Check:</b> hours(k) = sum of ⌈pile / k⌉ ≤ h.</p>
+
+  <p><b>First, see why it is monotonic:</b></p>
+
+  <table class="dry">
+    <thead>
+      <tr><th>k</th><th>Hours per pile (3, 6, 7, 11)</th><th>Total</th><th>≤ 8?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>3, 6, 7, 11</td><td>27</td><td class="no">No</td></tr>
+      <tr><td>2</td><td>2, 3, 4, 6</td><td>15</td><td class="no">No</td></tr>
+      <tr><td>3</td><td>1, 2, 3, 4</td><td>10</td><td class="no">No</td></tr>
+      <tr><td>4</td><td>1, 2, 2, 3</td><td>8</td><td class="yes">Yes</td></tr>
+      <tr><td>5</td><td>1, 2, 2, 3</td><td>8</td><td class="yes">Yes</td></tr>
+      <tr><td>6</td><td>1, 1, 2, 2</td><td>6</td><td class="yes">Yes</td></tr>
+    </tbody>
+  </table>
+
+  <div class="dryrun">
+    <b>No, No, No, Yes, Yes, Yes…</b> — we want the <b>first Yes</b>.
+    That is exactly <b>lower bound on the answer space</b>.
+  </div>
+
+<pre class="code">static boolean canFinish(int[] piles, int k, int h) {
+  long hours = 0;
+  for (int p : piles) hours += (p + k - 1) / k;  // ceil(p / k) with ints
+  return hours &lt;= h;
+}
+// main: low = 1, high = max(piles); use the template from 4.1</pre>
+
+  <h3><span class="qnum">4.4</span> <span class="hl-p">Ship packages within D days (LC 1011)</span></h3>
+  <p>Load packages in the given order; each day the ship carries at most
+  <b>cap</b> weight. Find the <b>minimum cap</b> to ship everything in <b>days</b> days.</p>
+  <div class="dryrun"><b>Input:</b> weights = [3, 2, 2, 4, 1, 4], days = 3 →
+  <b>Output: 6</b></div>
+
+  <p><b>Range:</b> low = max weight = 4 (must carry the heaviest one),
+  high = total = 16 (all in one day). <b>Check:</b> greedily fill each day until the next
+  package doesn't fit; count days.</p>
+
+<pre class="code">static int daysNeeded(int[] w, int cap) {
+  int days = 1, load = 0;
+  for (int x : w) {
+    if (load + x &gt; cap) { days++; load = 0; }  // start a new day
+    load += x;
+  }
+  return days;
+}</pre>
+
+  <div class="dryrun"><b>Check for cap = 6:</b>
+  day 1 [3, 2], day 2 [2, 4], day 3 [1, 4] → 3 days.</div>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Step</th><th>low</th><th>high</th><th>mid (cap)</th><th>Days loaded</th><th>Days</th><th>≤ 3?</th><th>ans</th><th>Move</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>4</td><td>16</td><td>10</td><td>[3,2,2] [4,1,4]</td><td>2</td><td class="yes">Yes</td><td>10</td><td>high = 9</td></tr>
+      <tr><td>2</td><td>4</td><td>9</td><td>6</td><td>[3,2] [2,4] [1,4]</td><td>3</td><td class="yes">Yes</td><td>6</td><td>high = 5</td></tr>
+      <tr><td>3</td><td>4</td><td>5</td><td>4</td><td>[3] [2,2] [4] [1] [4]</td><td>5</td><td class="no">No</td><td>6</td><td>low = 5</td></tr>
+      <tr><td>4</td><td>5</td><td>5</td><td>5</td><td>[3,2] [2] [4,1] [4]</td><td>4</td><td class="no">No</td><td>6</td><td>low = 6</td></tr>
+      <tr><td>stop</td><td>6</td><td>5</td><td>—</td><td>—</td><td>—</td><td>—</td><td><b>6</b></td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">4.5</span> <span class="hl-o">How to spot "binary search on answer"</span></h3>
+  <ul class="arrows">
+    <li>The question says <b>minimum maximum</b>, <b>maximum minimum</b>,
+        <i>"smallest speed / capacity / time such that…"</i>.</li>
+    <li>Constraints have a <b>large value range</b> (up to 10⁹) but you can
+        <b>check one candidate in O(n)</b>.</li>
+    <li>Writing <i>"for k from 1 to max, check(k)"</i> would work but is too slow —
+        <b>replace that loop with binary search</b>.</li>
+  </ul>
+
+  <div class="sticky blue">
+    <b>Answer-space recipe 🎯</b><br>
+    ① Find the range [smallest, largest].<br>
+    ② Write the O(n) <code>isFeasible</code> check.<br>
+    ③ Minimize → go left on success; maximize → go right.
+  </div>
+
+  <div class="pnum">10</div>
+</section>
+
+<!-- ============================ SECTION 5 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>5. Practice Bank &amp; Pattern Cheat Sheet</h2>
+    <p>Ongoing &nbsp;•&nbsp; <span class="hl-y">22 problems · 3 levels</span></p>
+  </div>
+
+  <p>Solve the <b>22 problems</b> below <b>in order</b>, writing the
+  <b>low / mid / high table on paper for each</b>. <b>Level 1 in week 1</b>;
+  <b>Levels 2–3 across week 2</b>.</p>
+
+  <h3><span class="qnum">5.1</span> <span class="hl-y">Pattern recognition cheat sheet</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th>If the problem says…</th><th>Template</th><th>Loop / moves</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>"sorted" + "find target"</td><td>Classic (1.3)</td><td><code class="inline">low &lt;= high</code>, mid ± 1</td></tr>
+      <tr><td>"first / last position", "insert position", "count of x"</td><td>Lower / upper bound (2.1, 2.2)</td><td>Record ans, keep searching</td></tr>
+      <tr><td>"floor", "largest ≤ x"</td><td>Floor (2.4)</td><td>Record ans, go right</td></tr>
+      <tr><td>"rotated sorted"</td><td>Find the sorted half (3.1)</td><td>Check target's range</td></tr>
+      <tr><td>"minimum in rotated", "peak", "converge on one element"</td><td>Converging (3.2, 3.3)</td><td><code class="inline">low &lt; high</code>, high = mid</td></tr>
+      <tr><td>"minimum speed / capacity / days such that…"</td><td>Answer space, minimize (4.1)</td><td>Feasible → go left</td></tr>
+      <tr><td>"maximum minimum distance", "largest x such that…"</td><td>Answer space, maximize (4.2)</td><td>Feasible → go right</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">5.2</span> <span class="hl-g">Level 1 — Fundamentals and boundaries</span></h3>
+
+  <table class="dry">
+    <thead><tr><th>#</th><th>Problem</th><th>Template</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Binary Search (LC 704)</td><td>Classic</td></tr>
+      <tr><td>2</td><td>Search Insert Position (LC 35)</td><td>Lower bound</td></tr>
+      <tr><td>3</td><td>Find First and Last Position of Element (LC 34)</td><td>Lower + upper bound</td></tr>
+      <tr><td>4</td><td>First Bad Version (LC 278)</td><td>Lower bound on a predicate</td></tr>
+      <tr><td>5</td><td>Guess Number Higher or Lower (LC 374)</td><td>Classic</td></tr>
+      <tr><td>6</td><td>Sqrt(x) (LC 69)</td><td>Answer space, maximize</td></tr>
+      <tr><td>7</td><td>Valid Perfect Square (LC 367)</td><td>Classic on 1..n</td></tr>
+      <tr><td>8</td><td>Floor and Ceil in a Sorted Array (GFG)</td><td>Floor / lower bound</td></tr>
+    </tbody>
+  </table>
+
+  <div class="pnum">11</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">5.3</span> <span class="hl-b">Level 2 — Modified arrays</span></h3>
+
+  <table class="dry">
+    <thead><tr><th>#</th><th>Problem</th><th>Template</th></tr></thead>
+    <tbody>
+      <tr><td>9</td><td>Search in Rotated Sorted Array (LC 33)</td><td>Sorted half</td></tr>
+      <tr><td>10</td><td>Search in Rotated Sorted Array II (LC 81)</td><td>Sorted half + duplicates</td></tr>
+      <tr><td>11</td><td>Find Minimum in Rotated Sorted Array (LC 153)</td><td>Converging</td></tr>
+      <tr><td>12</td><td>Peak Index in a Mountain Array (LC 852)</td><td>Converging on slope</td></tr>
+      <tr><td>13</td><td>Find Peak Element (LC 162)</td><td>Converging on slope</td></tr>
+      <tr><td>14</td><td>Single Element in a Sorted Array (LC 540)</td><td>Even / odd pairing</td></tr>
+      <tr><td>15</td><td>Search a 2D Matrix (LC 74)</td><td>Classic on index 0..m·n−1</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">5.4</span> <span class="hl-o">Level 3 — Binary search on answer</span></h3>
+
+  <table class="dry">
+    <thead><tr><th>#</th><th>Problem</th><th>Minimize or maximize</th></tr></thead>
+    <tbody>
+      <tr><td>16</td><td>Koko Eating Bananas (LC 875)</td><td>Minimize</td></tr>
+      <tr><td>17</td><td>Find the Smallest Divisor Given a Threshold (LC 1283)</td><td>Minimize</td></tr>
+      <tr><td>18</td><td>Capacity To Ship Packages Within D Days (LC 1011)</td><td>Minimize</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">5.5</span> <span class="hl-p">Self-review after each problem</span></h3>
+
+  <ul class="ticks">
+    <li>I named the <b>monotonic property</b> (what goes from false to true).</li>
+    <li>I chose the <b>template</b> and the <b>loop condition</b>
+        (<code class="inline">&lt;=</code> or <code class="inline">&lt;</code>) on purpose.</li>
+    <li>I wrote the <b>low / mid / high table</b> for a <b>normal</b> input and a
+        <b>size-1 or size-2</b> input.</li>
+    <li>I checked targets <b>below the minimum</b> and <b>above the maximum</b>.</li>
+    <li>I wrote final complexity (for answer-space problems:
+        <b>O(n × log range)</b>).</li>
+    <li>I can <b>re-solve it from scratch after 3 days</b> without looking.</li>
+  </ul>
+
+  <div class="sticky pink">
+    <b>2-week plan 📅</b><br>
+    <b>Week 1:</b> classic template + boundaries + Level 1 (8 problems).<br>
+    <b>Week 2:</b> modified arrays + answer space + Levels 2–3 (15 problems).<br>
+    Then re-solve everything from memory with a fresh dry-run table.
+  </div>
+
+  <div class="note">
+    <b>Next module (suggested):</b> Sorting algorithms — bubble, selection, insertion,
+    then <b>merge sort</b> and <b>quick sort</b>, which introduce recursion and
+    <b>divide and conquer</b>.
+  </div>
+
+  <div class="pnum">12</div>
+</section>
+
+<!-- ============================ QUICK REFERENCE ============================ -->
+<section class="page">
+  <h2 class="section hl-y">Quick Reference — One-Page Recap</h2>
+
+  <h3 style="border-bottom:none;"><span class="qnum">A</span> <span class="hl-b">The two loop conditions</span></h3>
+  <div class="grid2">
+    <div class="note" style="margin:0;">
+      <b><code>low &lt;= high</code></b><br>
+      Equality search.<br>
+      Move to <code>mid + 1</code> / <code>mid − 1</code>.<br>
+      Returns an <b>index</b> or −1.<br>
+      <span class="mini">Classic, lower bound, upper bound, floor, rotated search.</span>
+    </div>
+    <div class="note" style="margin:0;">
+      <b><code>low &lt; high</code></b><br>
+      Converging search.<br>
+      Use <code>high = mid</code> (keep mid).<br>
+      Returns the <b>element / position</b> the range converges to.<br>
+      <span class="mini">Minimum in rotated, peak, single element.</span>
+    </div>
+  </div>
+
+  <h3 style="border-bottom:none;"><span class="qnum">B</span> <span class="hl-g">Boundary recipes</span></h3>
+  <ul class="arrows">
+    <li><b>Lower bound</b> — arr[mid] ≥ x → ans = mid; <b>go left</b></li>
+    <li><b>Upper bound</b> — arr[mid] &gt; x → ans = mid; <b>go left</b></li>
+    <li><b>Floor</b> — arr[mid] ≤ x → ans = arr[mid]; <b>go right</b></li>
+    <li><b>First occurrence</b> = lowerBound; verify arr[lb] == x</li>
+    <li><b>Last occurrence</b> = upperBound − 1</li>
+    <li><b>Count</b> = upperBound − lowerBound</li>
+  </ul>
+
+  <h3 style="border-bottom:none;"><span class="qnum">C</span> <span class="hl-o">Answer-space recipe</span></h3>
+  <ol>
+    <li><b>Range</b> — smallest &amp; largest sensible answer.</li>
+    <li><b>Check</b> — O(n) <code class="inline">isFeasible(mid)</code>.</li>
+    <li><b>Direction</b> — minimize → go left on success;
+        maximize → go right on success.</li>
+  </ol>
+
+  <h3 style="border-bottom:none;"><span class="qnum">D</span> <span class="hl-p">Edge cases to test</span></h3>
+  <ul class="ticks">
+    <li>Array size <b>1</b> and size <b>2</b>.</li>
+    <li>Target <b>smaller than arr[0]</b> or <b>larger than arr[n−1]</b>.</li>
+    <li>All elements <b>equal</b>.</li>
+    <li><b>Rotated</b> array with k = 0 or k = n.</li>
+    <li>Answer-space problems: check the <b>lowest</b> and <b>highest</b> candidates
+        by hand.</li>
+  </ul>
+
+  <hr class="hand">
+
+  <div class="note">
+    <b>Reminder:</b> the dry-run table is not optional. If you can't say aloud
+    <i>why</i> each <code class="inline">low</code> / <code class="inline">high</code>
+    update is safe, you haven't understood the template yet.
+  </div>
+
+  <div class="sticky green" style="margin-top:36px;">
+    <b>You reached the end of Module 2. 🎉</b><br>
+    Close the notes, open a blank file, and re-write <u>classic binary search</u>,
+    <u>lower bound</u>, <u>peak element</u> and <u>Koko</u> from memory —
+    <b>with a low / mid / high table</b> for each.
+  </div>
+
+  <div class="center" style="margin-top:44px;">
+    <span class="stamp">END OF MODULE 2</span>
+  </div>
+
+  <div class="doodle-stars" style="margin-top:26px;">✦ ✧ ✦ ✧ ✦</div>
+
+  <div class="pnum">13</div>
+</section>
+
+</div>
+
+<!-- ============================================================
+     Tiny script: colour "// comment" text inside code blocks
+     green, so the code looks hand-annotated.
+     ============================================================ -->
+<script>
+(function () {
+  document.querySelectorAll('pre.code').forEach(function (block) {
+    var lines = block.innerHTML.split('\n');
+    var out = lines.map(function (line) {
+      var inSingle = false, inDouble = false, inTemplate = false, idx = -1;
+      for (var i = 0; i < line.length; i++) {
+        var ch = line[i];
+        var prev = line[i - 1];
+        if (ch === "'" && !inDouble && !inTemplate && prev !== '\\') inSingle = !inSingle;
+        else if (ch === '"' && !inSingle && !inTemplate && prev !== '\\') inDouble = !inDouble;
+        else if (ch === '`' && !inSingle && !inDouble && prev !== '\\') inTemplate = !inTemplate;
+        else if (!inSingle && !inDouble && !inTemplate && ch === '/' && line[i + 1] === '/') {
+          idx = i; break;
+        }
+      }
+      if (idx > -1) {
+        return line.slice(0, idx) + '<span class="cm">' + line.slice(idx) + '</span>';
+      }
+      return line;
+    });
+    block.innerHTML = out.join('\n');
+  });
+})();
+</script>
+
+</body>
+</html>

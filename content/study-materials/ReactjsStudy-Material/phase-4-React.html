@@ -1,0 +1,3697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React JS — Phase 4: Forms and User Interaction</title>
+<style>
+/* ============================================================
+   PREMIUM REACT PHASE 4 BOOK — PRINT / PDF STYLESHEET
+   ============================================================ */
+
+:root{
+  --ink:#141326;
+  --ink-soft:#3a3757;
+  --muted:#6d6a8c;
+  --brand:#4338ca;
+  --brand-2:#6366f1;
+  --brand-3:#c7d2fe;
+  --accent:#f97316;
+  --accent-2:#fb7185;
+  --teal:#0f9d76;
+  --line:#e5e4f2;
+  --code-bg:#0f0f23;
+  --code-head:#1c1c3a;
+}
+
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+
+body{
+  margin:0;
+  background:#eeecf7;
+  color:var(--ink);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size:11.4pt;
+  line-height:1.78;
+  -webkit-font-smoothing:antialiased;
+}
+
+.book{
+  max-width:960px;
+  margin:0 auto;
+  background:#fff;
+  padding:0 56px 80px;
+  box-shadow:0 0 60px rgba(30,25,90,.16);
+}
+
+/* ============================================================
+   COVER
+   ============================================================ */
+.cover{
+  position:relative;
+  margin:0 -56px 60px;
+  padding:78px 64px 70px;
+  background:
+    radial-gradient(1100px 600px at 12% -10%, #6366f1 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 110%, #1e1b4b 0%, transparent 60%),
+    linear-gradient(150deg,#0f0f38 0%, #1e1b6b 42%, #3730a3 100%);
+  color:#fff;
+  overflow:hidden;
+}
+.cover::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(ellipse at 70% 20%, #000 0%, transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse at 70% 20%, #000 0%, transparent 78%);
+  pointer-events:none;
+}
+.cover::after{
+  content:"";
+  position:absolute;
+  width:520px; height:520px; right:-160px; bottom:-220px;
+  background:radial-gradient(circle, rgba(249,115,22,.32) 0%, transparent 68%);
+  border-radius:50%;
+  pointer-events:none;
+}
+.cover-inner{ position:relative; z-index:2; }
+
+.badge{
+  display:inline-block;
+  font-size:9.5pt;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  font-weight:700;
+  color:#ffd479;
+  border:1px solid rgba(255,212,121,.45);
+  background:rgba(255,212,121,.09);
+  padding:7px 16px;
+  border-radius:100px;
+  margin-bottom:34px;
+}
+.cover h1{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size:52pt;
+  line-height:1.03;
+  margin:0 0 6px;
+  letter-spacing:-.02em;
+  font-weight:700;
+}
+.cover h1 .grad{
+  background:linear-gradient(100deg,#7dd3fc 0%, #ffd479 55%, #fb7185 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.cover .sub{
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size:19pt;
+  color:#c3c9ff;
+  margin:14px 0 0;
+  font-weight:400;
+  letter-spacing:.01em;
+}
+.cover .rule{
+  width:110px; height:5px; border-radius:6px;
+  background:linear-gradient(90deg,#ffd479,#fb7185);
+  margin:32px 0 30px;
+}
+.cover .lede{
+  max-width:610px;
+  font-size:12.4pt;
+  line-height:1.85;
+  color:#d9dcff;
+  margin:0 0 40px;
+}
+.cover-chips{ display:flex; flex-wrap:wrap; gap:10px; }
+.chip{
+  font-size:9.6pt;
+  font-weight:600;
+  letter-spacing:.02em;
+  padding:8px 15px;
+  border-radius:9px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.17);
+  color:#e6e8ff;
+  backdrop-filter:blur(4px);
+}
+.cover-foot{
+  margin-top:56px;
+  padding-top:24px;
+  border-top:1px solid rgba(255,255,255,.16);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  flex-wrap:wrap;
+  font-size:10pt;
+  color:#a8aef0;
+}
+.cover-foot strong{ color:#fff; font-weight:700; letter-spacing:.02em; }
+
+/* ============================================================
+   TOC / PANELS
+   ============================================================ */
+.toc{
+  background:linear-gradient(180deg,#f6f6ff 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:44px 46px;
+  margin-bottom:64px;
+}
+.toc h2{
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size:24pt;
+  margin:0 0 6px;
+  color:var(--brand);
+  letter-spacing:-.01em;
+}
+.toc .toc-sub{ color:var(--muted); font-size:10.4pt; margin:0 0 30px; }
+.toc ol{ list-style:none; margin:0; padding:0; counter-reset:toc; }
+.toc li{
+  counter-increment:toc;
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  padding:10px 0;
+  border-bottom:1px dashed #e2e1f4;
+  font-size:11.2pt;
+}
+.toc li:last-child{ border-bottom:none; }
+.toc li .n{
+  flex:0 0 34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(140deg,#4338ca,#6366f1);
+  color:#fff;
+  font-size:10pt;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transform:translateY(6px);
+}
+.toc li .t{ font-weight:600; color:var(--ink); }
+.toc li .t small{ display:block; font-weight:400; color:var(--muted); font-size:9.6pt; }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1,h2,h3,h4{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  color:var(--brand);
+  line-height:1.25;
+  letter-spacing:-.005em;
+}
+
+.topic-head{
+  margin:0 0 34px;
+  padding:34px 38px;
+  border-radius:18px;
+  background:linear-gradient(135deg,#0f0f38 0%, #1e1b6b 58%, #3730a3 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+}
+.topic-head::after{
+  content:"";
+  position:absolute; width:300px; height:300px; right:-90px; top:-140px;
+  background:radial-gradient(circle, rgba(249,115,22,.36), transparent 70%);
+  border-radius:50%;
+}
+.topic-head .kicker{
+  position:relative; z-index:2;
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#ffd479; font-weight:700; margin-bottom:12px;
+}
+.topic-head h2{
+  position:relative; z-index:2;
+  color:#fff; font-size:26pt; margin:0; letter-spacing:-.015em;
+}
+.topic-head p{
+  position:relative; z-index:2;
+  margin:12px 0 0; color:#c3c9ff; font-size:10.6pt; max-width:640px;
+}
+
+h3{
+  font-size:15.5pt;
+  margin:40px 0 12px;
+  padding-left:16px;
+  border-left:5px solid var(--accent);
+  color:#1e1b6b;
+}
+h4{
+  font-size:12.6pt;
+  margin:26px 0 8px;
+  color:var(--brand-2);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-weight:700;
+  letter-spacing:0;
+}
+p{ margin:0 0 15px; color:var(--ink-soft); }
+strong{ color:var(--ink); font-weight:700; }
+
+ul,ol{ margin:0 0 16px; padding-left:24px; color:var(--ink-soft); }
+li{ margin-bottom:7px; }
+
+a{ color:var(--brand-2); text-decoration:none; border-bottom:1px solid var(--brand-3); }
+
+code{
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size:.87em;
+  background:#eef2ff;
+  color:#3730a3;
+  padding:2px 6px;
+  border-radius:5px;
+  border:1px solid #dde3ff;
+  white-space:nowrap;
+}
+
+/* ============================================================
+   CODE CARDS
+   ============================================================ */
+.code-card{
+  margin:22px 0 26px;
+  border-radius:13px;
+  overflow:hidden;
+  background:var(--code-bg);
+  box-shadow:0 10px 30px rgba(15,15,35,.26), 0 2px 6px rgba(15,15,35,.16);
+  border:1px solid #26264a;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.code-head{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  background:linear-gradient(180deg,#1c1c3a 0%, #16162e 100%);
+  border-bottom:1px solid #2a2a55;
+}
+.dot{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+.dot.r{ background:#ff5f57; } .dot.y{ background:#febc2e; } .dot.g{ background:#28c840; }
+.code-title{
+  margin-left:12px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.2pt;
+  color:#9a9ad4;
+  letter-spacing:.03em;
+}
+.code-lang{
+  margin-left:auto;
+  font-size:8pt;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#6565a3;
+  font-weight:700;
+}
+.code-card pre{
+  margin:0;
+  padding:20px 22px;
+  overflow-x:auto;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px) 0 0 / 46px 100%,
+    var(--code-bg);
+}
+.code-card pre code{
+  display:block;
+  background:none;
+  border:none;
+  padding:0;
+  color:#dcdfff;
+  font-family:"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size:9.6pt;
+  line-height:1.72;
+  white-space:pre;
+  tab-size:2;
+}
+.tok-com{ color:#5f5f92; font-style:italic; }
+.tok-str{ color:#7ee2a8; }
+.tok-kw { color:#c792ea; font-weight:600; }
+.tok-num{ color:#ffb86c; }
+.tok-tag{ color:#5cc8ff; }
+.tok-tagp{ color:#8a8ac4; }
+.tok-attr{ color:#ffd479; }
+
+/* Terminal blocks */
+.term{
+  margin:18px 0 24px;
+  border-radius:11px;
+  overflow:hidden;
+  border:1px solid #d8dcf0;
+  background:#0f0f23;
+  break-inside:avoid;
+}
+.term .term-head{
+  background:#1c1c3a; color:#9a9ad4;
+  font-size:8.6pt; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:700; padding:8px 16px;
+  border-bottom:1px solid #2a2a55;
+}
+.term pre{
+  margin:0; padding:16px 20px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.6pt; line-height:1.7; color:#a7f3d0; white-space:pre-wrap;
+}
+.term.out pre{ color:#ffe9a8; }
+
+/* ============================================================
+   CALLOUTS
+   ============================================================ */
+.callout{
+  border-radius:13px;
+  padding:20px 24px 18px;
+  margin:24px 0;
+  border:1px solid;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.callout .ct{
+  font-weight:800;
+  font-size:10pt;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:10px;
+  display:flex; align-items:center; gap:9px;
+}
+.callout p:last-child{ margin-bottom:0; }
+
+.callout.remember{
+  background:linear-gradient(135deg,#eef2ff 0%, #f8faff 100%);
+  border-color:#c7d2fe;
+}
+.callout.remember .ct{ color:#4338ca; }
+
+.callout.analogy{
+  background:linear-gradient(135deg,#fff8ec 0%, #fffdf8 100%);
+  border-color:#ffdfae;
+}
+.callout.analogy .ct{ color:#b45309; }
+
+.callout.warn{
+  background:linear-gradient(135deg,#fff1f2 0%, #fff8f8 100%);
+  border-color:#ffd0d5;
+}
+.callout.warn .ct{ color:#be123c; }
+
+.callout.info{
+  background:linear-gradient(135deg,#eefbf6 0%, #f7fffc 100%);
+  border-color:#b8ecd8;
+}
+.callout.info .ct{ color:#047857; }
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  margin:24px 0;
+  font-size:10.4pt;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+thead th{
+  background:linear-gradient(135deg,#1e1b6b,#4338ca);
+  color:#fff;
+  text-align:left;
+  padding:12px 16px;
+  font-weight:700;
+  font-size:9.8pt;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+tbody td{
+  padding:11px 16px;
+  border-top:1px solid var(--line);
+  color:var(--ink-soft);
+  vertical-align:top;
+}
+tbody tr:nth-child(even){ background:#fafaff; }
+tbody td:first-child{ font-weight:600; color:var(--ink); }
+
+/* ============================================================
+   FIGURES
+   ============================================================ */
+figure{
+  margin:28px 0;
+  padding:22px 22px 14px;
+  background:linear-gradient(180deg,#f8f8ff 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  border-radius:16px;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+figure svg{ width:100%; height:auto; display:block; }
+figcaption{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px dashed #e2e1f4;
+  font-size:9.6pt;
+  color:var(--muted);
+  text-align:center;
+  font-style:italic;
+}
+figcaption b{ color:var(--brand); font-style:normal; }
+
+/* ============================================================
+   FILE TREE
+   ============================================================ */
+.tree{
+  background:#0f0f23;
+  color:#cfd3ff;
+  border-radius:12px;
+  padding:20px 24px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.6pt;
+  line-height:1.75;
+  white-space:pre;
+  margin:22px 0;
+  border:1px solid #26264a;
+  overflow-x:auto;
+  break-inside:avoid;
+}
+.tree .dir{ color:#5cc8ff; font-weight:600; }
+.tree .file{ color:#dcdfff; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:22px 0; }
+.mini-card{
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:18px 20px;
+  background:#fbfbff;
+  break-inside:avoid;
+}
+.mini-card h5{
+  margin:0 0 8px;
+  font-size:10.4pt;
+  color:var(--brand);
+  font-family: ui-sans-serif, sans-serif;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.mini-card p{ margin:0; font-size:10.2pt; }
+
+.steps{ counter-reset:st; list-style:none; padding:0; margin:24px 0; }
+.steps li{
+  counter-increment:st;
+  position:relative;
+  padding:14px 0 14px 58px;
+  border-bottom:1px dashed #e6e5f4;
+  margin:0;
+}
+.steps li:last-child{ border-bottom:none; }
+.steps li::before{
+  content:counter(st);
+  position:absolute; left:0; top:13px;
+  width:34px; height:34px; border-radius:10px;
+  background:linear-gradient(140deg,#4338ca,#6366f1);
+  color:#fff; font-weight:800; font-size:10.5pt;
+  display:flex; align-items:center; justify-content:center;
+}
+
+hr.sep{
+  border:none; height:1px;
+  background:linear-gradient(90deg,transparent,#e2e1f4,transparent);
+  margin:46px 0;
+}
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+@media print{
+  @page{
+    size:A4;
+    margin:15mm 13mm 16mm;
+  }
+  @page:first{
+    margin:0;
+  }
+  body{
+    background:#fff;
+    font-size:10.6pt;
+    line-height:1.7;
+  }
+  .book{
+    max-width:none;
+    margin:0;
+    padding:0;
+    box-shadow:none;
+    background:#fff;
+  }
+  .cover{
+    margin:0;
+    height:297mm;
+    padding:80px 60px 60px;
+    border-radius:0;
+    display:flex;
+    align-items:center;
+    break-after:page;
+    page-break-after:always;
+  }
+  .cover-inner{ width:100%; }
+  .toc{ break-after:page; page-break-after:always; }
+
+  .topic{ break-before:page; page-break-before:always; }
+  h1,h2,h3,h4{ break-after:avoid; page-break-after:avoid; }
+  p, li{ orphans:2; widows:2; }
+
+  .code-card, figure, table, .callout, .term{ break-inside:avoid; page-break-inside:avoid; }
+
+  a{ color:var(--brand-2); border-bottom:none; }
+  a[href^="http"]::after{
+    content:" (" attr(href) ")";
+    font-size:7.6pt;
+    color:#8d8dad;
+    word-break:break-all;
+  }
+  .no-print{ display:none !important; }
+}
+
+@media screen{
+  .topic{ margin-top:70px; }
+}
+</style>
+</head>
+<body>
+<div class="book">
+
+<!-- ============================================================
+     COVER
+     ============================================================ -->
+<section class="cover">
+  <div class="cover-inner">
+    <span class="badge">Phase 4 · Forms &amp; Interaction</span>
+
+    <h1>React&nbsp;JS<br><span class="grad">Forms and<br>User Interaction</span></h1>
+
+    <p class="sub">Controlled Inputs, Validation, Dynamic Fields &amp; File Uploads</p>
+
+    <div class="rule"></div>
+
+    <p class="lede">
+      A complete, practical guide to building forms that collect, validate, and present
+      user information. Learn <code style="background:rgba(255,255,255,.12);color:#ffd479;border-color:rgba(255,212,121,.3)">onSubmit</code>
+      and <code style="background:rgba(255,255,255,.12);color:#ffd479;border-color:rgba(255,212,121,.3)">preventDefault()</code>,
+      control inputs, selects, checkboxes, and radios, validate with HTML and JavaScript,
+      add dynamic fields, build reusable input components, handle file uploads, and design
+      accessible forms.
+    </p>
+
+    <div class="cover-chips">
+      <span class="chip">Form Submission</span>
+      <span class="chip">preventDefault()</span>
+      <span class="chip">Controlled vs Uncontrolled</span>
+      <span class="chip">Input · Select · Checkbox · Radio</span>
+      <span class="chip">Validation</span>
+      <span class="chip">Dynamic Fields</span>
+      <span class="chip">Reusable Components</span>
+      <span class="chip">File Uploads</span>
+      <span class="chip">Accessibility</span>
+    </div>
+
+    <div class="cover-foot">
+      <div>
+        <strong>Learning Track</strong><br>
+        Frontend Development · React Series
+      </div>
+      <div style="text-align:right">
+        <strong>Module</strong><br>
+        Phase 4 of the React Curriculum
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     LEARNING OBJECTIVES
+     ============================================================ -->
+<section class="toc" style="break-after:page;">
+  <h2>Learning Objectives</h2>
+  <p class="toc-sub">After completing this study material, you should be able to:</p>
+
+  <ol class="steps">
+    <li>Handle form submissions and understand <code>event.preventDefault()</code>.</li>
+    <li>Work with text inputs, dropdowns, checkboxes, and radio buttons.</li>
+    <li>Understand controlled and uncontrolled forms.</li>
+    <li>Validate form data using HTML and JavaScript.</li>
+    <li>Add and remove form fields dynamically.</li>
+    <li>Build reusable form input components.</li>
+    <li>Create file selection and upload interfaces.</li>
+    <li>Build accessible forms with proper labels and error messages.</li>
+  </ol>
+
+  <p style="margin-top:22px">Throughout this guide, we will build examples related to student registration, course admission, and user profiles.</p>
+</section>
+
+<!-- ============================================================
+     TABLE OF CONTENTS
+     ============================================================ -->
+<section class="toc">
+  <h2>Table of Contents</h2>
+  <p class="toc-sub">Eight topics, one practical project, and a full revision set.</p>
+
+  <ol>
+    <li><span class="n">1</span><span class="t">Form Submission and preventDefault()<small>onSubmit, FormData, and native behavior</small></span></li>
+    <li><span class="n">2</span><span class="t">Input, Select, Checkbox and Radio Controls<small>Choosing the right control and reading the right value</small></span></li>
+    <li><span class="n">3</span><span class="t">Controlled Versus Uncontrolled Forms<small>State-driven vs DOM-driven values</small></span></li>
+    <li><span class="n">4</span><span class="t">Form Validation<small>Native HTML rules and custom JavaScript checks</small></span></li>
+    <li><span class="n">5</span><span class="t">Dynamic Form Fields<small>Adding, updating, and removing fields immutably</small></span></li>
+    <li><span class="n">6</span><span class="t">Reusable Form Components<small>Building TextField, SelectField, and friends</small></span></li>
+    <li><span class="n">7</span><span class="t">File Input and Upload Interfaces<small>Reading File objects and sending FormData</small></span></li>
+    <li><span class="n">8</span><span class="t">Accessible Labels and Error Messages<small>Labels, fieldsets, and ARIA attributes</small></span></li>
+    <li><span class="n">★</span><span class="t">Practical Project: Student Admission Form<small>Apply everything you have learned</small></span></li>
+    <li><span class="n">!</span><span class="t">Common Beginner Mistakes<small>Eight pitfalls and how to fix them</small></span></li>
+    <li><span class="n">↺</span><span class="t">Quick Revision Notes &amp; Practice Exercises<small>Self-assessment and further reading</small></span></li>
+  </ol>
+</section>
+
+<!-- ============================================================
+     TOPIC 1
+     ============================================================ -->
+<section class="topic" id="t1">
+  <div class="topic-head">
+    <div class="kicker">Topic 01</div>
+    <h2>Form Submission and preventDefault()</h2>
+    <p>Collecting information from users — the right way in React.</p>
+  </div>
+
+  <h3>1.1 What Is a Form in React?</h3>
+  <p>A form is a part of an interface that collects information from a user.</p>
+  <p>Examples include:</p>
+  <ul>
+    <li>Login forms</li>
+    <li>Student registration forms</li>
+    <li>Course admission forms</li>
+    <li>Contact forms</li>
+    <li>Feedback forms</li>
+    <li>Job application forms</li>
+    <li>File upload forms</li>
+  </ul>
+  <p>A React form typically contains HTML elements such as <code>input</code>, <code>select</code>, <code>textarea</code>, and <code>button</code>.</p>
+  <p>React lets you handle form submissions using event handlers and manage the form's data using state or browser APIs.</p>
+
+  <h3>1.2 Why Do We Need Form Handling?</h3>
+  <p>Imagine a student registration form that asks for:</p>
+  <ul>
+    <li>Student name</li>
+    <li>Email address</li>
+    <li>Course selection</li>
+    <li>Learning mode</li>
+  </ul>
+  <p>When the student clicks Submit, your application should collect the information, validate it, and either show an error or process the submitted data.</p>
+  <p>React lets you control this process instead of simply allowing the browser to navigate away from the page.</p>
+
+  <h3>1.3 Analogy: An Admission Form at an Institute</h3>
+  <p>Imagine that a student fills out a physical admission form.</p>
+  <ol>
+    <li>The student enters personal information.</li>
+    <li>The student selects a course.</li>
+    <li>The student submits the form.</li>
+    <li>The institute checks that the information is valid.</li>
+    <li>The application is accepted or the student is asked to correct missing information.</li>
+  </ol>
+  <p>A web form follows a similar process. The main difference is that JavaScript can manage the submitted data and update the interface without a full page reload.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Paper admission form analogy for React form handling">
+      <defs>
+        <linearGradient id="g1a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4338ca"/><stop offset="100%" stop-color="#6366f1"/>
+        </linearGradient>
+        <linearGradient id="g1b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Paper form -->
+      <rect x="24" y="30" width="330" height="220" rx="12" fill="#f6f6ff" stroke="#c7d2fe" stroke-width="2"/>
+      <text x="189" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#4338ca">Admission Form</text>
+
+      <text x="48" y="92" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#1e1b6b">Full Name</text>
+      <line x1="48" y1="104" x2="330" y2="104" stroke="#c7d2fe"/>
+
+      <text x="48" y="130" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#1e1b6b">Email</text>
+      <line x1="48" y1="142" x2="330" y2="142" stroke="#c7d2fe"/>
+
+      <text x="48" y="168" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#1e1b6b">Course</text>
+      <line x1="48" y1="180" x2="330" y2="180" stroke="#c7d2fe"/>
+
+      <rect x="48" y="196" width="80" height="26" rx="6" fill="#c7d2fe"/>
+      <text x="88" y="214" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#1e1b6b">✓ Correct</text>
+      <rect x="140" y="196" width="100" height="26" rx="6" fill="#fbc7cf"/>
+      <text x="190" y="214" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#8c4152">✕ Missing</text>
+
+      <!-- Arrow -->
+      <path d="M370 140 H 420" stroke="#c7d2fe" stroke-width="3" stroke-dasharray="7 6"/>
+      <polygon points="420,132 436,140 420,148" fill="#4338ca"/>
+      <text x="395" y="126" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#4338ca">React handles it</text>
+
+      <!-- Browser form -->
+      <rect x="452" y="30" width="284" height="220" rx="12" fill="url(#g1a)"/>
+      <text x="594" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#fff">&lt;form onSubmit&gt;</text>
+
+      <rect x="474" y="80" width="240" height="28" rx="7" fill="rgba(255,255,255,.16)"/>
+      <text x="486" y="100" font-family="Consolas, monospace" font-size="10.5" fill="#fff">&lt;input name="fullName" /&gt;</text>
+
+      <rect x="474" y="116" width="240" height="28" rx="7" fill="rgba(255,255,255,.16)"/>
+      <text x="486" y="136" font-family="Consolas, monospace" font-size="10.5" fill="#fff">&lt;input name="email" /&gt;</text>
+
+      <rect x="474" y="152" width="240" height="28" rx="7" fill="rgba(255,255,255,.16)"/>
+      <text x="486" y="172" font-family="Consolas, monospace" font-size="10.5" fill="#fff">&lt;select name="course" /&gt;</text>
+
+      <rect x="474" y="188" width="240" height="44" rx="8" fill="url(#g1b)"/>
+      <text x="594" y="206" text-anchor="middle" font-family="Consolas, monospace" font-size="11" font-weight="700" fill="#4a2c00">handleSubmit(event)</text>
+      <text x="594" y="222" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#4a2c00">event.preventDefault()</text>
+
+      <text x="380" y="272" text-anchor="middle" font-family="Georgia, serif" font-size="11.5" font-style="italic" fill="#6d6a8c">Same process — collect, validate, respond — but without the reload.</text>
+    </svg>
+    <figcaption><b>Figure 1.1</b> — A React form mirrors a physical admission form: gather the fields, check them, and respond.</figcaption>
+  </figure>
+
+  <h3>1.4 Your First React Form</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentForm.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentForm() {
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    alert("Form submitted successfully!");
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;label htmlFor="studentName"&gt;
+        Student Name
+      &lt;/label&gt;
+
+      &lt;input
+        id="studentName"
+        name="studentName"
+        type="text"
+      /&gt;
+
+      &lt;button type="submit"&gt;
+        Submit
+      &lt;/button&gt;
+    &lt;/form&gt;
+  );
+}
+
+export default StudentForm;</code></pre>
+  </div>
+
+  <h4>Code Explanation</h4>
+
+  <p><strong>Step 1: Create a submit handler</strong></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">handler</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function handleSubmit(event) {
+  event.preventDefault();
+
+  alert("Form submitted successfully!");
+}</code></pre>
+  </div>
+
+  <p>The handler receives the submission event.</p>
+
+  <p><strong>Step 2: Prevent the default behavior</strong></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">preventDefault</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">event.preventDefault();</code></pre>
+  </div>
+
+  <p>A normal browser form submission can navigate to a URL or reload the current page, depending on its configuration.</p>
+  <p><code>preventDefault()</code> prevents that default submission behavior so your JavaScript can handle the submission.</p>
+  <p>It does not automatically validate, save, or upload the submitted information.</p>
+
+  <p><strong>Step 3: Connect the handler</strong></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">onSubmit</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;form onSubmit={handleSubmit}&gt;</code></pre>
+  </div>
+
+  <p>React calls the handler when the form is submitted.</p>
+
+  <p><strong>Step 4: Use a submit button</strong></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">submit</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;button type="submit"&gt;Submit&lt;/button&gt;</code></pre>
+  </div>
+
+  <p>Clicking this button submits the form.</p>
+  <p>Pressing Enter in an appropriate form field may also submit the form.</p>
+
+  <h3>1.5 Why Should You Use <code>onSubmit</code> Instead of Only <code>onClick</code>?</h3>
+  <p>Consider this:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">onClick only</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;button onClick={handleSubmit}&gt;Submit&lt;/button&gt;</code></pre>
+  </div>
+
+  <p>This responds to a click on the button. However, it does not represent the entire form submission event.</p>
+  <p>A better approach is:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">onSubmit</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;form onSubmit={handleSubmit}&gt;
+  &lt;input name="email" type="email" /&gt;
+
+  &lt;button type="submit"&gt;Submit&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+  </div>
+
+  <p>Using <code>onSubmit</code> supports submission through the form itself, including appropriate keyboard-based submission.</p>
+  <p>It also allows browser-native form validation to participate in submission.</p>
+
+  <div class="callout warn">
+    <div class="ct">▲ Important</div>
+    <p>A <code>&lt;button&gt;</code> inside a form submits the form by default if you omit its <code>type</code>. Use <code>type="button"</code> for buttons that should perform another action without submitting the form.</p>
+  </div>
+
+  <h3>1.6 Read Submitted Data with <code>FormData</code></h3>
+  <p>You do not always need a separate state variable for every field.</p>
+  <p>The browser provides a <code>FormData</code> API that can read values from named form controls.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentForm.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentForm() {
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+
+    const name = formData.get("studentName");
+    const email = formData.get("email");
+
+    console.log({ name, email });
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;label htmlFor="studentName"&gt;Name&lt;/label&gt;
+      &lt;input id="studentName" name="studentName" required /&gt;
+
+      &lt;label htmlFor="email"&gt;Email&lt;/label&gt;
+      &lt;input id="email" name="email" type="email" required /&gt;
+
+      &lt;button type="submit"&gt;Submit&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}</code></pre>
+  </div>
+
+  <h4>Explanation</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">create</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">const formData = new FormData(event.currentTarget);</code></pre>
+  </div>
+
+  <p>This creates a <code>FormData</code> object from the form that was submitted.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">read</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">formData.get("studentName");</code></pre>
+  </div>
+
+  <p>This retrieves the form value associated with the <code>studentName</code> field.</p>
+  <p>The <code>name</code> attribute is important because it identifies a field in form submission data.</p>
+  <p>When several controls use the same name, such as checkboxes representing multiple selected options, use <code>formData.getAll("fieldName")</code> to retrieve all submitted values for that name.</p>
+
+  <h3>1.7 Preventing Submission of Invalid Data</h3>
+  <p>You can combine submission handling with validation:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">LoginForm.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function LoginForm() {
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email");
+
+    if (!email) {
+      alert("Please enter your email.");
+      return;
+    }
+
+    alert("Ready to continue!");
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;label htmlFor="email"&gt;Email&lt;/label&gt;
+      &lt;input id="email" name="email" type="email" required /&gt;
+
+      &lt;button type="submit"&gt;Continue&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The <code>required</code> attribute enables browser-native validation. If custom JavaScript validation is needed, you can add it inside your handler, as we will do in Topic 4.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>Use the form's <code>onSubmit</code> handler to process submissions. Call <code>event.preventDefault()</code> when you want to prevent the browser's default navigation or reload behavior, and use named controls or controlled state to read form data.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 2
+     ============================================================ -->
+<section class="topic" id="t2">
+  <div class="topic-head">
+    <div class="kicker">Topic 02</div>
+    <h2>Input, Select, Checkbox and Radio Controls</h2>
+    <p>Choosing the right control — and reading the right property.</p>
+  </div>
+
+  <p>Forms contain different types of controls, and each type can represent a different kind of information.</p>
+  <p>React follows the usual HTML control model, but some controls need different props depending on whether they are controlled.</p>
+
+  <h3>2.1 Text Inputs</h3>
+  <p>A text input collects short text, such as a name or username.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">NameInput.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function NameInput() {
+  return (
+    &lt;div&gt;
+      &lt;label htmlFor="name"&gt;Full Name&lt;/label&gt;
+      &lt;input
+        id="name"
+        name="name"
+        type="text"
+        placeholder="Enter your name"
+      /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The important attributes are:</p>
+  <ul>
+    <li><code>id</code>: identifies the element.</li>
+    <li><code>name</code>: identifies the field in submitted form data.</li>
+    <li><code>type</code>: defines the type of input.</li>
+    <li><code>placeholder</code>: provides an example or hint.</li>
+  </ul>
+  <p>A placeholder does not replace a proper label.</p>
+
+  <h3>2.2 Controlled Text Input</h3>
+  <p>A controlled input receives its value from React state.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">NameInput.jsx — controlled</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useState } from "react";
+
+function NameInput() {
+  const [name, setName] = useState("");
+
+  return (
+    &lt;div&gt;
+      &lt;label htmlFor="name"&gt;Full Name&lt;/label&gt;
+
+      &lt;input
+        id="name"
+        name="name"
+        value={name}
+        onChange={event =&gt; setName(event.target.value)}
+      /&gt;
+
+      &lt;p&gt;Your name: {name}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Here, the input displays the value of <code>name</code>.</p>
+  <p>When a user types, <code>onChange</code> calls <code>setName</code>, and React renders the updated value.</p>
+  <p>A controlled text input should normally receive a string value throughout its lifetime. Initialize it with <code>""</code> rather than <code>undefined</code> or <code>null</code>.</p>
+
+  <h3>2.3 Select Dropdown</h3>
+  <p>A dropdown allows a user to choose one option from several choices.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">CourseSelect.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useState } from "react";
+
+function CourseSelect() {
+  const [course, setCourse] = useState("");
+
+  return (
+    &lt;div&gt;
+      &lt;label htmlFor="course"&gt;Select Course&lt;/label&gt;
+
+      &lt;select
+        id="course"
+        name="course"
+        value={course}
+        onChange={event =&gt; setCourse(event.target.value)}
+      &gt;
+        &lt;option value=""&gt;Choose a course&lt;/option&gt;
+        &lt;option value="react"&gt;React&lt;/option&gt;
+        &lt;option value="node"&gt;Node.js&lt;/option&gt;
+        &lt;option value="mongodb"&gt;MongoDB&lt;/option&gt;
+      &lt;/select&gt;
+
+      &lt;p&gt;Selected course: {course || "None"}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <h4>Explanation</h4>
+  <ul>
+    <li><code>value={course}</code> sets the currently selected value.</li>
+    <li><code>onChange</code> updates the state when the user selects an option.</li>
+    <li>Each option has a value used by the application.</li>
+    <li>The empty option encourages the user to make a selection.</li>
+  </ul>
+  <p>Use a controlled <code>select</code> when the current selection should be reflected in React state.</p>
+
+  <h3>2.4 Checkbox</h3>
+  <p>A checkbox represents a yes/no choice or an individual selection.</p>
+  <p>For example, a registration form may ask whether the student agrees to the terms.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">TermsCheckbox.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useState } from "react";
+
+function TermsCheckbox() {
+  const [agreed, setAgreed] = useState(false);
+
+  return (
+    &lt;div&gt;
+      &lt;label&gt;
+        &lt;input
+          type="checkbox"
+          name="agreed"
+          checked={agreed}
+          onChange={event =&gt; setAgreed(event.target.checked)}
+        /&gt;
+        I agree to the terms and conditions.
+      &lt;/label&gt;
+
+      &lt;p&gt;{agreed ? "Accepted" : "Not accepted"}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <div class="callout warn">
+    <div class="ct">▲ Important distinction</div>
+    <p>For checkboxes, read <code>event.target.checked</code>, not <code>event.target.value</code>, when you need to know whether the checkbox is selected.</p>
+    <p>In a controlled checkbox, <code>checked</code> is the state-driven prop.</p>
+  </div>
+
+  <h4>Multiple Checkboxes</h4>
+  <p>Imagine a student can choose several skills.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">SkillSelector.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useState } from "react";
+
+function SkillSelector() {
+  const [skills, setSkills] = useState([]);
+
+  function toggleSkill(skill) {
+    setSkills(currentSkills =&gt;
+      currentSkills.includes(skill)
+        ? currentSkills.filter(item =&gt; item !== skill)
+        : [...currentSkills, skill]
+    );
+  }
+
+  return (
+    &lt;fieldset&gt;
+      &lt;legend&gt;Select Your Skills&lt;/legend&gt;
+
+      {["HTML", "CSS", "JavaScript"].map(skill =&gt; (
+        &lt;label key={skill}&gt;
+          &lt;input
+            type="checkbox"
+            checked={skills.includes(skill)}
+            onChange={() =&gt; toggleSkill(skill)}
+          /&gt;
+          {skill}
+        &lt;/label&gt;
+      ))}
+
+      &lt;p&gt;Selected: {skills.join(", ") || "None"}&lt;/p&gt;
+    &lt;/fieldset&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>This example stores selected skills in an array. When a skill is selected, a new array includes it; when deselected, <code>filter()</code> creates an array without it.</p>
+
+  <h3>2.5 Radio Buttons</h3>
+  <p>Radio buttons allow a user to select one option from a group.</p>
+  <p>For example, a student may choose online or classroom learning.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">LearningMode.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useState } from "react";
+
+function LearningMode() {
+  const [mode, setMode] = useState("online");
+
+  return (
+    &lt;fieldset&gt;
+      &lt;legend&gt;Learning Mode&lt;/legend&gt;
+
+      &lt;label&gt;
+        &lt;input
+          type="radio"
+          name="mode"
+          value="online"
+          checked={mode === "online"}
+          onChange={event =&gt; setMode(event.target.value)}
+        /&gt;
+        Online
+      &lt;/label&gt;
+
+      &lt;label&gt;
+        &lt;input
+          type="radio"
+          name="mode"
+          value="classroom"
+          checked={mode === "classroom"}
+          onChange={event =&gt; setMode(event.target.value)}
+        /&gt;
+        Classroom
+      &lt;/label&gt;
+
+      &lt;p&gt;Selected mode: {mode}&lt;/p&gt;
+    &lt;/fieldset&gt;
+  );
+}</code></pre>
+  </div>
+
+  <h4>Why Do Both Radio Buttons Use the Same <code>name</code>?</h4>
+  <p>The shared <code>name="mode"</code> groups the radio buttons so that only one can be selected at a time by normal browser interaction.</p>
+  <p>The <code>value</code> of each radio identifies its choice, while the controlled <code>checked</code> prop determines whether that choice is selected.</p>
+
+  <h3>2.6 Quick Comparison</h3>
+
+  <table>
+    <thead><tr><th>Control</th><th>What it collects</th><th>Controlled prop</th><th>Change value</th></tr></thead>
+    <tbody>
+      <tr><td>Text input</td><td>Text</td><td><code>value</code></td><td><code>event.target.value</code></td></tr>
+      <tr><td>Select</td><td>Selected option</td><td><code>value</code></td><td><code>event.target.value</code></td></tr>
+      <tr><td>Checkbox</td><td>Selected or not</td><td><code>checked</code></td><td><code>event.target.checked</code></td></tr>
+      <tr><td>Radio</td><td>One selected choice</td><td><code>checked</code></td><td>Usually <code>event.target.value</code></td></tr>
+    </tbody>
+  </table>
+
+  <figure>
+    <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Four form controls and their controlled prop">
+      <defs>
+        <linearGradient id="g2a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4338ca"/><stop offset="100%" stop-color="#6366f1"/>
+        </linearGradient>
+        <linearGradient id="g2b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Text input -->
+      <rect x="24" y="30" width="170" height="240" rx="14" fill="#f6f6ff" stroke="#c7d2fe" stroke-width="2"/>
+      <text x="109" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#4338ca">Text Input</text>
+
+      <rect x="42" y="80" width="134" height="34" rx="7" fill="#fff" stroke="#90a4ff"/>
+      <text x="56" y="102" font-family="Consolas, monospace" font-size="11" fill="#6d6a8c">"Priya"</text>
+
+      <rect x="42" y="128" width="134" height="26" rx="6" fill="url(#g2a)"/>
+      <text x="109" y="146" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="700" fill="#fff">value</text>
+
+      <rect x="42" y="162" width="134" height="26" rx="6" fill="#fff" stroke="#90a4ff"/>
+      <text x="109" y="180" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#1e1b6b">.value</text>
+
+      <text x="109" y="216" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6d6a8c">text entry</text>
+      <text x="109" y="238" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#8d8dad">reads string</text>
+
+      <!-- Select -->
+      <rect x="206" y="30" width="170" height="240" rx="14" fill="#f6f6ff" stroke="#c7d2fe" stroke-width="2"/>
+      <text x="291" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#4338ca">Select</text>
+
+      <rect x="224" y="80" width="134" height="34" rx="7" fill="#fff" stroke="#90a4ff"/>
+      <text x="238" y="102" font-family="Consolas, monospace" font-size="11" fill="#6d6a8c">React ▾</text>
+
+      <rect x="224" y="128" width="134" height="26" rx="6" fill="url(#g2a)"/>
+      <text x="291" y="146" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="700" fill="#fff">value</text>
+
+      <rect x="224" y="162" width="134" height="26" rx="6" fill="#fff" stroke="#90a4ff"/>
+      <text x="291" y="180" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#1e1b6b">.value</text>
+
+      <text x="291" y="216" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6d6a8c">choose one</text>
+      <text x="291" y="238" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#8d8dad">reads string</text>
+
+      <!-- Checkbox -->
+      <rect x="388" y="30" width="170" height="240" rx="14" fill="#fff8ec" stroke="#ffdfae" stroke-width="2"/>
+      <text x="473" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#b45309">Checkbox</text>
+
+      <rect x="404" y="88" width="22" height="22" rx="5" fill="url(#g2b)"/>
+      <text x="415" y="104" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="800" fill="#fff">✓</text>
+      <text x="436" y="104" font-family="Segoe UI, sans-serif" font-size="11" fill="#8a5a00">I agree</text>
+
+      <rect x="406" y="128" width="134" height="26" rx="6" fill="url(#g2b)"/>
+      <text x="473" y="146" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="700" fill="#4a2c00">checked</text>
+
+      <rect x="406" y="162" width="134" height="26" rx="6" fill="#fff" stroke="#f6c667"/>
+      <text x="473" y="180" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#8a5a00">.checked</text>
+
+      <text x="473" y="216" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6d6a8c">yes / no</text>
+      <text x="473" y="238" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#8d8dad">reads boolean</text>
+
+      <!-- Radio -->
+      <rect x="570" y="30" width="170" height="240" rx="14" fill="#eefbf6" stroke="#b8ecd8" stroke-width="2"/>
+      <text x="655" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#047857">Radio</text>
+
+      <circle cx="608" cy="99" r="10" fill="#0f9d76"/>
+      <circle cx="608" cy="99" r="4" fill="#fff"/>
+      <text x="628" y="104" font-family="Segoe UI, sans-serif" font-size="11" fill="#0f6b52">Online</text>
+
+      <circle cx="608" cy="126" r="10" fill="none" stroke="#0f9d76" stroke-width="2"/>
+      <text x="628" y="131" font-family="Segoe UI, sans-serif" font-size="11" fill="#8794b5">Classroom</text>
+
+      <rect x="588" y="148" width="134" height="26" rx="6" fill="#0f9d76"/>
+      <text x="655" y="166" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="700" fill="#fff">checked</text>
+
+      <rect x="588" y="182" width="134" height="26" rx="6" fill="#fff" stroke="#8fdcbf"/>
+      <text x="655" y="200" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#0f6b52">.value</text>
+
+      <text x="655" y="230" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6d6a8c">one of many</text>
+    </svg>
+    <figcaption><b>Figure 2.1</b> — The four controls and their controlled prop and event property.</figcaption>
+  </figure>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>Text inputs and selects usually use <code>value</code>. Checkboxes and radio buttons use <code>checked</code> when controlled. The event property you read depends on the control.</p>
+    <p>Reference: <a href="https://react.dev/reference/react-dom/components/input">React — Input</a>.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 3
+     ============================================================ -->
+<section class="topic" id="t3">
+  <div class="topic-head">
+    <div class="kicker">Topic 03</div>
+    <h2>Controlled Versus Uncontrolled Forms</h2>
+    <p>Choosing where the truth of an input value should live.</p>
+  </div>
+
+  <h3>3.1 What Is a Controlled Form?</h3>
+  <p>A controlled form uses React state as the source of truth for input values.</p>
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">controlled</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">const [email, setEmail] = useState("");
+
+&lt;input
+  value={email}
+  onChange={event =&gt; setEmail(event.target.value)}
+/&gt;</code></pre>
+  </div>
+
+  <p>The displayed input value follows React state.</p>
+  <p>React receives every change through the handler, making the current value available for rendering, validation, and other application logic.</p>
+
+  <h3>3.2 What Is an Uncontrolled Form?</h3>
+  <p>An uncontrolled input keeps its current value in the DOM rather than being controlled by a React state variable.</p>
+  <p>Example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">uncontrolled</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;input
+  name="email"
+  type="email"
+  defaultValue="student@example.com"
+/&gt;</code></pre>
+  </div>
+
+  <p><code>defaultValue</code> specifies the initial value. It does not continuously control the input's current value.</p>
+  <p>You can read an uncontrolled form's values at submission time using <code>FormData</code>.</p>
+
+  <h3>3.3 Analogy: A Dashboard Versus a Paper Form</h3>
+  <p>Imagine two ways of handling information.</p>
+  <p><strong>Controlled approach:</strong> A dashboard updates its displayed information each time a value changes. The application knows the current value because it is stored in state.</p>
+  <p><strong>Uncontrolled approach:</strong> The user writes on a form, and the information is collected when the form is submitted. The DOM maintains the current input value until you read it.</p>
+  <p>Both approaches are useful. Choose based on what the application needs to do with the values.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dashboard versus paper form analogy for controlled and uncontrolled inputs">
+      <defs>
+        <linearGradient id="g3a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4338ca"/><stop offset="100%" stop-color="#6366f1"/>
+        </linearGradient>
+        <linearGradient id="g3b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Controlled dashboard -->
+      <rect x="24" y="30" width="340" height="190" rx="14" fill="#f6f6ff" stroke="#c7d2fe" stroke-width="2"/>
+      <text x="194" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#4338ca">Controlled — a dashboard</text>
+
+      <rect x="46" y="80" width="296" height="60" rx="10" fill="url(#g3a)"/>
+      <text x="194" y="106" text-anchor="middle" font-family="Consolas, monospace" font-size="12" fill="#fff">value={email}</text>
+      <text x="194" y="128" text-anchor="middle" font-family="Consolas, monospace" font-size="12" fill="#c3c9ff">onChange={handleChange}</text>
+
+      <rect x="46" y="150" width="296" height="56" rx="10" fill="#fff" stroke="#90a4ff"/>
+      <text x="194" y="172" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#1e1b6b">Every keystroke is known</text>
+      <text x="194" y="192" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#1e1b6b">to React in real time.</text>
+
+      <!-- Uncontrolled paper form -->
+      <rect x="392" y="30" width="344" height="190" rx="14" fill="#fff8ec" stroke="#ffdfae" stroke-width="2"/>
+      <text x="564" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#b45309">Uncontrolled — a paper form</text>
+
+      <rect x="414" y="80" width="300" height="60" rx="10" fill="url(#g3b)"/>
+      <text x="564" y="106" text-anchor="middle" font-family="Consolas, monospace" font-size="12" fill="#fff">defaultValue="..."</text>
+      <text x="564" y="128" text-anchor="middle" font-family="Consolas, monospace" font-size="12" fill="#4a2c00">no onChange required</text>
+
+      <rect x="414" y="150" width="300" height="56" rx="10" fill="#fff" stroke="#f6c667"/>
+      <text x="564" y="172" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#8a5a00">The DOM keeps the value.</text>
+      <text x="564" y="192" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#8a5a00">FormData reads it on submit.</text>
+
+      <text x="380" y="240" text-anchor="middle" font-family="Georgia, serif" font-size="11.5" font-style="italic" fill="#6d6a8c">State in React, or state in the DOM — both are valid strategies.</text>
+    </svg>
+    <figcaption><b>Figure 3.1</b> — A controlled form is a live dashboard; an uncontrolled form is a paper form read at submission.</figcaption>
+  </figure>
+
+  <h3>3.4 Controlled Form Example</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">LoginForm.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useState } from "react";
+
+function LoginForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    console.log({ email, password });
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;label htmlFor="email"&gt;Email&lt;/label&gt;
+      &lt;input
+        id="email"
+        name="email"
+        type="email"
+        value={email}
+        onChange={event =&gt; setEmail(event.target.value)}
+      /&gt;
+
+      &lt;label htmlFor="password"&gt;Password&lt;/label&gt;
+      &lt;input
+        id="password"
+        name="password"
+        type="password"
+        value={password}
+        onChange={event =&gt; setPassword(event.target.value)}
+      /&gt;
+
+      &lt;button type="submit"&gt;Log In&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}</code></pre>
+  </div>
+
+  <h4>Advantages</h4>
+  <ul>
+    <li>The current values are available in React state.</li>
+    <li>You can validate fields as the user interacts with them.</li>
+    <li>You can display conditional content based on field values.</li>
+    <li>You can enable or disable other controls according to the form state.</li>
+  </ul>
+
+  <h4>Disadvantages</h4>
+  <ul>
+    <li>Each field needs the appropriate state and change handler.</li>
+    <li>Many controlled inputs can make a large form more verbose.</li>
+    <li>If too much of the application depends on each keystroke, rendering performance may need attention.</li>
+  </ul>
+
+  <h3>3.5 Uncontrolled Form Example</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">ContactForm.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function ContactForm() {
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+
+    const name = formData.get("name");
+    const email = formData.get("email");
+
+    console.log({ name, email });
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;label htmlFor="name"&gt;Name&lt;/label&gt;
+      &lt;input id="name" name="name" defaultValue="" /&gt;
+
+      &lt;label htmlFor="email"&gt;Email&lt;/label&gt;
+      &lt;input
+        id="email"
+        name="email"
+        type="email"
+        defaultValue=""
+      /&gt;
+
+      &lt;button type="submit"&gt;Submit&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The browser keeps the input values. On submission, <code>FormData</code> collects them.</p>
+
+  <h4>Advantages</h4>
+  <ul>
+    <li>Less state-management code for simple forms.</li>
+    <li>Useful when you only need values at submission time.</li>
+    <li>Works naturally with browser form APIs.</li>
+  </ul>
+
+  <h4>Disadvantages</h4>
+  <ul>
+    <li>The latest field values are not automatically available as React state.</li>
+    <li>Real-time validation and conditional interfaces can require additional DOM access or a different form approach.</li>
+  </ul>
+
+  <h3>3.6 Can You Mix the Two Approaches?</h3>
+  <p>Yes. A form may have controlled text inputs and an uncontrolled file input, for example.</p>
+  <p>However, an individual input should not switch back and forth between controlled and uncontrolled during its lifetime.</p>
+  <p>For controlled inputs:</p>
+  <ul>
+    <li>Text input: <code>value</code> and <code>onChange</code>.</li>
+    <li>Checkbox and radio: <code>checked</code> and <code>onChange</code>.</li>
+  </ul>
+  <p>For uncontrolled inputs:</p>
+  <ul>
+    <li>Text input: optionally <code>defaultValue</code>.</li>
+    <li>Checkbox or radio: optionally <code>defaultChecked</code>.</li>
+  </ul>
+  <p>Do not pass both <code>value</code> and <code>defaultValue</code> to the same input as competing ways of setting its value.</p>
+
+  <h4>Which Approach Should You Choose?</h4>
+  <p>Choose controlled fields when their values need to affect the UI or validation as the user types.</p>
+  <p>Choose uncontrolled fields when it is sufficient to collect their values at submission time.</p>
+  <p>A controlled form is common in interactive React applications, but uncontrolled inputs can be simpler for straightforward data collection.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>References:</p>
+    <ul>
+      <li><a href="https://react.dev/reference/react-dom/components/input">React — Input</a></li>
+      <li><a href="https://react.dev/reference/react-dom/components/form">React — Form</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 4
+     ============================================================ -->
+<section class="topic" id="t4">
+  <div class="topic-head">
+    <div class="kicker">Topic 04</div>
+    <h2>Form Validation</h2>
+    <p>Helping users provide complete and correct information.</p>
+  </div>
+
+  <h3>4.1 What Is Form Validation?</h3>
+  <p>Form validation checks whether the submitted data meets the rules required by the application.</p>
+  <p>Examples:</p>
+  <ul>
+    <li>Name must not be empty.</li>
+    <li>Email must have a reasonable email format.</li>
+    <li>Password must meet the application's password requirements.</li>
+    <li>Course must be selected.</li>
+    <li>Terms must be accepted.</li>
+    <li>File size must remain within the permitted limit.</li>
+  </ul>
+  <p>Validation helps users correct incomplete or invalid information before submission.</p>
+
+  <h3>4.2 Analogy: An Admission Checklist</h3>
+  <p>An institute may require a completed admission form, an eligible course selection, and necessary documents.</p>
+  <p>If an important field is missing, the form should identify the missing information instead of silently proceeding.</p>
+  <p>Web form validation follows the same principle.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Admission checklist analogy for form validation">
+      <defs>
+        <linearGradient id="g4a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4338ca"/><stop offset="100%" stop-color="#6366f1"/>
+        </linearGradient>
+        <linearGradient id="g4b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0f9d76"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Checklist -->
+      <rect x="24" y="30" width="330" height="190" rx="14" fill="#f6f6ff" stroke="#c7d2fe" stroke-width="2"/>
+      <text x="189" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#4338ca">Admission Checklist</text>
+
+      <rect x="46" y="80" width="286" height="30" rx="7" fill="#fff" stroke="#90a4ff"/>
+      <circle cx="66" cy="95" r="9" fill="url(#g4b)"/>
+      <text x="66" y="100" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="800" fill="#fff">✓</text>
+      <text x="86" y="100" font-family="Segoe UI, sans-serif" font-size="11" fill="#1e1b6b">Personal details completed</text>
+
+      <rect x="46" y="116" width="286" height="30" rx="7" fill="#fff" stroke="#90a4ff"/>
+      <circle cx="66" cy="131" r="9" fill="url(#g4b)"/>
+      <text x="66" y="136" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="800" fill="#fff">✓</text>
+      <text x="86" y="136" font-family="Segoe UI, sans-serif" font-size="11" fill="#1e1b6b">Course selected</text>
+
+      <rect x="46" y="152" width="286" height="30" rx="7" fill="#fff" stroke="#ffd0d5"/>
+      <circle cx="66" cy="167" r="9" fill="#f43f5e"/>
+      <text x="66" y="172" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="800" fill="#fff">!</text>
+      <text x="86" y="172" font-family="Segoe UI, sans-serif" font-size="11" fill="#be123c">Document missing</text>
+
+      <text x="189" y="204" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#6d6a8c">Missing items must be fixed before proceeding.</text>
+
+      <!-- Arrow -->
+      <path d="M370 125 H 410" stroke="#c7d2fe" stroke-width="3" stroke-dasharray="7 6"/>
+      <polygon points="410,117 426,125 410,133" fill="#4338ca"/>
+
+      <!-- Validation panel -->
+      <rect x="440" y="30" width="296" height="190" rx="14" fill="url(#g4a)"/>
+      <text x="588" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#fff">Validation Errors</text>
+
+      <rect x="462" y="80" width="252" height="30" rx="7" fill="rgba(255,255,255,.16)"/>
+      <text x="588" y="100" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#fff">Name must be at least 3 characters.</text>
+
+      <rect x="462" y="116" width="252" height="30" rx="7" fill="rgba(255,255,255,.16)"/>
+      <text x="588" y="136" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#fff">Enter a valid email address.</text>
+
+      <rect x="462" y="152" width="252" height="30" rx="7" fill="rgba(255,255,255,.16)"/>
+      <text x="588" y="172" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#fff">Please select a course.</text>
+
+      <text x="588" y="204" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#c3c9ff">Explain how to fix each problem.</text>
+    </svg>
+    <figcaption><b>Figure 4.1</b> — Validation is a checklist: check each requirement and explain what is missing.</figcaption>
+  </figure>
+
+  <h3>4.3 Native HTML Validation</h3>
+  <p>HTML has built-in validation attributes.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">RegistrationForm.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function RegistrationForm() {
+  return (
+    &lt;form&gt;
+      &lt;label htmlFor="name"&gt;Full Name&lt;/label&gt;
+      &lt;input
+        id="name"
+        name="name"
+        type="text"
+        required
+        minLength={3}
+      /&gt;
+
+      &lt;label htmlFor="email"&gt;Email&lt;/label&gt;
+      &lt;input
+        id="email"
+        name="email"
+        type="email"
+        required
+      /&gt;
+
+      &lt;label htmlFor="age"&gt;Age&lt;/label&gt;
+      &lt;input
+        id="age"
+        name="age"
+        type="number"
+        min={18}
+        max={60}
+        required
+      /&gt;
+
+      &lt;button type="submit"&gt;Register&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Explanation:</p>
+  <ul>
+    <li><code>required</code> means the field must be filled in.</li>
+    <li><code>minLength={3}</code> requires at least three characters for the name.</li>
+    <li><code>type="email"</code> provides basic email-format checking.</li>
+    <li><code>min={18}</code> establishes the minimum age.</li>
+    <li><code>max={60}</code> establishes the maximum age.</li>
+  </ul>
+  <p>React uses camelCase for DOM props such as <code>minLength</code>.</p>
+  <p>If the data fails these browser constraints, the browser normally prevents submission and displays its validation feedback.</p>
+
+  <h3>4.4 What Are the Limitations of Native Validation?</h3>
+  <p>Native validation is useful for common input rules, but it is not enough for every application.</p>
+  <p>For example, you might need to check whether:</p>
+  <ul>
+    <li>Two password fields match.</li>
+    <li>A selected course is available.</li>
+    <li>A user has accepted a specific policy.</li>
+    <li>A date is within a business-defined range.</li>
+    <li>An email address is already registered.</li>
+  </ul>
+  <p>These rules often require custom JavaScript and sometimes a server request.</p>
+
+  <h3>4.5 Custom Validation with React</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">RegistrationForm.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useState } from "react";
+
+function RegistrationForm() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    const nextErrors = {};
+
+    if (name.trim().length &lt; 3) {
+      nextErrors.name = "Name must contain at least 3 characters.";
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      nextErrors.email = "Enter a valid email address.";
+    }
+
+    setErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length &gt; 0) {
+      setSubmitted(false);
+      return;
+    }
+
+    setSubmitted(true);
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit} noValidate&gt;
+      &lt;label htmlFor="name"&gt;Name&lt;/label&gt;
+      &lt;input
+        id="name"
+        value={name}
+        onChange={event =&gt; setName(event.target.value)}
+        aria-invalid={Boolean(errors.name)}
+        aria-describedby={errors.name ? "name-error" : undefined}
+      /&gt;
+
+      {errors.name &amp;&amp; (
+        &lt;p id="name-error" role="alert"&gt;
+          {errors.name}
+        &lt;/p&gt;
+      )}
+
+      &lt;label htmlFor="email"&gt;Email&lt;/label&gt;
+      &lt;input
+        id="email"
+        type="email"
+        value={email}
+        onChange={event =&gt; setEmail(event.target.value)}
+        aria-invalid={Boolean(errors.email)}
+        aria-describedby={errors.email ? "email-error" : undefined}
+      /&gt;
+
+      {errors.email &amp;&amp; (
+        &lt;p id="email-error" role="alert"&gt;
+          {errors.email}
+        &lt;/p&gt;
+      )}
+
+      &lt;button type="submit"&gt;Register&lt;/button&gt;
+
+      {submitted &amp;&amp; &lt;p&gt;Form submitted successfully!&lt;/p&gt;}
+    &lt;/form&gt;
+  );
+}</code></pre>
+  </div>
+
+  <h4>Explanation</h4>
+
+  <p><strong>Step 1: Store the field values</strong></p>
+  <p>The controlled inputs use <code>name</code> and <code>email</code> state variables.</p>
+
+  <p><strong>Step 2: Create an error object</strong></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">errors</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">const nextErrors = {};</code></pre>
+  </div>
+
+  <p>This object will contain messages for invalid fields.</p>
+
+  <p><strong>Step 3: Validate the name</strong></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">name</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">if (name.trim().length &lt; 3) {
+  nextErrors.name = "Name must contain at least 3 characters.";
+}</code></pre>
+  </div>
+
+  <p><code>trim()</code> removes leading and trailing whitespace before the length is checked.</p>
+
+  <p><strong>Step 4: Validate the email</strong></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">email</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">if (!/^\S+@\S+\.\S+$/.test(email)) {
+  nextErrors.email = "Enter a valid email address.";
+}</code></pre>
+  </div>
+
+  <p>This is a simple example check, not a complete implementation of every valid email format. Real applications should choose validation rules appropriate to their requirements.</p>
+
+  <p><strong>Step 5: Stop when errors exist</strong></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">stop</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">if (Object.keys(nextErrors).length &gt; 0) {
+  setSubmitted(false);
+  return;
+}</code></pre>
+  </div>
+
+  <p>The handler exits if any validation messages were generated.</p>
+
+  <p><strong>Step 6: Show success</strong></p>
+  <p>If validation passes, the component displays the success message.</p>
+  <p>The <code>noValidate</code> attribute disables the browser's automatic form-validation UI for this form, allowing this example to show its custom messages.</p>
+
+  <h3>4.6 Client-Side Validation Is Not Security</h3>
+  <p>Client-side validation improves the user experience, but it can be bypassed.</p>
+  <p>For example, a user might modify browser code or send a request directly to an API.</p>
+  <p>The backend must independently validate submitted data and enforce security rules. This is particularly important for payments, authentication, uploads, and other sensitive operations.</p>
+  <p>Reference: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Constraint_validation">MDN — Constraint Validation</a>.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>Use native HTML constraints for basic checks and custom JavaScript validation when the application needs more specific rules. Always validate untrusted data on the server as well.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 5
+     ============================================================ -->
+<section class="topic" id="t5">
+  <div class="topic-head">
+    <div class="kicker">Topic 05</div>
+    <h2>Dynamic Form Fields</h2>
+    <p>Letting the form grow with the user's needs.</p>
+  </div>
+
+  <h3>5.1 What Are Dynamic Form Fields?</h3>
+  <p>Dynamic form fields are inputs that can be added, removed, or changed while the application is running.</p>
+  <p>Examples include:</p>
+  <ul>
+    <li>Adding multiple skills to a student profile.</li>
+    <li>Adding guardian contact details.</li>
+    <li>Adding multiple education records.</li>
+    <li>Adding product items to an invoice.</li>
+    <li>Adding several work-experience entries to a job application.</li>
+  </ul>
+
+  <h3>5.2 Why Do We Need Dynamic Fields?</h3>
+  <p>Imagine a job application that asks for previous work experience.</p>
+  <p>One applicant may have one previous job, while another may have five.</p>
+  <p>A fixed form with exactly one experience field would not work well for everyone.</p>
+  <p>Dynamic fields allow the interface to match the user's needs.</p>
+
+  <h3>5.3 Analogy: Adding Rows to a Spreadsheet</h3>
+  <p>A spreadsheet lets you add rows as you need more information.</p>
+  <p>A React form can follow the same idea: maintain a list of fields in state and render one input for each item.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Adding rows to a spreadsheet analogy for dynamic form fields">
+      <defs>
+        <linearGradient id="g5a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4338ca"/><stop offset="100%" stop-color="#6366f1"/>
+        </linearGradient>
+        <linearGradient id="g5b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Spreadsheet -->
+      <rect x="24" y="30" width="340" height="190" rx="14" fill="#f6f6ff" stroke="#c7d2fe" stroke-width="2"/>
+      <text x="194" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#4338ca">Spreadsheet</text>
+
+      <rect x="46" y="80" width="296" height="30" rx="6" fill="#fff" stroke="#90a4ff"/>
+      <text x="194" y="100" text-anchor="middle" font-family="Consolas, monospace" font-size="11" fill="#1e1b6b">row 1</text>
+
+      <rect x="46" y="116" width="296" height="30" rx="6" fill="#fff" stroke="#90a4ff"/>
+      <text x="194" y="136" text-anchor="middle" font-family="Consolas, monospace" font-size="11" fill="#1e1b6b">row 2</text>
+
+      <rect x="46" y="152" width="296" height="30" rx="6" fill="#fff" stroke="#90a4ff"/>
+      <text x="194" y="172" text-anchor="middle" font-family="Consolas, monospace" font-size="11" fill="#1e1b6b">row 3</text>
+
+      <rect x="180" y="192" width="120" height="24" rx="8" fill="url(#g5a)"/>
+      <text x="240" y="208" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#fff">+ Add row</text>
+
+      <!-- Arrow -->
+      <path d="M380 125 H 420" stroke="#c7d2fe" stroke-width="3" stroke-dasharray="7 6"/>
+      <polygon points="420,117 436,125 420,133" fill="#4338ca"/>
+
+      <!-- React list -->
+      <rect x="450" y="30" width="286" height="190" rx="14" fill="#fff8ec" stroke="#ffdfae" stroke-width="2"/>
+      <text x="593" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#b45309">React array in state</text>
+
+      <rect x="472" y="80" width="242" height="30" rx="6" fill="url(#g5b)"/>
+      <text x="593" y="100" text-anchor="middle" font-family="Consolas, monospace" font-size="11" font-weight="700" fill="#4a2c00">{ id: "a", value: "" }</text>
+
+      <rect x="472" y="116" width="242" height="30" rx="6" fill="url(#g5b)"/>
+      <text x="593" y="136" text-anchor="middle" font-family="Consolas, monospace" font-size="11" font-weight="700" fill="#4a2c00">{ id: "b", value: "" }</text>
+
+      <rect x="472" y="152" width="242" height="30" rx="6" fill="url(#g5b)"/>
+      <text x="593" y="172" text-anchor="middle" font-family="Consolas, monospace" font-size="11" font-weight="700" fill="#4a2c00">{ id: "c", value: "" }</text>
+
+      <text x="593" y="204" text-anchor="middle" font-family="Consolas, monospace" font-size="11" fill="#8a5a00">.map() → &lt;input /&gt;</text>
+    </svg>
+    <figcaption><b>Figure 5.1</b> — A dynamic field list is like adding rows: each item in state becomes a row of inputs.</figcaption>
+  </figure>
+
+  <h3>5.4 Example: Add and Remove Skill Fields</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">SkillForm.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useState } from "react";
+
+function SkillForm() {
+  const [skills, setSkills] = useState([
+    { id: "skill-1", value: "" }
+  ]);
+
+  function addSkill() {
+    setSkills(currentSkills =&gt; [
+      ...currentSkills,
+      {
+        id: crypto.randomUUID(),
+        value: ""
+      }
+    ]);
+  }
+
+  function updateSkill(id, value) {
+    setSkills(currentSkills =&gt;
+      currentSkills.map(skill =&gt;
+        skill.id === id
+          ? { ...skill, value }
+          : skill
+      )
+    );
+  }
+
+  function removeSkill(id) {
+    setSkills(currentSkills =&gt;
+      currentSkills.filter(skill =&gt; skill.id !== id)
+    );
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Your Skills&lt;/h2&gt;
+
+      {skills.map((skill, index) =&gt; (
+        &lt;div key={skill.id}&gt;
+          &lt;label htmlFor={skill.id}&gt;
+            Skill {index + 1}
+          &lt;/label&gt;
+
+          &lt;input
+            id={skill.id}
+            value={skill.value}
+            onChange={event =&gt;
+              updateSkill(skill.id, event.target.value)
+            }
+          /&gt;
+
+          &lt;button
+            type="button"
+            onClick={() =&gt; removeSkill(skill.id)}
+            disabled={skills.length === 1}
+          &gt;
+            Remove
+          &lt;/button&gt;
+        &lt;/div&gt;
+      ))}
+
+      &lt;button type="button" onClick={addSkill}&gt;
+        Add Skill
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default SkillForm;</code></pre>
+  </div>
+
+  <h4>Explanation</h4>
+
+  <p><strong>Initial list</strong></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">initial</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">const [skills, setSkills] = useState([
+  { id: "skill-1", value: "" }
+]);</code></pre>
+  </div>
+
+  <p>The form begins with one skill field.</p>
+
+  <p><strong>Add a field</strong></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">add</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">setSkills(currentSkills =&gt; [
+  ...currentSkills,
+  {
+    id: crypto.randomUUID(),
+    value: ""
+  }
+]);</code></pre>
+  </div>
+
+  <p>A new object is appended to a newly created array.</p>
+  <p>The ID is generated when the field is created, rather than on every render.</p>
+
+  <p><strong>Update a field</strong></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">update</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">currentSkills.map(skill =&gt;
+  skill.id === id
+    ? { ...skill, value }
+    : skill
+)</code></pre>
+  </div>
+
+  <p><code>map()</code> replaces the matching skill with a new object while keeping the other fields intact.</p>
+
+  <p><strong>Remove a field</strong></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">remove</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">currentSkills.filter(skill =&gt; skill.id !== id)</code></pre>
+  </div>
+
+  <p><code>filter()</code> creates a new array without the selected field.</p>
+
+  <p><strong>Use a stable key</strong></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">key</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div key={skill.id}&gt;</code></pre>
+  </div>
+
+  <p>The stable ID lets React associate each rendered field with the correct item when fields are inserted or removed.</p>
+
+  <h3>5.5 Why Should You Avoid Array Indexes as Keys?</h3>
+  <p>Suppose you create three inputs with keys <code>0</code>, <code>1</code>, and <code>2</code>.</p>
+  <p>If the first input is removed, the remaining inputs shift positions. React can mistakenly associate an existing DOM input with a different data item.</p>
+  <p>Stable keys help prevent this problem.</p>
+  <p>This is especially important for dynamic inputs because each input may contain data the user has already entered.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>Represent dynamic fields as an array in state. Use immutable updates, stable IDs, and <code>map()</code> to render the current fields.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 6
+     ============================================================ -->
+<section class="topic" id="t6">
+  <div class="topic-head">
+    <div class="kicker">Topic 06</div>
+    <h2>Reusable Form Components</h2>
+    <p>Build the field once — configure it everywhere.</p>
+  </div>
+
+  <h3>6.1 What Is a Reusable Form Component?</h3>
+  <p>A reusable form component is a component designed to be used in multiple places with different values or configurations.</p>
+  <p>Examples include:</p>
+  <ul>
+    <li>Text fields</li>
+    <li>Email inputs</li>
+    <li>Password inputs</li>
+    <li>Select controls</li>
+    <li>Validation messages</li>
+    <li>Submit buttons</li>
+  </ul>
+  <p>Instead of repeating the same label, input, and error markup throughout an application, you can create one reusable component.</p>
+
+  <h3>6.2 Why Is Reusability Important?</h3>
+  <p>Imagine a CRM application with many forms:</p>
+  <ul>
+    <li>Add lead</li>
+    <li>Edit student</li>
+    <li>Create course</li>
+    <li>Add trainer</li>
+    <li>Update profile</li>
+  </ul>
+  <p>Many forms require a name, email, phone number, or other common fields.</p>
+  <p>Repeating the same markup can lead to inconsistent styling and validation behavior.</p>
+  <p>Reusable components help keep the appearance and interaction patterns consistent.</p>
+
+  <h3>6.3 Analogy: A Standard Form Template</h3>
+  <p>Imagine an institute using the same standard format for every student application.</p>
+  <p>The questions may differ, but the underlying structure and style remain consistent.</p>
+  <p>A reusable React form component provides a similar standard structure.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Standard form template analogy for reusable form components">
+      <defs>
+        <linearGradient id="g6a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4338ca"/><stop offset="100%" stop-color="#6366f1"/>
+        </linearGradient>
+        <linearGradient id="g6b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Template -->
+      <rect x="24" y="30" width="240" height="200" rx="14" fill="url(#g6a)"/>
+      <text x="144" y="60" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Standard Template</text>
+
+      <rect x="46" y="82" width="196" height="30" rx="7" fill="rgba(255,255,255,.16)"/>
+      <text x="58" y="102" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#e6e8ff">Label + input + error</text>
+
+      <rect x="46" y="120" width="196" height="30" rx="7" fill="rgba(255,255,255,.16)"/>
+      <text x="58" y="140" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#e6e8ff">Same spacing, same style</text>
+
+      <rect x="46" y="158" width="196" height="30" rx="7" fill="rgba(255,255,255,.16)"/>
+      <text x="58" y="178" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#e6e8ff">Same aria attributes</text>
+
+      <text x="144" y="212" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#c3c9ff">Written once, reused many times.</text>
+
+      <!-- Arrow -->
+      <path d="M280 130 H 320" stroke="#c7d2fe" stroke-width="3" stroke-dasharray="7 6"/>
+      <polygon points="320,122 336,130 320,138" fill="#4338ca"/>
+
+      <!-- Uses -->
+      <rect x="348" y="30" width="388" height="200" rx="14" fill="#fff8ec" stroke="#ffdfae" stroke-width="2"/>
+      <text x="542" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#b45309">Same component, different props</text>
+
+      <rect x="370" y="80" width="344" height="38" rx="8" fill="#fff" stroke="#f6c667"/>
+      <text x="384" y="104" font-family="Consolas, monospace" font-size="11" fill="#8a5a00">&lt;TextField id="name" label="Full Name" /&gt;</text>
+
+      <rect x="370" y="128" width="344" height="38" rx="8" fill="#fff" stroke="#f6c667"/>
+      <text x="384" y="152" font-family="Consolas, monospace" font-size="11" fill="#8a5a00">&lt;TextField id="email" type="email" /&gt;</text>
+
+      <rect x="370" y="176" width="344" height="38" rx="8" fill="#fff" stroke="#f6c667"/>
+      <text x="384" y="200" font-family="Consolas, monospace" font-size="11" fill="#8a5a00">&lt;TextField id="phone" label="Phone" /&gt;</text>
+    </svg>
+    <figcaption><b>Figure 6.1</b> — A reusable form component is a template: one shape, configured by props.</figcaption>
+  </figure>
+
+  <h3>6.4 Create a Reusable <code>TextField</code></h3>
+  <p>Create <code>TextField.jsx</code>.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">TextField.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function TextField({
+  id,
+  name,
+  label,
+  value,
+  onChange,
+  type = "text",
+  error,
+  ...inputProps
+}) {
+  const errorId = `${id}-error`;
+
+  return (
+    &lt;div className="form-field"&gt;
+      &lt;label htmlFor={id}&gt;{label}&lt;/label&gt;
+
+      &lt;input
+        id={id}
+        name={name}
+        type={type}
+        value={value}
+        onChange={onChange}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? errorId : undefined}
+        {...inputProps}
+      /&gt;
+
+      {error &amp;&amp; (
+        &lt;p id={errorId} className="field-error" role="alert"&gt;
+          {error}
+        &lt;/p&gt;
+      )}
+    &lt;/div&gt;
+  );
+}
+
+export default TextField;</code></pre>
+  </div>
+
+  <h4>Explanation</h4>
+  <ul>
+    <li><code>id</code> identifies the input.</li>
+    <li><code>name</code> identifies the field in submitted data.</li>
+    <li><code>label</code> provides its visible description.</li>
+    <li><code>value</code> and <code>onChange</code> control the input.</li>
+    <li><code>type</code> lets the parent choose the input type.</li>
+    <li><code>error</code> optionally displays a validation message.</li>
+    <li><code>...inputProps</code> lets the parent pass additional supported input attributes, such as <code>required</code>, <code>autoComplete</code>, or <code>placeholder</code>.</li>
+  </ul>
+  <p>The component also connects the label to the input and connects the error message to the input.</p>
+
+  <h3>6.5 Reuse the Component</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">ProfileForm.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useState } from "react";
+import TextField from "./TextField.jsx";
+
+function ProfileForm() {
+  const [form, setForm] = useState({
+    name: "",
+    email: ""
+  });
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+
+    setForm(current =&gt; ({
+      ...current,
+      [name]: value
+    }));
+  }
+
+  return (
+    &lt;form&gt;
+      &lt;TextField
+        id="name"
+        name="name"
+        label="Full Name"
+        value={form.name}
+        onChange={handleChange}
+        required
+      /&gt;
+
+      &lt;TextField
+        id="email"
+        name="email"
+        label="Email Address"
+        type="email"
+        value={form.email}
+        onChange={handleChange}
+        required
+      /&gt;
+
+      &lt;button type="submit"&gt;Save Profile&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}
+
+export default ProfileForm;</code></pre>
+  </div>
+
+  <h4>How Does the Generic Change Handler Work?</h4>
+  <p>Suppose the user types an email address.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">destructure</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">const { name, value } = event.target;</code></pre>
+  </div>
+
+  <p>The browser provides the input's <code>name</code> and <code>value</code>.</p>
+  <p>Then:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">update</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">setForm(current =&gt; ({
+  ...current,
+  [name]: value
+}));</code></pre>
+  </div>
+
+  <p>If the input's name is <code>"email"</code>, the handler updates the <code>email</code> property. If it is <code>"name"</code>, the handler updates the <code>name</code> property.</p>
+  <p>The square brackets create a computed property name based on the current field's <code>name</code>.</p>
+
+  <h3>6.6 Do All Inputs Use the Same Component?</h3>
+  <p>Not always.</p>
+  <p>A text input, checkbox, radio group, and file input may require different props and behavior.</p>
+  <p>You can reuse components where the structure is genuinely similar, but do not force every control into one complicated component with dozens of conditional branches.</p>
+  <p>It is often cleaner to create separate components such as:</p>
+  <ul>
+    <li><code>TextField</code></li>
+    <li><code>SelectField</code></li>
+    <li><code>CheckboxField</code></li>
+    <li><code>RadioGroup</code></li>
+    <li><code>FileField</code></li>
+  </ul>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>Reusable form components reduce duplication and support consistent labels, styles, validation messages, and behavior.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 7
+     ============================================================ -->
+<section class="topic" id="t7">
+  <div class="topic-head">
+    <div class="kicker">Topic 07</div>
+    <h2>File Input and Upload Interfaces</h2>
+    <p>Selecting a file is not the same as uploading it.</p>
+  </div>
+
+  <h3>7.1 What Is a File Input?</h3>
+  <p>A file input lets users select files from their device.</p>
+  <p>Examples include:</p>
+  <ul>
+    <li>Uploading a résumé.</li>
+    <li>Selecting a profile image.</li>
+    <li>Attaching supporting documents.</li>
+    <li>Uploading an assignment.</li>
+    <li>Submitting a certificate.</li>
+  </ul>
+  <p>HTML uses <code>type="file"</code> for this purpose.</p>
+
+  <h3>7.2 Create a Basic File Input</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">ResumeUpload.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function ResumeUpload() {
+  return (
+    &lt;div&gt;
+      &lt;label htmlFor="resume"&gt;Upload Resume&lt;/label&gt;
+
+      &lt;input
+        id="resume"
+        name="resume"
+        type="file"
+        accept=".pdf"
+      /&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default ResumeUpload;</code></pre>
+  </div>
+
+  <p>The <code>accept</code> attribute suggests which file types the selection dialog should offer. It does not provide secure file-type validation by itself.</p>
+
+  <h3>7.3 Read the Selected File</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">ResumeUpload.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useState } from "react";
+
+function ResumeUpload() {
+  const [file, setFile] = useState(null);
+
+  function handleFileChange(event) {
+    const selectedFile = event.target.files?.[0] ?? null;
+    setFile(selectedFile);
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;label htmlFor="resume"&gt;Upload Resume&lt;/label&gt;
+
+      &lt;input
+        id="resume"
+        name="resume"
+        type="file"
+        accept=".pdf"
+        onChange={handleFileChange}
+      /&gt;
+
+      {file &amp;&amp; (
+        &lt;p&gt;
+          Selected file: {file.name}
+        &lt;/p&gt;
+      )}
+    &lt;/div&gt;
+  );
+}
+
+export default ResumeUpload;</code></pre>
+  </div>
+
+  <h4>Explanation</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">read file</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">event.target.files?.[0] ?? null</code></pre>
+  </div>
+
+  <p>The file input's <code>files</code> property contains the selected files.</p>
+  <p>For a single-file input, <code>[0]</code> retrieves the first selected file. If no file exists, the code uses <code>null</code>.</p>
+  <p>The application stores the selected <code>File</code> object in state and displays its name.</p>
+
+  <div class="callout warn">
+    <div class="ct">▲ Important</div>
+    <p>File inputs are a special case. Usually, keep the file input itself uncontrolled and store the selected <code>File</code> object separately if the application needs to display or validate it. Do not try to control the file input using a filename as its <code>value</code>.</p>
+  </div>
+
+  <h3>7.4 Validate the File</h3>
+  <p>You can validate a selection in your change handler.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">ResumeUpload.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useState } from "react";
+
+function ResumeUpload() {
+  const [file, setFile] = useState(null);
+  const [error, setError] = useState("");
+
+  function handleFileChange(event) {
+    const selectedFile = event.target.files?.[0] ?? null;
+
+    if (!selectedFile) {
+      setFile(null);
+      setError("");
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024;
+    const isPdf = selectedFile.type === "application/pdf";
+
+    if (!isPdf) {
+      setFile(null);
+      setError("Please select a PDF file.");
+      return;
+    }
+
+    if (selectedFile.size &gt; maxSize) {
+      setFile(null);
+      setError("The file must be smaller than 5 MB.");
+      return;
+    }
+
+    setFile(selectedFile);
+    setError("");
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;label htmlFor="resume"&gt;Resume (PDF, up to 5 MB)&lt;/label&gt;
+
+      &lt;input
+        id="resume"
+        type="file"
+        accept=".pdf,application/pdf"
+        onChange={handleFileChange}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? "resume-error" : undefined}
+      /&gt;
+
+      {error &amp;&amp; (
+        &lt;p id="resume-error" role="alert"&gt;
+          {error}
+        &lt;/p&gt;
+      )}
+
+      {file &amp;&amp; &lt;p&gt;Selected: {file.name}&lt;/p&gt;}
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>This example checks the reported MIME type and file size on the client.</p>
+  <p>However, the browser-provided MIME type and file extension cannot be trusted as security guarantees. A backend must enforce upload restrictions and validate the received file appropriately.</p>
+
+  <h3>7.5 Upload a File Using <code>FormData</code></h3>
+  <p>Selecting a file does not upload it to a server.</p>
+  <p>To upload it, your application must send a request to a backend endpoint that accepts the file.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">uploadResume.js</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">async function uploadResume(file) {
+  const formData = new FormData();
+
+  formData.append("resume", file);
+
+  const response = await fetch("/api/resumes", {
+    method: "POST",
+    body: formData
+  });
+
+  if (!response.ok) {
+    throw new Error("Resume upload failed");
+  }
+
+  return response.json();
+}</code></pre>
+  </div>
+
+  <h4>Explanation</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">create</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">const formData = new FormData();</code></pre>
+  </div>
+
+  <p>Creates a multipart form-data payload.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">append</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">formData.append("resume", file);</code></pre>
+  </div>
+
+  <p>Adds the selected file under the field name <code>resume</code>.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">send</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">fetch("/api/resumes", {
+  method: "POST",
+  body: formData
+});</code></pre>
+  </div>
+
+  <p>Sends the file to the backend endpoint.</p>
+  <p>The URL <code>"/api/resumes"</code> is an example endpoint; your backend must implement it.</p>
+
+  <div class="callout warn">
+    <div class="ct">▲ Important</div>
+    <p><strong>Do not manually set the <code>Content-Type</code> header to <code>multipart/form-data</code> when using <code>FormData</code> with <code>fetch</code>.</strong> The browser needs to generate the correct multipart boundary.</p>
+    <p>The server should authenticate and authorize the request as necessary and validate the file independently of client-side checks.</p>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="File selection and upload flow">
+      <defs>
+        <linearGradient id="g7a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4338ca"/><stop offset="100%" stop-color="#6366f1"/>
+        </linearGradient>
+        <linearGradient id="g7b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+        <linearGradient id="g7c" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0f9d76"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Step 1 -->
+      <rect x="24" y="30" width="200" height="200" rx="14" fill="#f6f6ff" stroke="#c7d2fe" stroke-width="2"/>
+      <text x="124" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#4338ca">1 · Select file</text>
+      <rect x="46" y="82" width="156" height="30" rx="7" fill="#fff" stroke="#90a4ff"/>
+      <text x="124" y="102" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#1e1b6b">type="file"</text>
+      <rect x="46" y="120" width="156" height="50" rx="7" fill="url(#g7a)"/>
+      <text x="124" y="142" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#fff">resume.pdf</text>
+      <text x="124" y="160" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" fill="#c3c9ff">File object</text>
+      <text x="124" y="196" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6d6a8c">stays in DOM</text>
+      <text x="124" y="216" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6d6a8c">File stored in state</text>
+
+      <!-- Arrow -->
+      <path d="M228 130 H 262" stroke="#c7d2fe" stroke-width="3"/>
+      <polygon points="262,122 278,130 262,138" fill="#4338ca"/>
+
+      <!-- Step 2 -->
+      <rect x="286" y="30" width="200" height="200" rx="14" fill="#fff8ec" stroke="#ffdfae" stroke-width="2"/>
+      <text x="386" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#b45309">2 · Validate</text>
+      <rect x="308" y="82" width="156" height="30" rx="7" fill="#fff" stroke="#f6c667"/>
+      <text x="386" y="102" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#8a5a00">.type === pdf ?</text>
+      <rect x="308" y="120" width="156" height="30" rx="7" fill="#fff" stroke="#f6c667"/>
+      <text x="386" y="140" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#8a5a00">.size &lt; 5 MB ?</text>
+      <rect x="308" y="158" width="156" height="52" rx="8" fill="url(#g7b)"/>
+      <text x="386" y="182" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#4a2c00">show error</text>
+      <text x="386" y="200" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#4a2c00">or accept file</text>
+
+      <!-- Arrow -->
+      <path d="M490 130 H 524" stroke="#c7d2fe" stroke-width="3"/>
+      <polygon points="524,122 540,130 524,138" fill="#4338ca"/>
+
+      <!-- Step 3 -->
+      <rect x="548" y="30" width="188" height="200" rx="14" fill="#eefbf6" stroke="#b8ecd8" stroke-width="2"/>
+      <text x="642" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#047857">3 · Upload</text>
+      <rect x="568" y="82" width="148" height="34" rx="7" fill="url(#g7c)"/>
+      <text x="642" y="104" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="700" fill="#fff">new FormData()</text>
+      <rect x="568" y="124" width="148" height="30" rx="7" fill="#fff" stroke="#8fdcbf"/>
+      <text x="642" y="144" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#0f6b52">.append(name, file)</text>
+      <rect x="568" y="162" width="148" height="48" rx="8" fill="url(#g7a)"/>
+      <text x="642" y="184" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="700" fill="#fff">fetch("/api",</text>
+      <text x="642" y="200" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="700" fill="#fff">  { body: fd })</text>
+    </svg>
+    <figcaption><b>Figure 7.1</b> — Selecting a file stores it locally; validation checks it; uploading sends it to a backend.</figcaption>
+  </figure>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>File selection is not the same as file upload. Use <code>type="file"</code> to select a file, store the <code>File</code> object if needed, validate the input, and send it using <code>FormData</code> to a backend that supports uploads.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 8
+     ============================================================ -->
+<section class="topic" id="t8">
+  <div class="topic-head">
+    <div class="kicker">Topic 08</div>
+    <h2>Accessible Labels and Error Messages</h2>
+    <p>Forms that work for everyone.</p>
+  </div>
+
+  <h3>8.1 What Is Form Accessibility?</h3>
+  <p>Form accessibility means designing form controls so that people using different devices and assistive technologies can understand them and interact with them.</p>
+  <p>Examples include people who use screen readers, keyboard navigation, or other accessibility tools.</p>
+  <p>Accessible forms also help everyone by making instructions and validation messages clearer.</p>
+
+  <h3>8.2 Why Are Labels Important?</h3>
+  <p>A label communicates the purpose of a form control.</p>
+  <p>Consider an email input.</p>
+  <p>Without a proper label, a user may see a box and a placeholder. When the placeholder disappears after typing, its meaning may be less obvious.</p>
+  <p>A proper label gives the field a clear, persistent description.</p>
+
+  <h3>8.3 Connect Labels to Inputs</h3>
+  <p>Use <code>htmlFor</code> in JSX and make it match the input's <code>id</code>.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">EmailField.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function EmailField() {
+  return (
+    &lt;div&gt;
+      &lt;label htmlFor="email"&gt;Email Address&lt;/label&gt;
+
+      &lt;input
+        id="email"
+        name="email"
+        type="email"
+      /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The <code>htmlFor="email"</code> value associates the label with the input whose ID is <code>email</code>.</p>
+  <p>When practical, clicking the label also focuses the associated input.</p>
+
+  <h3>8.4 Group Related Controls with <code>fieldset</code> and <code>legend</code></h3>
+  <p>Checkbox groups and radio-button groups often benefit from a shared label.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">group</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;fieldset&gt;
+  &lt;legend&gt;Preferred Learning Mode&lt;/legend&gt;
+
+  &lt;label&gt;
+    &lt;input type="radio" name="mode" value="online" /&gt;
+    Online
+  &lt;/label&gt;
+
+  &lt;label&gt;
+    &lt;input type="radio" name="mode" value="classroom" /&gt;
+    Classroom
+  &lt;/label&gt;
+&lt;/fieldset&gt;</code></pre>
+  </div>
+
+  <p>The <code>fieldset</code> groups the related controls, while <code>legend</code> describes the group.</p>
+  <p>This is particularly useful when the choices cannot be understood completely from each individual option.</p>
+
+  <h3>8.5 Associate an Error with Its Field</h3>
+  <p>Imagine a registration form where the user enters an invalid email.</p>
+  <p>The interface should explain what went wrong and identify which field needs correction.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">EmailField.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function EmailField({ email, setEmail, error }) {
+  return (
+    &lt;div&gt;
+      &lt;label htmlFor="email"&gt;Email Address&lt;/label&gt;
+
+      &lt;input
+        id="email"
+        name="email"
+        type="email"
+        value={email}
+        onChange={event =&gt; setEmail(event.target.value)}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? "email-error" : undefined}
+      /&gt;
+
+      {error &amp;&amp; (
+        &lt;p id="email-error" role="alert"&gt;
+          {error}
+        &lt;/p&gt;
+      )}
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <h4>Important Attributes</h4>
+
+  <p><strong><code>aria-invalid</code></strong></p>
+  <p>Indicates that a field currently has invalid data. It is commonly set to <code>true</code> when a validation error exists.</p>
+
+  <p><strong><code>aria-describedby</code></strong></p>
+  <p>Associates a control with additional explanatory text, such as its validation message.</p>
+
+  <p><strong><code>role="alert"</code></strong></p>
+  <p>Can announce a newly displayed error message to assistive technologies. Use it thoughtfully rather than making every informational message an alert.</p>
+
+  <p>These attributes do not replace the actual label. The interface should provide both a clear field label and a useful error message.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 290" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Label, input, and error connection in an accessible form field">
+      <defs>
+        <linearGradient id="g8a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4338ca"/><stop offset="100%" stop-color="#6366f1"/>
+        </linearGradient>
+        <linearGradient id="g8b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#fb7185"/><stop offset="100%" stop-color="#f43f5e"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Label -->
+      <rect x="46" y="46" width="150" height="36" rx="9" fill="url(#g8a)"/>
+      <text x="121" y="69" text-anchor="middle" font-family="Consolas, monospace" font-size="12" font-weight="700" fill="#fff">&lt;label&gt;</text>
+      <text x="121" y="106" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#1e1b6b">"Email Address"</text>
+      <text x="121" y="124" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#6d6a8c">htmlFor="email"</text>
+
+      <!-- Arrow -->
+      <path d="M204 64 H 300" stroke="#c7d2fe" stroke-width="3"/>
+      <polygon points="300,56 316,64 300,72" fill="#4338ca"/>
+      <text x="252" y="52" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#4338ca">links to</text>
+
+      <!-- Input -->
+      <rect x="316" y="46" width="150" height="36" rx="9" fill="#f6f6ff" stroke="#90a4ff" stroke-width="2"/>
+      <text x="391" y="69" text-anchor="middle" font-family="Consolas, monospace" font-size="12" font-weight="700" fill="#1e1b6b">&lt;input&gt;</text>
+      <text x="391" y="106" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#1e1b6b">id="email"</text>
+      <text x="391" y="124" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#6d6a8c">type="email"</text>
+
+      <!-- Arrow -->
+      <path d="M474 64 H 570" stroke="#fbc7cf" stroke-width="3"/>
+      <polygon points="570,56 586,64 570,72" fill="#fb7185"/>
+      <text x="522" y="52" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#be123c">described by</text>
+
+      <!-- Error -->
+      <rect x="586" y="46" width="150" height="36" rx="9" fill="url(#g8b)"/>
+      <text x="661" y="69" text-anchor="middle" font-family="Consolas, monospace" font-size="12" font-weight="700" fill="#fff">error &lt;p&gt;</text>
+      <text x="661" y="106" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#8c4152">id="email-error"</text>
+      <text x="661" y="124" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#be123c">role="alert"</text>
+
+      <!-- Code row -->
+      <rect x="46" y="164" width="690" height="106" rx="12" fill="#0f0f23"/>
+      <text x="66" y="192" font-family="Consolas, monospace" font-size="11.5" fill="#7ee2a8">&lt;input</text>
+      <text x="86" y="212" font-family="Consolas, monospace" font-size="11.5" fill="#dcdfff">  id="email"</text>
+      <text x="86" y="232" font-family="Consolas, monospace" font-size="11.5" fill="#ffd479">  aria-invalid={Boolean(error)}</text>
+      <text x="86" y="252" font-family="Consolas, monospace" font-size="11.5" fill="#ffd479">  aria-describedby={error ? "email-error" : undefined}</text>
+      <text x="66" y="268" font-family="Consolas, monospace" font-size="11.5" fill="#7ee2a8">/&gt;</text>
+    </svg>
+    <figcaption><b>Figure 8.1</b> — A label names the field, the input identifies itself, and the error is associated back to the field.</figcaption>
+  </figure>
+
+  <h3>8.6 Show Clear Error Messages</h3>
+  <p>A useful error message tells the user how to correct the problem.</p>
+  <p>Less helpful:</p>
+
+  <div class="term out">
+    <div class="term-head">Less helpful</div>
+    <pre>Invalid input.</pre>
+  </div>
+
+  <p>More helpful:</p>
+
+  <div class="term out">
+    <div class="term-head">More helpful</div>
+    <pre>Enter an email address in the format name@example.com.</pre>
+  </div>
+
+  <p>For a required field, you might say:</p>
+
+  <div class="term out">
+    <div class="term-head">Required field</div>
+    <pre>Enter your full name.</pre>
+  </div>
+
+  <p>Error messages should identify the problem in a clear and respectful manner.</p>
+
+  <h3>8.7 Do Not Rely on Color Alone</h3>
+  <p>If an invalid field is highlighted in red, also provide textual feedback and appropriate accessibility attributes.</p>
+  <p>Not every user perceives color in the same way, and a color alone does not explain what needs to be corrected.</p>
+
+  <h3>8.8 Use Appropriate HTML Semantics</h3>
+  <p>Use:</p>
+  <ul>
+    <li><code>label</code> to name individual controls.</li>
+    <li><code>fieldset</code> and <code>legend</code> to group related fields.</li>
+    <li><code>button type="submit"</code> for form submission.</li>
+    <li><code>button type="button"</code> for an action that should not submit the form.</li>
+    <li><code>required</code> and suitable input types for basic native validation.</li>
+    <li><code>aria-describedby</code> when additional field instructions or errors need to be associated with a control.</li>
+  </ul>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>Accessible forms have clear labels, meaningful groups, understandable errors, keyboard-friendly controls, and appropriate HTML semantics.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     PRACTICAL PROJECT
+     ============================================================ -->
+<section class="topic" id="project">
+  <div class="topic-head">
+    <div class="kicker">Practical Project</div>
+    <h2>Build a Student Admission Form</h2>
+    <p>Combine all eight topics into one working React application.</p>
+  </div>
+
+  <p>The form will include:</p>
+  <ul>
+    <li>Full name and email</li>
+    <li>Course dropdown</li>
+    <li>Radio buttons for learning mode</li>
+    <li>A terms-and-conditions checkbox</li>
+    <li>Dynamic skill fields</li>
+    <li>A résumé file input</li>
+    <li>Custom validation</li>
+    <li>Accessible labels and error messages</li>
+    <li>A submission confirmation</li>
+  </ul>
+  <p>This project uses React state for controlled fields and file metadata, and it keeps the file input itself uncontrolled.</p>
+
+  <h3>Step 1: Create the Project Structure</h3>
+
+  <div class="tree"><span class="dir">src/</span>
+├── <span class="dir">components/</span>
+│   └── <span class="file">TextField.jsx</span>
+├── <span class="file">App.jsx</span>
+├── <span class="file">App.css</span>
+└── <span class="file">main.jsx</span></div>
+
+  <h3>Step 2: Create <code>components/TextField.jsx</code></h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/components/TextField.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function TextField({
+  id,
+  name,
+  label,
+  value,
+  onChange,
+  type = "text",
+  error,
+  ...inputProps
+}) {
+  const errorId = `${id}-error`;
+
+  return (
+    &lt;div className="form-field"&gt;
+      &lt;label htmlFor={id}&gt;{label}&lt;/label&gt;
+
+      &lt;input
+        id={id}
+        name={name}
+        type={type}
+        value={value}
+        onChange={onChange}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? errorId : undefined}
+        {...inputProps}
+      /&gt;
+
+      {error &amp;&amp; (
+        &lt;p id={errorId} className="field-error" role="alert"&gt;
+          {error}
+        &lt;/p&gt;
+      )}
+    &lt;/div&gt;
+  );
+}
+
+export default TextField;</code></pre>
+  </div>
+
+  <p>This reusable component includes a label, controlled input, and optional error message.</p>
+
+  <h3>Step 3: Create <code>App.jsx</code></h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useState } from "react";
+import TextField from "./components/TextField.jsx";
+import "./App.css";
+
+function App() {
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    course: "",
+    mode: "online",
+    agree: false
+  });
+
+  const [skills, setSkills] = useState([
+    { id: "skill-1", value: "" }
+  ]);
+
+  const [resume, setResume] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleChange(event) {
+    const { name, value, type, checked } = event.target;
+
+    setForm(current =&gt; ({
+      ...current,
+      [name]: type === "checkbox" ? checked : value
+    }));
+
+    setErrors(current =&gt; ({
+      ...current,
+      [name]: ""
+    }));
+
+    setSubmitted(false);
+  }
+
+  function addSkill() {
+    setSkills(current =&gt; [
+      ...current,
+      {
+        id: crypto.randomUUID(),
+        value: ""
+      }
+    ]);
+  }
+
+  function updateSkill(id, value) {
+    setSkills(current =&gt;
+      current.map(skill =&gt;
+        skill.id === id
+          ? { ...skill, value }
+          : skill
+      )
+    );
+  }
+
+  function removeSkill(id) {
+    setSkills(current =&gt;
+      current.filter(skill =&gt; skill.id !== id)
+    );
+  }
+
+  function handleResumeChange(event) {
+    const file = event.target.files?.[0] ?? null;
+
+    setResume(null);
+    setErrors(current =&gt; ({
+      ...current,
+      resume: ""
+    }));
+    setSubmitted(false);
+
+    if (!file) {
+      return;
+    }
+
+    if (file.type !== "application/pdf") {
+      setErrors(current =&gt; ({
+        ...current,
+        resume: "Please select a PDF file."
+      }));
+      return;
+    }
+
+    if (file.size &gt; 5 * 1024 * 1024) {
+      setErrors(current =&gt; ({
+        ...current,
+        resume: "The file must be smaller than 5 MB."
+      }));
+      return;
+    }
+
+    setResume(file);
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    const nextErrors = {};
+
+    if (form.fullName.trim().length &lt; 3) {
+      nextErrors.fullName =
+        "Enter a name containing at least 3 characters.";
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(form.email)) {
+      nextErrors.email =
+        "Enter a valid email address.";
+    }
+
+    if (!form.course) {
+      nextErrors.course =
+        "Please select a course.";
+    }
+
+    if (!form.agree) {
+      nextErrors.agree =
+        "You must accept the terms before continuing.";
+    }
+
+    if (errors.resume) {
+      nextErrors.resume = errors.resume;
+    }
+
+    setErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length &gt; 0) {
+      setSubmitted(false);
+      return;
+    }
+
+    setSubmitted(true);
+
+    console.log({
+      ...form,
+      skills: skills
+        .map(skill =&gt; skill.value.trim())
+        .filter(Boolean),
+      resumeName: resume?.name ?? null
+    });
+  }
+
+  return (
+    &lt;main className="admission-page"&gt;
+      &lt;h1&gt;Student Admission Form&lt;/h1&gt;
+      &lt;p&gt;Enter your details to register for a course.&lt;/p&gt;
+
+      &lt;form onSubmit={handleSubmit} noValidate&gt;
+        &lt;TextField
+          id="fullName"
+          name="fullName"
+          label="Full Name"
+          value={form.fullName}
+          onChange={handleChange}
+          error={errors.fullName}
+          autoComplete="name"
+          required
+        /&gt;
+
+        &lt;TextField
+          id="email"
+          name="email"
+          label="Email Address"
+          type="email"
+          value={form.email}
+          onChange={handleChange}
+          error={errors.email}
+          autoComplete="email"
+          required
+        /&gt;
+
+        &lt;div className="form-field"&gt;
+          &lt;label htmlFor="course"&gt;Select Course&lt;/label&gt;
+
+          &lt;select
+            id="course"
+            name="course"
+            value={form.course}
+            onChange={handleChange}
+            aria-invalid={Boolean(errors.course)}
+            aria-describedby={
+              errors.course ? "course-error" : undefined
+            }
+            required
+          &gt;
+            &lt;option value=""&gt;Choose a course&lt;/option&gt;
+            &lt;option value="react"&gt;React JS&lt;/option&gt;
+            &lt;option value="node"&gt;Node.js&lt;/option&gt;
+            &lt;option value="mern"&gt;MERN Stack&lt;/option&gt;
+          &lt;/select&gt;
+
+          {errors.course &amp;&amp; (
+            &lt;p id="course-error" className="field-error" role="alert"&gt;
+              {errors.course}
+            &lt;/p&gt;
+          )}
+        &lt;/div&gt;
+
+        &lt;fieldset&gt;
+          &lt;legend&gt;Preferred Learning Mode&lt;/legend&gt;
+
+          &lt;label&gt;
+            &lt;input
+              type="radio"
+              name="mode"
+              value="online"
+              checked={form.mode === "online"}
+              onChange={handleChange}
+            /&gt;
+            Online
+          &lt;/label&gt;
+
+          &lt;label&gt;
+            &lt;input
+              type="radio"
+              name="mode"
+              value="classroom"
+              checked={form.mode === "classroom"}
+              onChange={handleChange}
+            /&gt;
+            Classroom
+          &lt;/label&gt;
+        &lt;/fieldset&gt;
+
+        &lt;fieldset&gt;
+          &lt;legend&gt;Your Skills&lt;/legend&gt;
+
+          {skills.map((skill, index) =&gt; (
+            &lt;div className="skill-row" key={skill.id}&gt;
+              &lt;label htmlFor={skill.id}&gt;
+                Skill {index + 1}
+              &lt;/label&gt;
+
+              &lt;input
+                id={skill.id}
+                type="text"
+                value={skill.value}
+                onChange={event =&gt;
+                  updateSkill(skill.id, event.target.value)
+                }
+              /&gt;
+
+              &lt;button
+                type="button"
+                onClick={() =&gt; removeSkill(skill.id)}
+                disabled={skills.length === 1}
+              &gt;
+                Remove
+              &lt;/button&gt;
+            &lt;/div&gt;
+          ))}
+
+          &lt;button type="button" onClick={addSkill}&gt;
+            Add Skill
+          &lt;/button&gt;
+        &lt;/fieldset&gt;
+
+        &lt;div className="form-field"&gt;
+          &lt;label htmlFor="resume"&gt;
+            Résumé (PDF, up to 5 MB)
+          &lt;/label&gt;
+
+          &lt;input
+            id="resume"
+            name="resume"
+            type="file"
+            accept=".pdf,application/pdf"
+            onChange={handleResumeChange}
+            aria-invalid={Boolean(errors.resume)}
+            aria-describedby={
+              errors.resume ? "resume-error" : undefined
+            }
+          /&gt;
+
+          {errors.resume &amp;&amp; (
+            &lt;p id="resume-error" className="field-error" role="alert"&gt;
+              {errors.resume}
+            &lt;/p&gt;
+          )}
+
+          {resume &amp;&amp; &lt;p&gt;Selected file: {resume.name}&lt;/p&gt;}
+        &lt;/div&gt;
+
+        &lt;div className="form-field"&gt;
+          &lt;label&gt;
+            &lt;input
+              type="checkbox"
+              name="agree"
+              checked={form.agree}
+              onChange={handleChange}
+              aria-invalid={Boolean(errors.agree)}
+              aria-describedby={
+                errors.agree ? "agree-error" : undefined
+              }
+            /&gt;
+            I agree to the terms and conditions.
+          &lt;/label&gt;
+
+          {errors.agree &amp;&amp; (
+            &lt;p id="agree-error" className="field-error" role="alert"&gt;
+              {errors.agree}
+            &lt;/p&gt;
+          )}
+        &lt;/div&gt;
+
+        &lt;button type="submit"&gt;Submit Application&lt;/button&gt;
+      &lt;/form&gt;
+
+      {submitted &amp;&amp; (
+        &lt;section className="success-message" aria-live="polite"&gt;
+          &lt;h2&gt;Application Ready&lt;/h2&gt;
+          &lt;p&gt;Name: {form.fullName}&lt;/p&gt;
+          &lt;p&gt;Email: {form.email}&lt;/p&gt;
+          &lt;p&gt;Course: {form.course}&lt;/p&gt;
+          &lt;p&gt;Learning Mode: {form.mode}&lt;/p&gt;
+          &lt;p&gt;
+            Skills:{" "}
+            {skills.map(skill =&gt; skill.value.trim())
+              .filter(Boolean).join(", ") || "None entered"}
+          &lt;/p&gt;
+          &lt;p&gt;Résumé: {resume?.name ?? "Not provided"}&lt;/p&gt;
+        &lt;/section&gt;
+      )}
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 760 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Student Admission Form layout overview">
+      <defs>
+        <linearGradient id="gpa" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4338ca"/><stop offset="100%" stop-color="#6366f1"/>
+        </linearGradient>
+        <linearGradient id="gpb" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+        <linearGradient id="gpc" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0f9d76"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Form sheet -->
+      <rect x="24" y="18" width="360" height="286" rx="14" fill="#f6f6ff" stroke="#c7d2fe" stroke-width="2"/>
+      <text x="204" y="46" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#4338ca">Student Admission Form</text>
+
+      <rect x="44" y="62" width="320" height="26" rx="6" fill="#fff" stroke="#90a4ff"/>
+      <text x="54" y="80" font-family="Segoe UI, sans-serif" font-size="10" fill="#6d6a8c">Full Name</text>
+
+      <rect x="44" y="94" width="320" height="26" rx="6" fill="#fff" stroke="#90a4ff"/>
+      <text x="54" y="112" font-family="Segoe UI, sans-serif" font-size="10" fill="#6d6a8c">Email Address</text>
+
+      <rect x="44" y="126" width="320" height="26" rx="6" fill="#fff" stroke="#90a4ff"/>
+      <text x="54" y="144" font-family="Segoe UI, sans-serif" font-size="10" fill="#6d6a8c">Select Course ▾</text>
+
+      <rect x="44" y="158" width="320" height="40" rx="8" fill="#f0f0ff" stroke="#c7d2fe"/>
+      <text x="54" y="176" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#1e1b6b">Learning Mode</text>
+      <text x="54" y="192" font-family="Segoe UI, sans-serif" font-size="10" fill="#6d6a8c">◉ Online   ○ Classroom</text>
+
+      <rect x="44" y="204" width="320" height="46" rx="8" fill="#f0f0ff" stroke="#c7d2fe"/>
+      <text x="54" y="222" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#1e1b6b">Your Skills</text>
+      <rect x="54" y="230" width="200" height="16" rx="4" fill="#fff" stroke="#c7d2fe"/>
+      <rect x="260" y="230" width="50" height="16" rx="4" fill="url(#gpb)"/>
+      <text x="285" y="242" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="8.5" font-weight="700" fill="#4a2c00">Remove</text>
+
+      <rect x="44" y="256" width="320" height="26" rx="6" fill="#fff" stroke="#90a4ff"/>
+      <text x="54" y="274" font-family="Segoe UI, sans-serif" font-size="10" fill="#6d6a8c">Résumé (PDF)</text>
+
+      <rect x="44" y="286" width="320" height="12" rx="4" fill="#f0f0ff" stroke="#c7d2fe"/>
+      <text x="54" y="296" font-family="Segoe UI, sans-serif" font-size="9" fill="#6d6a8c">☐ I agree to the terms</text>
+
+      <!-- Right side: tags -->
+      <rect x="408" y="18" width="328" height="286" rx="14" fill="#fbfbff" stroke="#e5e4f2" stroke-width="2"/>
+      <text x="572" y="46" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#4338ca">Topics Practised</text>
+
+      <rect x="428" y="66" width="288" height="26" rx="7" fill="url(#gpa)"/>
+      <text x="572" y="84" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#fff">onSubmit + preventDefault</text>
+
+      <rect x="428" y="98" width="288" height="26" rx="7" fill="#4338ca"/>
+      <text x="572" y="116" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#fff">Controlled inputs &amp; selects</text>
+
+      <rect x="428" y="130" width="288" height="26" rx="7" fill="#4c6ef5"/>
+      <text x="572" y="148" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#fff">Checkbox &amp; radio groups</text>
+
+      <rect x="428" y="162" width="288" height="26" rx="7" fill="url(#gpb)"/>
+      <text x="572" y="180" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#4a2c00">Custom validation</text>
+
+      <rect x="428" y="194" width="288" height="26" rx="7" fill="#f59e0b"/>
+      <text x="572" y="212" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#4a2c00">Dynamic skill fields</text>
+
+      <rect x="428" y="226" width="288" height="26" rx="7" fill="url(#gpc)"/>
+      <text x="572" y="244" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#fff">Reusable TextField</text>
+
+      <rect x="428" y="258" width="288" height="26" rx="7" fill="#0f9d76"/>
+      <text x="572" y="276" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#fff">File input + accessibility</text>
+    </svg>
+    <figcaption><b>Figure P.1</b> — The finished Student Admission Form and the Phase 4 topics it practises.</figcaption>
+  </figure>
+
+  <h3>Step 4: Add Styling in <code>App.css</code></h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/App.css</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">.admission-page {
+  width: min(92%, 720px);
+  margin: 32px auto;
+  padding: 28px;
+  border: 1px solid #dbeafe;
+  border-radius: 16px;
+  font-family: Arial, sans-serif;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.admission-page h1 {
+  color: #1d4ed8;
+}
+
+.admission-page form {
+  display: grid;
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.form-field {
+  display: grid;
+  gap: 8px;
+}
+
+.form-field input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.form-field select,
+.skill-row input {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #94a3b8;
+  border-radius: 7px;
+  box-sizing: border-box;
+}
+
+.admission-page input:focus,
+.admission-page select:focus {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+.admission-page fieldset {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+}
+
+.admission-page button {
+  width: fit-content;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 7px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+.admission-page button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.field-error {
+  color: #b91c1c;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.skill-row {
+  display: grid;
+  grid-template-columns: auto minmax(100px, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.success-message {
+  margin-top: 24px;
+  padding: 18px;
+  border: 1px solid #86efac;
+  border-radius: 10px;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+@media (max-width: 520px) {
+  .admission-page {
+    padding: 18px;
+  }
+
+  .skill-row {
+    grid-template-columns: 1fr;
+  }
+}</code></pre>
+  </div>
+
+  <h3>Step 5: Run the Application</h3>
+  <p>Start Vite:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm run dev</code></pre>
+  </div>
+
+  <p>Open the local URL shown in your terminal.</p>
+
+  <h4>Test These Behaviors</h4>
+  <ol>
+    <li>Submit the form with no information and verify that the required fields display errors.</li>
+    <li>Enter an invalid email and confirm that the email error appears.</li>
+    <li>Select a course and learning mode.</li>
+    <li>Add multiple skill fields.</li>
+    <li>Enter several skills and remove one of the fields.</li>
+    <li>Select a PDF file smaller than 5 MB.</li>
+    <li>Try selecting a file with a different type or a larger size.</li>
+    <li>Accept the terms and submit the form.</li>
+    <li>Verify that the confirmation displays the entered information.</li>
+  </ol>
+
+  <div class="callout warn">
+    <div class="ct">▲ Important</div>
+    <p>This practice project validates the selected résumé and displays a confirmation, but it does not send the application or upload the file to a server. A production application needs a backend submission endpoint and server-side validation.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMMON BEGINNER MISTAKES
+     ============================================================ -->
+<section class="topic" id="mistakes">
+  <div class="topic-head">
+    <div class="kicker">Reference</div>
+    <h2>Common Beginner Mistakes</h2>
+    <p>Eight pitfalls every new React form developer runs into — and how to fix them.</p>
+  </div>
+
+  <h3>Mistake 1: Forgetting <code>preventDefault()</code></h3>
+  <p>If you use a normal form submission without intending to navigate or reload the page, the browser may reload or navigate away.</p>
+  <p>Use:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">preventDefault</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function handleSubmit(event) {
+  event.preventDefault();
+}</code></pre>
+  </div>
+
+  <h3>Mistake 2: Using <code>value</code> for a Controlled Checkbox</h3>
+  <p>Incorrect:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Incorrect</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;input type="checkbox" value={agreed} /&gt;</code></pre>
+  </div>
+
+  <p>Correct:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ Correct</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;input
+  type="checkbox"
+  checked={agreed}
+  onChange={event =&gt; setAgreed(event.target.checked)}
+/&gt;</code></pre>
+  </div>
+
+  <p>For checkboxes, <code>checked</code> represents the selected state.</p>
+
+  <h3>Mistake 3: Forgetting <code>onChange</code> on a Controlled Input</h3>
+  <p>Incorrect:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Incorrect</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;input value={name} /&gt;</code></pre>
+  </div>
+
+  <p>This input is controlled but cannot normally be edited by the user.</p>
+  <p>Correct:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ Correct</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;input
+  value={name}
+  onChange={event =&gt; setName(event.target.value)}
+/&gt;</code></pre>
+  </div>
+
+  <h3>Mistake 4: Using Placeholder Text Instead of a Label</h3>
+  <p>Incorrect:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Incorrect</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;input placeholder="Enter your email" /&gt;</code></pre>
+  </div>
+
+  <p>Better:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ Better</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;label htmlFor="email"&gt;Email Address&lt;/label&gt;
+&lt;input id="email" type="email" placeholder="name@example.com" /&gt;</code></pre>
+  </div>
+
+  <p>A placeholder provides a hint; the label identifies the field.</p>
+
+  <h3>Mistake 5: Using Array Indexes as Dynamic Field Keys</h3>
+  <p>Use a stable ID assigned when the field is created, rather than an index that changes when fields are removed or reordered.</p>
+
+  <h3>Mistake 6: Trusting Client-Side Validation Alone</h3>
+  <p>A user can bypass client-side rules. Validate the submitted data again on the server.</p>
+
+  <h3>Mistake 7: Assuming <code>accept</code> Makes File Uploads Safe</h3>
+  <p><code>accept=".pdf"</code> guides the browser's file picker. It is not a security guarantee. The server needs to validate the file and enforce suitable size and content restrictions.</p>
+
+  <h3>Mistake 8: Forgetting Button Types</h3>
+  <p>Inside a form, use:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">button types</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;button type="submit"&gt;Submit&lt;/button&gt;
+&lt;button type="button"&gt;Add Another Field&lt;/button&gt;</code></pre>
+  </div>
+
+  <p>This makes each button's purpose explicit and prevents ordinary action buttons from unintentionally submitting the form.</p>
+</section>
+
+<!-- ============================================================
+     QUICK REVISION NOTES
+     ============================================================ -->
+<section class="topic" id="revision">
+  <div class="topic-head">
+    <div class="kicker">Revision</div>
+    <h2>Quick Revision Notes</h2>
+    <p>One-sentence definitions for every concept in Phase 4.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="mini-card">
+      <h5>Form submission</h5>
+      <p>Use <code>onSubmit</code> to handle submission and <code>preventDefault()</code> when you need to prevent the browser's default behavior.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Input controls</h5>
+      <p>Use <code>value</code> for controlled text inputs and selects; use <code>checked</code> for controlled checkboxes and radio buttons.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Controlled form</h5>
+      <p>React state is the source of truth for the input value.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Uncontrolled form</h5>
+      <p>The DOM maintains the current value, which can be read with <code>FormData</code> at submission time.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Validation</h5>
+      <p>Use native HTML attributes and JavaScript validation for appropriate form rules.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Dynamic fields</h5>
+      <p>Store fields in an array, use immutable updates, and assign stable IDs.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Reusable form components</h5>
+      <p>Build common inputs and error displays once, then configure them through props.</p>
+    </div>
+    <div class="mini-card">
+      <h5>File input</h5>
+      <p>Read the selected <code>File</code> object and use <code>FormData</code> when sending it to a backend.</p>
+    </div>
+    <div class="mini-card" style="grid-column: span 2;">
+      <h5>Accessibility</h5>
+      <p>Use proper labels, group related controls, associate errors with fields, and explain how to correct invalid data.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PRACTICE EXERCISES
+     ============================================================ -->
+<section class="topic" id="exercises">
+  <div class="topic-head">
+    <div class="kicker">Practice</div>
+    <h2>Practice Exercises</h2>
+    <p>Complete these exercises in your Vite React project.</p>
+  </div>
+
+  <h3>Beginner Level</h3>
+  <ol>
+    <li>Create a login form with email and password fields.</li>
+    <li>Add <code>preventDefault()</code> to a form submit handler and display the submitted values.</li>
+    <li>Create a dropdown containing five courses and display the selected course.</li>
+    <li>Create a checkbox that displays whether the terms have been accepted.</li>
+    <li>Create a group of radio buttons for online, classroom, and hybrid learning.</li>
+    <li>Build a controlled text input that displays the entered text below it.</li>
+    <li>Build an uncontrolled contact form that uses <code>FormData</code> to read the values at submission time.</li>
+    <li>Add <code>required</code>, <code>type="email"</code>, and suitable labels to a registration form.</li>
+  </ol>
+
+  <h3>Intermediate Level</h3>
+  <ol start="9">
+    <li>Build a registration form with custom validation for name and email. Display field-specific error messages.</li>
+    <li>Build a skill form that allows the user to add, edit, and remove skill inputs. Use stable keys and immutable updates.</li>
+    <li>Create a reusable <code>TextField</code> component with props for label, ID, value, change handler, and error message.</li>
+    <li>Create a résumé upload interface that displays the filename and rejects files larger than 5 MB.</li>
+    <li>Build a course admission form with a select dropdown, radio buttons, checkboxes, and a submission summary.</li>
+    <li>Make all field errors accessible by using unique IDs, <code>aria-invalid</code>, and <code>aria-describedby</code>.</li>
+  </ol>
+
+  <h3>Challenge Level</h3>
+  <ol start="15">
+    <li>Create an education form where users can add multiple education records, each with institution, qualification, and passing year.</li>
+    <li>Build a dynamic work-experience form where users can add or remove experience entries.</li>
+    <li>Create a registration form using reusable text-field and select components. Centralize form values in a state object and validation messages in an error object.</li>
+    <li>Build a form that collects a résumé file and submits it as <code>FormData</code> to a backend endpoint. Display loading, success, and error feedback, and validate the received file on the server.</li>
+    <li>Create a form with both native and custom validation. Explain when you use browser validation and when you use custom JavaScript validation.</li>
+    <li>Build a complete student admission form with accessible labels, validation, dynamic skills, file selection, and a successful submission summary.</li>
+  </ol>
+</section>
+
+<!-- ============================================================
+     FINAL SELF-ASSESSMENT
+     ============================================================ -->
+<section class="topic" id="assessment">
+  <div class="topic-head">
+    <div class="kicker">Wrap-Up</div>
+    <h2>Final Self-Assessment</h2>
+    <p>Before moving to the next topic in your React roadmap, make sure you can:</p>
+  </div>
+
+  <ul>
+    <li>Handle form submission and explain <code>preventDefault()</code>.</li>
+    <li>Read values using controlled state or <code>FormData</code>.</li>
+    <li>Control inputs, selects, checkboxes, and radio buttons.</li>
+    <li>Explain the difference between controlled and uncontrolled forms.</li>
+    <li>Validate fields using native HTML rules and JavaScript.</li>
+    <li>Add, update, and remove dynamic form fields immutably.</li>
+    <li>Build reusable input components.</li>
+    <li>Read selected files and create a <code>FormData</code> upload payload.</li>
+    <li>Provide clear labels and accessible error messages.</li>
+    <li>Explain why client-side validation does not replace server-side validation.</li>
+  </ul>
+
+  <h3>Official Documentation for Further Reading</h3>
+  <ol>
+    <li><a href="https://react.dev/reference/react-dom/components/form">React — Form</a></li>
+    <li><a href="https://react.dev/reference/react-dom/components/input">React — Input</a></li>
+    <li><a href="https://react.dev/reference/react-dom/components/select">React — Select</a></li>
+    <li><a href="https://react.dev/learn/sharing-state-between-components">React — Sharing State Between Components</a></li>
+    <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Constraint_validation">MDN — Constraint Validation</a></li>
+    <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/FormData">MDN — FormData</a></li>
+    <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/File_API">MDN — File API</a></li>
+  </ol>
+
+  <div class="callout remember" style="margin-top:34px;">
+    <div class="ct">◆ Your Phase 4 Goal</div>
+    <p>Become comfortable building forms that collect, validate, and present user information correctly. When you can build the Student Admission Form independently, you will have practised all eight topics in this study material.</p>
+  </div>
+</section>
+
+</div><!-- /book -->
+
+<script>
+/* ============================================================
+   Lightweight, dependency-free syntax highlighter.
+   Runs in the browser before you print to PDF.
+   ============================================================ */
+(function () {
+  function esc(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +          // 1 comment
+    "|(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'|`(?:[^`\\\\]|\\\\.)*`)" + // 2 string
+    "|(<\\/?)([A-Za-z][A-Za-z0-9.]*)" +                 // 3,4 tag
+    "|(\\/?>)" +                                        // 5 tag close
+    "|\\b(const|let|var|function|return|import|from|export|default|if|else|for|while|class|new|this|true|false|null|undefined|typeof|async|await|of|in|try|catch|finally|throw|switch|case|break)\\b" + // 6 keyword
+    "|\\b(\\d+(?:\\.\\d+)?)\\b",                        // 7 number
+    "g"
+  );
+
+  function highlight(src) {
+    var out = "", last = 0, m;
+    RE.lastIndex = 0;
+    while ((m = RE.exec(src)) !== null) {
+      out += esc(src.slice(last, m.index));
+      if (m[1] !== undefined)      out += '<span class="tok-com">' + esc(m[1]) + "</span>";
+      else if (m[2] !== undefined) out += '<span class="tok-str">' + esc(m[2]) + "</span>";
+      else if (m[4] !== undefined) out += '<span class="tok-tagp">' + esc(m[3]) + '</span><span class="tok-tag">' + esc(m[4]) + "</span>";
+      else if (m[5] !== undefined) out += '<span class="tok-tagp">' + esc(m[5]) + "</span>";
+      else if (m[6] !== undefined) out += '<span class="tok-kw">' + esc(m[6]) + "</span>";
+      else if (m[7] !== undefined) out += '<span class="tok-num">' + esc(m[7]) + "</span>";
+      last = RE.lastIndex;
+    }
+    out += esc(src.slice(last));
+    return out;
+  }
+
+  function run() {
+    var blocks = document.querySelectorAll("pre > code");
+    for (var i = 0; i < blocks.length; i++) {
+      var el = blocks[i];
+      if (el.dataset.highlighted === "1") continue;
+      if (el.parentElement && el.parentElement.parentElement &&
+          el.parentElement.parentElement.classList.contains("term")) {
+        el.dataset.highlighted = "1";
+        continue;
+      }
+      el.innerHTML = highlight(el.textContent);
+      el.dataset.highlighted = "1";
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run);
+  } else {
+    run();
+  }
+  window.addEventListener("beforeprint", run);
+})();
+</script>
+</body>
+</html>

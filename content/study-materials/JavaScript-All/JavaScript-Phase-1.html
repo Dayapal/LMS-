@@ -1,0 +1,3324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Mastery — Phase 1: Programming Foundations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   JAVASCRIPT MASTERY — PHASE 1
+   A handcrafted, premium handbook.
+   ============================================================ */
+
+:root{
+  --paper:        #fdfaf3;
+  --paper-warm:   #f7f1e4;
+  --paper-edge:   #e6dcc7;
+  --ink:          #1b2432;
+  --ink-soft:     #3b4657;
+  --muted:        #6d7686;
+  --rule:         #ddd2ba;
+
+  --navy:         #16243d;
+  --navy-2:       #223354;
+  --gold:         #c9a227;
+  --gold-soft:    #e6d49a;
+  --gold-deep:    #9c7c14;
+
+  --js:           #f7df1e;
+  --teal:         #0f766e;
+  --plum:         #7c3aed;
+  --rose:         #b03a52;
+
+  --code-bg:      #131b2c;
+  --code-bg-2:    #0d1422;
+  --code-edge:    #2a3category;
+
+  --shadow-book:  0 40px 90px -30px rgba(20,30,50,.45), 0 12px 30px -12px rgba(20,30,50,.35);
+  --shadow-card:  0 10px 30px -12px rgba(20,30,50,.35);
+}
+
+*{ box-sizing:border-box; }
+
+html{ scroll-behavior:smooth; }
+
+body{
+  margin:0;
+  padding:48px 20px 90px;
+  background:
+    radial-gradient(1200px 700px at 50% -10%, #2b3a56 0%, #16203a 45%, #0d1424 100%);
+  background-attachment: fixed;
+  font-family:'Lora', Georgia, 'Times New Roman', serif;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- The Book ---------- */
+.book{
+  max-width: 920px;
+  margin: 0 auto;
+  counter-reset: pageCount;
+  filter: drop-shadow(0 0 0 transparent);
+}
+
+/* ---------- A Page ---------- */
+.page{
+  position: relative;
+  background: var(--paper);
+  background-image:
+    radial-gradient(circle at 18% 12%, rgba(201,162,39,.055) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 72% 38%, rgba(27,36,50,.045) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 42% 82%, rgba(201,162,39,.05) 0 1px, transparent 1.6px),
+    linear-gradient(180deg, #fffdf8 0%, #fdfaf3 40%, #f8f3e8 100%);
+  background-size: 27px 27px, 31px 31px, 37px 37px, 100% 100%;
+  padding: 62px 74px 78px;
+  margin: 0 0 34px;
+  border-radius: 4px 12px 12px 4px;
+  box-shadow: var(--shadow-book);
+  border: 1px solid #efe7d4;
+  border-left: none;
+  overflow: hidden;
+}
+
+/* book spine */
+.page::before{
+  content:"";
+  position:absolute; top:0; left:0; bottom:0; width:26px;
+  background: linear-gradient(90deg,
+      rgba(20,30,50,.16) 0%,
+      rgba(20,30,50,.06) 32%,
+      rgba(255,255,255,.35) 60%,
+      rgba(20,30,50,.05) 100%);
+  border-right: 1px solid rgba(20,30,50,.08);
+  pointer-events:none;
+}
+
+/* page edge highlight */
+.page::after{
+  content:"";
+  position:absolute; inset:0;
+  border-radius: inherit;
+  pointer-events:none;
+  box-shadow: inset 0 0 60px rgba(160,140,90,.07), inset 0 0 0 1px rgba(255,255,255,.6);
+}
+
+.page > *{ position:relative; z-index:1; }
+
+.page + .page{ margin-top: 0; }
+
+/* ---------- Cover ---------- */
+.cover{
+  counter-increment: none;
+  min-height: 1080px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding: 90px 70px;
+  background:
+    radial-gradient(circle at 50% 0%, #24334f 0%, #16243d 42%, #0e1728 100%);
+  color:#f6f1e4;
+  border:1px solid rgba(201,162,39,.35);
+  border-radius:4px 14px 14px 4px;
+}
+.cover::before{
+  background: linear-gradient(90deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 40%, rgba(255,255,255,.08) 70%, rgba(0,0,0,.2) 100%);
+  border-right:1px solid rgba(201,162,39,.25);
+}
+.cover::after{
+  box-shadow: inset 0 0 120px rgba(0,0,0,.5), inset 0 0 0 1px rgba(201,162,39,.18);
+}
+
+.cover-frame{
+  border: 1.5px solid rgba(201,162,39,.5);
+  outline: 1px solid rgba(201,162,39,.18);
+  outline-offset: 8px;
+  padding: 58px 46px 52px;
+  width: 100%;
+  max-width: 620px;
+  border-radius: 3px;
+  position: relative;
+}
+
+.cover-eyebrow{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .42em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  margin-bottom: 26px;
+}
+
+.cover-logo{
+  width: 86px; height: 86px;
+  margin: 0 auto 26px;
+  background: var(--js);
+  border-radius: 14px;
+  display:flex; align-items:flex-end; justify-content:flex-end;
+  padding: 12px 14px;
+  font-family:'JetBrains Mono', monospace;
+  font-weight:700;
+  font-size: 28px;
+  color:#111;
+  box-shadow: 0 14px 34px -10px rgba(247,223,30,.55), inset 0 -4px 0 rgba(0,0,0,.12);
+  letter-spacing:-.06em;
+}
+
+.cover h1{
+  font-family:'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 56px;
+  line-height: 1.04;
+  margin: 0 0 8px;
+  letter-spacing: -.01em;
+  background: linear-gradient(180deg,#fffdf5 0%, #e8d9a0 60%, #c9a227 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.cover .cover-sub{
+  font-family:'Playfair Display', serif;
+  font-style: italic;
+  font-size: 21px;
+  color:#cbd5e6;
+  margin: 14px 0 30px;
+}
+
+.cover-rule{
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  margin: 26px 0 28px;
+  color: var(--gold);
+}
+.cover-rule span{ height:1px; width:76px; background:linear-gradient(90deg,transparent,var(--gold)); }
+.cover-rule span:last-child{ background:linear-gradient(270deg,transparent,var(--gold)); }
+
+.cover-meta{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color:#93a1b8;
+  line-height: 2.1;
+}
+
+.cover-badges{
+  display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+  margin-top: 34px;
+}
+.badge{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  padding: 7px 15px;
+  border-radius: 100px;
+  border: 1px solid rgba(201,162,39,.45);
+  color: var(--gold-soft);
+  background: rgba(201,162,39,.07);
+}
+
+.cover-foot{
+  margin-top: 44px;
+  font-size: 12.5px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  font-family:'JetBrains Mono', monospace;
+  color:#7f8da5;
+}
+
+/* ---------- Page Footer ---------- */
+.page-foot{
+  counter-increment: pageCount;
+  position:absolute;
+  left: 74px; right: 74px; bottom: 26px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing:.16em;
+  text-transform: uppercase;
+  color: #a99f88;
+  border-top: 1px solid var(--rule);
+  padding-top: 12px;
+  z-index: 2;
+}
+.page-foot .pn::after{ content: counter(pageCount); }
+.page-foot .pn::before{ content: "— "; }
+
+/* ---------- Headings ---------- */
+.chap-head{ margin: 0 0 40px; text-align:center; }
+
+.chap-num{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .42em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 12px;
+}
+
+.chap-title{
+  font-family:'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 40px;
+  line-height: 1.12;
+  margin: 0 0 20px;
+  color: var(--navy);
+  letter-spacing: -.015em;
+}
+
+.chap-rule{
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  color: var(--gold);
+  font-size: 13px;
+}
+.chap-rule span{ height:1px; width:88px; background:linear-gradient(90deg,transparent,var(--gold-soft),var(--gold)); }
+.chap-rule span:last-child{ background:linear-gradient(270deg,transparent,var(--gold-soft),var(--gold)); }
+.chap-rule i{ font-style:normal; opacity:.9; }
+
+h3{
+  font-family:'Playfair Display', serif;
+  font-size: 25px;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 44px 0 14px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+  letter-spacing: -.01em;
+}
+h3::after{
+  content:"";
+  position:absolute; left:0; bottom:-1px; width:56px; height:3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-soft));
+  border-radius: 3px;
+}
+
+h4{
+  font-family:'Playfair Display', serif;
+  font-size: 19.5px;
+  font-weight: 700;
+  color: var(--navy-2);
+  margin: 32px 0 10px;
+}
+
+h5{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing:.2em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin: 26px 0 8px;
+}
+
+p{
+  font-size: 16.6px;
+  line-height: 1.82;
+  margin: 0 0 16px;
+  color: var(--ink-soft);
+}
+
+strong{ color: var(--ink); font-weight: 600; }
+em{ font-style: italic; }
+
+a{ color: var(--teal); }
+
+/* ---------- Lists ---------- */
+ul, ol{
+  font-size: 16.4px;
+  line-height: 1.8;
+  color: var(--ink-soft);
+  margin: 0 0 18px;
+  padding-left: 24px;
+}
+li{ margin-bottom: 7px; }
+ul li::marker{ color: var(--gold); }
+ol li::marker{ color: var(--gold-deep); font-family:'JetBrains Mono',monospace; font-size: 13px; }
+
+/* ---------- Tables ---------- */
+.table-wrap{
+  margin: 24px 0 30px;
+  border-radius: 10px;
+  overflow:hidden;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--paper-edge);
+}
+table{
+  width:100%;
+  border-collapse: collapse;
+  font-size: 15.2px;
+  background:#fffdf8;
+}
+thead th{
+  background: linear-gradient(180deg, var(--navy-2), var(--navy));
+  color: #f4efe2;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing:.16em;
+  text-transform: uppercase;
+  font-weight: 500;
+  text-align:left;
+  padding: 13px 18px;
+}
+tbody td{
+  padding: 12px 18px;
+  border-bottom: 1px solid #f0e9d8;
+  color: var(--ink-soft);
+  vertical-align: top;
+  line-height: 1.6;
+}
+tbody tr:nth-child(even){ background: #fbf7ee; }
+tbody tr:last-child td{ border-bottom:none; }
+tbody td:first-child{ color: var(--navy); font-weight:600; }
+table code{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 13px;
+  background: rgba(201,162,39,.13);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--gold-deep);
+}
+
+/* ---------- Inline code ---------- */
+p code, li code, td code, .callout code{
+  font-family:'JetBrains Mono', monospace;
+  font-size: .86em;
+  background: rgba(20,30,50,.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--rose);
+  border: 1px solid rgba(20,30,50,.06);
+}
+
+/* ============================================================
+   FIGURES — code "images", output "images", illustrations
+   ============================================================ */
+figure{ margin: 28px 0 34px; }
+
+.fig{
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px -18px rgba(15,25,45,.55), 0 3px 10px -4px rgba(15,25,45,.35);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+/* --- Code card (looks like a screenshot) --- */
+.fig-code{
+  background: linear-gradient(180deg, var(--code-bg) 0%, var(--code-bg-2) 100%);
+}
+.fig-bar{
+  display:flex; align-items:center; gap:8px;
+  padding: 11px 16px;
+  background: linear-gradient(180deg, #1d2740, #182136);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.dot{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+.dot.r{ background:#ff5f57; }
+.dot.a{ background:#febc2e; }
+.dot.g{ background:#28c840; }
+.fig-title{
+  margin-left: 12px;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing:.14em;
+  color:#8b9ab8;
+  text-transform: lowercase;
+}
+.fig pre{
+  margin:0;
+  padding: 20px 22px;
+  overflow-x:auto;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 1.78;
+  color:#c7d3e8;
+  tab-size: 2;
+}
+.fig code{ font-family: inherit; }
+
+/* token colours */
+.tok-com{ color:#5d6b8a; font-style: italic; }
+.tok-str{ color:#a5e075; }
+.tok-num{ color:#f7a56b; }
+.tok-kw { color:#c792ea; font-weight:500; }
+.tok-fn { color:#82aaff; }
+.tok-op { color:#89ddff; }
+
+/* --- Output card --- */
+.fig-out{
+  background: linear-gradient(180deg,#f2ecdd,#eae2cf);
+  border: 1px solid var(--paper-edge);
+}
+.fig-out .fig-bar{
+  background: linear-gradient(180deg,#e3d9c1,#dbd0b5);
+  border-bottom: 1px solid #d0c3a4;
+}
+.fig-out .fig-bar .fig-title{ color:#7a6a45; }
+.fig-out pre{
+  margin:0;
+  padding: 16px 22px;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 1.75;
+  color:#2f3b4f;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.fig-out .fig-bar .dot{ opacity:.35; }
+
+/* --- Figure caption --- */
+figcaption{
+  margin-top: 11px;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  letter-spacing:.06em;
+  color: var(--muted);
+  text-align:center;
+  line-height:1.7;
+}
+figcaption b{ color: var(--gold-deep); font-weight:700; }
+
+/* --- Illustration figure --- */
+.fig-illo{
+  background: linear-gradient(180deg,#fffdf8,#f5efe1);
+  border: 1px solid var(--paper-edge);
+  padding: 20px 18px 8px;
+  box-shadow: 0 16px 36px -20px rgba(15,25,45,.5);
+}
+.fig-illo svg{ display:block; width:100%; height:auto; }
+
+.illo text{ font-family:'JetBrains Mono', monospace; }
+.illo .t-label{ font-size: 12px; letter-spacing:.22em; fill:#8a7d5f; }
+.illo .t-strong{ font-size: 14px; font-weight:700; fill:#1b2432; font-family:'Lora',serif; }
+.illo .t-mono{ font-size: 12.5px; fill:#3b4657; }
+.illo .t-gold{ font-size: 12px; fill:#9c7c14; letter-spacing:.14em; }
+.illo .t-code{ font-size: 12px; fill:#c7d3e8; }
+
+/* ---------- Callouts ---------- */
+.callout{
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin: 26px 0;
+  font-size: 16px;
+  line-height: 1.75;
+  position: relative;
+  border-left: 4px solid var(--gold);
+  background: linear-gradient(90deg, #fdf6e0, #fbf8ee);
+  color: var(--ink-soft);
+  box-shadow: 0 8px 22px -14px rgba(20,30,50,.4);
+}
+.callout .callout-title{
+  display:block;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing:.28em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 8px;
+}
+.callout.warn{ border-left-color: var(--rose); background: linear-gradient(90deg,#fdeef0,#fbf6f4); }
+.callout.warn .callout-title{ color: var(--rose); }
+.callout.tip{ border-left-color: var(--teal); background: linear-gradient(90deg,#e9f6f4,#f5fbfa); }
+.callout.tip .callout-title{ color: var(--teal); }
+.callout.note{ border-left-color: var(--navy-2); background: linear-gradient(90deg,#eef2f9,#f8fafd); }
+.callout.note .callout-title{ color: var(--navy-2); }
+.callout p:last-child{ margin-bottom:0; }
+
+/* ---------- Key-idea banner ---------- */
+.keyidea{
+  margin: 30px 0;
+  padding: 26px 30px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 60%, #2c3f66 100%);
+  color: #f3eee1;
+  text-align:center;
+  box-shadow: 0 18px 40px -22px rgba(10,18,35,.9);
+  position: relative;
+  overflow: hidden;
+}
+.keyidea::before{
+  content:"";
+  position:absolute; inset:0;
+  background: radial-gradient(circle at 20% 0%, rgba(201,162,39,.22), transparent 60%);
+  pointer-events:none;
+}
+.keyidea .k-label{
+  display:block;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing:.36em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  margin-bottom: 10px;
+}
+.keyidea p{
+  margin:0;
+  color:#f3eee1;
+  font-size: 18px;
+  font-style: italic;
+  line-height:1.65;
+  position:relative;
+}
+
+/* ---------- Question blocks ---------- */
+.qgroup{ margin: 30px 0; }
+.qgroup-title{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing:.28em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin: 34px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--rule);
+}
+.q{
+  margin: 0 0 20px;
+  padding: 16px 20px 16px 22px;
+  background: #fffdf8;
+  border: 1px solid var(--paper-edge);
+  border-left: 3px solid var(--gold-soft);
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.72;
+  color: var(--ink-soft);
+  box-shadow: 0 5px 16px -12px rgba(20,30,50,.5);
+}
+.q .qnum{
+  font-family:'JetBrains Mono', monospace;
+  font-weight:700;
+  font-size: 12.5px;
+  color: var(--gold-deep);
+  margin-right: 8px;
+}
+.q .qcode{ margin-top: 14px; }
+
+/* ---------- Checklist ---------- */
+.checklist{ list-style:none; padding:0; margin: 24px 0; }
+.checklist li{
+  position: relative;
+  padding: 12px 0 12px 42px;
+  border-bottom: 1px solid #efe8d7;
+  font-size: 16.2px;
+  color: var(--ink-soft);
+  line-height:1.65;
+}
+.checklist li::before{
+  content:"";
+  position:absolute;
+  left: 4px; top: 15px;
+  width: 18px; height: 18px;
+  border: 2px solid var(--gold);
+  border-radius: 4px;
+  background: #fffdf6;
+  box-shadow: inset 0 0 0 2px #fffdf6, inset 0 0 0 3px rgba(201,162,39,.25);
+}
+.checklist li:last-child{ border-bottom:none; }
+
+/* ---------- TOC ---------- */
+.toc{ list-style:none; padding:0; margin: 8px 0 0; counter-reset: toc; }
+.toc li{
+  counter-increment: toc;
+  display:flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 13px 4px;
+  border-bottom: 1px dotted #e2d8c0;
+  font-size: 16.6px;
+  color: var(--ink-soft);
+}
+.toc li a{
+  text-decoration:none;
+  color: var(--navy);
+  font-weight: 500;
+  transition: color .18s ease;
+  display:flex;
+  align-items:baseline;
+  gap: 14px;
+  width:100%;
+}
+.toc li a:hover{ color: var(--gold-deep); }
+.toc li a::before{
+  content: counter(toc, decimal-leading-zero);
+  font-family:'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing:.08em;
+  flex: 0 0 30px;
+}
+.toc li a::after{
+  content:"";
+  flex: 1 1 auto;
+  border-bottom: 1px dotted #ddd0b2;
+  margin: 0 6px 4px;
+}
+.toc li .pg{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ---------- Misc helpers ---------- */
+.lead{
+  font-size: 19px;
+  line-height: 1.78;
+  color: var(--ink);
+  font-style: italic;
+  margin-bottom: 26px;
+}
+.divider{
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  margin: 46px 0;
+  color: var(--gold-soft);
+  font-size: 14px;
+}
+.divider span{ height:1px; width:70px; background:linear-gradient(90deg,transparent,var(--gold-soft)); }
+.divider span:last-child{ background:linear-gradient(270deg,transparent,var(--gold-soft)); }
+
+.step-list{ list-style:none; padding:0; counter-reset: step; }
+.step-list li{
+  counter-increment: step;
+  position: relative;
+  padding: 8px 0 8px 46px;
+  margin-bottom: 6px;
+  font-size: 16.3px;
+  line-height:1.75;
+  color: var(--ink-soft);
+}
+.step-list li::before{
+  content: counter(step);
+  position:absolute; left:0; top:8px;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+  color:#fff;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  font-weight: 700;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 4px 12px -5px rgba(156,124,20,.9);
+}
+
+.analogy{
+  font-style: italic;
+  color: var(--plum);
+  border-bottom: 1px dashed rgba(124,58,237,.3);
+}
+
+.term{
+  font-family:'JetBrains Mono', monospace;
+  font-size:.86em;
+  color: var(--teal);
+  font-weight: 500;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 820px){
+  body{ padding: 22px 10px 60px; }
+  .page{ padding: 42px 30px 66px; border-radius: 3px 8px 8px 3px; }
+  .page::before{ width: 16px; }
+  .page-foot{ left:30px; right:30px; }
+  .chap-title{ font-size: 30px; }
+  .cover{ min-height:auto; padding: 60px 26px; }
+  .cover-frame{ padding: 40px 22px; }
+  .cover h1{ font-size: 38px; }
+  h3{ font-size: 21px; }
+  p, ul, ol, .q, .checklist li{ font-size: 15.6px; }
+  .fig pre{ font-size: 12.4px; padding: 15px 14px; }
+}
+
+/* ---------- Print ---------- */
+@media print{
+  body{ background:#fff; padding:0; }
+  .book{ max-width:none; }
+  .page{
+    box-shadow:none; border:none; margin:0; border-radius:0;
+    page-break-after: always;
+    padding: 48px 54px 66px;
+  }
+  .page::before, .page::after{ display:none; }
+  .cover{ min-height: 96vh; }
+}
+</style>
+</head>
+<body>
+
+<div class="book">
+
+<!-- ══════════════════════════════════════════════════════════
+     COVER
+     ══════════════════════════════════════════════════════════ -->
+<section class="page cover">
+  <div class="cover-frame">
+    <div class="cover-eyebrow">The Complete Handbook Series</div>
+    <div class="cover-logo">JS</div>
+    <h1>JavaScript<br>Mastery</h1>
+    <div class="cover-sub">Phase 1 — Programming Foundations</div>
+    <div class="cover-rule"><span></span><i>❖</i><span></span></div>
+    <div class="cover-meta">
+      Level &nbsp;·&nbsp; Beginner<br>
+      Volume &nbsp;·&nbsp; One of Six<br>
+      Edition &nbsp;·&nbsp; Handcrafted Study Edition
+    </div>
+    <div class="cover-badges">
+      <span class="badge">Variables</span>
+      <span class="badge">Data Types</span>
+      <span class="badge">Operators</span>
+      <span class="badge">I / O</span>
+      <span class="badge">Debugging</span>
+    </div>
+  </div>
+  <div class="cover-foot">Learn the language · Understand the machine</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     FRONT MATTER — GOAL & HOW TO USE
+     ══════════════════════════════════════════════════════════ -->
+<section class="page">
+  <header class="chap-head">
+    <div class="chap-num">Before We Begin</div>
+    <h2 class="chap-title">About This Phase</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p class="lead">Every skyscraper begins with a foundation that nobody sees. This phase is that foundation — the quiet, unglamorous, absolutely essential layer on which every advanced JavaScript skill will later rest.</p>
+
+  <div class="table-wrap">
+    <table>
+      <tbody>
+        <tr><td>Level</td><td>Beginner</td></tr>
+        <tr><td>Goal</td><td>Understand how programming works, how JavaScript executes code, how programs receive input and produce output, and how to identify and fix errors.</td></tr>
+        <tr><td>Prerequisites</td><td>None. Only curiosity and patience.</td></tr>
+        <tr><td>What comes next</td><td>Phase 2 — JavaScript Fundamentals (variables, data types and operators in depth).</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>How to Read This Handbook</h3>
+  <ol class="step-list">
+    <li><strong>Read slowly.</strong> Programming is not a race. Understanding ten lines deeply beats skimming a hundred.</li>
+    <li><strong>Type every example.</strong> Reading code builds recognition; typing code builds skill.</li>
+    <li><strong>Predict before you run.</strong> Before executing any snippet, write down what you think the output will be. Then run it and compare.</li>
+    <li><strong>Do the dry runs.</strong> Tracing code by hand is the single most underrated skill for beginners.</li>
+    <li><strong>Answer the practice questions</strong> without looking at the answer key first.</li>
+    <li><strong>Finish the mini-project.</strong> Building something real cements everything else.</li>
+  </ol>
+
+  <div class="callout tip">
+    <span class="callout-title">How to use the figures</span>
+    <p>Throughout this book you will find <strong>code plates</strong> (dark cards that look like editor screenshots), <strong>output plates</strong> (light cards showing what the console prints) and <strong>analogy illustrations</strong> (hand-drawn style diagrams). Study them together — the code shows you <em>what</em>, the illustration shows you <em>why</em>.</p>
+  </div>
+
+  <div class="page-foot"><span>JavaScript Mastery · Phase 1</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     TABLE OF CONTENTS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page">
+  <header class="chap-head">
+    <div class="chap-num">Contents</div>
+    <h2 class="chap-title">Table of Contents</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <ol class="toc">
+    <li><a href="#ch1">What Is Programming?</a></li>
+    <li><a href="#ch2">What Is JavaScript?</a></li>
+    <li><a href="#ch3">How JavaScript Works</a></li>
+    <li><a href="#ch4">Variables and Values — The Foundation</a></li>
+    <li><a href="#ch5">Introduction to Data Types</a></li>
+    <li><a href="#ch6">Operators and Expressions</a></li>
+    <li><a href="#ch7">Statements and Program Structure</a></li>
+    <li><a href="#ch8">Comments and Code Readability</a></li>
+    <li><a href="#ch9">Input and Output Basics</a></li>
+    <li><a href="#ch10">Errors and Debugging</a></li>
+    <li><a href="#ch11">How Code Executes — Step-by-Step Dry Runs</a></li>
+    <li><a href="#ch12">Common Beginner Mistakes</a></li>
+    <li><a href="#ch13">Practice Questions</a></li>
+    <li><a href="#ch14">Practical Mini-Project</a></li>
+    <li><a href="#ch15">Phase 1 Revision Sheet</a></li>
+    <li><a href="#ch16">Phase Completion Checklist</a></li>
+  </ol>
+
+  <div class="keyidea">
+    <span class="k-label">The Three Questions</span>
+    <p>Whenever you read code, ask: What data does this program have? What operation does it perform? What result should I expect?</p>
+  </div>
+
+  <div class="page-foot"><span>JavaScript Mastery · Phase 1</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 1
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch1">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 01</div>
+    <h2 class="chap-title">What Is Programming?</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>1.1 &nbsp;Definition</h3>
+  <p>Programming is the process of writing instructions that a computer can execute to perform a task.</p>
+  <p>A computer does not automatically understand what you want. You must provide instructions in a form that it can process.</p>
+  <p>For example, suppose you want a computer to calculate the total price of two products.</p>
+  <p>You need to tell it:</p>
+  <ol>
+    <li>Read the price of the first product.</li>
+    <li>Read the price of the second product.</li>
+    <li>Add the two prices.</li>
+    <li>Display the total.</li>
+  </ol>
+  <p>These instructions form a simple program.</p>
+
+  <h3>1.2 &nbsp;Real-World Analogy: A Restaurant</h3>
+  <p>Imagine a restaurant kitchen.</p>
+  <p>A customer orders a pizza. The chef follows a recipe:</p>
+  <ul>
+    <li>Take the dough.</li>
+    <li>Add the sauce.</li>
+    <li>Add the cheese.</li>
+    <li>Bake the pizza.</li>
+    <li>Serve it.</li>
+  </ul>
+  <p>A computer program works similarly.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 330" role="img" aria-label="The kitchen and the program — a recipe is to a chef what a program is to a computer">
+      <defs>
+        <linearGradient id="c1paper" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fffdf8"/><stop offset="100%" stop-color="#f1ead9"/>
+        </linearGradient>
+        <linearGradient id="c1dark" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#22314e"/><stop offset="100%" stop-color="#121c2f"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="0" y="0" width="700" height="330" rx="16" fill="#faf5e9"/>
+
+      <!-- LEFT PANEL : KITCHEN -->
+      <rect x="26" y="28" width="286" height="274" rx="14" fill="url(#c1paper)" stroke="#ddd1b6" stroke-width="2"/>
+      <text x="169" y="60" text-anchor="middle" class="t-label">THE KITCHEN</text>
+
+      <!-- chef hat -->
+      <ellipse cx="169" cy="118" rx="46" ry="33" fill="#fff" stroke="#1b2432" stroke-width="3"/>
+      <ellipse cx="139" cy="112" rx="22" ry="20" fill="#fff" stroke="#1b2432" stroke-width="3"/>
+      <ellipse cx="199" cy="112" rx="22" ry="20" fill="#fff" stroke="#1b2432" stroke-width="3"/>
+      <rect x="129" y="136" width="80" height="28" rx="8" fill="#fff" stroke="#1b2432" stroke-width="3"/>
+      <line x1="141" y1="150" x2="197" y2="150" stroke="#e0d6bd" stroke-width="3" stroke-linecap="round"/>
+
+      <!-- recipe card -->
+      <rect x="92" y="192" width="154" height="80" rx="10" fill="#fff" stroke="#1b2432" stroke-width="3"/>
+      <line x1="108" y1="214" x2="230" y2="214" stroke="#c9a227" stroke-width="6" stroke-linecap="round"/>
+      <line x1="108" y1="234" x2="210" y2="234" stroke="#cfd5e0" stroke-width="6" stroke-linecap="round"/>
+      <line x1="108" y1="253" x2="220" y2="253" stroke="#cfd5e0" stroke-width="6" stroke-linecap="round"/>
+      <text x="169" y="290" text-anchor="middle" class="t-gold">RECIPE</text>
+
+      <!-- RIGHT PANEL : PROGRAM -->
+      <rect x="388" y="28" width="286" height="274" rx="14" fill="url(#c1dark)" stroke="#2b3b5c" stroke-width="2"/>
+      <text x="531" y="60" text-anchor="middle" class="t-label" fill="#8b9ab8">THE PROGRAM</text>
+
+      <!-- code window -->
+      <rect x="410" y="80" width="242" height="150" rx="10" fill="#0d1422" stroke="#2a3category" stroke-width="0"/>
+      <rect x="410" y="80" width="242" height="150" rx="10" fill="#0d1422" stroke="#2c3c5c" stroke-width="2"/>
+      <circle cx="428" cy="98" r="5" fill="#ff5f57"/>
+      <circle cx="445" cy="98" r="5" fill="#febc2e"/>
+      <circle cx="462" cy="98" r="5" fill="#28c840"/>
+      <line x1="410" y1="114" x2="652" y2="114" stroke="#2c3c5c" stroke-width="1.5"/>
+
+      <text x="428" y="140" class="t-code" fill="#c792ea">let</text>
+      <text x="462" y="140" class="t-code" fill="#c7d3e8">dough =</text>
+      <text x="552" y="140" class="t-code" fill="#a5e075">"ready"</text>
+
+      <text x="428" y="164" class="t-code" fill="#82aaff">addSauce</text>
+      <text x="510" y="164" class="t-code" fill="#c7d3e8">()</text>
+
+      <text x="428" y="188" class="t-code" fill="#82aaff">addCheese</text>
+      <text x="522" y="188" class="t-code" fill="#c7d3e8">()</text>
+
+      <text x="428" y="212" class="t-code" fill="#82aaff">bake</text>
+      <text x="470" y="212" class="t-code" fill="#c7d3e8">()</text>
+
+      <text x="531" y="272" text-anchor="middle" class="t-gold" fill="#e6d49a">PROGRAM</text>
+
+      <!-- dashed connector -->
+      <line x1="318" y1="165" x2="382" y2="165" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="7 7"/>
+      <polygon points="382,158 396,165 382,172" fill="#c9a227"/>
+      <text x="350" y="148" text-anchor="middle" class="t-gold" font-size="9.5">SAME</text>
+      <text x="350" y="190" text-anchor="middle" class="t-gold" font-size="9.5">IDEA</text>
+    </svg>
+    <figcaption><b>Figure 1.1</b> — A recipe is to a chef what a program is to a computer: an ordered set of instructions that produces a result.</figcaption>
+  </figure>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Restaurant</th><th>Programming</th></tr></thead>
+      <tbody>
+        <tr><td>Recipe</td><td>Program</td></tr>
+        <tr><td>Recipe instructions</td><td>Code</td></tr>
+        <tr><td>Chef following the recipe</td><td>Computer executing instructions</td></tr>
+        <tr><td>Ingredients</td><td>Input data</td></tr>
+        <tr><td>Cooking process</td><td>Program execution</td></tr>
+        <tr><td>Finished pizza</td><td>Output</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="keyidea">
+    <span class="k-label">Key Idea</span>
+    <p>A program is a sequence of instructions that tells a computer how to perform a task.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 01 · What Is Programming?</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>1.3 &nbsp;A Simple Program</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">welcome.js</span></div>
+    <pre><code>console.log("Welcome to JavaScript!");</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Welcome to JavaScript!</pre>
+  </figure>
+
+  <h5>Explanation</h5>
+  <ul>
+    <li><code>console</code> provides access to the browser or runtime's console.</li>
+    <li><code>log()</code> displays a value in the console.</li>
+    <li><code>"Welcome to JavaScript!"</code> is the message being displayed.</li>
+    <li><code>;</code> marks the end of the statement in this example.</li>
+  </ul>
+  <p>JavaScript generally permits omitting semicolons in many situations, but using them consistently can help beginners recognize statement boundaries.</p>
+
+  <h3>1.4 &nbsp;What Can Programming Accomplish?</h3>
+  <p>Programming can be used to:</p>
+  <ul>
+    <li>Build websites and web applications.</li>
+    <li>Calculate salaries and taxes.</li>
+    <li>Process student attendance.</li>
+    <li>Manage product inventories.</li>
+    <li>Create mobile and desktop applications.</li>
+    <li>Build games.</li>
+    <li>Communicate with databases.</li>
+    <li>Automate repetitive tasks.</li>
+    <li>Integrate AI into applications.</li>
+  </ul>
+
+  <h4>Example: Calculate a Student's Total Marks</h4>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">marks.js</span></div>
+    <pre><code>console.log(80 + 75 + 90);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>245</pre>
+  </figure>
+
+  <p>The computer evaluates the addition and displays the result.</p>
+
+  <h3>1.5 &nbsp;Algorithm versus Program</h3>
+  <p>An <strong>algorithm</strong> is a logical sequence of steps for solving a problem. A <strong>program</strong> implements those steps in a programming language.</p>
+
+  <div class="callout note">
+    <span class="callout-title">Example problem</span>
+    <p>Find the total price of three products.</p>
+  </div>
+
+  <h5>Algorithm</h5>
+  <ol>
+    <li>Start.</li>
+    <li>Obtain three prices.</li>
+    <li>Add the prices.</li>
+    <li>Display the total.</li>
+    <li>End.</li>
+  </ol>
+
+  <h5>Program</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">total.js</span></div>
+    <pre><code>console.log(100 + 200 + 300);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>600</pre>
+  </figure>
+
+  <div class="keyidea">
+    <span class="k-label">Remember</span>
+    <p>The algorithm explains the solution; the program expresses it as executable code.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 01 · What Is Programming?</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 2
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch2">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 02</div>
+    <h2 class="chap-title">What Is JavaScript?</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>2.1 &nbsp;Definition</h3>
+  <p>JavaScript is a programming language used to create interactive and dynamic applications.</p>
+  <p>It is especially popular in web development because it can run in browsers and, through runtimes such as Node.js, on servers.</p>
+  <p>HTML defines the structure of a webpage. CSS controls its appearance. JavaScript adds behavior and logic.</p>
+
+  <h3>2.2 &nbsp;Real-World Analogy: A House</h3>
+  <p>Imagine building a house.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 330" role="img" aria-label="House analogy — HTML is structure, CSS is appearance, JavaScript is behaviour">
+      <defs>
+        <linearGradient id="c2sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#eef4fb"/><stop offset="100%" stop-color="#f8f4e9"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="700" height="330" rx="16" fill="url(#c2sky)"/>
+
+      <!-- ground -->
+      <line x1="30" y1="278" x2="670" y2="278" stroke="#ddd1b6" stroke-width="3" stroke-linecap="round"/>
+
+      <!-- HOUSE BODY -->
+      <rect x="228" y="150" width="244" height="128" fill="#fffdf8" stroke="#1b2432" stroke-width="3.5"/>
+      <!-- roof -->
+      <polygon points="204,152 350,58 496,152" fill="#f3ead6" stroke="#1b2432" stroke-width="3.5" stroke-linejoin="round"/>
+      <!-- door -->
+      <rect x="322" y="208" width="58" height="70" rx="4" fill="#c9a227" stroke="#1b2432" stroke-width="3"/>
+      <circle cx="368" cy="245" r="4" fill="#1b2432"/>
+      <!-- windows -->
+      <rect x="252" y="180" width="52" height="48" rx="4" fill="#dbe8f7" stroke="#1b2432" stroke-width="3"/>
+      <line x1="278" y1="180" x2="278" y2="228" stroke="#1b2432" stroke-width="2"/>
+      <line x1="252" y1="204" x2="304" y2="204" stroke="#1b2432" stroke-width="2"/>
+      <rect x="396" y="180" width="52" height="48" rx="4" fill="#dbe8f7" stroke="#1b2432" stroke-width="3"/>
+      <line x1="422" y1="180" x2="422" y2="228" stroke="#1b2432" stroke-width="2"/>
+      <line x1="396" y1="204" x2="448" y2="204" stroke="#1b2432" stroke-width="2"/>
+
+      <!-- HTML label -->
+      <rect x="42" y="70" width="176" height="46" rx="10" fill="#fff" stroke="#1b2432" stroke-width="2.5"/>
+      <circle cx="66" cy="93" r="9" fill="#e34c26"/>
+      <text x="84" y="90" class="t-strong" font-size="13">HTML</text>
+      <text x="84" y="106" class="t-mono" font-size="10.5">structure &amp; rooms</text>
+      <line x1="218" y1="93" x2="240" y2="120" stroke="#c9a227" stroke-width="2" stroke-dasharray="5 5"/>
+
+      <!-- CSS label -->
+      <rect x="482" y="70" width="176" height="46" rx="10" fill="#fff" stroke="#1b2432" stroke-width="2.5"/>
+      <circle cx="506" cy="93" r="9" fill="#264de4"/>
+      <text x="524" y="90" class="t-strong" font-size="13">CSS</text>
+      <text x="524" y="106" class="t-mono" font-size="10.5">paint &amp; interior</text>
+      <line x1="482" y1="93" x2="460" y2="120" stroke="#c9a227" stroke-width="2" stroke-dasharray="5 5"/>
+
+      <!-- JS label -->
+      <rect x="262" y="18" width="176" height="46" rx="10" fill="#16243d" stroke="#c9a227" stroke-width="2"/>
+      <circle cx="286" cy="41" r="9" fill="#f7df1e"/>
+      <text x="304" y="38" class="t-strong" font-size="13" fill="#f6f1e4">JavaScript</text>
+      <text x="304" y="54" class="t-mono" font-size="10.5" fill="#93a1b8">behaviour &amp; control</text>
+      <line x1="350" y1="64" x2="350" y2="140" stroke="#c9a227" stroke-width="2" stroke-dasharray="5 5"/>
+
+      <text x="350" y="308" text-anchor="middle" class="t-gold" font-size="11">THREE LANGUAGES · ONE HOUSE</text>
+    </svg>
+    <figcaption><b>Figure 2.1</b> — HTML builds the house, CSS decorates it, JavaScript wires the electricity and makes things move.</figcaption>
+  </figure>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Technology</th><th>Analogy</th><th>Responsibility</th></tr></thead>
+      <tbody>
+        <tr><td>HTML</td><td>Structure and rooms</td><td>Defines content and structure</td></tr>
+        <tr><td>CSS</td><td>Paint and interior design</td><td>Controls visual appearance</td></tr>
+        <tr><td>JavaScript</td><td>Electrical controls and automation</td><td>Adds behavior and interaction</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>For example:</p>
+  <ul>
+    <li>HTML creates a button.</li>
+    <li>CSS makes the button blue and rounded.</li>
+    <li>JavaScript makes the button respond when clicked.</li>
+  </ul>
+  <p>These are simplified roles; modern applications can use each technology in more advanced ways.</p>
+
+  <div class="page-foot"><span>Chapter 02 · What Is JavaScript?</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>2.3 &nbsp;Example: JavaScript Adds Behavior</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">index.html</span></div>
+    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;JavaScript Demo&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Hello, Developer!&lt;/h1&gt;
+
+  &lt;button onclick="showMessage()"&gt;
+    Click Me
+  &lt;/button&gt;
+
+  &lt;script&gt;
+    function showMessage() {
+      alert("Welcome to JavaScript!");
+    }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </figure>
+
+  <p>When the user clicks the button, the browser executes <code>showMessage()</code> and displays an alert.</p>
+  <p>The function syntax will be studied in greater detail in a later phase.</p>
+
+  <h3>2.4 &nbsp;Where Does JavaScript Run?</h3>
+
+  <h4>A. In a web browser</h4>
+  <p>Examples include Chrome, Firefox and Edge.</p>
+  <p>Browser JavaScript can interact with webpage elements and use browser-provided APIs.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">browser.js</span></div>
+    <pre><code>console.log("Running in the browser");</code></pre>
+  </figure>
+
+  <p>Open the browser's Developer Tools and select the Console tab to see the output.</p>
+
+  <h4>B. In Node.js</h4>
+  <p>Node.js allows JavaScript to run outside a browser, commonly for backend development, command-line tools and automation.</p>
+  <p>Create a file named <code>app.js</code>:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">app.js</span></div>
+    <pre><code>console.log("Running with Node.js");</code></pre>
+  </figure>
+
+  <p>Run it from a terminal:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">terminal</span></div>
+    <pre><code>node app.js</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">terminal output</span></div>
+    <pre>Running with Node.js</pre>
+  </figure>
+
+  <div class="callout warn">
+    <span class="callout-title">Important Distinction</span>
+    <p><strong>JavaScript is the language.</strong> The browser and Node.js are <em>environments</em> that execute JavaScript and provide different APIs.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 02 · What Is JavaScript?</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 3
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch3">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 03</div>
+    <h2 class="chap-title">How JavaScript Works</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p class="lead">Understanding execution helps you reason about what a program actually does.</p>
+
+  <h3>3.1 &nbsp;The Basic Execution Process</h3>
+  <p>A simplified model is:</p>
+  <ol class="step-list">
+    <li>You write JavaScript code.</li>
+    <li>The JavaScript engine processes the source code.</li>
+    <li>The engine executes the program.</li>
+    <li>Operations produce results, modify state or interact with the environment.</li>
+    <li>Results may be displayed or returned to another part of the application.</li>
+  </ol>
+
+  <div class="callout note">
+    <span class="callout-title">A note on accuracy</span>
+    <p>Modern JavaScript engines use multiple internal stages and optimization techniques. The simplified sequence above is a learning model, not a complete description of engine internals.</p>
+  </div>
+
+  <h3>3.2 &nbsp;What Is a JavaScript Engine?</h3>
+  <p>A JavaScript engine is software that processes and executes JavaScript.</p>
+  <p>Examples include:</p>
+  <ul>
+    <li><strong>V8</strong>, used by Chrome and Node.js.</li>
+    <li><strong>SpiderMonkey</strong>, used by Firefox.</li>
+    <li><strong>JavaScriptCore</strong>, used by Safari.</li>
+  </ul>
+
+  <h4>Analogy: A Translator and a Machine Operator</h4>
+  <p>Imagine giving a machine operator a set of instructions written in a language they understand.</p>
+  <p>The operator interprets the instructions and performs the required work.</p>
+  <p>Similarly, a JavaScript engine processes JavaScript code and executes its operations.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 300" role="img" aria-label="The JavaScript engine receives source code and produces results">
+      <defs>
+        <linearGradient id="c3machine" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#243350"/><stop offset="100%" stop-color="#121c2f"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="700" height="300" rx="16" fill="#f7f2e7"/>
+
+      <!-- INPUT CARD -->
+      <rect x="26" y="88" width="150" height="124" rx="12" fill="#fffdf8" stroke="#1b2432" stroke-width="2.5"/>
+      <text x="101" y="114" text-anchor="middle" class="t-label" font-size="10">SOURCE CODE</text>
+      <line x1="44" y1="136" x2="158" y2="136" stroke="#c792ea" stroke-width="5" stroke-linecap="round"/>
+      <line x1="44" y1="156" x2="140" y2="156" stroke="#a5e075" stroke-width="5" stroke-linecap="round"/>
+      <line x1="44" y1="176" x2="152" y2="176" stroke="#82aaff" stroke-width="5" stroke-linecap="round"/>
+      <line x1="44" y1="196" x2="120" y2="196" stroke="#f7a56b" stroke-width="5" stroke-linecap="round"/>
+
+      <polygon points="186,142 216,150 186,158" fill="#c9a227"/>
+
+      <!-- ENGINE BOX -->
+      <rect x="226" y="56" width="248" height="188" rx="16" fill="url(#c3machine)" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="350" y="88" text-anchor="middle" class="t-gold" fill="#e6d49a" font-size="11">JAVASCRIPT ENGINE</text>
+
+      <!-- gears -->
+      <circle cx="302" cy="152" r="30" fill="none" stroke="#c9a227" stroke-width="6"/>
+      <circle cx="302" cy="152" r="10" fill="#c9a227"/>
+      <g stroke="#c9a227" stroke-width="6" stroke-linecap="round">
+        <line x1="302" y1="112" x2="302" y2="122"/>
+        <line x1="302" y1="182" x2="302" y2="192"/>
+        <line x1="262" y1="152" x2="272" y2="152"/>
+        <line x1="332" y1="152" x2="342" y2="152"/>
+        <line x1="274" y1="124" x2="281" y2="131"/>
+        <line x1="323" y1="173" x2="330" y2="180"/>
+        <line x1="330" y1="124" x2="323" y2="131"/>
+        <line x1="281" y1="173" x2="274" y2="180"/>
+      </g>
+
+      <circle cx="396" cy="176" r="22" fill="none" stroke="#5c7ab8" stroke-width="5"/>
+      <circle cx="396" cy="176" r="7" fill="#5c7ab8"/>
+      <g stroke="#5c7ab8" stroke-width="5" stroke-linecap="round">
+        <line x1="396" y1="148" x2="396" y2="156"/>
+        <line x1="396" y1="196" x2="396" y2="204"/>
+        <line x1="368" y1="176" x2="376" y2="176"/>
+        <line x1="416" y1="176" x2="424" y2="176"/>
+      </g>
+
+      <text x="350" y="228" text-anchor="middle" class="t-mono" fill="#93a1b8" font-size="10.5">parse · interpret · optimise</text>
+
+      <polygon points="484,142 514,150 484,158" fill="#c9a227"/>
+
+      <!-- OUTPUT CARD -->
+      <rect x="524" y="88" width="150" height="124" rx="12" fill="#fffdf8" stroke="#1b2432" stroke-width="2.5"/>
+      <text x="599" y="114" text-anchor="middle" class="t-label" font-size="10">RESULTS</text>
+      <rect x="544" y="130" width="110" height="26" rx="6" fill="#16243d"/>
+      <text x="599" y="148" text-anchor="middle" font-size="12" fill="#a5e075" font-family="JetBrains Mono, monospace">Start</text>
+      <rect x="544" y="164" width="110" height="26" rx="6" fill="#16243d"/>
+      <text x="599" y="182" text-anchor="middle" font-size="12" fill="#a5e075" font-family="JetBrains Mono, monospace">Learning</text>
+    </svg>
+    <figcaption><b>Figure 3.1</b> — The engine reads your source code, works through it, and produces results in the environment.</figcaption>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 03 · How JavaScript Works</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>3.3 &nbsp;A Basic Execution Example</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">order.js</span></div>
+    <pre><code>console.log("Start");
+console.log("Learning");
+console.log("Finish");</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Start
+Learning
+Finish</pre>
+  </figure>
+
+  <p>The statements execute in source order because this example contains ordinary synchronous operations.</p>
+
+  <h4>Dry Run</h4>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Step</th><th>Instruction</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>First <code>console.log()</code></td><td>Displays <code>Start</code></td></tr>
+        <tr><td>2</td><td>Second <code>console.log()</code></td><td>Displays <code>Learning</code></td></tr>
+        <tr><td>3</td><td>Third <code>console.log()</code></td><td>Displays <code>Finish</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>3.4 &nbsp;Does JavaScript Always Execute Line by Line?</h3>
+  <p>Not exactly.</p>
+  <p>Ordinary synchronous statements generally execute in order, but functions, branches, loops, asynchronous operations and exceptions affect which code runs and when.</p>
+  <p>For example:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">branch.js</span></div>
+    <pre><code>console.log("A");
+
+if (false) {
+  console.log("B");
+}
+
+console.log("C");</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>A
+C</pre>
+  </figure>
+
+  <p>The <code>B</code> statement is inside a branch whose condition is false, so it does not execute.</p>
+  <p>Later phases will explain control flow and asynchronous execution in depth.</p>
+
+  <h3>3.5 &nbsp;Compilation and Interpretation</h3>
+  <p>You may hear that JavaScript is an interpreted language.</p>
+  <p>That is an oversimplification of modern JavaScript engines. Engines commonly combine parsing, bytecode or other intermediate representations, interpretation and just-in-time compilation or optimization.</p>
+  <p>For a beginner, remember:</p>
+  <ul>
+    <li><strong>Source code</strong> is the JavaScript you write.</li>
+    <li>The <strong>engine</strong> processes that source code.</li>
+    <li>The engine <strong>executes</strong> the program according to JavaScript's language rules.</li>
+  </ul>
+
+  <div class="callout tip">
+    <span class="callout-title">You don't need to know this yet</span>
+    <p>You do not need to understand the engine's internal compiler architecture to start writing useful JavaScript.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 03 · How JavaScript Works</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 4
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch4">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 04</div>
+    <h2 class="chap-title">Variables and Values — The Foundation</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>4.1 &nbsp;What Is a Value?</h3>
+  <p>A <strong>value</strong> is a piece of data that a program can work with.</p>
+  <p>Examples:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">values.js</span></div>
+    <pre><code>"Rahul"
+25
+true
+null</code></pre>
+  </figure>
+
+  <p>These represent a string, a number, a boolean and the special value <code>null</code>, respectively.</p>
+  <p>Variables and data types will be covered in depth in Phase 2. For now, understand that programs store, read and process values.</p>
+
+  <h3>4.2 &nbsp;What Is a Variable?</h3>
+  <p>A <strong>variable</strong> is a named binding through which a program can access a value.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">variable.js</span></div>
+    <pre><code>let studentName = "Rahul";
+
+console.log(studentName);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Rahul</pre>
+  </figure>
+
+  <p>Here:</p>
+  <ul>
+    <li><code>let</code> declares a variable.</li>
+    <li><code>studentName</code> is the variable name.</li>
+    <li><code>=</code> assigns a value.</li>
+    <li><code>"Rahul"</code> is the string value.</li>
+  </ul>
+
+  <h3>4.3 &nbsp;Real-World Analogy: A Labeled Storage Box</h3>
+  <p>Imagine a storage box with the label <code>studentName</code>.</p>
+  <p>You place a card containing the name Rahul inside it.</p>
+  <p>When you ask for the value associated with <code>studentName</code>, you retrieve Rahul.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 300" role="img" aria-label="A labelled storage box holding the value Rahul">
+      <defs>
+        <linearGradient id="c4box" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f4e6bd"/><stop offset="100%" stop-color="#e0c982"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="700" height="300" rx="16" fill="#f7f2e7"/>
+
+      <!-- incoming value card -->
+      <rect x="52" y="112" width="132" height="70" rx="10" fill="#fffdf8" stroke="#1b2432" stroke-width="2.5"/>
+      <text x="118" y="146" text-anchor="middle" font-size="19" font-family="Lora, serif" font-weight="700" fill="#1b2432">"Rahul"</text>
+      <text x="118" y="166" text-anchor="middle" font-size="10.5" fill="#8a7d5f" font-family="JetBrains Mono, monospace">A VALUE</text>
+
+      <polygon points="196,140 226,147 196,154" fill="#c9a227"/>
+
+      <!-- the box -->
+      <rect x="248" y="80" width="220" height="150" rx="12" fill="url(#c4box)" stroke="#1b2432" stroke-width="3"/>
+      <rect x="248" y="80" width="220" height="46" rx="12" fill="#c9a227" stroke="#1b2432" stroke-width="3"/>
+      <text x="358" y="110" text-anchor="middle" font-size="15" font-family="JetBrains Mono, monospace" font-weight="700" fill="#1b2432">studentName</text>
+      <line x1="248" y1="150" x2="468" y2="150" stroke="#b8992f" stroke-width="2" stroke-dasharray="6 6"/>
+
+      <polygon points="482,140 512,147 482,154" fill="#c9a227"/>
+
+      <!-- retrieved card -->
+      <rect x="524" y="112" width="132" height="70" rx="10" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="590" y="146" text-anchor="middle" font-size="19" font-family="Lora, serif" font-weight="700" fill="#f6f1e4">Rahul</text>
+      <text x="590" y="166" text-anchor="middle" font-size="10.5" fill="#93a1b8" font-family="JetBrains Mono, monospace">RETRIEVED</text>
+
+      <text x="118" y="216" text-anchor="middle" class="t-gold" font-size="10">STORE</text>
+      <text x="358" y="256" text-anchor="middle" class="t-gold" font-size="10">NAMED BINDING</text>
+      <text x="590" y="216" text-anchor="middle" class="t-gold" font-size="10">READ</text>
+    </svg>
+    <figcaption><b>Figure 4.1</b> — A variable is like a labelled box: you store a value under a name and read it back later.</figcaption>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">box.js</span></div>
+    <pre><code>let studentName = "Rahul";
+
+console.log(studentName);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Rahul</pre>
+  </figure>
+
+  <div class="callout note">
+    <span class="callout-title">A caution about analogies</span>
+    <p>The analogy is useful, but remember that a JavaScript variable is <em>not literally</em> a physical box. It is a named binding managed by the language runtime.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 04 · Variables and Values</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>4.4 &nbsp;Variables Can Be Reassigned</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">reassign.js</span></div>
+    <pre><code>let score = 50;
+
+console.log(score);
+
+score = 80;
+
+console.log(score);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>50
+80</pre>
+  </figure>
+
+  <p>The variable initially has the value <code>50</code>. Later, its value is changed to <code>80</code>.</p>
+
+  <h3>4.5 &nbsp;Variable Names Should Describe Their Purpose</h3>
+
+  <h5>Unclear</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">unclear.js</span></div>
+    <pre><code>let x = 500;
+let y = 3;</code></pre>
+  </figure>
+
+  <h5>Clearer</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">clear.js</span></div>
+    <pre><code>let productPrice = 500;
+let productQuantity = 3;</code></pre>
+  </figure>
+
+  <p>Descriptive names make code easier to understand, debug and maintain.</p>
+
+  <h3>4.6 &nbsp;A Practical Example</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">student.js</span></div>
+    <pre><code>let studentName = "Aarav";
+let studentAge = 21;
+let courseName = "JavaScript";
+
+console.log(studentName);
+console.log(studentAge);
+console.log(courseName);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Aarav
+21
+JavaScript</pre>
+  </figure>
+
+  <p>This example stores and displays basic student information.</p>
+
+  <div class="keyidea">
+    <span class="k-label">Foundation Rule</span>
+    <p>Name your variables for the meaning they carry, not for the keystrokes they save.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 04 · Variables and Values</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 5
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch5">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 05</div>
+    <h2 class="chap-title">Introduction to Data Types</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p>A <strong>data type</strong> describes the kind of value being represented.</p>
+  <p>JavaScript has primitive types and objects. At this stage, learn to recognize common values.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Example</th><th>Type or category</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td><code>"Hello"</code></td><td>String</td><td>Text</td></tr>
+        <tr><td><code>100</code></td><td>Number</td><td>Numeric values</td></tr>
+        <tr><td><code>true</code></td><td>Boolean</td><td>Logical true</td></tr>
+        <tr><td><code>false</code></td><td>Boolean</td><td>Logical false</td></tr>
+        <tr><td><code>undefined</code></td><td>Undefined</td><td>An absent or unassigned value</td></tr>
+        <tr><td><code>null</code></td><td>Null</td><td>An intentional absence of a value</td></tr>
+        <tr><td><code>{ name: "Aarav" }</code></td><td>Object</td><td>Structured data</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>JavaScript also has <code>BigInt</code> and <code>Symbol</code> primitive types. They will be covered in Phase 2.</p>
+
+  <h3>5.1 &nbsp;Strings</h3>
+  <p>Strings represent text.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">strings.js</span></div>
+    <pre><code>console.log("Hello JavaScript");
+console.log("Welcome to programming");</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Hello JavaScript
+Welcome to programming</pre>
+  </figure>
+
+  <h3>5.2 &nbsp;Numbers</h3>
+  <p>Numbers can represent quantities used in calculations.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">numbers.js</span></div>
+    <pre><code>console.log(10);
+console.log(10 + 20);
+console.log(100 / 4);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>10
+30
+25</pre>
+  </figure>
+
+  <p>JavaScript's ordinary <code>Number</code> type uses IEEE 754 double-precision floating-point representation.</p>
+
+  <h3>5.3 &nbsp;Booleans</h3>
+  <p>A boolean represents one of two logical values: <code>true</code> or <code>false</code>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">booleans.js</span></div>
+    <pre><code>console.log(true);
+console.log(false);
+console.log(10 &gt; 5);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>true
+false
+true</pre>
+  </figure>
+
+  <p>The expression <code>10 &gt; 5</code> evaluates to <code>true</code>.</p>
+
+  <h3>5.4 &nbsp;Undefined and null</h3>
+  <p>These values are related but different.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">nothing.js</span></div>
+    <pre><code>let course;
+
+console.log(course);
+
+let selectedCourse = null;
+
+console.log(selectedCourse);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>undefined
+null</pre>
+  </figure>
+
+  <p>In the first example, the declared variable has not been assigned a value.</p>
+  <p>In the second, the program explicitly assigns <code>null</code> to represent the absence of a selected course.</p>
+
+  <div class="callout warn">
+    <span class="callout-title">Remember</span>
+    <p><code>undefined</code> and <code>null</code> are <strong>not interchangeable</strong>, even though both can represent an absence of a meaningful value.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 05 · Introduction to Data Types</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 6
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch6">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 06</div>
+    <h2 class="chap-title">Operators and Expressions</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>6.1 &nbsp;What Is an Operator?</h3>
+  <p>An <strong>operator</strong> performs an operation on one or more values.</p>
+  <p>Examples:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">arithmetic.js</span></div>
+    <pre><code>console.log(10 + 5);
+console.log(10 - 5);
+console.log(10 * 5);
+console.log(10 / 5);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>15
+5
+50
+2</pre>
+  </figure>
+
+  <p>Here, <code>+</code>, <code>-</code>, <code>*</code> and <code>/</code> are arithmetic operators.</p>
+
+  <h3>6.2 &nbsp;Real-World Analogy: A Calculator</h3>
+  <p>A calculator receives numbers and an operation.</p>
+  <p>For example:</p>
+  <ul>
+    <li>Input: <code>10</code></li>
+    <li>Operation: addition</li>
+    <li>Input: <code>5</code></li>
+    <li>Result: <code>15</code></li>
+  </ul>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 300" role="img" aria-label="A calculator performing 10 plus 5 equals 15">
+      <rect x="0" y="0" width="700" height="300" rx="16" fill="#f7f2e7"/>
+
+      <!-- inputs -->
+      <circle cx="96" cy="132" r="40" fill="#fffdf8" stroke="#1b2432" stroke-width="3"/>
+      <text x="96" y="143" text-anchor="middle" font-size="26" font-family="JetBrains Mono, monospace" font-weight="700" fill="#1b2432">10</text>
+
+      <text x="168" y="145" text-anchor="middle" font-size="34" font-family="JetBrains Mono, monospace" fill="#c9a227">+</text>
+
+      <circle cx="240" cy="132" r="40" fill="#fffdf8" stroke="#1b2432" stroke-width="3"/>
+      <text x="240" y="143" text-anchor="middle" font-size="26" font-family="JetBrains Mono, monospace" font-weight="700" fill="#1b2432">5</text>
+
+      <text x="308" y="145" text-anchor="middle" font-size="30" font-family="JetBrains Mono, monospace" fill="#8a7d5f">=</text>
+
+      <!-- calculator body -->
+      <rect x="348" y="42" width="200" height="216" rx="18" fill="#16243d" stroke="#c9a227" stroke-width="3"/>
+      <rect x="368" y="62" width="160" height="52" rx="8" fill="#0d1422" stroke="#2c3c5c" stroke-width="2"/>
+      <text x="448" y="98" text-anchor="middle" font-size="26" font-family="JetBrains Mono, monospace" fill="#a5e075">15</text>
+
+      <g fill="#2c3c5c">
+        <rect x="368" y="128" width="46" height="34" rx="6"/>
+        <rect x="425" y="128" width="46" height="34" rx="6"/>
+        <rect x="482" y="128" width="46" height="34" rx="6"/>
+        <rect x="368" y="172" width="46" height="34" rx="6"/>
+        <rect x="425" y="172" width="46" height="34" rx="6"/>
+        <rect x="482" y="172" width="46" height="34" rx="6"/>
+        <rect x="368" y="216" width="103" height="30" rx="6" fill="#c9a227"/>
+        <rect x="482" y="216" width="46" height="30" rx="6"/>
+      </g>
+      <g font-family="JetBrains Mono, monospace" font-size="13" fill="#93a1b8" text-anchor="middle">
+        <text x="391" y="150">7</text><text x="448" y="150">8</text><text x="505" y="150">9</text>
+        <text x="391" y="194">4</text><text x="448" y="194">5</text><text x="505" y="194">6</text>
+        <text x="419" y="237" fill="#1b2432" font-weight="700">CLEAR</text>
+        <text x="505" y="237">0</text>
+      </g>
+
+      <text x="96" y="206" text-anchor="middle" class="t-gold" font-size="10">INPUT</text>
+      <text x="240" y="206" text-anchor="middle" class="t-gold" font-size="10">INPUT</text>
+      <text x="448" y="282" text-anchor="middle" class="t-gold" font-size="10">RESULT</text>
+    </svg>
+    <figcaption><b>Figure 6.1</b> — Operators are the buttons on the calculator: they take values in and hand a new value back.</figcaption>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">total.js</span></div>
+    <pre><code>let total = 10 + 5;
+
+console.log(total);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>15</pre>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 06 · Operators and Expressions</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>6.3 &nbsp;Common Operator Categories</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Category</th><th>Example</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>Arithmetic</td><td><code>10 + 5</code></td><td>Adds numbers</td></tr>
+        <tr><td>Assignment</td><td><code>score = 90</code></td><td>Assigns a value</td></tr>
+        <tr><td>Comparison</td><td><code>10 &gt; 5</code></td><td>Compares values</td></tr>
+        <tr><td>Logical</td><td><code>true &amp;&amp; false</code></td><td>Combines logical conditions</td></tr>
+        <tr><td>Unary</td><td><code>-10</code></td><td>Uses an operator with one operand</td></tr>
+        <tr><td>Ternary</td><td><code>age &gt;= 18 ? "Adult" : "Minor"</code></td><td>Chooses between two expressions</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>These categories will be explored systematically in Phase 2.</p>
+
+  <h3>6.4 &nbsp;What Is an Expression?</h3>
+  <p>An <strong>expression</strong> is code that evaluates to a value.</p>
+  <p>Examples:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">expression</span></div>
+    <pre><code>10 + 20</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">result</span></div>
+    <pre>30</pre>
+  </figure>
+
+  <p>Another example:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">expression</span></div>
+    <pre><code>10 &gt; 5</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">result</span></div>
+    <pre>true</pre>
+  </figure>
+
+  <p>Expressions can be assigned to variables:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">assign-expression.js</span></div>
+    <pre><code>let total = 100 + 200;
+
+console.log(total);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>300</pre>
+  </figure>
+
+  <h3>6.5 &nbsp;Expression versus Statement</h3>
+  <p>An <strong>expression</strong> produces a value. A <strong>statement</strong> performs an action or forms part of the program's execution structure.</p>
+  <p>Consider:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">expression-statement.js</span></div>
+    <pre><code>10 + 20;</code></pre>
+  </figure>
+
+  <p>The addition is an expression. The complete line is an expression statement.</p>
+  <p>Now consider:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">declaration-statement.js</span></div>
+    <pre><code>let total = 10 + 20;</code></pre>
+  </figure>
+
+  <p>The declaration is a statement, and <code>10 + 20</code> is an expression used to initialize the variable.</p>
+
+  <div class="callout tip">
+    <span class="callout-title">Why this matters</span>
+    <p>Understanding this distinction will help you read JavaScript more accurately.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 06 · Operators and Expressions</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 7
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch7">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 07</div>
+    <h2 class="chap-title">Statements and Program Structure</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>7.1 &nbsp;What Is a Statement?</h3>
+  <p>A <strong>statement</strong> is an instruction that forms part of a JavaScript program.</p>
+  <p>Examples include variable declarations, expression statements, conditional statements and loops.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">statements.js</span></div>
+    <pre><code>let message = "Hello";
+
+console.log(message);</code></pre>
+  </figure>
+
+  <p>This example contains two statements:</p>
+  <ol>
+    <li>A variable declaration.</li>
+    <li>A call to <code>console.log()</code>.</li>
+  </ol>
+
+  <h3>7.2 &nbsp;Programs Are Built from Smaller Instructions</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">shop.js</span></div>
+    <pre><code>let productPrice = 200;
+let quantity = 3;
+
+let total = productPrice * quantity;
+
+console.log(total);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>600</pre>
+  </figure>
+
+  <p>The program follows this sequence:</p>
+  <ol>
+    <li>Store the product price.</li>
+    <li>Store the quantity.</li>
+    <li>Multiply the two values.</li>
+    <li>Display the total.</li>
+  </ol>
+  <p>Each statement contributes to the final result.</p>
+
+  <h3>7.3 &nbsp;Why Order Matters</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">order.js</span></div>
+    <pre><code>console.log("First");
+console.log("Second");
+console.log("Third");</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>First
+Second
+Third</pre>
+  </figure>
+
+  <p>Reordering the statements changes the displayed order.</p>
+  <p>In more complex programs, order can also affect which values are available and which operations occur.</p>
+
+  <div class="keyidea">
+    <span class="k-label">Structure</span>
+    <p>A program is a stack of small, ordered instructions. Change the order, and you change the story.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 07 · Statements and Program Structure</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 8
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch8">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 08</div>
+    <h2 class="chap-title">Comments and Code Readability</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p>Comments are notes written in source code to help developers understand it.</p>
+  <p>The JavaScript engine ignores comments as executable JavaScript instructions.</p>
+
+  <h3>8.1 &nbsp;Single-Line Comments</h3>
+  <p>Use <code>//</code> for a single-line comment.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">single-line.js</span></div>
+    <pre><code>// Store the product price
+let productPrice = 500;
+
+// Display the price
+console.log(productPrice);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>500</pre>
+  </figure>
+
+  <h3>8.2 &nbsp;Multi-Line Comments</h3>
+  <p>Use <code>/* ... */</code> for a block comment.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">multi-line.js</span></div>
+    <pre><code>/*
+  Calculate the total price
+  of three products.
+*/
+
+let total = 100 + 200 + 300;
+
+console.log(total);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>600</pre>
+  </figure>
+
+  <h3>8.3 &nbsp;Comments Should Explain Why When Useful</h3>
+
+  <h5>Less useful</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">obvious.js</span></div>
+    <pre><code>// Add 10 and 20
+let total = 10 + 20;</code></pre>
+  </figure>
+
+  <h5>More useful when the reason is not obvious</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">meaningful.js</span></div>
+    <pre><code>// Apply a fixed introductory credit to the account.
+let accountCredit = 10 + 20;</code></pre>
+  </figure>
+
+  <p>Comments should add context rather than merely repeat obvious code.</p>
+
+  <h3>8.4 &nbsp;Code Readability Matters</h3>
+  <p>Readable code helps you and other developers:</p>
+  <ul>
+    <li>Understand a program quickly.</li>
+    <li>Identify mistakes.</li>
+    <li>Make changes safely.</li>
+    <li>Collaborate with a team.</li>
+    <li>Maintain an application over time.</li>
+  </ul>
+
+  <div class="keyidea">
+    <span class="k-label">Professional Truth</span>
+    <p>Professional programming is not only about making code run. It is also about making code understandable.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 08 · Comments and Code Readability</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 9
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch9">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 09</div>
+    <h2 class="chap-title">Input and Output Basics</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p>Programs often receive input, process it and produce output.</p>
+
+  <h3>9.1 &nbsp;The IPO Model</h3>
+  <p>IPO means <strong>Input → Process → Output</strong>.</p>
+  <p>Real-world analogy: A coffee machine.</p>
+  <ul>
+    <li>Input: Choose a coffee and provide payment.</li>
+    <li>Process: The machine prepares the drink.</li>
+    <li>Output: The finished coffee.</li>
+  </ul>
+  <p>In programming:</p>
+  <ul>
+    <li><strong>Input</strong> supplies data.</li>
+    <li><strong>Processing</strong> transforms or analyzes data.</li>
+    <li><strong>Output</strong> presents the result.</li>
+  </ul>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 320" role="img" aria-label="The IPO model — input, process, output — illustrated as a coffee machine">
+      <defs>
+        <linearGradient id="c9m" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#243350"/><stop offset="100%" stop-color="#121c2f"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="700" height="320" rx="16" fill="#f7f2e7"/>
+
+      <!-- INPUT -->
+      <rect x="28" y="70" width="164" height="180" rx="14" fill="#fffdf8" stroke="#1b2432" stroke-width="2.5"/>
+      <text x="110" y="100" text-anchor="middle" class="t-label" font-size="10">INPUT</text>
+      <!-- coin -->
+      <circle cx="110" cy="140" r="24" fill="#f4e6bd" stroke="#c9a227" stroke-width="3"/>
+      <text x="110" y="147" text-anchor="middle" font-size="16" font-family="JetBrains Mono, monospace" font-weight="700" fill="#9c7c14">₹</text>
+      <!-- cup empty -->
+      <path d="M78 186 L142 186 L134 232 L86 232 Z" fill="#fff" stroke="#1b2432" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M142 196 q18 0 18 14 t-18 14" fill="none" stroke="#1b2432" stroke-width="2.5"/>
+      <text x="110" y="254" text-anchor="middle" class="t-mono" font-size="9.5">choose &amp; pay</text>
+
+      <polygon points="204,160 234,168 204,176" fill="#c9a227"/>
+
+      <!-- PROCESS -->
+      <rect x="242" y="50" width="216" height="220" rx="16" fill="url(#c9m)" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="350" y="82" text-anchor="middle" class="t-gold" fill="#e6d49a" font-size="10.5">PROCESS</text>
+      <rect x="278" y="100" width="144" height="70" rx="10" fill="#0d1422" stroke="#2c3c5c" stroke-width="2"/>
+      <circle cx="304" cy="122" r="6" fill="#28c840"/>
+      <circle cx="324" cy="122" r="6" fill="#febc2e"/>
+      <line x1="278" y1="136" x2="422" y2="136" stroke="#2c3c5c" stroke-width="1.5"/>
+      <text x="350" y="158" text-anchor="middle" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#a5e075">brewing…</text>
+
+      <rect x="278" y="188" width="144" height="52" rx="8" fill="#1b2b47" stroke="#2c3c5c" stroke-width="2"/>
+      <text x="350" y="210" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#89ddff">let coffee =</text>
+      <text x="350" y="228" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#c7d3e8">brew(beans)</text>
+
+      <polygon points="470,160 500,168 470,176" fill="#c9a227"/>
+
+      <!-- OUTPUT -->
+      <rect x="508" y="70" width="164" height="180" rx="14" fill="#fffdf8" stroke="#1b2432" stroke-width="2.5"/>
+      <text x="590" y="100" text-anchor="middle" class="t-label" font-size="10">OUTPUT</text>
+      <!-- full cup -->
+      <path d="M552 128 L628 128 L618 196 L562 196 Z" fill="#8b5e3c" stroke="#1b2432" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M628 142 q22 0 22 17 t-22 17" fill="none" stroke="#1b2432" stroke-width="2.5"/>
+      <path d="M566 118 q10 -14 0 -24 M590 118 q10 -14 0 -24 M614 118 q10 -14 0 -24"
+            fill="none" stroke="#c9a227" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="590" y="224" text-anchor="middle" class="t-mono" font-size="9.5">finished coffee</text>
+
+      <text x="350" y="300" text-anchor="middle" class="t-gold" font-size="11">INPUT  →  PROCESS  →  OUTPUT</text>
+    </svg>
+    <figcaption><b>Figure 9.1</b> — Every useful program follows the same shape: something goes in, something happens, something comes out.</figcaption>
+  </figure>
+
+  <h3>9.2 &nbsp;Example: Calculate a Total</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">ipo.js</span></div>
+    <pre><code>let price = 100;
+let quantity = 3;
+
+let total = price * quantity;
+
+console.log(total);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>300</pre>
+  </figure>
+
+  <h4>IPO Breakdown</h4>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Stage</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>Input</td><td>Price is <code>100</code>; quantity is <code>3</code></td></tr>
+        <tr><td>Process</td><td>Multiply price by quantity</td></tr>
+        <tr><td>Output</td><td>Display <code>300</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-foot"><span>Chapter 09 · Input and Output Basics</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>9.3 &nbsp;Console Output</h3>
+  <p>The most common beginner output method is <code>console.log()</code>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">details.js</span></div>
+    <pre><code>console.log("Student Details");
+console.log("Name: Aarav");
+console.log("Course: JavaScript");</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Student Details
+Name: Aarav
+Course: JavaScript</pre>
+  </figure>
+
+  <h3>9.4 &nbsp;Browser Input with prompt()</h3>
+  <p>In a browser, <code>prompt()</code> can request a value from the user.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">prompt.js</span></div>
+    <pre><code>let studentName = prompt("Enter your name");
+
+console.log(studentName);</code></pre>
+  </figure>
+
+  <p>If the user enters <code>Aarav</code>, the console displays:</p>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Aarav</pre>
+  </figure>
+
+  <h4>Important details</h4>
+  <ul>
+    <li><code>prompt()</code> is a browser API, not a universal JavaScript feature available in every runtime.</li>
+    <li>Its result is generally a string when the user enters text.</li>
+    <li>It can return <code>null</code> if the user cancels the dialog.</li>
+  </ul>
+
+  <h3>9.5 &nbsp;Numeric Input Requires Care</h3>
+  <p>Consider this code:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">naive-input.js</span></div>
+    <pre><code>let firstNumber = prompt("Enter the first number");
+let secondNumber = prompt("Enter the second number");
+
+console.log(firstNumber + secondNumber);</code></pre>
+  </figure>
+
+  <p>If the user enters <code>10</code> and <code>20</code>, the result may be:</p>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output — surprising!</span></div>
+    <pre>1020</pre>
+  </figure>
+
+  <h5>Why?</h5>
+  <p>Because <code>prompt()</code> returns strings, and the <code>+</code> operator can <em>concatenate</em> strings rather than add their numeric contents.</p>
+
+  <p>To perform numeric addition:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">safe-input.js</span></div>
+    <pre><code>let firstNumber = Number(prompt("Enter the first number"));
+let secondNumber = Number(prompt("Enter the second number"));
+
+console.log(firstNumber + secondNumber);</code></pre>
+  </figure>
+
+  <p>If the user enters <code>10</code> and <code>20</code>, the result is:</p>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>30</pre>
+  </figure>
+
+  <div class="callout warn">
+    <span class="callout-title">Production note</span>
+    <p>This conversion is appropriate for ordinary numeric input, but production programs should also <strong>validate input</strong> and handle invalid numbers.</p>
+  </div>
+
+  <h3>9.6 &nbsp;A Complete Input-Process-Output Example</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">product.js</span></div>
+    <pre><code>let productName = prompt("Enter the product name");
+let price = Number(prompt("Enter the product price"));
+let quantity = Number(prompt("Enter the quantity"));
+
+let total = price * quantity;
+
+console.log("Product:", productName);
+console.log("Total:", total);</code></pre>
+  </figure>
+
+  <h5>Example input</h5>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">user enters</span></div>
+    <pre>Product name: Notebook
+Product price: 50
+Quantity: 4</pre>
+  </figure>
+
+  <h5>Output</h5>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Product: Notebook
+Total: 200</pre>
+  </figure>
+
+  <p>This is a small example of a program that receives data, processes it and produces output.</p>
+
+  <div class="page-foot"><span>Chapter 09 · Input and Output Basics</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 10
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch10">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 10</div>
+    <h2 class="chap-title">Errors and Debugging</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>10.1 &nbsp;What Is an Error?</h3>
+  <p>An <strong>error</strong> is a problem that prevents code from behaving as intended. Some errors stop execution; others cause incorrect results without stopping the program.</p>
+  <p>Errors are a normal part of programming.</p>
+  <p>The goal is not to avoid every mistake forever. The goal is to identify problems, understand their causes and fix them systematically.</p>
+
+  <h3>10.2 &nbsp;Real-World Analogy: Following a Recipe</h3>
+  <p>Imagine a recipe says:</p>
+  <ol>
+    <li>Add flour.</li>
+    <li>Add water.</li>
+    <li>Bake the mixture.</li>
+  </ol>
+  <p>If you accidentally add salt instead of sugar, the steps might still run, but the result may be wrong.</p>
+  <p>Programming has similar situations: code may execute successfully but produce an incorrect result.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 280" role="img" aria-label="Three categories of errors: syntax, runtime and logical">
+      <rect x="0" y="0" width="700" height="280" rx="16" fill="#f7f2e7"/>
+
+      <!-- syntax -->
+      <rect x="24" y="34" width="200" height="212" rx="14" fill="#fffdf8" stroke="#b03a52" stroke-width="2.5"/>
+      <circle cx="124" cy="76" r="22" fill="#fdeef0" stroke="#b03a52" stroke-width="2.5"/>
+      <text x="124" y="84" text-anchor="middle" font-size="20" font-weight="700" fill="#b03a52" font-family="JetBrains Mono, monospace">!</text>
+      <text x="124" y="122" text-anchor="middle" class="t-strong" font-size="14">Syntax Error</text>
+      <text x="124" y="146" text-anchor="middle" class="t-mono" font-size="10.5">code breaks the</text>
+      <text x="124" y="162" text-anchor="middle" class="t-mono" font-size="10.5">grammar rules</text>
+      <rect x="52" y="182" width="144" height="42" rx="6" fill="#16243d"/>
+      <text x="124" y="208" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#f7a56b">"Hello</text>
+
+      <!-- runtime -->
+      <rect x="250" y="34" width="200" height="212" rx="14" fill="#fffdf8" stroke="#9c7c14" stroke-width="2.5"/>
+      <circle cx="350" cy="76" r="22" fill="#fdf6e0" stroke="#9c7c14" stroke-width="2.5"/>
+      <text x="350" y="84" text-anchor="middle" font-size="18" font-weight="700" fill="#9c7c14" font-family="JetBrains Mono, monospace">✕</text>
+      <text x="350" y="122" text-anchor="middle" class="t-strong" font-size="14">Runtime Error</text>
+      <text x="350" y="146" text-anchor="middle" class="t-mono" font-size="10.5">fails while the</text>
+      <text x="350" y="162" text-anchor="middle" class="t-mono" font-size="10.5">program runs</text>
+      <rect x="278" y="182" width="144" height="42" rx="6" fill="#16243d"/>
+      <text x="350" y="208" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#f7a56b">user.name</text>
+
+      <!-- logical -->
+      <rect x="476" y="34" width="200" height="212" rx="14" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <circle cx="576" cy="76" r="22" fill="#e9f6f4" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="576" y="84" text-anchor="middle" font-size="18" font-weight="700" fill="#0f766e" font-family="JetBrains Mono, monospace">?</text>
+      <text x="576" y="122" text-anchor="middle" class="t-strong" font-size="14">Logical Error</text>
+      <text x="576" y="146" text-anchor="middle" class="t-mono" font-size="10.5">runs, but gives</text>
+      <text x="576" y="162" text-anchor="middle" class="t-mono" font-size="10.5">the wrong answer</text>
+      <rect x="504" y="182" width="144" height="42" rx="6" fill="#16243d"/>
+      <text x="576" y="208" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#a5e075">price + qty</text>
+    </svg>
+    <figcaption><b>Figure 10.1</b> — Three doors through which a program can go wrong: grammar, execution, and logic.</figcaption>
+  </figure>
+
+  <h3>10.3 &nbsp;Syntax Errors</h3>
+  <p>A syntax error occurs when code violates JavaScript's grammatical rules.</p>
+
+  <h5>Incorrect</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">broken.js</span></div>
+    <pre><code>console.log("Hello);</code></pre>
+  </figure>
+
+  <p>The string is missing its closing quotation mark.</p>
+
+  <h5>Correct</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">fixed.js</span></div>
+    <pre><code>console.log("Hello");</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Hello</pre>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 10 · Errors and Debugging</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>10.4 &nbsp;Runtime Errors</h3>
+  <p>A runtime error occurs while a program is executing.</p>
+
+  <h5>Example</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">reference-error.js</span></div>
+    <pre><code>console.log(user.name);</code></pre>
+  </figure>
+
+  <p>If <code>user</code> has never been declared in the accessible scope, JavaScript throws a <code>ReferenceError</code>.</p>
+
+  <h5>Another example</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">type-error.js</span></div>
+    <pre><code>let user = null;
+
+console.log(user.name);</code></pre>
+  </figure>
+
+  <p>This throws a <code>TypeError</code> because <code>null</code> does not provide a <code>name</code> property that can be accessed.</p>
+
+  <h3>10.5 &nbsp;Logical Errors</h3>
+  <p>A logical error occurs when a program runs but gives an incorrect result.</p>
+
+  <h5>Incorrect</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">wrong-operator.js</span></div>
+    <pre><code>let price = 100;
+let quantity = 3;
+
+let total = price + quantity;
+
+console.log(total);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>103</pre>
+  </figure>
+
+  <p>But the intended total price is <code>300</code>.</p>
+
+  <h5>Correct</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">right-operator.js</span></div>
+    <pre><code>let price = 100;
+let quantity = 3;
+
+let total = price * quantity;
+
+console.log(total);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>300</pre>
+  </figure>
+
+  <p>The first program contains valid JavaScript, but the operation does not match the intended calculation.</p>
+
+  <h3>10.6 &nbsp;Three Major Error Categories</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Category</th><th>What happens?</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>Syntax error</td><td>Code violates language grammar</td><td>Unclosed string</td></tr>
+        <tr><td>Runtime error</td><td>A problem occurs during execution</td><td>Accessing a property of <code>null</code></td></tr>
+        <tr><td>Logical error</td><td>Code executes but gives the wrong result</td><td>Adding instead of multiplying</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>10.7 &nbsp;What Is Debugging?</h3>
+  <p><strong>Debugging</strong> is the process of finding and correcting defects in a program.</p>
+  <p>A practical debugging process:</p>
+  <ol class="step-list">
+    <li>Reproduce the problem.</li>
+    <li>Read the error message carefully.</li>
+    <li>Identify the relevant line of code.</li>
+    <li>Check the values used by that code.</li>
+    <li>Determine what you expected to happen.</li>
+    <li>Compare the expected and actual behavior.</li>
+    <li>Make a focused change.</li>
+    <li>Run the program again to verify the fix.</li>
+  </ol>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 260" role="img" aria-label="Debugging — a magnifying glass inspecting lines of code with a bug">
+      <rect x="0" y="0" width="700" height="260" rx="16" fill="#f7f2e7"/>
+
+      <!-- code panel -->
+      <rect x="60" y="34" width="360" height="192" rx="12" fill="#131b2c" stroke="#2c3c5c" stroke-width="2"/>
+      <circle cx="84" cy="56" r="5" fill="#ff5f57"/>
+      <circle cx="100" cy="56" r="5" fill="#febc2e"/>
+      <circle cx="116" cy="56" r="5" fill="#28c840"/>
+      <line x1="60" y1="72" x2="420" y2="72" stroke="#2c3c5c" stroke-width="1.5"/>
+
+      <text x="82" y="98" font-size="12" font-family="JetBrains Mono, monospace" fill="#c792ea">let</text>
+      <text x="112" y="98" font-size="12" font-family="JetBrains Mono, monospace" fill="#c7d3e8">price =</text>
+      <text x="180" y="98" font-size="12" font-family="JetBrains Mono, monospace" fill="#f7a56b">100</text>
+
+      <text x="82" y="124" font-size="12" font-family="JetBrains Mono, monospace" fill="#c792ea">let</text>
+      <text x="112" y="124" font-size="12" font-family="JetBrains Mono, monospace" fill="#c7d3e8">quantity =</text>
+      <text x="196" y="124" font-size="12" font-family="JetBrains Mono, monospace" fill="#f7a56b">3</text>
+
+      <rect x="70" y="136" width="300" height="26" rx="5" fill="rgba(247,223,30,.12)"/>
+      <text x="82" y="154" font-size="12" font-family="JetBrains Mono, monospace" fill="#c792ea">let</text>
+      <text x="112" y="154" font-size="12" font-family="JetBrains Mono, monospace" fill="#c7d3e8">total = price</text>
+      <text x="212" y="154" font-size="12" font-family="JetBrains Mono, monospace" fill="#f7a56b">+</text>
+      <text x="226" y="154" font-size="12" font-family="JetBrains Mono, monospace" fill="#c7d3e8">quantity</text>
+
+      <text x="82" y="192" font-size="12" font-family="JetBrains Mono, monospace" fill="#82aaff">console</text>
+      <text x="146" y="192" font-size="12" font-family="JetBrains Mono, monospace" fill="#c7d3e8">.log(total)</text>
+
+      <!-- bug -->
+      <g transform="translate(352,148)">
+        <ellipse cx="0" cy="0" rx="15" ry="11" fill="#b03a52"/>
+        <line x1="-11" y1="6" x2="-18" y2="14" stroke="#b03a52" stroke-width="3" stroke-linecap="round"/>
+        <line x1="-4" y1="-9" x2="-8" y2="-17" stroke="#b03a52" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="4" y1="-9" x2="8" y2="-17" stroke="#b03a52" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="11" y1="6" x2="18" y2="14" stroke="#b03a52" stroke-width="3" stroke-linecap="round"/>
+      </g>
+
+      <!-- magnifier -->
+      <circle cx="470" cy="126" r="62" fill="rgba(15,118,110,.10)" stroke="#0f766e" stroke-width="7"/>
+      <line x1="514" y1="172" x2="566" y2="222" stroke="#0f766e" stroke-width="12" stroke-linecap="round"/>
+
+      <text x="470" y="118" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" fill="#0f766e">INSPECT</text>
+      <text x="470" y="140" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" fill="#0f766e">VALUES</text>
+
+      <text x="176" y="248" text-anchor="middle" class="t-gold" font-size="10.5">TRACE · COMPARE · FIX</text>
+    </svg>
+    <figcaption><b>Figure 10.2</b> — Debugging is detective work: inspect the actual values, not the values you assumed.</figcaption>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 10 · Errors and Debugging</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>10.8 &nbsp;Debugging with console.log()</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">debug.js</span></div>
+    <pre><code>let price = 100;
+let quantity = 3;
+
+console.log("Price:", price);
+console.log("Quantity:", quantity);
+
+let total = price * quantity;
+
+console.log("Calculated total:", total);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Price: 100
+Quantity: 3
+Calculated total: 300</pre>
+  </figure>
+
+  <p>These messages reveal the values at different points in the program.</p>
+  <p>For larger applications, use browser Developer Tools or a debugger to inspect values, set breakpoints and step through execution.</p>
+
+  <h3>10.9 &nbsp;A Professional Debugging Mindset</h3>
+  <p>When code fails:</p>
+  <ul>
+    <li>Do not change several unrelated things at once.</li>
+    <li>Do not ignore the first useful error message.</li>
+    <li>Do not assume the computer misunderstood your intention.</li>
+    <li>Verify the actual values and execution path.</li>
+    <li>Test the fix against the original problem.</li>
+  </ul>
+
+  <div class="keyidea">
+    <span class="k-label">Important</span>
+    <p>An error message is evidence that helps you investigate. Learning to read it is one of the most valuable skills a developer can build.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 10 · Errors and Debugging</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 11
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch11">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 11</div>
+    <h2 class="chap-title">How Code Executes — Step-by-Step Dry Runs</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p>A <strong>dry run</strong> means manually tracing a program to determine what happens at each step.</p>
+  <p>It helps you understand program behavior without relying only on the final output.</p>
+
+  <h3>Example 1: Basic Calculation</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">example1.js</span></div>
+    <pre><code>let a = 10;
+let b = 20;
+
+let result = a + b;
+
+console.log(result);</code></pre>
+  </figure>
+
+  <h4>Dry Run</h4>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Step</th><th>Operation</th><th>a</th><th>b</th><th>result</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Assign <code>10</code> to <code>a</code></td><td>10</td><td>—</td><td>—</td></tr>
+        <tr><td>2</td><td>Assign <code>20</code> to <code>b</code></td><td>10</td><td>20</td><td>—</td></tr>
+        <tr><td>3</td><td>Evaluate <code>a + b</code></td><td>10</td><td>20</td><td>30</td></tr>
+        <tr><td>4</td><td>Display <code>result</code></td><td>10</td><td>20</td><td>30</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>30</pre>
+  </figure>
+
+  <h3>Example 2: Reassigning a Variable</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">example2.js</span></div>
+    <pre><code>let score = 40;
+
+score = score + 10;
+
+console.log(score);</code></pre>
+  </figure>
+
+  <h4>Dry Run</h4>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Step</th><th>Operation</th><th>score</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Initialize <code>score</code></td><td>40</td></tr>
+        <tr><td>2</td><td>Evaluate <code>score + 10</code></td><td>50</td></tr>
+        <tr><td>3</td><td>Assign the result to <code>score</code></td><td>50</td></tr>
+        <tr><td>4</td><td>Display <code>score</code></td><td>50</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>50</pre>
+  </figure>
+
+  <p>The assignment statement first evaluates the expression on the right and then updates the variable's value.</p>
+
+  <div class="page-foot"><span>Chapter 11 · Step-by-Step Dry Runs</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>Example 3: Understanding Concatenation</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">example3a.js</span></div>
+    <pre><code>let first = "10";
+let second = "20";
+
+console.log(first + second);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>1020</pre>
+  </figure>
+
+  <h4>Dry Run</h4>
+  <ol>
+    <li><code>first</code> contains the string <code>"10"</code>.</li>
+    <li><code>second</code> contains the string <code>"20"</code>.</li>
+    <li>The <code>+</code> operator concatenates the strings.</li>
+    <li>The resulting string is <code>"1020"</code>.</li>
+  </ol>
+
+  <p>Compare that with:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">example3b.js</span></div>
+    <pre><code>let first = 10;
+let second = 20;
+
+console.log(first + second);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>30</pre>
+  </figure>
+
+  <p>The difference is the values' types.</p>
+
+  <h3>Example 4: Predict the Output</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">example4.js</span></div>
+    <pre><code>console.log("Start");
+
+let number = 5;
+
+console.log(number);
+
+number = 15;
+
+console.log(number);
+
+console.log("End");</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Start
+5
+15
+End</pre>
+  </figure>
+
+  <p>The variable is first assigned <code>5</code> and then reassigned <code>15</code>. Each <code>console.log()</code> displays the value available at that point in execution.</p>
+
+  <div class="callout tip">
+    <span class="callout-title">Practice habit</span>
+    <p>Cover the output plate with your hand. Read the code. Write your prediction. Then uncover it.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 11 · Step-by-Step Dry Runs</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 12
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch12">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 12</div>
+    <h2 class="chap-title">Common Beginner Mistakes</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>Mistake 1: Forgetting Quotation Marks</h3>
+
+  <h5>Incorrect</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">mistake1.js</span></div>
+    <pre><code>console.log(Hello);</code></pre>
+  </figure>
+
+  <p>Unless <code>Hello</code> is a declared variable, this causes a <code>ReferenceError</code>.</p>
+
+  <h5>Correct</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">fixed1.js</span></div>
+    <pre><code>console.log("Hello");</code></pre>
+  </figure>
+
+  <h3>Mistake 2: Confusing Strings and Numbers</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">mistake2.js</span></div>
+    <pre><code>console.log("5" + 2);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>52</pre>
+  </figure>
+
+  <p>The string <code>"5"</code> and number <code>2</code> do not produce ordinary numeric addition with <code>+</code>.</p>
+
+  <h3>Mistake 3: Using an Undeclared Variable</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">mistake3.js</span></div>
+    <pre><code>console.log(studentName);</code></pre>
+  </figure>
+
+  <p>If <code>studentName</code> is not declared in the accessible scope, JavaScript throws a <code>ReferenceError</code>.</p>
+
+  <h5>Correct</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">fixed3.js</span></div>
+    <pre><code>let studentName = "Aarav";
+
+console.log(studentName);</code></pre>
+  </figure>
+
+  <h3>Mistake 4: Writing Code Without Checking the Output</h3>
+  <p>A program can run successfully while producing an incorrect result.</p>
+  <p>Always compare the actual output with the expected result.</p>
+
+  <h3>Mistake 5: Guessing Instead of Tracing</h3>
+  <p>When output is confusing, trace the code statement by statement. Record variable values and evaluate expressions explicitly.</p>
+
+  <h3>Mistake 6: Assuming prompt() Returns a Number</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">mistake6.js</span></div>
+    <pre><code>let age = prompt("Enter your age");</code></pre>
+  </figure>
+
+  <p>The returned value is normally a string, not a number.</p>
+  <p>When a numeric value is required, convert it and validate it.</p>
+
+  <div class="keyidea">
+    <span class="k-label">The Beginner's Creed</span>
+    <p>Run it. Read it. Trace it. Never assume — verify.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 12 · Common Beginner Mistakes</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 13
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch13">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 13</div>
+    <h2 class="chap-title">Practice Questions</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p class="lead">Try solving these without looking at the answers first.</p>
+
+  <div class="qgroup">
+    <div class="qgroup-title">Beginner Level</div>
+
+    <div class="q"><span class="qnum">Q1.</span> What is programming? Explain it in your own words.</div>
+
+    <div class="q"><span class="qnum">Q2.</span> What is the difference between HTML, CSS and JavaScript?</div>
+
+    <div class="q"><span class="qnum">Q3.</span> Write a JavaScript statement that displays <code>Hello World</code>.</div>
+
+    <div class="q"><span class="qnum">Q4.</span> What is a JavaScript engine? Name one example.</div>
+
+    <div class="q">
+      <span class="qnum">Q5.</span> Identify the values and variable names in this code:
+      <div class="qcode">
+        <figure class="fig fig-code">
+          <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">q5.js</span></div>
+          <pre><code>let studentName = "Riya";
+let age = 20;</code></pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="qnum">Q6.</span> Predict the output:
+      <div class="qcode">
+        <figure class="fig fig-code">
+          <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">q6.js</span></div>
+          <pre><code>console.log(10 + 5);
+console.log(10 * 5);</code></pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="q"><span class="qnum">Q7.</span> What is the purpose of comments?</div>
+
+    <div class="q"><span class="qnum">Q8.</span> Explain input, processing and output using a real-world example.</div>
+  </div>
+
+  <div class="page-foot"><span>Chapter 13 · Practice Questions</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <div class="qgroup">
+    <div class="qgroup-title">Intermediate Level</div>
+
+    <div class="q">
+      <span class="qnum">Q9.</span> Find and fix the syntax error:
+      <div class="qcode">
+        <figure class="fig fig-code">
+          <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">q9.js</span></div>
+          <pre><code>console.log("Learning JavaScript);</code></pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="qnum">Q10.</span> Identify the logical error:
+      <div class="qcode">
+        <figure class="fig fig-code">
+          <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">q10.js</span></div>
+          <pre><code>let price = 200;
+let quantity = 4;
+
+let total = price + quantity;
+
+console.log(total);</code></pre>
+        </figure>
+      </div>
+      The intended result is the total cost of four products.
+    </div>
+
+    <div class="q">
+      <span class="qnum">Q11.</span> Predict the output:
+      <div class="qcode">
+        <figure class="fig fig-code">
+          <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">q11.js</span></div>
+          <pre><code>let value = 10;
+
+console.log(value);
+
+value = 25;
+
+console.log(value);</code></pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="qnum">Q12.</span> Predict the output and explain why:
+      <div class="qcode">
+        <figure class="fig fig-code">
+          <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">q12.js</span></div>
+          <pre><code>let a = "5";
+let b = "10";
+
+console.log(a + b);</code></pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="q"><span class="qnum">Q13.</span> Explain the difference between a syntax error and a logical error.</div>
+
+    <div class="q"><span class="qnum">Q14.</span> Why is <code>Number()</code> useful when reading numeric input using <code>prompt()</code>?</div>
+  </div>
+
+  <div class="qgroup">
+    <div class="qgroup-title">Practical Challenges</div>
+
+    <div class="q"><span class="qnum">Q15.</span> Write a program that displays your name, age and favorite programming language.</div>
+
+    <div class="q"><span class="qnum">Q16.</span> Write a program that calculates the total price of two products.</div>
+
+    <div class="q"><span class="qnum">Q17.</span> Write a browser program that asks the user for a name and displays it in the console.</div>
+
+    <div class="q"><span class="qnum">Q18.</span> Write a browser program that asks for two numbers and displays their sum.</div>
+
+    <div class="q">
+      <span class="qnum">Q19.</span> Find the problem and correct the code:
+      <div class="qcode">
+        <figure class="fig fig-code">
+          <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">q19.js</span></div>
+          <pre><code>let price = 100;
+let quantity = 5;
+
+let total = price + quantity;
+
+console.log("Total:", total);</code></pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="qnum">Q20.</span> Dry-run this code and explain every step:
+      <div class="qcode">
+        <figure class="fig fig-code">
+          <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">q20.js</span></div>
+          <pre><code>let x = 10;
+let y = 5;
+
+let result = x * y;
+
+console.log(result);
+
+result = result + 20;
+
+console.log(result);</code></pre>
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-foot"><span>Chapter 13 · Practice Questions</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ANSWER KEY -->
+<section class="page">
+  <header class="chap-head">
+    <div class="chap-num">Answer Key</div>
+    <h2 class="chap-title">Suggested Answers</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <div class="callout warn">
+    <span class="callout-title">Read this first</span>
+    <p>These are <em>suggested</em> answers, not the only correct ones. If your reasoning is sound and your output matches, you are doing well.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Q</th><th>Suggested answer</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Programming is writing a precise, ordered set of instructions that a computer can execute to perform a task.</td></tr>
+        <tr><td>2</td><td>HTML defines structure/content. CSS controls appearance. JavaScript adds behaviour and logic.</td></tr>
+        <tr><td>3</td><td><code>console.log("Hello World");</code></td></tr>
+        <tr><td>4</td><td>Software that processes and executes JavaScript. Example: V8 (Chrome / Node.js).</td></tr>
+        <tr><td>5</td><td>Variables: <code>studentName</code>, <code>age</code>. Values: <code>"Riya"</code> (string), <code>20</code> (number).</td></tr>
+        <tr><td>6</td><td><code>15</code> then <code>50</code>.</td></tr>
+        <tr><td>7</td><td>To explain code to humans, add context, aid maintenance. They are ignored by the engine.</td></tr>
+        <tr><td>8</td><td>E.g. an ATM: input = card + PIN; process = verify and compute; output = cash + receipt.</td></tr>
+        <tr><td>9</td><td>Missing closing quote → <code>console.log("Learning JavaScript");</code></td></tr>
+        <tr><td>10</td><td><code>+</code> should be <code>*</code>: <code>let total = price * quantity;</code> giving <code>800</code>.</td></tr>
+        <tr><td>11</td><td><code>10</code> then <code>25</code>.</td></tr>
+        <tr><td>12</td><td><code>510</code> — both are strings, so <code>+</code> concatenates rather than adds.</td></tr>
+        <tr><td>13</td><td>A syntax error stops the program before it runs (grammar broken). A logical error runs fine but gives the wrong result.</td></tr>
+        <tr><td>14</td><td><code>prompt()</code> returns a string; <code>Number()</code> converts it so arithmetic (not concatenation) happens.</td></tr>
+        <tr><td>15</td><td>Three <code>let</code> declarations plus three <code>console.log()</code> calls.</td></tr>
+        <tr><td>16</td><td><code>let total = price1 + price2; console.log(total);</code></td></tr>
+        <tr><td>17</td><td><code>let name = prompt("Enter your name"); console.log(name);</code></td></tr>
+        <tr><td>18</td><td><code>let a = Number(prompt("First")); let b = Number(prompt("Second")); console.log(a + b);</code></td></tr>
+        <tr><td>19</td><td>Should be <code>price * quantity</code> → <code>500</code>.</td></tr>
+        <tr><td>20</td><td><code>x=10</code>, <code>y=5</code>, <code>result=50</code> → prints <code>50</code>; then <code>result = 50+20 = 70</code> → prints <code>70</code>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-foot"><span>Chapter 13 · Answer Key</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 14
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch14">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 14</div>
+    <h2 class="chap-title">Practical Mini-Project — Student Information and Marks Calculator</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>Objective</h3>
+  <p>Build a simple program that accepts student information, calculates total marks and displays the result.</p>
+
+  <h3>Requirements</h3>
+  <ol class="step-list">
+    <li>Ask for the student's name.</li>
+    <li>Ask for marks in three subjects.</li>
+    <li>Convert the entered marks to numbers.</li>
+    <li>Calculate the total marks.</li>
+    <li>Calculate the average.</li>
+    <li>Display the student's information and results.</li>
+  </ol>
+
+  <h3>Solution</h3>
+  <p>Run this code in a browser environment because it uses <code>prompt()</code>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">student-calculator.js</span></div>
+    <pre><code>let studentName = prompt("Enter student name");
+
+let subject1 = Number(prompt("Enter marks for Subject 1"));
+let subject2 = Number(prompt("Enter marks for Subject 2"));
+let subject3 = Number(prompt("Enter marks for Subject 3"));
+
+let total = subject1 + subject2 + subject3;
+let average = total / 3;
+
+console.log("Student Name:", studentName);
+console.log("Total Marks:", total);
+console.log("Average Marks:", average);</code></pre>
+  </figure>
+
+  <h3>Example Input</h3>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">user enters</span></div>
+    <pre>Student name: Riya
+Subject 1: 80
+Subject 2: 90
+Subject 3: 70</pre>
+  </figure>
+
+  <h3>Expected Output</h3>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Student Name: Riya
+Total Marks: 240
+Average Marks: 80</pre>
+  </figure>
+
+  <h3>Dry Run</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Step</th><th>Operation</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Receive the student's name</td><td><code>Riya</code></td></tr>
+        <tr><td>2</td><td>Read and convert the first mark</td><td>80</td></tr>
+        <tr><td>3</td><td>Read and convert the second mark</td><td>90</td></tr>
+        <tr><td>4</td><td>Read and convert the third mark</td><td>70</td></tr>
+        <tr><td>5</td><td>Calculate the total</td><td>240</td></tr>
+        <tr><td>6</td><td>Divide total by 3</td><td>80</td></tr>
+        <tr><td>7</td><td>Display all results</td><td>Student details and marks</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Challenge Extensions</h3>
+  <p>After completing the basic project, try to:</p>
+  <ul>
+    <li>Display the average with two decimal places.</li>
+    <li>Detect invalid numeric input.</li>
+    <li>Reject marks outside the range 0–100.</li>
+    <li>Display a message if the user cancels an input dialog.</li>
+  </ul>
+  <p>These extensions introduce validation and conditional logic, which will be studied in subsequent phases.</p>
+
+  <div class="page-foot"><span>Chapter 14 · Practical Mini-Project</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 15
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch15">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 15</div>
+    <h2 class="chap-title">Phase 1 Revision Sheet</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>Core Concepts</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>Programming</td><td>Writing instructions to solve problems or perform tasks.</td></tr>
+        <tr><td>Algorithm</td><td>A logical sequence of steps for solving a problem.</td></tr>
+        <tr><td>JavaScript</td><td>A programming language used in browsers, servers and other environments.</td></tr>
+        <tr><td>JavaScript engine</td><td>Software that processes and executes JavaScript code.</td></tr>
+        <tr><td>Variable</td><td>A named binding used to access a value.</td></tr>
+        <tr><td>Value</td><td>Data that a program can work with.</td></tr>
+        <tr><td>Data type</td><td>A classification describing the kind of value.</td></tr>
+        <tr><td>Operator</td><td>A symbol or construct that performs an operation.</td></tr>
+        <tr><td>Expression</td><td>Code that evaluates to a value.</td></tr>
+        <tr><td>Statement</td><td>An instruction or structural unit in a program.</td></tr>
+        <tr><td>Comment</td><td>A note in source code that is not executed as JavaScript instructions.</td></tr>
+        <tr><td>Input</td><td>Data supplied to a program.</td></tr>
+        <tr><td>Processing</td><td>Operations performed on input or existing data.</td></tr>
+        <tr><td>Output</td><td>Information produced by a program.</td></tr>
+        <tr><td>Debugging</td><td>The process of finding and correcting defects.</td></tr>
+        <tr><td>Dry run</td><td>Manually tracing a program to understand its execution.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Essential Syntax</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">cheatsheet.js</span></div>
+    <pre><code>// Display output
+console.log("Hello");
+
+// Declare a variable
+let name = "Aarav";
+
+// Perform a calculation
+let total = 100 + 200;
+
+// Display a variable
+console.log(total);
+
+// Convert a value to a number
+let age = Number("21");
+
+/*
+  This is a multi-line comment.
+*/</code></pre>
+  </figure>
+
+  <h3>Remember These Distinctions</h3>
+  <ul>
+    <li>JavaScript is a language; Node.js is a runtime.</li>
+    <li>A string containing digits is not the same as a number.</li>
+    <li>Valid syntax does not guarantee correct logic.</li>
+    <li>An expression produces a value; a statement forms part of program execution.</li>
+    <li><code>prompt()</code> is browser-specific and normally returns text or <code>null</code>.</li>
+    <li>Debugging requires investigating actual behavior, not guessing.</li>
+  </ul>
+
+  <div class="keyidea">
+    <span class="k-label">One-Sentence Summary</span>
+    <p>A program is an ordered set of instructions that takes input, performs processing, produces output — and must be traced, not guessed.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 15 · Phase 1 Revision Sheet</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 16
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch16">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 16</div>
+    <h2 class="chap-title">Phase Completion Checklist</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p>Before moving to Phase 2, verify that you can do the following without copying examples.</p>
+
+  <ul class="checklist">
+    <li>Explain what programming is and why programs need instructions.</li>
+    <li>Describe the difference between HTML, CSS and JavaScript.</li>
+    <li>Explain the basic role of a JavaScript engine.</li>
+    <li>Run a JavaScript program in a browser console or Node.js.</li>
+    <li>Recognize common values, variable names and basic data types.</li>
+    <li>Perform simple calculations using JavaScript.</li>
+    <li>Distinguish expressions from statements.</li>
+    <li>Write single-line and multi-line comments.</li>
+    <li>Explain the input-process-output model.</li>
+    <li>Read simple error messages and identify common mistakes.</li>
+    <li>Dry-run a short program and predict its output.</li>
+    <li>Complete the student marks calculator independently.</li>
+  </ul>
+
+  <div class="divider"><span></span>❖<span></span></div>
+
+  <h3>Final Advice</h3>
+  <p>Do not rush through this phase just to reach advanced topics. Build the habit of asking three questions whenever you read code:</p>
+
+  <ol class="step-list">
+    <li>What data does this program have?</li>
+    <li>What operation does it perform?</li>
+    <li>What result should I expect?</li>
+  </ol>
+
+  <p>Once you can answer those questions consistently, you will have a strong foundation for <strong>Phase 2: JavaScript Fundamentals</strong>.</p>
+
+  <div class="keyidea">
+    <span class="k-label">End of Phase 1</span>
+    <p>Foundations built. Now we build the house.</p>
+  </div>
+
+  <div class="divider"><span></span>❖<span></span></div>
+
+  <p style="text-align:center; font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing:.22em; text-transform:uppercase; color:#a99f88; margin-top:40px;">
+    JavaScript Mastery · Phase 1 · Programming Foundations<br>
+    Handcrafted Study Edition
+  </p>
+
+  <div class="page-foot"><span>Chapter 16 · Phase Completion Checklist</span><span class="pn"></span></div>
+</section>
+
+</div><!-- /book -->
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SYNTAX HIGHLIGHTER
+     Tiny, dependency-free tokenizer for the code plates.
+     ══════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  "use strict";
+
+  var TOKEN_RE = new RegExp(
+    [
+      "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)",              // 1 comments
+      "(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'|`(?:[^`\\\\]|\\\\.)*`)", // 2 strings
+      "\\b(\\d+(?:\\.\\d+)?)\\b",                            // 3 numbers
+      "\\b(let|const|var|function|if|else|return|true|false|null|undefined|new|typeof|for|while|class|of|in|this|try|catch|throw|switch|case|break|continue)\\b", // 4 keywords
+      "([A-Za-z_$][\\w$]*)(?=\\s*\\()",                      // 5 function calls
+      "([+\\-*/%=<>!&|?:;,.()\\[\\]{}]+)"                    // 6 operators / punctuation
+    ].join("|"),
+    "g"
+  );
+
+  var CLASS = ["", "tok-com", "tok-str", "tok-num", "tok-kw", "tok-fn", "tok-op"];
+
+  function escapeHTML(s) {
+    return s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function highlight(text) {
+    var out = "";
+    var last = 0;
+    var m;
+
+    TOKEN_RE.lastIndex = 0;
+
+    while ((m = TOKEN_RE.exec(text)) !== null) {
+      // plain text before this match
+      out += escapeHTML(text.slice(last, m.index));
+
+      // which group matched?
+      var cls = "";
+      for (var i = 1; i < m.length; i++) {
+        if (m[i] !== undefined) { cls = CLASS[i]; break; }
+      }
+
+      var piece = escapeHTML(m[0]);
+      out += cls ? '<span class="' + cls + '">' + piece + "</span>" : piece;
+
+      last = m.index + m[0].length;
+
+      // guard against zero-length matches
+      if (m[0].length === 0) { TOKEN_RE.lastIndex++; }
+    }
+
+    out += escapeHTML(text.slice(last));
+    return out;
+  }
+
+  var codes = document.querySelectorAll(".fig-code pre code");
+
+  for (var i = 0; i < codes.length; i++) {
+    var el = codes[i];
+    var raw = el.textContent;           // browser already decoded entities
+    el.innerHTML = highlight(raw);
+  }
+})();
+</script>
+
+</body>
+</html>

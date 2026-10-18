@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Module 4 — Strings in JavaScript | Handmade Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Kalam:wght@300;400;700&family=Patrick+Hand&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THE HANDMADE NOTEBOOK — premium paper + ink styling
+   ============================================================ */
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  padding: 34px 14px 70px;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(214,197,166,.55), transparent 46%),
+    radial-gradient(circle at 84% 78%, rgba(198,181,150,.5), transparent 52%),
+    repeating-linear-gradient(115deg, rgba(140,115,80,.05) 0 3px, transparent 3px 7px),
+    #c8b295;
+  font-family: 'Patrick Hand', 'Kalam', cursive;
+  color: #21304a;
+  font-size: 18px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+
+.book { max-width: 900px; margin: 0 auto; }
+
+/* ---------- the "sheet of paper" ---------- */
+.page {
+  position: relative;
+  background-color: #fdfaf1;
+  background-image:
+    repeating-linear-gradient(to bottom,
+      transparent 0px, transparent 30px,
+      #c9d6ea 30px, #c9d6ea 31px),
+    repeating-linear-gradient(90deg, rgba(160,140,110,.035) 0 1px, transparent 1px 5px);
+  border-radius: 3px 10px 10px 3px;
+  box-shadow:
+    0 1px 0 #e8e0cd inset,
+    0 18px 34px -14px rgba(40,25,10,.55),
+    0 3px 0 rgba(255,255,255,.35) inset;
+  padding: 46px 46px 62px 96px;
+  margin: 0 0 40px;
+  overflow: hidden;
+}
+
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 74px;
+  width: 2px;
+  background: linear-gradient(to bottom,
+    rgba(203,78,78,.15), rgba(203,78,78,.75) 6%,
+    rgba(203,78,78,.75) 94%, rgba(203,78,78,.15));
+}
+
+.page::after {
+  content: "";
+  position: absolute;
+  left: 24px; top: 0; bottom: 0;
+  width: 24px;
+  background-image: radial-gradient(circle at 50% 50%, #cdbca0 0 8px, rgba(0,0,0,.12) 8px 9px, transparent 10px);
+  background-size: 24px 150px;
+  background-repeat: repeat-y;
+  background-position: 0 40px;
+  opacity: .85;
+}
+
+/* ---------- headings ---------- */
+h1, h2, h3, h4 {
+  font-family: 'Caveat', cursive;
+  color: #1b2a45;
+  margin: 0 0 .35em;
+  line-height: 1.15;
+}
+
+.cover h1 {
+  font-size: clamp(44px, 8.5vw, 80px);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: center;
+  margin: 0;
+  text-shadow: 2px 2px 0 rgba(255,241,118,.85), 4px 4px 0 rgba(0,0,0,.07);
+}
+.cover .sub {
+  text-align: center;
+  font-family: 'Caveat', cursive;
+  font-size: 30px;
+  color: #b3372f;
+  margin-top: 6px;
+}
+
+h2.section {
+  font-size: 46px;
+  display: inline-block;
+  padding: 2px 16px 6px;
+  margin-bottom: 4px;
+  transform: rotate(-1.2deg);
+}
+
+h3 {
+  font-size: 29px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+  border-bottom: 1.5px dashed #b9c6dc;
+  padding-bottom: 4px;
+}
+h4 { font-size: 23px; color: #2b3d5e; margin-top: 20px; }
+
+/* number badge */
+.qnum {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 26px;
+  color: #b3372f;
+  border: 2.2px solid #b3372f;
+  border-radius: 50%;
+  min-width: 54px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 9px;
+  flex: 0 0 auto;
+  transform: rotate(-3deg);
+  background: rgba(255,255,255,.6);
+}
+
+/* ---------- highlighters ---------- */
+.hl-y, .hl-p, .hl-g, .hl-b, .hl-o {
+  padding: 0 3px;
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.hl-y { background: linear-gradient(100deg, rgba(255,241,118,0) 0%, rgba(255,238,88,.85) 2%, rgba(255,238,88,.85) 97%, rgba(255,241,118,0) 100%); }
+.hl-p { background: linear-gradient(100deg, rgba(255,190,215,0) 0%, rgba(255,183,208,.8) 2%, rgba(255,183,208,.8) 97%, rgba(255,190,215,0) 100%); }
+.hl-g { background: linear-gradient(100deg, rgba(178,240,180,0) 0%, rgba(167,238,170,.85) 2%, rgba(167,238,170,.85) 97%, rgba(178,240,180,0) 100%); }
+.hl-b { background: linear-gradient(100deg, rgba(175,220,255,0) 0%, rgba(163,214,255,.8) 2%, rgba(163,214,255,.8) 97%, rgba(175,220,255,0) 100%); }
+.hl-o { background: linear-gradient(100deg, rgba(255,214,150,0) 0%, rgba(255,209,138,.85) 2%, rgba(255,209,138,.85) 97%, rgba(255,214,150,0) 100%); }
+
+/* red-pen emphasis */
+.red { color: #b3372f; }
+.blue { color: #1f4e8c; }
+.green { color: #2f6b3a; }
+.pen-underline { border-bottom: 2.5px solid #b3372f; padding-bottom: 1px; }
+.wavy { text-decoration: underline wavy #b3372f; text-underline-offset: 4px; }
+
+/* ---------- code blocks ---------- */
+pre.code {
+  font-family: 'Kalam', cursive;
+  font-size: 16.5px;
+  line-height: 1.75;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 26px, rgba(160,185,220,.35) 26px 27px),
+    #f4f8ff;
+  border: 1.6px solid #b9c9e2;
+  border-left: 6px solid #8fb3e0;
+  border-radius: 4px 8px 8px 4px;
+  padding: 14px 16px 16px 18px;
+  margin: 14px 0 12px;
+  overflow-x: auto;
+  color: #1c2b47;
+  white-space: pre;
+  box-shadow: 2px 3px 0 rgba(120,150,190,.22);
+  position: relative;
+}
+pre.code::before {
+  content: "js";
+  position: absolute;
+  top: -12px; right: 12px;
+  font-family: 'Caveat', cursive;
+  font-size: 17px;
+  color: #6d8db8;
+  background: #fdfaf1;
+  padding: 0 7px;
+  transform: rotate(3deg);
+}
+.cm { color: #2e8b57; font-style: italic; }
+
+code.inline {
+  font-family: 'Kalam', cursive;
+  background: rgba(180,210,245,.32);
+  border-radius: 3px;
+  padding: 0 5px;
+  font-size: .95em;
+  color: #14315c;
+}
+
+/* ---------- callouts ---------- */
+.note, .warn, .tip, .complexity, .dryrun, .trap, .think {
+  position: relative;
+  border-radius: 5px;
+  padding: 12px 16px 12px 18px;
+  margin: 14px 0;
+  font-size: 17px;
+}
+
+.dryrun {
+  background: linear-gradient(180deg, rgba(255,246,196,.75), rgba(255,240,160,.5));
+  border-left: 6px solid #e3b93c;
+  box-shadow: 2px 3px 0 rgba(200,160,40,.18);
+}
+.dryrun b:first-child { color: #a5761a; }
+
+.complexity {
+  background: linear-gradient(180deg, rgba(200,240,205,.7), rgba(175,232,182,.45));
+  border-left: 6px solid #4e9b5b;
+  box-shadow: 2px 3px 0 rgba(70,150,85,.16);
+  font-family: 'Kalam', cursive;
+}
+.complexity b:first-child { color: #2f6b3a; }
+
+.note {
+  background: linear-gradient(180deg, rgba(205,228,255,.7), rgba(180,212,250,.45));
+  border-left: 6px solid #4a7fbf;
+  box-shadow: 2px 3px 0 rgba(70,120,180,.16);
+}
+
+.warn, .trap {
+  background: linear-gradient(180deg, rgba(255,215,215,.8), rgba(255,190,190,.5));
+  border-left: 6px solid #c0403a;
+  box-shadow: 2px 3px 0 rgba(180,60,55,.16);
+}
+.warn b:first-child, .trap b:first-child { color: #9c2f2a; }
+
+/* "Think first" box */
+.think {
+  background: linear-gradient(180deg, rgba(255,225,245,.75), rgba(250,205,235,.5));
+  border-left: 6px solid #b55a9e;
+  box-shadow: 2px 3px 0 rgba(170,80,150,.15);
+}
+.think b:first-child { color: #8a2f76; }
+
+/* ---------- sticky notes ---------- */
+.sticky {
+  background: #fff8a8;
+  background-image: linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%);
+  padding: 18px 20px;
+  margin: 22px 0;
+  border-radius: 2px;
+  box-shadow: 3px 6px 14px -6px rgba(90,70,20,.55);
+  transform: rotate(-.8deg);
+  font-family: 'Caveat', cursive;
+  font-size: 23px;
+  line-height: 1.4;
+  color: #4a3d10;
+  position: relative;
+}
+.sticky.pink { background: #ffd6e8; color: #6b2447; transform: rotate(1deg); }
+.sticky.green { background: #d3f7cf; color: #23502a; transform: rotate(-1.4deg); }
+.sticky.blue { background: #cfe6ff; color: #17375f; transform: rotate(.6deg); }
+
+/* tape */
+.tape {
+  position: absolute;
+  width: 108px; height: 28px;
+  background: rgba(255,255,255,.55);
+  border-left: 1px dashed rgba(0,0,0,.12);
+  border-right: 1px dashed rgba(0,0,0,.12);
+  box-shadow: 0 2px 5px rgba(0,0,0,.12);
+  top: -14px; left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+}
+
+/* ---------- lists ---------- */
+ul.ticks { list-style: none; padding-left: 4px; }
+ul.ticks li { position: relative; padding-left: 30px; margin-bottom: 6px; }
+ul.ticks li::before { content: "✔"; position: absolute; left: 0; top: -1px; color: #3f8f4f; font-size: 19px; }
+
+ul.arrows { list-style: none; padding-left: 4px; }
+ul.arrows li { position: relative; padding-left: 28px; margin-bottom: 5px; }
+ul.arrows li::before { content: "➜"; position: absolute; left: 0; top: -1px; color: #b3372f; font-size: 17px; }
+
+ol.steps { list-style: none; counter-reset: s; padding-left: 0; margin: 16px 0; }
+ol.steps li {
+  counter-increment: s;
+  position: relative;
+  padding: 10px 14px 10px 58px;
+  margin-bottom: 10px;
+  background: rgba(255,255,255,.5);
+  border-radius: 6px;
+  border-left: 5px solid #4a7fbf;
+}
+ol.steps li::before {
+  content: counter(s);
+  position: absolute; left: 14px; top: 9px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #4a7fbf; color: #fff;
+  font-family: 'Caveat', cursive; font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ---------- dry-run tables ---------- */
+table.dry {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+  font-family: 'Kalam', cursive;
+  font-size: 16.5px;
+  background: rgba(255,255,255,.55);
+  box-shadow: 2px 3px 0 rgba(120,150,190,.16);
+}
+table.dry caption {
+  font-family: 'Caveat', cursive;
+  font-size: 23px;
+  color: #b3372f;
+  text-align: left;
+  padding-bottom: 6px;
+}
+table.dry th, table.dry td {
+  border: 1.6px solid #8fa8c9;
+  padding: 6px 10px;
+  text-align: left;
+}
+table.dry th { background: rgba(200,222,250,.6); font-weight: 700; color: #17335c; }
+table.dry tr:nth-child(even) td { background: rgba(240,246,255,.55); }
+table.dry td.yes { color: #2f6b3a; font-weight: 700; }
+table.dry td.no  { color: #9c2f2a; }
+
+/* ---------- pattern cards ---------- */
+.pattern-card {
+  position: relative;
+  border: 2px dashed #8fa8c9;
+  border-radius: 10px;
+  padding: 20px 18px 18px;
+  margin: 26px 0;
+  background: rgba(255,255,255,.45);
+}
+.pattern-card::before {
+  content: "PATTERN";
+  position: absolute; top: -13px; left: 18px;
+  background: #fdfaf1; padding: 0 8px;
+  font-family: 'Caveat', cursive; font-size: 19px;
+  color: #4a7fbf; letter-spacing: 2px;
+}
+
+.trigger {
+  display: inline-block;
+  background: #b3372f;
+  color: #fff;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  padding: 1px 14px 3px;
+  border-radius: 20px;
+  transform: rotate(-1.5deg);
+  box-shadow: 2px 2px 0 rgba(0,0,0,.15);
+}
+
+.analogy {
+  display: inline-block;
+  background: #4a7fbf;
+  color: #fff;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  padding: 1px 14px 3px;
+  border-radius: 20px;
+  transform: rotate(1deg);
+  box-shadow: 2px 2px 0 rgba(0,0,0,.15);
+}
+
+/* ---------- banner ---------- */
+.banner {
+  background: linear-gradient(120deg, #1b2a45, #2f4a76);
+  color: #fdfaf1;
+  padding: 22px 28px;
+  border-radius: 4px;
+  box-shadow: 0 12px 22px -12px rgba(20,30,50,.8), 3px 4px 0 rgba(0,0,0,.15);
+  margin-bottom: 26px;
+  transform: rotate(-.4deg);
+  position: relative;
+}
+.banner h2 { color: #fdfaf1; margin: 0; font-size: 42px; }
+.banner p { margin: 4px 0 0; font-family: 'Kalam', cursive; font-size: 16px; opacity: .9; }
+.banner .hl-y { color: #21304a; }
+
+/* ---------- misc ---------- */
+.pnum {
+  position: absolute;
+  right: 26px; bottom: 16px;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  color: #8a9bb5;
+}
+.pnum::before { content: "— "; }
+.pnum::after { content: " —"; }
+
+hr.hand {
+  border: none;
+  height: 2px;
+  background: repeating-linear-gradient(to right, #b9c6dc 0 10px, transparent 10px 18px);
+  margin: 26px 0;
+}
+
+.mini { font-size: 15px; color: #6c7d97; font-family: 'Kalam', cursive; }
+.center { text-align: center; }
+.stamp {
+  display: inline-block;
+  border: 3px double #b3372f;
+  color: #b3372f;
+  font-family: 'Caveat', cursive;
+  font-size: 24px;
+  padding: 4px 16px;
+  border-radius: 6px;
+  transform: rotate(-6deg);
+  opacity: .85;
+}
+.doodle-stars { font-size: 26px; letter-spacing: 12px; color: #d9a441; text-align: center; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+@media (max-width: 660px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .page { padding: 36px 20px 54px 60px; }
+  .page::before { left: 44px; }
+  .page::after { display: none; }
+  body { font-size: 17px; }
+  pre.code { font-size: 15px; }
+  table.dry { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+
+<div class="book">
+
+<!-- ============================ COVER ============================ -->
+<section class="page cover">
+  <div class="tape"></div>
+  <div class="doodle-stars">✦ ✧ ✦ ✧ ✦</div>
+
+  <h1>DSA MODULE 4</h1>
+  <div class="sub">Strings in JavaScript — 5 Patterns</div>
+
+  <p class="center" style="font-family:'Caveat',cursive;font-size:25px;margin-top:14px;">
+    <span class="hl-y">Handmade Solutions, Dry-Runs &amp; Pattern Notes</span>
+  </p>
+
+  <p class="center mini" style="margin-top:6px;">
+    Frequency · Two pointers · Sliding window · Expand around center · Scanning
+  </p>
+
+  <hr class="hand">
+
+  <h2 style="font-size:36px;transform:rotate(-1deg);">📘 What is inside</h2>
+  <ul class="ticks">
+    <li><b>Strings in JS</b> — immutability, char codes, method costs, Unicode trap</li>
+    <li><b>Pattern 1</b> — Frequency counting <span class="mini">("the tally register")</span></li>
+    <li><b>Pattern 2</b> — Two pointers <span class="mini">("two inspectors on a bridge")</span></li>
+    <li><b>Pattern 3</b> — Sliding window <span class="mini">("the caterpillar")</span></li>
+    <li><b>Pattern 4</b> — Expand around center <span class="mini">("ripples in a pond")</span></li>
+    <li><b>Pattern 5</b> — Scanning and parsing</li>
+    <li><b>Practice bank</b> — 30 questions across 3 levels</li>
+    <li><b>Pattern cheat sheet</b> — trigger words → pattern → analogy → cost</li>
+  </ul>
+
+  <div class="sticky pink" style="margin-top:34px;">
+    <b>My note to self:</b><br>
+    A string is just an <u>array of characters</u> with a few extra rules —
+    so every array pattern from Modules 1–3 works here. ✍️
+  </div>
+
+  <div class="center" style="margin-top:30px;">
+    <span class="stamp">HANDMADE NOTES</span>
+  </div>
+
+  <div class="pnum">cover</div>
+</section>
+
+<!-- ============================ HOW TO USE ============================ -->
+<section class="page">
+  <h2 class="section hl-y">How to Use This Module</h2>
+
+  <p>A string is just an <b>array of characters</b> with a few extra rules, so every
+  array pattern from Modules 1–3 works here. This module teaches <b>five string
+  patterns</b> in about <b>2–3 weeks</b>, each with an
+  <span class="hl-p">analogy to remember it by</span>, a
+  <span class="hl-g">"think first" pause</span> before the solution, and a
+  <span class="hl-y">full dry run</span>.</p>
+
+  <div class="note">
+    <b>Language from here on:</b> JavaScript. Modules 1–3 used Java; the logic is
+    identical, only syntax changes. Run the code in <b>Node.js</b> or the browser console.
+  </div>
+
+  <hr class="hand">
+
+  <h2 style="font-size:36px;">🗺️ Roadmap <span class="mini">(do in order)</span></h2>
+  <ul class="arrows">
+    <li><b>1.</b> Strings in JS: how they really behave — <span class="hl-y">1–2 days</span></li>
+    <li><b>2.</b> Pattern 1 — Frequency counting <span class="mini">("the tally register")</span> — <span class="hl-g">2–3 days</span></li>
+    <li><b>3.</b> Pattern 2 — Two pointers <span class="mini">("two readers meeting in the middle")</span> — <span class="hl-b">2 days</span></li>
+    <li><b>4.</b> Pattern 3 — Sliding window <span class="mini">("the caterpillar")</span> — <span class="hl-o">3–4 days</span></li>
+    <li><b>5.</b> Pattern 4 — Expand around center <span class="mini">("ripples in a pond")</span> — <span class="hl-p">2 days</span></li>
+    <li><b>6.</b> Pattern 5 — Scanning and parsing — <span class="hl-y">2 days</span></li>
+    <li><b>7.</b> Practice bank <b>(30 questions)</b> — <span class="red">ongoing</span></li>
+  </ul>
+
+  <hr class="hand">
+
+  <h2 style="font-size:36px;">🧠 The thinking routine <span class="mini">(use it on every problem, out loud)</span></h2>
+
+  <ol class="steps">
+    <li><b>What exactly is the input?</b> Lowercase only? Spaces? Unicode? Empty string?</li>
+    <li><b>What is the answer's shape?</b> A boolean, a number, an index, a substring?</li>
+    <li><b>What's the dumbest correct solution?</b> State its Big-O. A slow correct
+        answer beats a fast wrong one.</li>
+    <li><b>What work am I repeating?</b> That repeated work is what a pattern removes.</li>
+    <li><b>Which pattern's trigger words do I see?</b> <span class="mini">(cheat sheet in section 7)</span></li>
+    <li><b>Dry run on the smallest tricky input</b> before writing a line of code.</li>
+  </ol>
+
+  <div class="sticky green">
+    <b>How to read this module 📖</b><br>
+    When you see a <u>Think first</u> box, <b>stop</b>. Cover the solution and spend
+    5–10 minutes on the questions. The struggle is where the learning happens.
+  </div>
+
+  <div class="pnum">2</div>
+</section>
+
+<!-- ============================ SECTION 1 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>1. Strings in JS</h2>
+    <p>1–2 days &nbsp;•&nbsp; <span class="hl-y">Immutability · Char codes · Method costs · Unicode trap</span></p>
+  </div>
+
+  <p>Three facts drive almost every string bug in JS: strings are
+  <b>immutable</b>, every "change" creates a <b>new string</b> (cost O(n)), and
+  characters can be turned into numbers with <code class="inline">charCodeAt</code>.
+  Learn these and the patterns become easy.</p>
+
+  <h3><span class="qnum">1.1</span> <span class="hl-y">Immutability — the printed page analogy</span></h3>
+
+  <p><span class="analogy">Analogy</span> &nbsp;an array is a
+  <b>whiteboard</b> — you can rub out one letter and write another. A string is a
+  <b>printed page</b> — to fix one typo, you must <b>reprint the whole page</b>.</p>
+
+<pre class="code">let s = "cat";
+s[0] = "b";            // silently ignored (TypeError in strict mode)
+console.log(s);        // "cat"
+
+s = "b" + s.slice(1);  // reprint: builds a NEW string "bat" - O(n)
+
+// To edit many characters, copy to a whiteboard (array), edit, then print once:
+const arr = s.split("");   // ["b", "a", "t"]
+arr[2] = "g";
+s = arr.join("");          // "bag"</pre>
+
+  <div class="note">
+    <b>Rule:</b> need many edits ⇒ <code class="inline">split("")</code>,
+    edit the array, <code class="inline">join("")</code> once.
+  </div>
+
+  <h3><span class="qnum">1.2</span> <span class="hl-b">Reading characters</span></h3>
+
+  <table class="dry">
+    <caption>For s = "hello"</caption>
+    <thead><tr><th>Code</th><th>Result</th><th>Cost</th></tr></thead>
+    <tbody>
+      <tr><td><code class="inline">s.length</code></td><td>5</td><td>O(1)</td></tr>
+      <tr><td><code class="inline">s[1]</code> or <code class="inline">s.charAt(1)</code></td><td>"e"</td><td>O(1)</td></tr>
+      <tr><td><code class="inline">s[10]</code></td><td>undefined (no error!)</td><td>O(1)</td></tr>
+      <tr><td><code class="inline">s.charCodeAt(1)</code></td><td>101</td><td>O(1)</td></tr>
+      <tr><td><code class="inline">String.fromCharCode(101)</code></td><td>"e"</td><td>O(1)</td></tr>
+      <tr><td><code class="inline">for (const ch of s)</code></td><td>h, e, l, l, o</td><td>O(n)</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">1.3</span> <span class="hl-g">Character codes — the cinema seat analogy</span></h3>
+
+  <p><span class="analogy">Analogy</span> &nbsp;every character has a fixed
+  <b>seat number</b> in a cinema hall. <b>'a'</b> sits in seat <b>97</b>,
+  <b>'b'</b> in 98 … <b>'z'</b> in 122. <b>'A'</b> is in 65, <b>'0'</b> in 48.
+  To find a letter's position in the alphabet, subtract the first seat:
+  <b>code − 97</b>.</p>
+
+<pre class="code">const idx = ch =&gt; ch.charCodeAt(0) - 97;
+// 'a' ⇒ 0, 'b' ⇒ 1, … 'z' ⇒ 25</pre>
+
+  <table class="dry">
+    <caption>Dry run for "cab"</caption>
+    <thead><tr><th>ch</th><th>charCodeAt</th><th>−97</th><th>Alphabet index</th></tr></thead>
+    <tbody>
+      <tr><td>c</td><td>99</td><td>99 − 97</td><td>2</td></tr>
+      <tr><td>a</td><td>97</td><td>97 − 97</td><td>0</td></tr>
+      <tr><td>b</td><td>98</td><td>98 − 97</td><td>1</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    This is why a fixed <code class="inline">new Array(26).fill(0)</code> can replace a
+    <b>Map</b> for lowercase letters — <b>faster and simpler</b>.
+  </div>
+
+<pre class="code">// Useful checks without regex:
+const isLower = c =&gt; c &gt;= "a" &amp;&amp; c &lt;= "z";
+const isDigit = c =&gt; c &gt;= "0" &amp;&amp; c &lt;= "9";
+const isAlnum = c =&gt; /[a-z0-9]/i.test(c);</pre>
+
+  <div class="pnum">3</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">1.4</span> <span class="hl-o">What common methods really cost</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Method</th><th>What it does</th><th>Time</th><th>Hidden trap</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code class="inline">slice(i, j)</code> / <code class="inline">substring</code></td><td>Copy part</td><td>O(j − i)</td><td>Creates a new string</td></tr>
+      <tr><td><code class="inline">indexOf(t)</code> / <code class="inline">includes(t)</code></td><td>Search</td><td>O(n·m) worst</td><td>Calling it inside a loop makes O(n²)</td></tr>
+      <tr><td><code class="inline">split(" ")</code></td><td>To array</td><td>O(n)</td><td>Extra O(n) memory</td></tr>
+      <tr><td><code class="inline">join(" ")</code></td><td>Array to string</td><td>O(n)</td><td>—</td></tr>
+      <tr><td><code class="inline">toLowerCase()</code></td><td>New lowered copy</td><td>O(n)</td><td>Do it once, not inside a loop</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">1.5</span> <span class="hl-p">Building strings — the bead necklace analogy</span></h3>
+
+  <p><span class="analogy">Analogy</span> &nbsp;joining beads one at a time and
+  <b>re-threading the whole necklace</b> each time is slow. Collect beads in a
+  <b>bowl</b> (an array), then <b>thread them once</b> with <code class="inline">join</code>.</p>
+
+<pre class="code">// Risky in other languages, usually optimized by JS engines — but not guaranteed
+let out = "";
+for (const ch of s) out += ch;
+
+// The predictable interview answer: O(n) total
+const parts = [];
+for (const ch of s) parts.push(ch);
+const result = parts.join("");</pre>
+
+  <h3><span class="qnum">1.6</span> <span class="hl-y">Dry run — reverse a string without built-ins</span></h3>
+
+<pre class="code">function reverseStr(s) {
+  const a = s.split("");
+  let l = 0, r = a.length - 1;
+  while (l &lt; r) {
+    [a[l], a[r]] = [a[r], a[l]];   // swap
+    l++;
+    r--;
+  }
+  return a.join("");
+}</pre>
+
+  <table class="dry">
+    <caption>Input "hello"</caption>
+    <thead><tr><th>l</th><th>r</th><th>Swap</th><th>Array after</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>4</td><td>h ↔ o</td><td>["o", "e", "l", "l", "h"]</td></tr>
+      <tr><td>1</td><td>3</td><td>e ↔ l</td><td>["o", "l", "l", "e", "h"]</td></tr>
+      <tr><td>2</td><td>2</td><td>stop</td><td>["o", "l", "l", "e", "h"]</td></tr>
+    </tbody>
+  </table>
+
+  <div class="dryrun"><b>Result:</b> <code class="inline">a.join("")</code> →
+  <b>"olleh"</b>. O(n) time, O(n) space (for the split copy).</div>
+
+  <h3><span class="qnum">1.7</span> <span class="hl-o">The Unicode trap</span></h3>
+
+  <p><code class="inline">"😀".length</code> is <b>2</b>, not 1: JS counts
+  <b>UTF-16 code units</b>, and emoji use two. <code class="inline">s.split("")</code>
+  breaks them into broken halves; <code class="inline">[...s]</code> or
+  <code class="inline">Array.from(s)</code> keeps them whole. Interview problems usually
+  promise <b>ASCII or lowercase letters</b> — but ask, because <b>asking is a senior habit</b>.</p>
+
+  <h3><span class="qnum">1.8</span> <span class="hl-y">Think first</span></h3>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    1. Why is <code class="inline">for (i…) { if (s.includes(s[i] + "x")) … }</code> slow?<br>
+    2. You need to change every vowel in a 10⁵-character string to '*'. Strategy?<br>
+    3. Is <code class="inline">s1 === s2</code> O(1)?
+  </div>
+
+  <div class="dryrun">
+    <b>Answers:</b><br>
+    1) <code class="inline">includes</code> is O(n) inside an O(n) loop → <b>O(n²)</b>.<br>
+    2) <b>split, edit the array, join once</b> → O(n).<br>
+    3) No — <b>O(n)</b> in the worst case, since characters are compared.
+  </div>
+
+  <div class="pnum">4</div>
+</section>
+
+<!-- ============================ SECTION 2 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>2. Pattern 1 — Frequency Counting</h2>
+    <p>2–3 days &nbsp;•&nbsp; <span class="hl-g">"The tally register"</span></p>
+  </div>
+
+  <p>Whenever a question cares about <b>which characters appear and how often</b>, but
+  not their order, count them in <b>one pass</b> into an array of 26 or a Map. That turns
+  <b>O(n²)</b> "search for each character" solutions into <b>O(n)</b>.</p>
+
+  <div class="note">
+    <span class="analogy">Analogy — the tally register</span><br>
+    A class teacher doesn't remember who came in which order; she keeps one register with
+    a <b>column per student</b> and adds a <b>tally mark</b>. To compare two classes, she
+    compares registers, not the order students walked in.
+  </div>
+
+  <p><b>Trigger words:</b> anagram, permutation, "same characters", "first unique /
+  non-repeating", "most frequent", "can be formed from".</p>
+
+  <h3><span class="qnum">2.0</span> <span class="hl-y">Two tools</span></h3>
+
+<pre class="code">// 1) Lowercase a–z only: fixed array (fastest)
+const count = new Array(26).fill(0);
+for (const ch of s) count[ch.charCodeAt(0) - 97]++;
+
+// 2) Any characters: Map
+const freq = new Map();
+for (const ch of s) freq.set(ch, (freq.get(ch) || 0) + 1);</pre>
+
+  <h3><span class="qnum">2.1</span> <span class="hl-b">Valid Anagram (LC 242)</span></h3>
+  <p>Return true if <b>t</b> is a rearrangement of <b>s</b>.</p>
+  <div class="dryrun"><b>Input:</b> s = "listen", t = "silent" → <b>true</b></div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    • What's a quick check that rules out many cases instantly?<br>
+    • Brute force idea: sort both. Cost?<br>
+    • Can you use <b>one register</b> instead of two?
+  </div>
+
+  <p><b>Solution idea:</b> different lengths ⇒ <b>false immediately</b>. Otherwise add
+  <b>+1</b> for each letter of s and <b>−1</b> for each letter of t. If they are anagrams,
+  every tally returns to <b>zero</b>. (Sorting works too, at O(n log n).)</p>
+
+<pre class="code">function isAnagram(s, t) {
+  if (s.length !== t.length) return false;
+  const count = new Array(26).fill(0);
+  for (let i = 0; i &lt; s.length; i++) {
+    count[s.charCodeAt(i) - 97]++;
+    count[t.charCodeAt(i) - 97]--;
+  }
+  return count.every(c =&gt; c === 0);
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run on s = "listen", t = "silent" (only non-zero tallies shown)</caption>
+    <thead>
+      <tr><th>i</th><th>s[i] (+1)</th><th>t[i] (−1)</th><th>Non-zero tallies after</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>l</td><td>s</td><td>l: +1, s: −1</td></tr>
+      <tr><td>1</td><td>i</td><td>i</td><td>l: +1, s: −1 (i cancels itself)</td></tr>
+      <tr><td>2</td><td>s</td><td>l</td><td>none (both cancel)</td></tr>
+      <tr><td>3</td><td>t</td><td>e</td><td>t: +1, e: −1</td></tr>
+      <tr><td>4</td><td>e</td><td>n</td><td>t: +1, n: −1</td></tr>
+      <tr><td>5</td><td>n</td><td>t</td><td>none</td></tr>
+    </tbody>
+  </table>
+
+  <div class="dryrun">All zero ⇒ <b>true</b>. O(n) time, O(1) space
+  (26 is a constant). Try "rat" / "car": t: +1 and c: −1 survive ⇒ <b>false</b>.</div>
+
+  <div class="pnum">5</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">2.2</span> <span class="hl-g">First Unique Character (LC 387)</span></h3>
+  <p>Return the index of the first character that appears <b>exactly once</b>, or <b>−1</b>.</p>
+  <div class="dryrun"><b>Input:</b> "loveletecode" → <b>2</b> ('v')</div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    • Brute force: for each character, scan the whole string to count it. Cost?<br>
+    • Can one pass both count and know the order? If not, what about <b>two passes</b>?
+  </div>
+
+  <p><b>Solution idea:</b> pass 1 fills the register. Pass 2 walks the string in
+  <b>original order</b> and returns the first index whose tally is 1. Two passes of O(n)
+  is still <b>O(n)</b>.</p>
+
+<pre class="code">function firstUniqChar(s) {
+  const count = new Array(26).fill(0);
+  for (const ch of s) count[ch.charCodeAt(0) - 97]++;
+  for (let i = 0; i &lt; s.length; i++) {
+    if (count[s.charCodeAt(i) - 97] === 1) return i;
+  }
+  return -1;
+}</pre>
+
+  <table class="dry">
+    <caption>Pass 1 register for "loveletecode"</caption>
+    <thead><tr><th>Letter</th><th>l</th><th>o</th><th>v</th><th>e</th><th>t</th><th>c</th><th>d</th></tr></thead>
+    <tbody>
+      <tr><td><b>Tally</b></td><td>2</td><td>2</td><td>1</td><td>4</td><td>1</td><td>1</td><td>1</td></tr>
+    </tbody>
+  </table>
+
+  <table class="dry">
+    <caption>Pass 2</caption>
+    <thead><tr><th>i</th><th>s[i]</th><th>Tally</th><th>Unique?</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>l</td><td>2</td><td class="no">No</td></tr>
+      <tr><td>1</td><td>o</td><td>2</td><td class="no">No</td></tr>
+      <tr><td>2</td><td>v</td><td>1</td><td class="yes">Yes ⇒ return 2</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <b>Teaching point:</b> 't', 'c', 'd' are also unique, but <b>'v' wins</b> because
+    pass 2 follows the <b>string's order</b>, not the register's.
+  </div>
+
+  <h3><span class="qnum">2.3</span> <span class="hl-p">Group Anagrams (LC 49)</span></h3>
+  <p>Group words that are anagrams of each other.</p>
+  <div class="dryrun"><b>Input:</b> ["eat", "tea", "tan", "ate", "nat", "bat"] →
+  [["eat", "tea", "ate"], ["tan", "nat"], ["bat"]]</div>
+
+  <div class="note">
+    <span class="analogy">Analogy — the post office</span><br>
+    Every anagram family needs the <b>same postal code</b>. Give each word a code that's
+    identical for all its anagrams, then sort letters into <b>bins by code</b>.
+  </div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    • What "signature" is the same for "eat" and "tea" but different for "tan"?<br>
+    • Option A: sorted letters. Option B: the 26-tally written as a string.
+    Which is faster for long words?
+  </div>
+
+<pre class="code">function groupAnagrams(words) {
+  const bins = new Map();
+  for (const w of words) {
+    const key = w.split("").sort().join("");   // postal code
+    if (!bins.has(key)) bins.set(key, []);
+    bins.get(key).push(w);
+  }
+  return [...bins.values()];
+}</pre>
+
+  <table class="dry">
+    <thead><tr><th>Word</th><th>Key (sorted)</th><th>Bins after</th></tr></thead>
+    <tbody>
+      <tr><td>eat</td><td>aet</td><td>aet: [eat]</td></tr>
+      <tr><td>tea</td><td>aet</td><td>aet: [eat, tea]</td></tr>
+      <tr><td>tan</td><td>ant</td><td>aet: [eat, tea] · ant: [tan]</td></tr>
+      <tr><td>ate</td><td>aet</td><td>aet: [eat, tea, ate] · ant: [tan]</td></tr>
+      <tr><td>nat</td><td>ant</td><td>aet: [eat, tea, ate] · ant: [tan, nat]</td></tr>
+      <tr><td>bat</td><td>abt</td><td>… · abt: [bat]</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity"><b>Complexity:</b> n words of length k →
+  <b>O(n · k log k)</b>. With the tally key (<code class="inline">count.join("#")</code>)
+  it becomes <b>O(n · k)</b>.</div>
+
+  <h3><span class="qnum">2.4</span> <span class="hl-o">Teacher's notes — common mistakes</span></h3>
+  <ul class="arrows">
+    <li>Forgetting the <b>length check</b> in anagram problems.</li>
+    <li>Using <code class="inline">s.indexOf(ch) === s.lastIndexOf(ch)</code> for
+        uniqueness — correct, but <b>O(n²)</b>.</li>
+    <li>Assuming lowercase when the problem allows uppercase or spaces —
+        <b>use a Map</b> then.</li>
+  </ul>
+  <div class="note">
+    <b>Variation to try alone:</b> Ransom Note (LC 383) — can <b>ransom</b> be built from
+    the letters of <b>magazine</b>? (Same register: add magazine, subtract ransom,
+    any negative ⇒ false.)
+  </div>
+
+  <div class="pnum">6</div>
+</section>
+
+<!-- ============================ SECTION 3 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>3. Pattern 2 — Two Pointers on Strings</h2>
+    <p>2 days &nbsp;•&nbsp; <span class="hl-b">"Two inspectors on a bridge"</span></p>
+  </div>
+
+  <p>When a question compares a string with its <b>mirror</b> (palindromes, reversing),
+  put one pointer at <b>each end</b> and walk them <b>toward each other</b>. Each step
+  settles one pair, so n/2 steps finish the job in <b>O(n)</b> with <b>O(1)</b> extra
+  space.</p>
+
+  <div class="note">
+    <span class="analogy">Analogy — two inspectors on a bridge</span><br>
+    A bridge is painted <b>symmetrically</b>. Two inspectors start at opposite ends and
+    walk toward the middle, checking that the tiles under their feet match. They never
+    need to walk the bridge twice, and they're done when they <b>meet</b>.
+  </div>
+
+  <p><b>Trigger words:</b> palindrome, reverse, "from both ends", "in place",
+  "ignore non-alphanumeric".</p>
+
+  <h3><span class="qnum">3.0</span> <span class="hl-y">Template</span></h3>
+
+<pre class="code">let l = 0, r = s.length - 1;
+while (l &lt; r) {
+  // 1. skip characters that don't count (move l or r, then continue)
+  // 2. compare or swap s[l] and s[r]
+  l++; r--;
+}</pre>
+
+  <h3><span class="qnum">3.1</span> <span class="hl-g">Valid Palindrome (LC 125)</span></h3>
+  <p>After lowercasing and removing non-alphanumeric characters, does the string read the
+  same both ways?</p>
+  <div class="dryrun"><b>Input:</b> "Taco cat!" → <b>true</b></div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    • The easy way: clean the string into a new one, then compare it with its reverse.
+    What does that cost in memory?<br>
+    • Can the inspectors simply <b>step over</b> spaces and punctuation instead of
+    removing them?
+  </div>
+
+  <p><b>Solution idea:</b> don't build a cleaned copy. If <code class="inline">s[l]</code>
+  isn't a letter or digit, move l; same for r. Compare the rest case-insensitively.</p>
+
+<pre class="code">function isPalindrome(s) {
+  const ok = c =&gt; /[a-z0-9]/i.test(c);
+  let l = 0, r = s.length - 1;
+  while (l &lt; r) {
+    if (!ok(s[l])) { l++; continue; }
+    if (!ok(s[r])) { r--; continue; }
+    if (s[l].toLowerCase() !== s[r].toLowerCase()) return false;
+    l++; r--;
+  }
+  return true;
+}</pre>
+
+  <p><b>Indices of "Taco cat!":</b> T<sub>0</sub> a<sub>1</sub> c<sub>2</sub>
+  o<sub>3</sub> ␣<sub>4</sub> c<sub>5</sub> a<sub>6</sub> t<sub>7</sub>
+  !<sub>8</sub></p>
+
+  <table class="dry">
+    <thead><tr><th>l</th><th>r</th><th>s[l]</th><th>s[r]</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>8</td><td>T</td><td>!</td><td>r is punctuation → r = 7</td></tr>
+      <tr><td>0</td><td>7</td><td>T</td><td>t</td><td>match (case-insensitive) → l = 1, r = 6</td></tr>
+      <tr><td>1</td><td>6</td><td>a</td><td>a</td><td>match → l = 2, r = 5</td></tr>
+      <tr><td>2</td><td>5</td><td>c</td><td>c</td><td>match → l = 3, r = 4</td></tr>
+      <tr><td>3</td><td>4</td><td>o</td><td>␣</td><td>r is space → r = 3</td></tr>
+      <tr><td>3</td><td>3</td><td>—</td><td>—</td><td>l &lt; r false ⇒ true</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">The middle 'o' is <b>never compared</b> — a single middle character
+  always matches itself.</div>
+
+  <div class="note">
+    <b>Follow-up (LC 680, Valid Palindrome II):</b> you may delete <b>at most one</b>
+    character. At the first mismatch, try <b>two options</b> — skip s[l] or skip s[r] —
+    and check whether the remaining range is a palindrome. Still O(n).
+  </div>
+
+  <div class="pnum">7</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">3.2</span> <span class="hl-y">Reverse Words in a String (LC 151)</span></h3>
+  <p>Reverse the order of words; remove extra spaces.</p>
+  <div class="dryrun"><b>Input:</b> "the sky is blue" → <b>"blue is sky the"</b></div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    In JS this is one line:
+    <code class="inline">s.trim().split(/\s+/).reverse().join(" ")</code>.
+    An interviewer then asks: <i>"Now do it without split."</i> How?<br>
+    If you read the string <b>from the right</b>, in what order do you meet the words?
+  </div>
+
+  <p><b>Solution idea:</b> scan from the <b>end</b>. Skip spaces, mark where a word ends,
+  walk left to its start, <b>slice</b> it out. Words come out <b>already reversed</b>.</p>
+
+<pre class="code">function reverseWords(s) {
+  const words = [];
+  let i = s.length - 1;
+  while (i &gt;= 0) {
+    while (i &gt;= 0 &amp;&amp; s[i] === " ") i--;          // skip spaces
+    if (i &lt; 0) break;
+    const end = i;
+    while (i &gt;= 0 &amp;&amp; s[i] !== " ") i--;           // walk to word start
+    words.push(s.slice(i + 1, end + 1));
+  }
+  return words.join(" ");
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run on "the sky is blue" (length 15)</caption>
+    <thead>
+      <tr><th>Step</th><th>i (after skipping spaces)</th><th>end</th><th>word start i</th><th>slice</th><th>words so far</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>14</td><td>14</td><td>11</td><td>slice(11,15)</td><td>["blue"]</td></tr>
+      <tr><td>2</td><td>9</td><td>9</td><td>8</td><td>slice(8,10)</td><td>["blue", "is"]</td></tr>
+      <tr><td>3</td><td>6</td><td>6</td><td>4</td><td>slice(4,7)</td><td>["blue", "is", "sky"]</td></tr>
+      <tr><td>4</td><td>2</td><td>2</td><td>−1</td><td>slice(0,3)</td><td>["blue", "is", "sky", "the"]</td></tr>
+      <tr><td>5</td><td>−1</td><td>—</td><td>—</td><td>break</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <div class="dryrun"><b>Result:</b> "blue is sky the". Extra spaces vanish because we
+  only ever <b>slice letters</b>.</div>
+
+  <h3><span class="qnum">3.3</span> <span class="hl-p">Reverse Only Letters (LC 917)</span></h3>
+  <p>Reverse the letters; keep every non-letter in its place.</p>
+  <div class="dryrun"><b>Input:</b> "Ab-cD" → <b>"Dc-bA"</b></div>
+
+  <div class="think">
+    <b>Think first:</b> which inspector rule from <b>3.1</b> can you reuse?
+    (Strings are immutable — what do you need first?)
+  </div>
+
+<pre class="code">function reverseOnlyLetters(s) {
+  const a = s.split("");
+  const isLetter = c =&gt; /[a-z]/i.test(c);
+  let l = 0, r = a.length - 1;
+  while (l &lt; r) {
+    if (!isLetter(a[l])) l++;
+    else if (!isLetter(a[r])) r--;
+    else { [a[l], a[r]] = [a[r], a[l]]; l++; r--; }
+  }
+  return a.join("");
+}</pre>
+
+  <table class="dry">
+    <thead><tr><th>l</th><th>r</th><th>a[l]</th><th>a[r]</th><th>Action</th><th>Array</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>4</td><td>A</td><td>D</td><td>swap</td><td>[D, b, -, c, A]</td></tr>
+      <tr><td>1</td><td>3</td><td>b</td><td>c</td><td>swap</td><td>[D, c, -, b, A]</td></tr>
+      <tr><td>2</td><td>2</td><td>—</td><td>—</td><td>stop</td><td>"Dc-bA"</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">3.4</span> <span class="hl-o">Teacher's notes</span></h3>
+  <ul class="arrows">
+    <li>Always ask: should comparison <b>ignore case</b>? <b>spaces</b>? <b>digits</b>?</li>
+    <li><b>continue</b> after moving a skip-pointer is essential — otherwise you compare
+        a punctuation mark.</li>
+    <li>Two pointers means <b>O(1) extra space</b>; building a cleaned copy is
+        <b>O(n)</b>. In interviews, say <b>both</b> and choose the first.</li>
+  </ul>
+
+  <div class="sticky blue">
+    <b>Two-pointer rule on strings 🎯</b><br>
+    One pointer at each end, walk <u>toward the middle</u>.<br>
+    Skip what doesn't count, compare/swap what does.
+  </div>
+
+  <div class="pnum">8</div>
+</section>
+
+<!-- ============================ SECTION 4 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>4. Pattern 3 — Sliding Window on Strings</h2>
+    <p>3–4 days &nbsp;•&nbsp; <span class="hl-o">"The caterpillar"</span></p>
+  </div>
+
+  <p>For questions about the <b>best substring (contiguous)</b> that satisfies a rule,
+  keep a window <code class="inline">[l..r]</code>: grow it on the <b>right</b>, and
+  shrink it from the <b>left</b> only when the rule breaks. Each character
+  <b>enters and leaves once</b>, so <b>O(n)</b> replaces the O(n²) or O(n³) of trying
+  every substring.</p>
+
+  <div class="note">
+    <span class="analogy">Analogy — the caterpillar</span><br>
+    A caterpillar crawls along a leaf. Its <b>head (r)</b> always moves forward and eats
+    the next letter. If it eats something that makes it sick (a repeat, too many of a
+    letter), its <b>tail (l)</b> pulls forward until it feels fine again. The tail
+    <b>never moves backward</b>. We record the caterpillar's longest healthy length.
+  </div>
+
+  <p><b>Trigger words:</b> substring, "longest / shortest", "contains all",
+  "at most k distinct", "without repeating", "permutation of s1 inside s2".</p>
+
+  <h3><span class="qnum">4.0</span> <span class="hl-y">Variable window template</span></h3>
+
+<pre class="code">let l = 0, best = 0;
+for (let r = 0; r &lt; s.length; r++) {
+  // 1. head eats s[r]: add it to the window's state
+  // 2. while window is invalid: remove s[l] from state, l++
+  // 3. window [l..r] is valid: best = Math.max(best, r - l + 1)
+}</pre>
+
+  <h3><span class="qnum">4.1</span> <span class="hl-b">Longest Substring Without Repeating Characters (LC 3)</span></h3>
+  <div class="dryrun"><b>Input:</b> "abcabcbb" → <b>3</b> ("abc")</div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    • How many substrings does a string of length n have? What does checking each one cost?<br>
+    • When the head meets a letter already in the window, <b>where must the tail jump</b> to?<br>
+    • What do you need to remember to make that jump in <b>O(1)</b>?
+  </div>
+
+  <p><b>Solution idea:</b> store the <b>last index where each character was seen</b>.
+  If <code class="inline">s[r]</code> was last seen at position
+  <code class="inline">≥ l</code> (inside the window), jump the tail to
+  <b>just after it</b>.</p>
+
+<pre class="code">function lengthOfLongestSubstring(s) {
+  const last = new Map();     // char -> last index seen
+  let l = 0, best = 0;
+  for (let r = 0; r &lt; s.length; r++) {
+    const ch = s[r];
+    if (last.has(ch) &amp;&amp; last.get(ch) &gt;= l) {
+      l = last.get(ch) + 1;   // tail jumps past the old copy
+    }
+    last.set(ch, r);
+    best = Math.max(best, r - l + 1);
+  }
+  return best;
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run, "abcabcbb"</caption>
+    <thead>
+      <tr><th>r</th><th>ch</th><th>Last seen (≥ l?)</th><th>l after</th><th>Window</th><th>Length</th><th>best</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>a</td><td>—</td><td>0</td><td>a</td><td>1</td><td>1</td></tr>
+      <tr><td>1</td><td>b</td><td>—</td><td>0</td><td>ab</td><td>2</td><td>2</td></tr>
+      <tr><td>2</td><td>c</td><td>—</td><td>0</td><td>abc</td><td>3</td><td>3</td></tr>
+      <tr><td>3</td><td>a</td><td>0 (yes)</td><td>1</td><td>bca</td><td>3</td><td>3</td></tr>
+      <tr><td>4</td><td>b</td><td>1 (yes)</td><td>2</td><td>cab</td><td>3</td><td>3</td></tr>
+      <tr><td>5</td><td>c</td><td>2 (yes)</td><td>3</td><td>abc</td><td>3</td><td>3</td></tr>
+      <tr><td>6</td><td>b</td><td>4 (yes)</td><td>5</td><td>cb</td><td>2</td><td>3</td></tr>
+      <tr><td>7</td><td>b</td><td>6 (yes)</td><td>7</td><td>b</td><td>1</td><td>3</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <b>The trap that separates good from great — input "abba":</b>
+  </div>
+
+  <table class="dry">
+    <thead>
+      <tr><th>r</th><th>ch</th><th>Last seen</th><th>Inside window (≥ l)?</th><th>l after</th><th>Window</th><th>best</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>a</td><td>—</td><td>—</td><td>0</td><td>a</td><td>1</td></tr>
+      <tr><td>1</td><td>b</td><td>—</td><td>—</td><td>0</td><td>ab</td><td>2</td></tr>
+      <tr><td>2</td><td>b</td><td>1</td><td class="yes">Yes (1 ≥ 0)</td><td>2</td><td>b</td><td>2</td></tr>
+      <tr><td>3</td><td>a</td><td>0</td><td class="no">No (0 &lt; 2)</td><td>2</td><td>ba</td><td>2</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    The check <code class="inline">last.get(ch) &gt;= l</code> is what stops the tail from
+    jumping <b>backwards</b> at r = 3. Without it, l would go to 1 and the answer would
+    be wrong.
+  </div>
+
+  <div class="pnum">9</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">4.2</span> <span class="hl-g">Permutation in String (LC 567) — fixed window</span></h3>
+  <p>Does s2 contain a permutation of s1?</p>
+  <div class="dryrun"><b>Input:</b> s1 = "ab", s2 = "eidbaooo" → <b>true</b></div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    • The window size is fixed: what is it?<br>
+    • What do you compare the window's tally to at each step?<br>
+    • How many tallies change when the window slides by one?
+  </div>
+
+  <p><b>Solution idea:</b> build a fixed window of size
+  <code class="inline">s1.length</code> and slide it one step at a time, updating the
+  tally by <b>+1 for the entering character</b> and <b>−1 for the leaving one</b>. If the
+  tally ever equals s1's tally, return true.</p>
+
+<pre class="code">function checkInclusion(s1, s2) {
+  if (s1.length &gt; s2.length) return false;
+  const need = new Array(26).fill(0);
+  const win  = new Array(26).fill(0);
+  for (const ch of s1) need[ch.charCodeAt(0) - 97]++;
+  for (let r = 0; r &lt; s2.length; r++) {
+    win[s2.charCodeAt(r) - 97]++;
+    if (r &gt;= s1.length) win[s2.charCodeAt(r - s1.length) - 97]--;
+    if (r &gt;= s1.length - 1 &amp;&amp; win.every((v, i) =&gt; v === need[i])) return true;
+  }
+  return false;
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run on s1 = "ab", s2 = "eidbaooo" (need = {a:1, b:1})</caption>
+    <thead>
+      <tr><th>r</th><th>Enters</th><th>Leaves</th><th>Window</th><th>Window counts</th><th>Match?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>e</td><td>—</td><td>"e"</td><td>e:1</td><td class="no">No</td></tr>
+      <tr><td>1</td><td>i</td><td>—</td><td>"ei"</td><td>e:1, i:1</td><td class="no">No</td></tr>
+      <tr><td>2</td><td>d</td><td>e</td><td>"id"</td><td>i:1, d:1</td><td class="no">No</td></tr>
+      <tr><td>3</td><td>b</td><td>i</td><td>"db"</td><td>d:1, b:1</td><td class="no">No</td></tr>
+      <tr><td>4</td><td>a</td><td>d</td><td>"ba"</td><td>b:1, a:1</td><td class="yes">Yes → true</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity"><b>Complexity:</b> O(26 · n) = <b>O(n)</b>.
+  Same idea solves <b>Find All Anagrams in a String (LC 438)</b> — just collect every
+  matching start index instead of returning.</div>
+
+  <h3><span class="qnum">4.3</span> <span class="hl-o">Teacher's notes — fixed vs variable window</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th></th><th>Fixed window</th><th>Variable window</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><b>Size</b></td><td>Known (k or s1.length)</td><td>Changes</td></tr>
+      <tr><td><b>Tail moves</b></td><td>Exactly with the head</td><td>Only when the rule breaks</td></tr>
+      <tr><td><b>Typical question</b></td><td>"substring of length k…", "permutation"</td><td>"longest / shortest substring such that…"</td></tr>
+      <tr><td><b>Examples</b></td><td>LC 567, 438, 643</td><td>LC 3, 424, 76</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <b>One rule to remember:</b> if you ever write <code class="inline">l--</code> or
+    move the <b>tail backward</b>, the approach is <span class="red">wrong</span>.
+  </div>
+
+  <div class="sticky green">
+    <b>Caterpillar rule 🐛</b><br>
+    Head grows the window.<br>
+    Tail shrinks it only when the rule breaks.<br>
+    <u>Never move the tail backward.</u>
+  </div>
+
+  <div class="pnum">10</div>
+</section>
+
+<!-- ============================ SECTION 5 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>5. Pattern 4 — Expand Around Center</h2>
+    <p>2 days &nbsp;•&nbsp; <span class="hl-p">"Ripples in a pond"</span></p>
+  </div>
+
+  <p>Every palindrome is <b>symmetric around a center</b>, so instead of testing every
+  substring (O(n³)), try <b>every center</b> and grow outward while both sides match.
+  There are <b>2n − 1 centers</b> and each expansion is at most O(n), giving
+  <b>O(n²) time</b> and <b>O(1) space</b>.</p>
+
+  <div class="note">
+    <span class="analogy">Analogy — ripples in a pond</span><br>
+    Drop a stone at one spot; ripples spread out equally left and right. Keep spreading
+    while the letter on the left ripple equals the letter on the right ripple. The moment
+    they differ, the ripple dies. Drop a stone on <b>every letter</b> and in
+    <b>every gap</b> between two letters.
+  </div>
+
+  <div class="think">
+    <b>Why gaps too?</b><br>
+    "aba" has its center <b>on the letter 'b'</b> (odd length).<br>
+    "abba" has its center <b>in the gap between the two b's</b> (even length).<br>
+    <span class="red">Forgetting gaps is the #1 bug in this pattern.</span>
+  </div>
+
+  <table class="dry">
+    <caption>Centers for a string of length n</caption>
+    <thead><tr><th>String length n</th><th>Letter centers</th><th>Gap centers</th><th>Total</th></tr></thead>
+    <tbody>
+      <tr><td>5 ("babad")</td><td>5</td><td>4</td><td>9 = 2n − 1</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">5.0</span> <span class="hl-y">The helper — one ripple</span></h3>
+
+<pre class="code">// Expand from (l, r) while it's a palindrome; return its bounds
+function expand(s, l, r) {
+  while (l &gt;= 0 &amp;&amp; r &lt; s.length &amp;&amp; s[l] === s[r]) {
+    l--; r++;
+  }
+  return [l + 1, r - 1];   // step back to the last matching pair
+}</pre>
+
+  <h3><span class="qnum">5.1</span> <span class="hl-b">Longest Palindrome Substring (LC 5)</span></h3>
+  <div class="dryrun"><b>Input:</b> "babad" → <b>"bab"</b> ("aba" is also accepted)</div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    • Brute force: every substring (n²) × check palindrome (n). Total?<br>
+    • If you know "aba" is a palindrome, what <b>single check</b> tells you whether
+    "xabax" is one?
+  </div>
+
+<pre class="code">function longestPalindrome(s) {
+  let start = 0, end = 0;
+  for (let i = 0; i &lt; s.length; i++) {
+    for (const [l, r] of [expand(s, i, i), expand(s, i, i + 1)]) {
+      // letter, gap
+      if (r - l &gt; end - start) { start = l; end = r; }
+    }
+  }
+  return s.slice(start, end + 1);
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run, "babad" (indices b0 a1 b2 a3 d4)</caption>
+    <thead>
+      <tr><th>Center</th><th>Type</th><th>Ripple steps</th><th>Palindrome found</th><th>Best so far</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>letter</td><td>(0,0) b=b → (−1,1) out of bounds</td><td>"b"</td><td>"b"</td></tr>
+      <tr><td>0-1</td><td>gap</td><td>(0,1) b≠a → dies</td><td>none</td><td>"b"</td></tr>
+      <tr><td>1</td><td>letter</td><td>(1,1) a → (0,2) b=b → (−1,3) out</td><td>"bab"</td><td>"bab"</td></tr>
+      <tr><td>1-2</td><td>gap</td><td>(1,2) a≠b</td><td>none</td><td>"bab"</td></tr>
+      <tr><td>2</td><td>letter</td><td>(2,2) b → (1,3) a=a → (0,4) b≠d</td><td>"aba" (not longer)</td><td>"bab"</td></tr>
+      <tr><td>2-3</td><td>gap</td><td>(2,3) b≠a</td><td>none</td><td>"bab"</td></tr>
+      <tr><td>3</td><td>letter</td><td>(3,3) a → (2,4) b≠d</td><td>"a"</td><td>"bab"</td></tr>
+      <tr><td>3-4</td><td>gap</td><td>(3,4) a≠d</td><td>none</td><td>"bab"</td></tr>
+      <tr><td>4</td><td>letter</td><td>(4,4) d</td><td>"d"</td><td>"bab"</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <b>Even case check, "cbbd":</b> the gap between indices 1 and 2 ripples (1,2) b=b →
+    (0,3) c≠d → "bb". No letter center does better, so the answer is <b>"bb"</b> —
+    impossible to find without gap centers.
+  </div>
+
+  <div class="pnum">11</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">5.2</span> <span class="hl-g">Palindromic Substrings — count them (LC 647)</span></h3>
+  <p>Count all palindromic substrings (same text at different positions counts separately).</p>
+  <div class="dryrun"><b>Input:</b> "aaa" → <b>6</b></div>
+
+  <div class="think">
+    <b>Think first:</b> each successful ripple step is <b>one palindrome</b>. So instead
+    of tracking the longest, what do you add up?
+  </div>
+
+<pre class="code">function countSubstrings(s) {
+  let count = 0;
+  const ripple = (l, r) =&gt; {
+    while (l &gt;= 0 &amp;&amp; r &lt; s.length &amp;&amp; s[l] === s[r]) {
+      count++;
+      l--; r++;
+    }
+  };
+  for (let i = 0; i &lt; s.length; i++) {
+    ripple(i, i);       // letter center
+    ripple(i, i + 1);   // gap center
+  }
+  return count;
+}</pre>
+
+  <table class="dry">
+    <caption>Dry run on "aaa"</caption>
+    <thead>
+      <tr><th>Center</th><th>Successful ripple steps (each = +1)</th><th>Added</th><th>Total</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>letter 0</td><td>"a"</td><td>1</td><td>1</td></tr>
+      <tr><td>gap 0-1</td><td>"a"</td><td>1</td><td>2</td></tr>
+      <tr><td>letter 1</td><td>"a", "aaa"</td><td>2</td><td>4</td></tr>
+      <tr><td>gap 1-2</td><td>"a"</td><td>1</td><td>5</td></tr>
+      <tr><td>letter 2</td><td>"a"</td><td>1</td><td>6</td></tr>
+      <tr><td>gap 2-3</td><td>out of bounds</td><td>0</td><td>6</td></tr>
+    </tbody>
+  </table>
+
+  <div class="dryrun">
+    The six: <b>a, a, a, aa, aa, aaa</b>.
+  </div>
+
+  <h3><span class="qnum">5.3</span> <span class="hl-o">Teacher's notes</span></h3>
+  <ul class="arrows">
+    <li><code class="inline">return [l + 1, r - 1]</code>: the loop exits <b>one step
+        past</b> the palindrome, so <b>step back</b>. Draw it once on paper and it sticks.</li>
+    <li><b>O(n²)</b> is the expected interview answer. <b>Manacher's algorithm</b> does it
+        in O(n) — know the name; learning it is optional.</li>
+    <li>When a problem says <b>subsequence</b> (not substring), characters needn't be
+        adjacent → this pattern <b>doesn't apply</b>; that's dynamic programming.</li>
+  </ul>
+
+  <div class="sticky pink">
+    <b>Ripple rule 🪷</b><br>
+    <b>2n − 1 centers</b> — n letters + n − 1 gaps.<br>
+    Expand while both sides match.<br>
+    Step back one to get the palindrome's bounds.
+  </div>
+
+  <div class="pnum">12</div>
+</section>
+
+<!-- ============================ SECTION 6 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>6. Pattern 5 — Scanning and Parsing</h2>
+    <p>2 days &nbsp;•&nbsp; <span class="hl-y">Careful one-pass walks</span></p>
+  </div>
+
+  <p>Many "easy" string questions are really about <b>walking the string carefully once</b>
+  and handling runs, columns, or neighbour rules <b>without off-by-one errors</b>.
+  They look simple and are where most interview bugs happen.</p>
+
+  <h3><span class="qnum">6.1</span> <span class="hl-y">Longest Common Prefix (LC 14)</span></h3>
+  <div class="dryrun"><b>Input:</b> ["flower", "flow", "flight"] → <b>"fl"</b></div>
+
+  <div class="note">
+    <span class="analogy">Analogy — the roll-call by columns</span><br>
+    Line up the words one below another like rows in a register. Read <b>column 0</b>
+    down the page: all 'f'? Then <b>column 1</b>: all 'l'? The first column with a
+    different letter — or a word that has run out — ends the prefix.
+  </div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    • Which word limits how long the prefix can possibly be?<br>
+    • What happens with an <b>empty array</b>, or a <b>single word</b>?
+  </div>
+
+<pre class="code">function longestCommonPrefix(strs) {
+  if (strs.length === 0) return "";
+  const first = strs[0];
+  for (let col = 0; col &lt; first.length; col++) {
+    const ch = first[col];
+    for (let row = 1; row &lt; strs.length; row++) {
+      if (col &gt;= strs[row].length || strs[row][col] !== ch) {
+        return first.slice(0, col);   // column broke: prefix ends here
+      }
+    }
+  }
+  return first;                        // first word is itself the prefix
+}</pre>
+
+  <table class="dry">
+    <thead>
+      <tr><th>col</th><th>flower</th><th>flow</th><th>flight</th><th>All same?</th><th>Prefix</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>f</td><td>f</td><td>f</td><td class="yes">Yes</td><td>f</td></tr>
+      <tr><td>1</td><td>l</td><td>l</td><td>l</td><td class="yes">Yes</td><td>fl</td></tr>
+      <tr><td>2</td><td>o</td><td>o</td><td>i</td><td class="no">No → stop</td><td>"fl"</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity"><b>Complexity:</b> O(S) time where S is the total number of
+  characters, O(1) extra space. <b>Edge:</b> ["ab", "a"] → at col 1 the second word has
+  run out → <b>"a"</b>.</div>
+
+  <h3><span class="qnum">6.2</span> <span class="hl-b">String Compression (run-length encoding)</span></h3>
+  <p>Replace each run of a repeated character with the character and its count.
+  Return the original if the result isn't shorter.</p>
+  <div class="dryrun"><b>Input:</b> "aabcccccaaa" → <b>"a2b1c5a3"</b></div>
+
+  <div class="note">
+    <span class="analogy">Analogy — the shopping list</span><br>
+    You don't write "apple, apple, apple"; you write "apple × 3". But for a
+    single banana, "banana × 1" is <b>longer</b> than "banana" — which is why we keep
+    the original if compression doesn't help.
+  </div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    • How do you know a <b>run has ended</b>?<br>
+    • Instead of comparing neighbours one by one, can a <b>second pointer</b> jump over
+    the whole run?
+  </div>
+
+<pre class="code">function compress(s) {
+  const out = [];
+  let i = 0;
+  while (i &lt; s.length) {
+    let j = i;
+    while (j &lt; s.length &amp;&amp; s[j] === s[i]) j++;   // j stops at first different char
+    out.push(s[i], String(j - i));                // char + run length
+    i = j;                                        // jump to the next run
+  }
+  const res = out.join("");
+  return res.length &lt; s.length ? res : s;
+}</pre>
+
+  <table class="dry">
+    <thead>
+      <tr><th>i</th><th>s[i]</th><th>j stops at</th><th>Run length (j−i)</th><th>Output so far</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>a</td><td>2</td><td>2</td><td>a2</td></tr>
+      <tr><td>2</td><td>b</td><td>3</td><td>1</td><td>a2b1</td></tr>
+      <tr><td>3</td><td>c</td><td>8</td><td>5</td><td>a2b1c5</td></tr>
+      <tr><td>8</td><td>a</td><td>11 (end)</td><td>3</td><td>a2b1c5a3</td></tr>
+    </tbody>
+  </table>
+
+  <div class="dryrun">8 &lt; 11 ⇒ return <b>"a2b1c5a3"</b>. <b>O(n)</b>: i and j together
+  walk the string once. The LeetCode version (LC 443) does this <b>in place</b> and
+  omits the count 1 — try it as an exercise.</div>
+
+  <div class="pnum">13</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">6.3</span> <span class="hl-g">Roman to Integer (LC 13)</span></h3>
+  <div class="dryrun"><b>Input:</b> "MCMXCIV" → <b>1994</b></div>
+
+  <div class="note">
+    <span class="analogy">Analogy — the discount tag</span><br>
+    Normally coins add up left to right, biggest first. But when a
+    <b>smaller value sits just before a bigger one</b>, it's a discount sticker:
+    <b>subtract</b> it instead of adding (<b>IV = 5 − 1</b>, <b>CM = 1000 − 100</b>).
+  </div>
+
+  <div class="think">
+    <b>Think first:</b> to decide whether to add or subtract a symbol, which
+    <b>one other symbol</b> do you need to look at?
+  </div>
+
+<pre class="code">function romanToInt(s) {
+  const val = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+  let total = 0;
+  for (let i = 0; i &lt; s.length; i++) {
+    const cur = val[s[i]], next = val[s[i + 1]] || 0;   // past the end ⇒ 0
+    total += cur &lt; next ? -cur : cur;
+  }
+  return total;
+}</pre>
+
+  <table class="dry">
+    <thead>
+      <tr><th>i</th><th>Symbol</th><th>Value</th><th>Next value</th><th>Smaller than next?</th><th>Change</th><th>Total</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>M</td><td>1000</td><td>100</td><td class="no">No</td><td>+1000</td><td>1000</td></tr>
+      <tr><td>1</td><td>C</td><td>100</td><td>1000</td><td class="yes">Yes</td><td>−100</td><td>900</td></tr>
+      <tr><td>2</td><td>M</td><td>1000</td><td>10</td><td class="no">No</td><td>+1000</td><td>1900</td></tr>
+      <tr><td>3</td><td>X</td><td>10</td><td>100</td><td class="yes">Yes</td><td>−10</td><td>1890</td></tr>
+      <tr><td>4</td><td>C</td><td>100</td><td>1</td><td class="no">No</td><td>+100</td><td>1990</td></tr>
+      <tr><td>5</td><td>I</td><td>1</td><td>5</td><td class="yes">Yes</td><td>−1</td><td>1989</td></tr>
+      <tr><td>6</td><td>V</td><td>5</td><td>0</td><td class="no">No</td><td>+5</td><td>1994</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">6.4</span> <span class="hl-o">Teacher's notes — the off-by-one checklist</span></h3>
+  <ul class="arrows">
+    <li>Reading <code class="inline">s[i + 1]</code> at the last index gives
+        <b>undefined</b> in JS (no crash) — handle it explicitly, as
+        <code class="inline">|| 0</code> does above.</li>
+    <li>After an inner while that advances <b>j</b>, set
+        <code class="inline">i = j</code> — <span class="red">not i++</span>, or you'll
+        re-count the run.</li>
+    <li>Test every scanner on: <b>empty string, length 1, all same characters, and a run
+        at the very end</b>.</li>
+  </ul>
+
+  <div class="sticky blue">
+    <b>Scanner rule 🔍</b><br>
+    One pass, one state.<br>
+    Use a <u>second pointer</u> to jump over runs.<br>
+    Handle <code>s[i+1]</code> at the end explicitly.
+  </div>
+
+  <div class="pnum">14</div>
+</section>
+
+<!-- ============================ SECTION 7 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>7. Practice Bank &amp; Cheat Sheet</h2>
+    <p>Ongoing &nbsp;•&nbsp; <span class="hl-y">30 questions · 3 levels</span></p>
+  </div>
+
+  <p>Thirty questions in <b>three levels</b>, each with a one-line <b>think-first hint</b>
+  instead of the answer. Read <b>only the hint</b>, close the doc, and solve; check the
+  pattern column only if stuck for <b>20+ minutes</b>.</p>
+
+  <h3><span class="qnum">7.1</span> <span class="hl-y">Pattern cheat sheet</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th>If the problem says…</th><th>Pattern</th><th>Analogy</th><th>Typical cost</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>anagram, "same letters", "can be built from", most frequent</td><td>Frequency counting</td><td>Tally register</td><td>O(n)</td></tr>
+      <tr><td>palindrome, reverse, "from both ends"</td><td>Two pointers</td><td>Two inspectors on a bridge</td><td>O(n), O(1) space</td></tr>
+      <tr><td>longest / shortest substring with a rule</td><td>Variable sliding window</td><td>Caterpillar</td><td>O(n)</td></tr>
+      <tr><td>substring of fixed length, permutation inside</td><td>Fixed sliding window</td><td>Stencil</td><td>O(n)</td></tr>
+      <tr><td>longest / count palindromic substrings</td><td>Expand around center</td><td>Ripples in a pond</td><td>O(n²)</td></tr>
+      <tr><td>prefix, runs of characters, numerals</td><td>Careful scan</td><td>Roll-call / shopping list</td><td>O(n)</td></tr>
+      <tr><td>subsequence (not contiguous)</td><td>Dynamic programming (later)</td><td>—</td><td>usually O(n²)</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">7.2</span> <span class="hl-g">Level 1 — Build the basics (10)</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th>#</th><th>Problem</th><th>Think-first hint</th><th>Pattern</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Reverse String (LC 344)</td><td>Already an array — just swap ends</td><td>Two pointers</td></tr>
+      <tr><td>2</td><td>Merge Strings Alternately (LC 1768)</td><td>One index, two strings; what if one ends first?</td><td>Scan</td></tr>
+      <tr><td>3</td><td>Length of Last Word (LC 58)</td><td>Start from the end; skip trailing spaces first</td><td>Scan</td></tr>
+      <tr><td>4</td><td>Valid Palindrome (LC 125)</td><td>Inspectors step over punctuation</td><td>Two pointers</td></tr>
+      <tr><td>5</td><td>Valid Anagram (LC 242)</td><td>One register: +1 then −1</td><td>Frequency</td></tr>
+      <tr><td>6</td><td>Ransom Note (LC 383)</td><td>Any tally going negative?</td><td>Frequency</td></tr>
+      <tr><td>7</td><td>First Unique Character (LC 387)</td><td>Count first, then walk in order</td><td>Frequency</td></tr>
+      <tr><td>8</td><td>Longest Common Prefix (LC 14)</td><td>Read column by column</td><td>Scan</td></tr>
+      <tr><td>9</td><td>Roman to Integer (LC 13)</td><td>Smaller before bigger = discount</td><td>Scan</td></tr>
+      <tr><td>10</td><td>Find the Index of the First Occurrence (LC 28)</td><td>Try each start; compare up to needle's length. Cost?</td><td>Scan (brute force)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="pnum">15</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">7.3</span> <span class="hl-b">Level 2 — Core patterns (10)</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th>#</th><th>Problem</th><th>Think-first hint</th><th>Pattern</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>11</td><td>Reverse Only Letters (LC 917)</td><td>Skip non-letters on both sides</td><td>Two pointers</td></tr>
+      <tr><td>12</td><td>Reverse Words in a String (LC 151)</td><td>Read words from the right</td><td>Scan</td></tr>
+      <tr><td>13</td><td>Valid Palindrome II (LC 680)</td><td>At the first mismatch you get two choices</td><td>Two pointers</td></tr>
+      <tr><td>14</td><td>Group Anagrams (LC 49)</td><td>Same postal code for every anagram</td><td>Frequency + Map</td></tr>
+      <tr><td>15</td><td>Longest Substring Without Repeating Characters (LC 3)</td><td>Tail never moves back ("abba")</td><td>Variable window</td></tr>
+      <tr><td>16</td><td>Permutation in String (LC 567)</td><td>Stencil of width s1.length</td><td>Fixed window</td></tr>
+      <tr><td>17</td><td>Find All Anagrams in a String (LC 438)</td><td>Same as 16, but collect every start</td><td>Fixed window</td></tr>
+      <tr><td>18</td><td>Maximum Number of Vowels in a Substring of Given Length (LC 1456)</td><td>+1 entering vowel, −1 leaving vowel</td><td>Fixed window</td></tr>
+      <tr><td>19</td><td>Longest Palindromic Substring (LC 5)</td><td>Stones on letters and gaps</td><td>Expand around center</td></tr>
+      <tr><td>20</td><td>Palindromic Substrings (LC 647)</td><td>Every ripple step is +1</td><td>Expand around center</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">7.4</span> <span class="hl-o">Level 3 — Interview stretch (10)</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th>#</th><th>Problem</th><th>Think-first hint</th><th>Pattern</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>21</td><td>String Compression (LC 443)</td><td>Read pointer and write pointer in one array</td><td>Scan + two pointers</td></tr>
+      <tr><td>22</td><td>Longest Palindrome (LC 409)</td><td>Pairs go on both sides; one odd letter may sit in the middle</td><td>Frequency</td></tr>
+      <tr><td>23</td><td>Word Break (LC 139)</td><td>Can you build the string piece by piece?</td><td>DP (later)</td></tr>
+      <tr><td>24</td><td>Minimum Window Substring (LC 76)</td><td>When does the caterpillar have everything it needs?</td><td>Variable window</td></tr>
+      <tr><td>25</td><td>Longest Repeating Character Replacement (LC 424)</td><td>Window size − max frequency of a letter ≤ k</td><td>Variable window</td></tr>
+      <tr><td>26</td><td>Fruit Into Baskets (LC 904)</td><td>At most 2 distinct characters</td><td>Variable window</td></tr>
+      <tr><td>27</td><td>Palindrome Partitioning (LC 131)</td><td>Every prefix that is a palindrome, then recurse</td><td>Backtracking</td></tr>
+      <tr><td>28</td><td>Count and Say (LC 38)</td><td>Read a run, write "count + digit", repeat</td><td>Scan</td></tr>
+      <tr><td>29</td><td>Decode String (LC 394)</td><td>"3[a2[c]]" — what does the innermost bracket produce?</td><td>Stack</td></tr>
+      <tr><td>30</td><td>Text Justification (LC 68)</td><td>Greedy fill lines, then pad spaces</td><td>Scan + greedy</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">7.5</span> <span class="hl-p">Self-review after each problem</span></h3>
+
+  <ul class="ticks">
+    <li>I asked about the <b>character set</b> (lowercase only? spaces? Unicode?).</li>
+    <li>I stated the <b>brute force and its Big-O</b> before optimizing.</li>
+    <li>I named the <b>pattern and its analogy</b> in one sentence.</li>
+    <li>I filled a <b>dry-run table</b> on the smallest tricky input
+        ("abba", "cbbd", "a").</li>
+    <li>I avoided <b>O(n) string operations</b> (slice, includes, +=) inside loops,
+        or explained why they're fine.</li>
+    <li>I can <b>teach this problem to a friend in 3 minutes</b> without notes.</li>
+  </ul>
+
+  <div class="sticky green">
+    <b>Teacher's closing advice 📝</b><br>
+    Patterns are not memorized, they are <u>recognized</u>. After every problem, write one
+    line in a notebook: <b>"I knew it was ___ because the problem said ___."</b><br>
+    After 30 problems, that notebook is worth more than any cheat sheet.
+  </div>
+
+  <div class="note">
+    <b>Next module (suggested):</b> Recursion and Backtracking in JavaScript —
+    the call stack, subsets, permutations and the
+    <b>"choose / explore / un-choose"</b> template.
+  </div>
+
+  <div class="pnum">16</div>
+</section>
+
+<!-- ============================ QUICK REFERENCE ============================ -->
+<section class="page">
+  <h2 class="section hl-y">Quick Reference — One-Page Recap</h2>
+
+  <h3 style="border-bottom:none;"><span class="qnum">A</span> <span class="hl-b">Strings in JS — three facts</span></h3>
+  <ul class="arrows">
+    <li><b>Immutable</b> — every "change" creates a new string, cost O(n).</li>
+    <li><b>charCodeAt</b> — 'a' = 97, 'A' = 65, '0' = 48. Index = code − 97.</li>
+    <li><b>Many edits</b> → split(""), edit the array, join("") once.</li>
+  </ul>
+
+  <h3 style="border-bottom:none;"><span class="qnum">B</span> <span class="hl-g">The five patterns</span></h3>
+  <ol>
+    <li><b>Frequency counting</b> — "tally register" — one pass, O(n).</li>
+    <li><b>Two pointers</b> — "two inspectors on a bridge" — O(n), O(1) space.</li>
+    <li><b>Sliding window (variable)</b> — "caterpillar" — O(n).</li>
+    <li><b>Sliding window (fixed)</b> — "stencil" — O(n).</li>
+    <li><b>Expand around center</b> — "ripples in a pond" — O(n²).</li>
+    <li><b>Careful scan</b> — "roll-call / shopping list" — O(n).</li>
+  </ol>
+
+  <h3 style="border-bottom:none;"><span class="qnum">C</span> <span class="hl-o">Common traps</span></h3>
+  <ul class="ticks">
+    <li><code class="inline">includes</code> / <code class="inline">slice</code> /
+        <code class="inline">toLowerCase</code> inside a loop → <b>O(n²)</b>.</li>
+    <li><code class="inline">s.split("")</code> breaks emoji — use
+        <code class="inline">[...s]</code>.</li>
+    <li>Anagram: always check <b>length first</b>.</li>
+    <li>Sliding window: <b>tail never moves backward</b>.</li>
+    <li>Expand around center: don't forget the <b>gap centers</b>.</li>
+    <li>Scanner: after <code class="inline">j</code> stops, set
+        <code class="inline">i = j</code>, not <code class="inline">i++</code>.</li>
+    <li>Reading <code class="inline">s[i+1]</code> at the end gives
+        <code class="inline">undefined</code> — handle it explicitly.</li>
+  </ul>
+
+  <hr class="hand">
+
+  <div class="note">
+    <b>Reminder:</b> the dry-run table is not optional. If you can't trace the window on
+    "abba" or the ripple on "cbbd" by hand, you don't yet understand the pattern.
+  </div>
+
+  <div class="sticky green" style="margin-top:36px;">
+    <b>You reached the end of Module 4. 🎉</b><br>
+    Close the notes, open a blank file, and re-write <u>Valid Anagram</u>,
+    <u>Valid Palindrome</u>, <u>Longest Substring Without Repeating</u> and
+    <u>Longest Palindromic Substring</u> from memory —
+    <b>with a dry-run table for each</b>.
+  </div>
+
+  <div class="center" style="margin-top:44px;">
+    <span class="stamp">END OF MODULE 4</span>
+  </div>
+
+  <div class="doodle-stars" style="margin-top:26px;">✦ ✧ ✦ ✧ ✦</div>
+
+  <div class="pnum">17</div>
+</section>
+
+</div>
+
+<!-- ============================================================
+     Tiny script: colour "// comment" text inside code blocks
+     green, so the code looks hand-annotated.
+     ============================================================ -->
+<script>
+(function () {
+  document.querySelectorAll('pre.code').forEach(function (block) {
+    var lines = block.innerHTML.split('\n');
+    var out = lines.map(function (line) {
+      var inSingle = false, inDouble = false, inTemplate = false, idx = -1;
+      for (var i = 0; i < line.length; i++) {
+        var ch = line[i];
+        var prev = line[i - 1];
+        if (ch === "'" && !inDouble && !inTemplate && prev !== '\\') inSingle = !inSingle;
+        else if (ch === '"' && !inSingle && !inTemplate && prev !== '\\') inDouble = !inDouble;
+        else if (ch === '`' && !inSingle && !inDouble && prev !== '\\') inTemplate = !inTemplate;
+        else if (!inSingle && !inDouble && !inTemplate && ch === '/' && line[i + 1] === '/') {
+          idx = i; break;
+        }
+      }
+      if (idx > -1) {
+        return line.slice(0, idx) + '<span class="cm">' + line.slice(idx) + '</span>';
+      }
+      return line;
+    });
+    block.innerHTML = out.join('\n');
+  });
+})();
+</script>
+
+</body>
+</html>

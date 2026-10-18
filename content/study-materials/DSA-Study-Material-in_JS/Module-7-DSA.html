@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Module 7 — Stacks &amp; Queues in JavaScript | Handmade Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Kalam:wght@300;400;700&family=Patrick+Hand&family=Shadows+Into+Light&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THE HANDMADE NOTEBOOK — premium paper + ink styling
+   + "screenshot" code cards + real-life SVG illustrations
+   ============================================================ */
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  padding: 34px 14px 70px;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(214,197,166,.55), transparent 46%),
+    radial-gradient(circle at 84% 78%, rgba(198,181,150,.5), transparent 52%),
+    repeating-linear-gradient(115deg, rgba(140,115,80,.05) 0 3px, transparent 3px 7px),
+    #c8b295;
+  font-family: 'Patrick Hand', 'Kalam', cursive;
+  color: #21304a;
+  font-size: 18px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+
+.book { max-width: 920px; margin: 0 auto; }
+
+/* ---------- the "sheet of paper" ---------- */
+.page {
+  position: relative;
+  background-color: #fdfaf1;
+  background-image:
+    repeating-linear-gradient(to bottom,
+      transparent 0px, transparent 30px,
+      #c9d6ea 30px, #c9d6ea 31px),
+    repeating-linear-gradient(90deg, rgba(160,140,110,.035) 0 1px, transparent 1px 5px);
+  border-radius: 3px 10px 10px 3px;
+  box-shadow:
+    0 1px 0 #e8e0cd inset,
+    0 18px 34px -14px rgba(40,25,10,.55),
+    0 3px 0 rgba(255,255,255,.35) inset;
+  padding: 46px 46px 62px 96px;
+  margin: 0 0 40px;
+  overflow: hidden;
+}
+
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 74px;
+  width: 2px;
+  background: linear-gradient(to bottom,
+    rgba(203,78,78,.15), rgba(203,78,78,.75) 6%,
+    rgba(203,78,78,.75) 94%, rgba(203,78,78,.15));
+}
+
+.page::after {
+  content: "";
+  position: absolute;
+  left: 24px; top: 0; bottom: 0;
+  width: 24px;
+  background-image: radial-gradient(circle at 50% 50%, #cdbca0 0 8px, rgba(0,0,0,.12) 8px 9px, transparent 10px);
+  background-size: 24px 150px;
+  background-repeat: repeat-y;
+  background-position: 0 40px;
+  opacity: .85;
+}
+
+/* ---------- headings ---------- */
+h1, h2, h3, h4 {
+  font-family: 'Caveat', cursive;
+  color: #1b2a45;
+  margin: 0 0 .35em;
+  line-height: 1.15;
+}
+
+.cover h1 {
+  font-size: clamp(44px, 8.5vw, 80px);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: center;
+  margin: 0;
+  text-shadow: 2px 2px 0 rgba(255,241,118,.85), 4px 4px 0 rgba(0,0,0,.07);
+}
+.cover .sub {
+  text-align: center;
+  font-family: 'Caveat', cursive;
+  font-size: 30px;
+  color: #b3372f;
+  margin-top: 6px;
+}
+
+h2.section {
+  font-size: 46px;
+  display: inline-block;
+  padding: 2px 16px 6px;
+  margin-bottom: 4px;
+  transform: rotate(-1.2deg);
+}
+
+h3 {
+  font-size: 29px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+  border-bottom: 1.5px dashed #b9c6dc;
+  padding-bottom: 4px;
+}
+h4 { font-size: 23px; color: #2b3d5e; margin-top: 20px; }
+
+/* number badge */
+.qnum {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 26px;
+  color: #b3372f;
+  border: 2.2px solid #b3372f;
+  border-radius: 50%;
+  min-width: 54px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 9px;
+  flex: 0 0 auto;
+  transform: rotate(-3deg);
+  background: rgba(255,255,255,.6);
+}
+
+/* ---------- highlighters ---------- */
+.hl-y, .hl-p, .hl-g, .hl-b, .hl-o {
+  padding: 0 3px;
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.hl-y { background: linear-gradient(100deg, rgba(255,241,118,0) 0%, rgba(255,238,88,.85) 2%, rgba(255,238,88,.85) 97%, rgba(255,241,118,0) 100%); }
+.hl-p { background: linear-gradient(100deg, rgba(255,190,215,0) 0%, rgba(255,183,208,.8) 2%, rgba(255,183,208,.8) 97%, rgba(255,190,215,0) 100%); }
+.hl-g { background: linear-gradient(100deg, rgba(178,240,180,0) 0%, rgba(167,238,170,.85) 2%, rgba(167,238,170,.85) 97%, rgba(178,240,180,0) 100%); }
+.hl-b { background: linear-gradient(100deg, rgba(175,220,255,0) 0%, rgba(163,214,255,.8) 2%, rgba(163,214,255,.8) 97%, rgba(175,220,255,0) 100%); }
+.hl-o { background: linear-gradient(100deg, rgba(255,214,150,0) 0%, rgba(255,209,138,.85) 2%, rgba(255,209,138,.85) 97%, rgba(255,214,150,0) 100%); }
+
+/* red-pen emphasis */
+.red { color: #b3372f; }
+.blue { color: #1f4e8c; }
+.green { color: #2f6b3a; }
+.pen-underline { border-bottom: 2.5px solid #b3372f; padding-bottom: 1px; }
+.wavy { text-decoration: underline wavy #b3372f; text-underline-offset: 4px; }
+
+/* ---------- inline code ---------- */
+code.inline {
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(180,210,245,.32);
+  border-radius: 3px;
+  padding: 0 5px;
+  font-size: .86em;
+  color: #14315c;
+}
+
+/* ============================================================
+   CODE "SCREENSHOT" CARDS — premium IDE look
+   ============================================================ */
+.codecard {
+  position: relative;
+  margin: 22px 0 26px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 20px 40px -18px rgba(20,30,50,.55),
+    0 4px 0 rgba(0,0,0,.06),
+    0 0 0 1px rgba(255,255,255,.06) inset;
+  background: #1a2233;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* window chrome */
+.codecard .chrome {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, #2b3448, #222a3c);
+  border-bottom: 1px solid #151c29;
+}
+.codecard .dot { width: 12px; height: 12px; border-radius: 50%; }
+.codecard .dot.r { background: #ff5f56; box-shadow: 0 0 0 1px rgba(0,0,0,.2) inset; }
+.codecard .dot.y { background: #ffbd2e; box-shadow: 0 0 0 1px rgba(0,0,0,.2) inset; }
+.codecard .dot.g { background: #27c93f; box-shadow: 0 0 0 1px rgba(0,0,0,.2) inset; }
+
+.codecard .filename {
+  margin-left: 10px;
+  color: #9fb0cc;
+  font-size: 12.5px;
+  letter-spacing: .3px;
+}
+.codecard .filename::before {
+  content: "◆ ";
+  color: #ffbd2e;
+  font-size: 10px;
+}
+.codecard .lang {
+  margin-left: auto;
+  font-size: 11px;
+  color: #6f82a3;
+  border: 1px solid #3a4761;
+  padding: 1px 8px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+}
+
+/* body with line numbers */
+.codecard .body {
+  display: flex;
+  padding: 16px 0 18px;
+  overflow-x: auto;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.02), transparent 40%),
+    #1a2233;
+}
+.codecard .ln {
+  flex: 0 0 auto;
+  padding: 0 14px 0 16px;
+  text-align: right;
+  color: #4d5d7c;
+  font-size: 13.5px;
+  line-height: 1.85;
+  user-select: none;
+  border-right: 1px solid #2b3448;
+  margin-right: 14px;
+}
+.codecard pre {
+  margin: 0;
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13.5px;
+  line-height: 1.85;
+  color: #dbe4f3;
+  white-space: pre;
+  padding-right: 20px;
+}
+
+/* syntax tokens */
+.codecard .kw  { color: #ff7ab2; }         /* keyword */
+.codecard .fn  { color: #82d2ff; }         /* function */
+.codecard .str { color: #b7e07f; }         /* string  */
+.codecard .num { color: #ffd479; }         /* number  */
+.codecard .cm  { color: #6c7d9c; font-style: italic; }  /* comment */
+.codecard .op  { color: #f7a1c4; }         /* operator */
+.codecard .punc{ color: #a8b8d6; }
+.codecard .id  { color: #e9eefb; }
+
+/* a subtle glow at top edge */
+.codecard::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(130,210,255,.35), transparent);
+}
+
+/* ============================================================
+   REAL-LIFE ILLUSTRATION FRAMES
+   ============================================================ */
+.illustration {
+  margin: 22px 0;
+  border-radius: 12px;
+  background:
+    repeating-linear-gradient(45deg, rgba(255,255,255,.35) 0 6px, rgba(255,255,255,.15) 6px 12px),
+    #fffdf5;
+  border: 2px dashed #b9c6dc;
+  padding: 16px 14px 12px;
+  box-shadow: 3px 5px 0 rgba(120,150,190,.18);
+  text-align: center;
+  position: relative;
+}
+.illustration svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
+.illustration .cap {
+  font-family: 'Caveat', cursive;
+  font-size: 21px;
+  color: #4a5d7e;
+  margin-top: 6px;
+  line-height: 1.25;
+}
+.illustration .cap b { color: #b3372f; }
+.illustration::before {
+  content: "🎨 real life";
+  position: absolute;
+  top: -13px; left: 18px;
+  background: #fdfaf1;
+  padding: 0 8px;
+  font-family: 'Caveat', cursive;
+  font-size: 17px;
+  color: #b55a9e;
+  letter-spacing: .5px;
+}
+
+/* ---------- callouts ---------- */
+.note, .warn, .tip, .complexity, .dryrun, .trap, .think {
+  position: relative;
+  border-radius: 5px;
+  padding: 12px 16px 12px 18px;
+  margin: 14px 0;
+  font-size: 17px;
+}
+
+.dryrun {
+  background: linear-gradient(180deg, rgba(255,246,196,.75), rgba(255,240,160,.5));
+  border-left: 6px solid #e3b93c;
+  box-shadow: 2px 3px 0 rgba(200,160,40,.18);
+}
+.dryrun b:first-child { color: #a5761a; }
+
+.complexity {
+  background: linear-gradient(180deg, rgba(200,240,205,.7), rgba(175,232,182,.45));
+  border-left: 6px solid #4e9b5b;
+  box-shadow: 2px 3px 0 rgba(70,150,85,.16);
+  font-family: 'Kalam', cursive;
+}
+.complexity b:first-child { color: #2f6b3a; }
+
+.note {
+  background: linear-gradient(180deg, rgba(205,228,255,.7), rgba(180,212,250,.45));
+  border-left: 6px solid #4a7fbf;
+  box-shadow: 2px 3px 0 rgba(70,120,180,.16);
+}
+
+.warn, .trap {
+  background: linear-gradient(180deg, rgba(255,215,215,.8), rgba(255,190,190,.5));
+  border-left: 6px solid #c0403a;
+  box-shadow: 2px 3px 0 rgba(180,60,55,.16);
+}
+.warn b:first-child, .trap b:first-child { color: #9c2f2a; }
+
+.think {
+  background: linear-gradient(180deg, rgba(255,225,245,.75), rgba(250,205,235,.5));
+  border-left: 6px solid #b55a9e;
+  box-shadow: 2px 3px 0 rgba(170,80,150,.15);
+}
+.think b:first-child { color: #8a2f76; }
+
+/* ---------- sticky notes ---------- */
+.sticky {
+  background: #fff8a8;
+  background-image: linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%);
+  padding: 18px 20px;
+  margin: 22px 0;
+  border-radius: 2px;
+  box-shadow: 3px 6px 14px -6px rgba(90,70,20,.55);
+  transform: rotate(-.8deg);
+  font-family: 'Caveat', cursive;
+  font-size: 23px;
+  line-height: 1.4;
+  color: #4a3d10;
+  position: relative;
+}
+.sticky.pink { background: #ffd6e8; color: #6b2447; transform: rotate(1deg); }
+.sticky.green { background: #d3f7cf; color: #23502a; transform: rotate(-1.4deg); }
+.sticky.blue { background: #cfe6ff; color: #17375f; transform: rotate(.6deg); }
+
+/* tape */
+.tape {
+  position: absolute;
+  width: 108px; height: 28px;
+  background: rgba(255,255,255,.55);
+  border-left: 1px dashed rgba(0,0,0,.12);
+  border-right: 1px dashed rgba(0,0,0,.12);
+  box-shadow: 0 2px 5px rgba(0,0,0,.12);
+  top: -14px; left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+}
+
+/* ---------- lists ---------- */
+ul.ticks { list-style: none; padding-left: 4px; }
+ul.ticks li { position: relative; padding-left: 30px; margin-bottom: 6px; }
+ul.ticks li::before { content: "✔"; position: absolute; left: 0; top: -1px; color: #3f8f4f; font-size: 19px; }
+
+ul.arrows { list-style: none; padding-left: 4px; }
+ul.arrows li { position: relative; padding-left: 28px; margin-bottom: 5px; }
+ul.arrows li::before { content: "➜"; position: absolute; left: 0; top: -1px; color: #b3372f; font-size: 17px; }
+
+ol.steps { list-style: none; counter-reset: s; padding-left: 0; margin: 16px 0; }
+ol.steps li {
+  counter-increment: s;
+  position: relative;
+  padding: 10px 14px 10px 58px;
+  margin-bottom: 10px;
+  background: rgba(255,255,255,.5);
+  border-radius: 6px;
+  border-left: 5px solid #4a7fbf;
+}
+ol.steps li::before {
+  content: counter(s);
+  position: absolute; left: 14px; top: 9px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #4a7fbf; color: #fff;
+  font-family: 'Caveat', cursive; font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ---------- dry-run tables ---------- */
+table.dry {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+  font-family: 'Kalam', cursive;
+  font-size: 16.5px;
+  background: rgba(255,255,255,.55);
+  box-shadow: 2px 3px 0 rgba(120,150,190,.16);
+}
+table.dry caption {
+  font-family: 'Caveat', cursive;
+  font-size: 23px;
+  color: #b3372f;
+  text-align: left;
+  padding-bottom: 6px;
+}
+table.dry th, table.dry td {
+  border: 1.6px solid #8fa8c9;
+  padding: 6px 10px;
+  text-align: left;
+}
+table.dry th { background: rgba(200,222,250,.6); font-weight: 700; color: #17335c; }
+table.dry tr:nth-child(even) td { background: rgba(240,246,255,.55); }
+table.dry td.yes { color: #2f6b3a; font-weight: 700; }
+table.dry td.no  { color: #9c2f2a; }
+
+/* ---------- banner ---------- */
+.banner {
+  background: linear-gradient(120deg, #1b2a45, #2f4a76);
+  color: #fdfaf1;
+  padding: 22px 28px;
+  border-radius: 4px;
+  box-shadow: 0 12px 22px -12px rgba(20,30,50,.8), 3px 4px 0 rgba(0,0,0,.15);
+  margin-bottom: 26px;
+  transform: rotate(-.4deg);
+  position: relative;
+}
+.banner h2 { color: #fdfaf1; margin: 0; font-size: 42px; }
+.banner p { margin: 4px 0 0; font-family: 'Kalam', cursive; font-size: 16px; opacity: .9; }
+.banner .hl-y { color: #21304a; }
+
+/* ---------- analogy badges ---------- */
+.analogy {
+  display: inline-block;
+  background: #4a7fbf;
+  color: #fff;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  padding: 1px 14px 3px;
+  border-radius: 20px;
+  transform: rotate(1deg);
+  box-shadow: 2px 2px 0 rgba(0,0,0,.15);
+  margin: 2px 0;
+}
+.trigger {
+  display: inline-block;
+  background: #b3372f;
+  color: #fff;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  padding: 1px 14px 3px;
+  border-radius: 20px;
+  transform: rotate(-1.5deg);
+  box-shadow: 2px 2px 0 rgba(0,0,0,.15);
+}
+
+/* ---------- misc ---------- */
+.pnum {
+  position: absolute;
+  right: 26px; bottom: 16px;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  color: #8a9bb5;
+}
+.pnum::before { content: "— "; }
+.pnum::after { content: " —"; }
+
+hr.hand {
+  border: none;
+  height: 2px;
+  background: repeating-linear-gradient(to right, #b9c6dc 0 10px, transparent 10px 18px);
+  margin: 26px 0;
+}
+
+.mini { font-size: 15px; color: #6c7d97; font-family: 'Kalam', cursive; }
+.center { text-align: center; }
+.stamp {
+  display: inline-block;
+  border: 3px double #b3372f;
+  color: #b3372f;
+  font-family: 'Caveat', cursive;
+  font-size: 24px;
+  padding: 4px 16px;
+  border-radius: 6px;
+  transform: rotate(-6deg);
+  opacity: .85;
+}
+.doodle-stars { font-size: 26px; letter-spacing: 12px; color: #d9a441; text-align: center; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+@media (max-width: 660px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .page { padding: 36px 20px 54px 60px; }
+  .page::before { left: 44px; }
+  .page::after { display: none; }
+  body { font-size: 17px; }
+  .codecard pre { font-size: 12px; }
+  .codecard .ln { font-size: 12px; padding: 0 8px 0 10px; margin-right: 8px; }
+  table.dry { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+
+<div class="book">
+
+<!-- ============================ COVER ============================ -->
+<section class="page cover">
+  <div class="tape"></div>
+  <div class="doodle-stars">✦ ✧ ✦ ✧ ✦</div>
+
+  <h1>DSA MODULE 7</h1>
+  <div class="sub">Stacks &amp; Queues in JavaScript</div>
+
+  <p class="center" style="font-family:'Caveat',cursive;font-size:25px;margin-top:14px;">
+    <span class="hl-y">Handmade Solutions, Dry-Runs &amp; Real-Life Pictures</span>
+  </p>
+
+  <p class="center mini" style="margin-top:6px;">
+    LIFO · FIFO · Monotonic stack · Deque · Expression evaluation
+  </p>
+
+  <hr class="hand">
+
+  <h2 style="font-size:36px;transform:rotate(-1deg);">📘 What is inside</h2>
+  <ul class="ticks">
+    <li><b>Fundamentals</b> — LIFO vs FIFO, the <code class="inline">shift()</code> trap, deque</li>
+    <li><b>Classic stack problems</b> — Valid Parentheses, Min Stack</li>
+    <li><b>Monotonic stack</b> — Next Greater, Daily Temperatures, the four variants</li>
+    <li><b>Queue problems</b> — Queue using Stacks, Sliding Window Maximum</li>
+    <li><b>Expressions &amp; histograms</b> — RPN, Largest Rectangle</li>
+    <li><b>Interview question bank</b> — theory + 20 coding problems</li>
+    <li><b>Real-life SVG illustrations</b> for every analogy</li>
+    <li><b>Screenshot-style code cards</b> for every solution</li>
+  </ul>
+
+  <div class="sticky pink" style="margin-top:34px;">
+    <b>My note to self:</b><br>
+    A stack serves the <u>last item added first</u> (LIFO); a queue serves the
+    <u>first item added first</u> (FIFO). Stacks solve matching, undo and
+    <i>"nearest greater / smaller"</i>; queues power BFS, scheduling and
+    sliding windows. ✍️
+  </div>
+
+  <div class="center" style="margin-top:30px;">
+    <span class="stamp">HANDMADE NOTES</span>
+  </div>
+
+  <div class="pnum">cover</div>
+</section>
+
+<!-- ============================ SECTION 1 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>1. Fundamentals</h2>
+    <p><span class="hl-y">Plates · Ticket counter · LIFO vs FIFO · Deque</span></p>
+  </div>
+
+  <!-- ILLUSTRATION: plates stack -->
+  <div class="illustration">
+    <svg viewBox="0 0 420 200" width="420" height="200" role="img" aria-label="Stack of plates">
+      <defs>
+        <linearGradient id="plateG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9e2f0"/>
+        </linearGradient>
+        <linearGradient id="plateTop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#fff7d6"/><stop offset="1" stop-color="#f5dfa0"/>
+        </linearGradient>
+      </defs>
+      <!-- table -->
+      <rect x="60" y="160" width="300" height="8" rx="4" fill="#b7a077"/>
+      <rect x="60" y="168" width="300" height="20" rx="6" fill="#c9b393" opacity=".7"/>
+
+      <!-- plates bottom to top -->
+      <ellipse cx="210" cy="152" rx="110" ry="12" fill="url(#plateG)" stroke="#9fb0cc" stroke-width="1.5"/>
+      <ellipse cx="210" cy="138" rx="110" ry="12" fill="url(#plateG)" stroke="#9fb0cc" stroke-width="1.5"/>
+      <ellipse cx="210" cy="124" rx="110" ry="12" fill="url(#plateG)" stroke="#9fb0cc" stroke-width="1.5"/>
+      <ellipse cx="210" cy="110" rx="110" ry="12" fill="url(#plateG)" stroke="#9fb0cc" stroke-width="1.5"/>
+      <!-- top plate highlighted -->
+      <ellipse cx="210" cy="96" rx="110" ry="12" fill="url(#plateTop)" stroke="#b3372f" stroke-width="2.2"/>
+      <text x="210" y="100" text-anchor="middle" font-family="Caveat, cursive" font-size="18" fill="#b3372f" font-weight="700">push / pop here</text>
+
+      <!-- curved arrow "take from top" -->
+      <path d="M355 70 q40 20 0 45" fill="none" stroke="#b3372f" stroke-width="2.5" stroke-dasharray="5 5"/>
+      <polygon points="355,70 360,80 348,78" fill="#b3372f"/>
+      <text x="330" y="52" font-family="Caveat, cursive" font-size="19" fill="#b3372f">LIFO</text>
+
+      <!-- a hand placing plate -->
+      <g transform="translate(150,50)">
+        <rect x="0" y="12" width="120" height="12" rx="6" fill="url(#plateTop)" stroke="#b3372f" stroke-width="1.6"/>
+        <text x="60" y="22" text-anchor="middle" font-family="Caveat, cursive" font-size="13" fill="#8a5a12">new plate</text>
+      </g>
+    </svg>
+    <div class="cap"><b>Stack = plates in a canteen.</b> Put a clean plate on top, take from the top. The plate placed <b>last</b> is used <b>first</b>.</div>
+  </div>
+
+  <!-- ILLUSTRATION: queue ticket counter -->
+  <div class="illustration">
+    <svg viewBox="0 0 460 190" width="460" height="190" role="img" aria-label="Queue at ticket counter">
+      <!-- counter -->
+      <rect x="350" y="70" width="90" height="100" rx="8" fill="#d8c9a8" stroke="#b7a077" stroke-width="2"/>
+      <rect x="358" y="78" width="74" height="40" rx="4" fill="#bfe0f0" stroke="#7fa8c0" stroke-width="1.4"/>
+      <text x="395" y="103" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#1f4e8c">counter</text>
+      <text x="395" y="150" text-anchor="middle" font-family="Caveat, cursive" font-size="15" fill="#7a6a45">served first</text>
+
+      <!-- people queue -->
+      <g>
+        <!-- person template -->
+        <g transform="translate(40,80)">
+          <circle cx="0" cy="0" r="13" fill="#f4c98a" stroke="#c99a55" stroke-width="1.5"/>
+          <rect x="-12" y="14" width="24" height="34" rx="10" fill="#a9c8e8" stroke="#6f93b6" stroke-width="1.4"/>
+          <text x="0" y="72" text-anchor="middle" font-family="Caveat, cursive" font-size="14" fill="#1f4e8c">1</text>
+        </g>
+        <g transform="translate(110,80)">
+          <circle cx="0" cy="0" r="13" fill="#f4c98a" stroke="#c99a55" stroke-width="1.5"/>
+          <rect x="-12" y="14" width="24" height="34" rx="10" fill="#b8e0c2" stroke="#6fa882" stroke-width="1.4"/>
+          <text x="0" y="72" text-anchor="middle" font-family="Caveat, cursive" font-size="14" fill="#1f4e8c">2</text>
+        </g>
+        <g transform="translate(180,80)">
+          <circle cx="0" cy="0" r="13" fill="#f4c98a" stroke="#c99a55" stroke-width="1.5"/>
+          <rect x="-12" y="14" width="24" height="34" rx="10" fill="#ffd6e8" stroke="#c07fa2" stroke-width="1.4"/>
+          <text x="0" y="72" text-anchor="middle" font-family="Caveat, cursive" font-size="14" fill="#1f4e8c">3</text>
+        </g>
+        <g transform="translate(250,80)">
+          <circle cx="0" cy="0" r="13" fill="#f4c98a" stroke="#c99a55" stroke-width="1.5"/>
+          <rect x="-12" y="14" width="24" height="34" rx="10" fill="#ffe8b5" stroke="#c9a24a" stroke-width="1.4"/>
+          <text x="0" y="72" text-anchor="middle" font-family="Caveat, cursive" font-size="14" fill="#1f4e8c">4</text>
+        </g>
+        <g transform="translate(320,80)">
+          <circle cx="0" cy="0" r="13" fill="#f4c98a" stroke="#c99a55" stroke-width="1.5"/>
+          <rect x="-12" y="14" width="24" height="34" rx="10" fill="#d7c9f5" stroke="#8f7fc0" stroke-width="1.4"/>
+          <text x="0" y="72" text-anchor="middle" font-family="Caveat, cursive" font-size="14" fill="#1f4e8c">5</text>
+        </g>
+      </g>
+
+      <!-- arrow front -->
+      <path d="M45 40 L335 40" fill="none" stroke="#b3372f" stroke-width="2.5" stroke-dasharray="6 5"/>
+      <polygon points="335,40 326,35 326,45" fill="#b3372f"/>
+      <text x="190" y="30" text-anchor="middle" font-family="Caveat, cursive" font-size="19" fill="#b3372f">served in arrival order →</text>
+      <text x="25" y="140" font-family="Caveat, cursive" font-size="17" fill="#1f4e8c">front</text>
+      <text x="320" y="140" font-family="Caveat, cursive" font-size="17" fill="#1f4e8c">back</text>
+    </svg>
+    <div class="cap"><b>Queue = railway ticket counter.</b> Whoever joined <b>first</b> is served <b>first</b>; newcomers join at the <b>back</b>.</div>
+  </div>
+
+  <table class="dry">
+    <thead>
+      <tr><th></th><th>Stack</th><th>Queue</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><b>Order</b></td><td>LIFO — last in, first out</td><td>FIFO — first in, first out</td></tr>
+      <tr><td><b>Add</b></td><td><code class="inline">push</code> (top)</td><td><code class="inline">enqueue</code> (back)</td></tr>
+      <tr><td><b>Remove</b></td><td><code class="inline">pop</code> (top)</td><td><code class="inline">dequeue</code> (front)</td></tr>
+      <tr><td><b>Look</b></td><td><code class="inline">peek</code> (top)</td><td><code class="inline">peek</code> (front)</td></tr>
+      <tr><td><b>Trigger words</b></td><td>matching, nested, undo, most recent, next greater/smaller</td><td>level by level, in order of arrival, shortest steps, window</td></tr>
+    </tbody>
+  </table>
+
+  <div class="pnum">2</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">1.1</span> <span class="hl-y">Stack in JavaScript</span></h3>
+  <p>A plain array is a <b>perfect stack</b>: <code class="inline">push</code> and
+  <code class="inline">pop</code> work at the <b>end</b> in <b>O(1)</b>.</p>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">stack.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6</div>
+      <pre><span class="kw">const</span> st <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">;</span>
+st<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span><span class="num">10</span><span class="punc">)</span><span class="punc">;</span> st<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span><span class="num">20</span><span class="punc">)</span><span class="punc">;</span> st<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span><span class="num">30</span><span class="punc">)</span><span class="punc">;</span> <span class="cm">// [10, 20, 30]</span>
+st<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span><span class="punc">;</span>                          <span class="cm">// 30 → [10, 20]</span>
+st<span class="punc">[</span>st<span class="punc">.</span>length <span class="op">-</span> <span class="num">1</span><span class="punc">]</span><span class="punc">;</span>                <span class="cm">// peek → 20</span>
+st<span class="punc">.</span>length <span class="op">===</span> <span class="num">0</span><span class="punc">;</span>                     <span class="cm">// isEmpty → false</span></pre>
+    </div>
+  </div>
+
+  <table class="dry">
+    <thead><tr><th>Operation</th><th>Stack after</th><th>Returns</th></tr></thead>
+    <tbody>
+      <tr><td>push 10</td><td>[10]</td><td>—</td></tr>
+      <tr><td>push 20</td><td>[10, 20]</td><td>—</td></tr>
+      <tr><td>push 30</td><td>[10, 20, 30]</td><td>—</td></tr>
+      <tr><td>pop</td><td>[10, 20]</td><td>30</td></tr>
+      <tr><td>peek</td><td>[10, 20]</td><td>20</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="qnum">1.2</span> <span class="hl-b">Queue in JavaScript — the <code class="inline">shift()</code> trap</span></h3>
+
+  <p><code class="inline">arr.shift()</code> removes the front, but <b>every remaining element
+  must move one place left</b>: <b>O(n)</b>. Inside a BFS loop over <b>10⁵ nodes</b> that
+  silently becomes <span class="red">O(n²)</span>.</p>
+
+  <!-- ILLUSTRATION: shift vs head pointer -->
+  <div class="illustration">
+    <svg viewBox="0 0 480 210" width="480" height="210" role="img" aria-label="shift vs head pointer">
+      <!-- LEFT: shift -->
+      <text x="20" y="22" font-family="Caveat, cursive" font-size="19" fill="#b3372f" font-weight="700">shift() — everyone steps forward</text>
+      <g>
+        <rect x="20" y="36" width="46" height="36" rx="6" fill="#ffd6e8" stroke="#c07fa2" stroke-width="1.6"/>
+        <text x="43" y="60" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#6b2447">A</text>
+        <rect x="74" y="36" width="46" height="36" rx="6" fill="#a9c8e8" stroke="#6f93b6" stroke-width="1.6"/>
+        <text x="97" y="60" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#17375f">B</text>
+        <rect x="128" y="36" width="46" height="36" rx="6" fill="#b8e0c2" stroke="#6fa882" stroke-width="1.6"/>
+        <text x="151" y="60" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#23502a">C</text>
+        <rect x="182" y="36" width="46" height="36" rx="6" fill="#ffe8b5" stroke="#c9a24a" stroke-width="1.6"/>
+        <text x="205" y="60" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#6b4a10">D</text>
+      </g>
+      <text x="20" y="96" font-family="Caveat, cursive" font-size="17" fill="#9c2f2a">after shift():</text>
+      <g>
+        <rect x="20" y="106" width="46" height="36" rx="6" fill="#a9c8e8" stroke="#6f93b6" stroke-width="1.6"/>
+        <text x="43" y="130" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#17375f">B</text>
+        <rect x="74" y="106" width="46" height="36" rx="6" fill="#b8e0c2" stroke="#6fa882" stroke-width="1.6"/>
+        <text x="97" y="130" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#23502a">C</text>
+        <rect x="128" y="106" width="46" height="36" rx="6" fill="#ffe8b5" stroke="#c9a24a" stroke-width="1.6"/>
+        <text x="151" y="130" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#6b4a10">D</text>
+        <text x="186" y="130" font-family="Caveat, cursive" font-size="15" fill="#b3372f">← moved</text>
+      </g>
+      <text x="20" y="176" font-family="Kalam, cursive" font-size="14" fill="#9c2f2a">O(n) per shift — B moves!</text>
+      <text x="20" y="196" font-family="Caveat, cursive" font-size="16" fill="#9c2f2a">😰 BFS becomes O(n²)</text>
+
+      <!-- divider -->
+      <line x1="250" y1="16" x2="250" y2="196" stroke="#b9c6dc" stroke-width="2" stroke-dasharray="4 4"/>
+
+      <!-- RIGHT: head pointer -->
+      <text x="266" y="22" font-family="Caveat, cursive" font-size="19" fill="#2f6b3a" font-weight="700">head pointer — nobody moves</text>
+      <g>
+        <rect x="266" y="36" width="46" height="36" rx="6" fill="#e7eefb" stroke="#b9c6dc" stroke-width="1.6"/>
+        <text x="289" y="60" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#9aa9c4">A</text>
+        <rect x="320" y="36" width="46" height="36" rx="6" fill="#a9c8e8" stroke="#6f93b6" stroke-width="1.6"/>
+        <text x="343" y="60" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#17375f">B</text>
+        <rect x="374" y="36" width="46" height="36" rx="6" fill="#b8e0c2" stroke="#6fa882" stroke-width="1.6"/>
+        <text x="397" y="60" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#23502a">C</text>
+        <rect x="428" y="36" width="46" height="36" rx="6" fill="#ffe8b5" stroke="#c9a24a" stroke-width="1.6"/>
+        <text x="451" y="60" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#6b4a10">D</text>
+      </g>
+      <!-- head arrow -->
+      <path d="M343 88 L343 78" fill="none" stroke="#2f6b3a" stroke-width="2.4"/>
+      <polygon points="343,78 338,84 348,84" fill="#2f6b3a"/>
+      <text x="343" y="104" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#2f6b3a">head</text>
+
+      <text x="266" y="150" font-family="Kalam, cursive" font-size="14" fill="#2f6b3a">O(1) per dequeue — nothing moves!</text>
+      <text x="266" y="172" font-family="Caveat, cursive" font-size="16" fill="#2f6b3a">😎 BFS stays O(n)</text>
+      <text x="266" y="194" font-family="Caveat, cursive" font-size="15" fill="#4a7fbf">token display just moves its number</text>
+    </svg>
+    <div class="cap"><b>The queue where everyone steps forward (shift) vs a token display that just moves to the next number (head pointer). The second is instant.</b></div>
+  </div>
+
+  <h3><span class="qnum">1.3</span> <span class="hl-g">Deque (double-ended queue)</span></h3>
+  <p>A <b>deque</b> adds and removes at <b>both ends</b> — it's what the sliding-window
+  maximum uses (<b>section 4</b>). In interviews a plain array with
+  <code class="inline">push</code>, <code class="inline">pop</code>, and a
+  <code class="inline">head</code> index (or <code class="inline">shift</code> for small
+  inputs) is accepted; <span class="red">say out loud that shift is O(n)</span>.</p>
+
+  <h3><span class="qnum">1.4</span> <span class="hl-o">Complexity summary</span></h3>
+
+  <table class="dry">
+    <thead><tr><th>Operation</th><th>Stack (array)</th><th>Queue (head pointer)</th><th>Queue with shift()</th></tr></thead>
+    <tbody>
+      <tr><td>Add</td><td>O(1)</td><td>O(1)</td><td>O(1)</td></tr>
+      <tr><td>Remove</td><td>O(1)</td><td>O(1)</td><td class="no">O(n)</td></tr>
+      <tr><td>Peek</td><td>O(1)</td><td>O(1)</td><td>O(1)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sticky green">
+    <b>Choose right 🧠</b><br>
+    <b>Stack</b> → matching, undo, most-recent.<br>
+    <b>Queue</b> → BFS, scheduling, window.<br>
+    <u>Never shift() in a loop.</u>
+  </div>
+
+  <div class="pnum">3</div>
+</section>
+
+<!-- ============================ SECTION 2 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>2. Classic Stack Problems</h2>
+    <p><span class="hl-y">Valid Parentheses · Min Stack</span></p>
+  </div>
+
+  <h3><span class="qnum">2.1</span> <span class="hl-y">Valid Parentheses (LC 20)</span></h3>
+  <div class="dryrun">
+    <b>Input:</b> "{{()}}" → <b>true</b> ; "{{)}}" → <b>false</b> ; "(" → <b>false</b>
+  </div>
+
+  <!-- ILLUSTRATION: nested gift boxes -->
+  <div class="illustration">
+    <svg viewBox="0 0 440 220" width="440" height="220" role="img" aria-label="Nested gift boxes">
+      <!-- outer box (open) -->
+      <rect x="40" y="60" width="360" height="140" rx="10" fill="#ffe8b5" stroke="#c9a24a" stroke-width="2.5"/>
+      <rect x="30" y="40" width="380" height="26" rx="6" fill="#ffd47a" stroke="#c9a24a" stroke-width="2.5"/>
+      <!-- ribbon vertical -->
+      <rect x="210" y="40" width="22" height="160" fill="#e59aa6" opacity=".7"/>
+      <!-- middle box -->
+      <rect x="90" y="98" width="260" height="102" rx="8" fill="#ffd6e8" stroke="#c07fa2" stroke-width="2.2"/>
+      <rect x="82" y="82" width="276" height="22" rx="5" fill="#ffb7d0" stroke="#c07fa2" stroke-width="2.2"/>
+      <rect x="210" y="82" width="20" height="118" fill="#c07fa2" opacity=".55"/>
+      <!-- inner box -->
+      <rect x="150" y="132" width="140" height="68" rx="6" fill="#cfe6ff" stroke="#4a7fbf" stroke-width="2.2"/>
+      <rect x="144" y="118" width="152" height="18" rx="4" fill="#a9c8e8" stroke="#4a7fbf" stroke-width="2.2"/>
+      <rect x="212" y="118" width="16" height="82" fill="#4a7fbf" opacity=".5"/>
+
+      <!-- labels -->
+      <text x="225" y="24" text-anchor="middle" font-family="Caveat, cursive" font-size="19" fill="#b3372f">open, then close inner first</text>
+      <text x="60" y="55" font-family="Caveat, cursive" font-size="16" fill="#8a5a12">{</text>
+      <text x="392" y="55" font-family="Caveat, cursive" font-size="16" fill="#8a5a12">}</text>
+      <text x="102" y="94" font-family="Caveat, cursive" font-size="16" fill="#8a2f56">(</text>
+      <text x="352" y="94" font-family="Caveat, cursive" font-size="16" fill="#8a2f56">)</text>
+      <text x="160" y="128" font-family="Caveat, cursive" font-size="16" fill="#1f4e8c">[</text>
+      <text x="284" y="128" font-family="Caveat, cursive" font-size="16" fill="#1f4e8c">]</text>
+    </svg>
+    <div class="cap"><b>Nested gift boxes.</b> You can only close the box you opened <b>most recently</b>. "Most recent" = <b>top of a stack</b>.</div>
+  </div>
+
+  <div class="think">
+    <b>Think first:</b><br>
+    • When you see a <b>closing bracket</b>, which opening bracket <b>must</b> it match?<br>
+    • What <b>three situations</b> make the string invalid?
+  </div>
+
+  <h4>Approach 1 — Brute force: keep deleting matched pairs</h4>
+  <p><b>Idea:</b> a valid string always contains an adjacent pair "()", "[]" or "{}"
+  somewhere. Delete pairs until nothing changes; valid strings shrink to "".</p>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">valid_parentheses_brute.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7</div>
+      <pre><span class="kw">function</span> <span class="fn">isValidBrute</span><span class="punc">(</span>s<span class="punc">)</span> <span class="punc">{</span>
+  <span class="kw">let</span> prev<span class="punc">;</span>
+  <span class="kw">do</span> <span class="punc">{</span>
+    prev <span class="op">=</span> s<span class="punc">;</span>
+    s <span class="op">=</span> s<span class="punc">.</span><span class="fn">replace</span><span class="punc">(</span><span class="str">"()"</span><span class="punc">,</span> <span class="str">""</span><span class="punc">)</span><span class="punc">.</span><span class="fn">replace</span><span class="punc">(</span><span class="str">"[]"</span><span class="punc">,</span> <span class="str">""</span><span class="punc">)</span><span class="punc">.</span><span class="fn">replace</span><span class="punc">(</span><span class="str">"{}"</span><span class="punc">,</span> <span class="str">""</span><span class="punc">)</span><span class="punc">;</span>
+  <span class="punc">}</span> <span class="kw">while</span> <span class="punc">(</span>s <span class="op">!==</span> prev<span class="punc">)</span><span class="punc">;</span>
+  <span class="kw">return</span> s <span class="op">===</span> <span class="str">""</span><span class="punc">;</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <table class="dry">
+    <thead><tr><th>Round</th><th>String before</th><th>Pair removed</th><th>String after</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>{{()}}</td><td>()</td><td>{{}}</td></tr>
+      <tr><td>2</td><td>{{}}</td><td>{}</td><td>{}</td></tr>
+      <tr><td>3</td><td>{}</td><td>{}</td><td>""</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    Time <b>O(n²)</b> in the worst case — each pass scans the whole string.
+  </div>
+
+  <h4>Approach 2 — Optimal: stack of openings</h4>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">valid_parentheses.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12</div>
+      <pre><span class="kw">function</span> <span class="fn">isValid</span><span class="punc">(</span>s<span class="punc">)</span> <span class="punc">{</span>
+  <span class="kw">if</span> <span class="punc">(</span>s<span class="punc">.</span>length <span class="op">%</span> <span class="num">2</span> <span class="op">!==</span> <span class="num">0</span><span class="punc">)</span> <span class="kw">return</span> <span class="kw">false</span><span class="punc">;</span>      <span class="cm">// odd length → impossible</span>
+  <span class="kw">const</span> pair <span class="op">=</span> <span class="punc">{</span> <span class="str">")"</span><span class="punc">:</span> <span class="str">"("</span><span class="punc">,</span> <span class="str">"]"</span><span class="punc">:</span> <span class="str">"["</span><span class="punc">,</span> <span class="str">"}"</span><span class="punc">:</span> <span class="str">"{"</span> <span class="punc">}</span><span class="punc">;</span>
+  <span class="kw">const</span> st <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">;</span>
+  <span class="kw">for</span> <span class="punc">(</span><span class="kw">const</span> ch <span class="kw">of</span> s<span class="punc">)</span> <span class="punc">{</span>
+    <span class="kw">if</span> <span class="punc">(</span>ch <span class="op">===</span> <span class="str">"("</span> <span class="op">||</span> ch <span class="op">===</span> <span class="str">"["</span> <span class="op">||</span> ch <span class="op">===</span> <span class="str">"{"</span><span class="punc">)</span>
+      st<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span>ch<span class="punc">)</span><span class="punc">;</span>
+    <span class="kw">else if</span> <span class="punc">(</span>st<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span> <span class="op">!==</span> pair<span class="punc">[</span>ch<span class="punc">]</span><span class="punc">)</span>
+      <span class="kw">return</span> <span class="kw">false</span><span class="punc">;</span>                           <span class="cm">// wrong match or empty stack</span>
+  <span class="punc">}</span>
+  <span class="kw">return</span> st<span class="punc">.</span>length <span class="op">===</span> <span class="num">0</span><span class="punc">;</span>                          <span class="cm">// leftovers → invalid</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <table class="dry">
+    <thead><tr><th>Input</th><th>ch</th><th>Action</th><th>Stack after</th></tr></thead>
+    <tbody>
+      <tr><td>"("</td><td>(</td><td>push, push</td><td>( (</td></tr>
+      <tr><td></td><td>—</td><td>stack not empty → false</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity">
+    <b>Complexity:</b> O(n) time, O(n) space.
+  </div>
+
+  <div class="note">
+    <b>The three invalid cases:</b> ① wrong match, ② closing with an empty stack
+    (<code class="inline">pop()</code> gives <code class="inline">undefined</code>),
+    ③ leftovers at the end.<br>
+    <b>Quick win:</b> an odd-length string can never be valid —
+    <span class="hl-y">return false immediately</span>.
+  </div>
+
+  <div class="pnum">4</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">2.2</span> <span class="hl-b">Min Stack (LC 155)</span></h3>
+  <p>Design a stack with <code class="inline">push</code>, <code class="inline">pop</code>,
+  <code class="inline">top</code> and <code class="inline">getMin</code> — all
+  <b>O(1)</b>.</p>
+
+  <!-- ILLUSTRATION: sticky note on each plate -->
+  <div class="illustration">
+    <svg viewBox="0 0 440 230" width="440" height="230" role="img" aria-label="Sticky note on each plate">
+      <!-- plates with sticky notes -->
+      <g>
+        <!-- plate 1 (bottom) -->
+        <ellipse cx="180" cy="196" rx="110" ry="12" fill="#e7eefb" stroke="#9fb0cc" stroke-width="1.6"/>
+        <ellipse cx="180" cy="180" rx="110" ry="12" fill="#f4f8ff" stroke="#9fb0cc" stroke-width="1.6"/>
+        <rect x="260" y="162" width="90" height="30" rx="4" fill="#fff8a8" stroke="#d9c04a" stroke-width="1.6" transform="rotate(-4 305 177)"/>
+        <text x="305" y="182" text-anchor="middle" font-family="Kalam, cursive" font-size="13" fill="#5a4a10">min = −2</text>
+
+        <!-- plate 2 -->
+        <ellipse cx="180" cy="158" rx="110" ry="12" fill="#e7eefb" stroke="#9fb0cc" stroke-width="1.6"/>
+        <ellipse cx="180" cy="142" rx="110" ry="12" fill="#f4f8ff" stroke="#9fb0cc" stroke-width="1.6"/>
+        <rect x="260" y="124" width="90" height="30" rx="4" fill="#fff8a8" stroke="#d9c04a" stroke-width="1.6" transform="rotate(3 305 139)"/>
+        <text x="305" y="144" text-anchor="middle" font-family="Kalam, cursive" font-size="13" fill="#5a4a10">min = −2</text>
+
+        <!-- plate 3 (top) -->
+        <ellipse cx="180" cy="120" rx="110" ry="12" fill="#e7eefb" stroke="#9fb0cc" stroke-width="1.6"/>
+        <ellipse cx="180" cy="104" rx="110" ry="12" fill="#fff7d6" stroke="#b3372f" stroke-width="2.2"/>
+        <rect x="260" y="86" width="90" height="30" rx="4" fill="#ffd6e8" stroke="#b3372f" stroke-width="2" transform="rotate(-2 305 101)"/>
+        <text x="305" y="106" text-anchor="middle" font-family="Kalam, cursive" font-size="13" fill="#6b2447">min = −3</text>
+
+        <!-- labels -->
+        <text x="80" y="112" font-family="Caveat, cursive" font-size="17" fill="#b3372f">−3</text>
+        <text x="80" y="150" font-family="Caveat, cursive" font-size="17" fill="#1f4e8c">0</text>
+        <text x="80" y="188" font-family="Caveat, cursive" font-size="17" fill="#1f4e8c">−2</text>
+
+        <!-- arrow pointing to top note -->
+        <path d="M420 60 q-30 30 -50 40" fill="none" stroke="#b3372f" stroke-width="2.2" stroke-dasharray="4 4"/>
+        <polygon points="370,100 380,96 378,106" fill="#b3372f"/>
+        <text x="352" y="52" font-family="Caveat, cursive" font-size="17" fill="#b3372f">read the top note</text>
+      </g>
+    </svg>
+    <div class="cap"><b>The sticky note on each plate.</b> Every plate carries <i>"the smallest plate in the pile, including me"</i>. Read the top note for <b>getMin</b> in O(1).</div>
+  </div>
+
+  <div class="think">
+    <b>Think first:</b> after popping the current minimum, how would you know the
+    <b>previous minimum</b> without re-scanning?
+  </div>
+
+  <h4>Approach 1 — Brute force: scan on getMin</h4>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">min_stack_brute.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8</div>
+      <pre><span class="kw">class</span> <span class="fn">MinStackBrute</span> <span class="punc">{</span>
+  <span class="fn">constructor</span><span class="punc">(</span><span class="punc">)</span> <span class="punc">{</span> <span class="kw">this</span><span class="punc">.</span>st <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">;</span> <span class="punc">}</span>
+  <span class="fn">push</span><span class="punc">(</span>x<span class="punc">)</span> <span class="punc">{</span> <span class="kw">this</span><span class="punc">.</span>st<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span>x<span class="punc">)</span><span class="punc">;</span> <span class="punc">}</span>
+  <span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span>  <span class="punc">{</span> <span class="kw">this</span><span class="punc">.</span>st<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span><span class="punc">;</span> <span class="punc">}</span>
+  <span class="fn">top</span><span class="punc">(</span><span class="punc">)</span>  <span class="punc">{</span> <span class="kw">return</span> <span class="kw">this</span><span class="punc">.</span>st<span class="punc">[</span><span class="kw">this</span><span class="punc">.</span>st<span class="punc">.</span>length <span class="op">-</span> <span class="num">1</span><span class="punc">]</span><span class="punc">;</span> <span class="punc">}</span>
+  <span class="fn">getMin</span><span class="punc">(</span><span class="punc">)</span> <span class="punc">{</span> <span class="kw">return</span> Math<span class="punc">.</span><span class="fn">min</span><span class="punc">(</span><span class="op">...</span><span class="kw">this</span><span class="punc">.</span>st<span class="punc">)</span><span class="punc">;</span> <span class="punc">}</span> <span class="cm">// O(n) every time</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <div class="warn">
+    <code class="inline">getMin</code> is <b>O(n)</b> (and <code class="inline">Math.min(...arr)</code>
+    can even <b>throw</b> for very large arrays).
+  </div>
+
+  <h4>Approach 2 — Optimal: store [value, minSoFar] pairs</h4>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">min_stack.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9</div>
+      <pre><span class="kw">class</span> <span class="fn">MinStack</span> <span class="punc">{</span>
+  <span class="fn">constructor</span><span class="punc">(</span><span class="punc">)</span> <span class="punc">{</span> <span class="kw">this</span><span class="punc">.</span>st <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">;</span> <span class="punc">}</span>
+  <span class="fn">push</span><span class="punc">(</span>x<span class="punc">)</span> <span class="punc">{</span>
+    <span class="kw">const</span> min <span class="op">=</span> <span class="kw">this</span><span class="punc">.</span>st<span class="punc">.</span>length <span class="op">?</span> Math<span class="punc">.</span><span class="fn">min</span><span class="punc">(</span>x<span class="punc">,</span> <span class="kw">this</span><span class="punc">.</span><span class="fn">getMin</span><span class="punc">(</span><span class="punc">)</span><span class="punc">)</span> <span class="op">:</span> x<span class="punc">;</span>
+    <span class="kw">this</span><span class="punc">.</span>st<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span><span class="punc">[</span>x<span class="punc">,</span> min<span class="punc">]</span><span class="punc">)</span><span class="punc">;</span>          <span class="cm">// the sticky note</span>
+  <span class="punc">}</span>
+  <span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span>    <span class="punc">{</span> <span class="kw">this</span><span class="punc">.</span>st<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span><span class="punc">;</span> <span class="punc">}</span>
+  <span class="fn">top</span><span class="punc">(</span><span class="punc">)</span>    <span class="punc">{</span> <span class="kw">return</span> <span class="kw">this</span><span class="punc">.</span>st<span class="punc">[</span><span class="kw">this</span><span class="punc">.</span>st<span class="punc">.</span>length <span class="op">-</span> <span class="num">1</span><span class="punc">]</span><span class="punc">[</span><span class="num">0</span><span class="punc">]</span><span class="punc">;</span> <span class="punc">}</span>
+  <span class="fn">getMin</span><span class="punc">(</span><span class="punc">)</span> <span class="punc">{</span> <span class="kw">return</span> <span class="kw">this</span><span class="punc">.</span>st<span class="punc">[</span><span class="kw">this</span><span class="punc">.</span>st<span class="punc">.</span>length <span class="op">-</span> <span class="num">1</span><span class="punc">]</span><span class="punc">[</span><span class="num">1</span><span class="punc">]</span><span class="punc">;</span> <span class="punc">}</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Operation</th><th>Stack [value, minSoFar] (bottom → top)</th><th>Returns</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>push −2</td><td>[−2, −2]</td><td>—</td></tr>
+      <tr><td>push 0</td><td>[−2, −2] [0, −2]</td><td>—</td></tr>
+      <tr><td>push −3</td><td>[−2, −2] [0, −2] [−3, −3]</td><td>—</td></tr>
+      <tr><td>getMin</td><td>same</td><td><b>−3</b></td></tr>
+      <tr><td>pop</td><td>[−2, −2] [0, −2]</td><td>—</td></tr>
+      <tr><td>top</td><td>same</td><td>0</td></tr>
+      <tr><td>getMin</td><td>same</td><td><b>−2</b> (the old minimum is back automatically)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity">
+    All operations <b>O(1)</b>, space <b>O(n)</b>. A space-saving variant keeps a
+    <b>second stack</b> that only stores a new minimum when it <b>changes</b>.
+  </div>
+
+  <div class="sticky blue">
+    <b>Sticky-note trick 📝</b><br>
+    Each pushed element carries the <u>min so far</u>.<br>
+    Pop it — the previous min is already on the new top.
+  </div>
+
+  <div class="pnum">5</div>
+</section>
+
+<!-- ============================ SECTION 3 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>3. Monotonic Stack</h2>
+    <p><span class="hl-b">Nearest greater element</span></p>
+  </div>
+
+  <!-- ILLUSTRATION: people looking right -->
+  <div class="illustration">
+    <svg viewBox="0 0 460 200" width="460" height="200" role="img" aria-label="People looking right for someone taller">
+      <!-- ground line -->
+      <line x1="20" y1="160" x2="440" y2="160" stroke="#b7a077" stroke-width="3"/>
+
+      <!-- person heights -->
+      <g>
+        <!-- 2 -->
+        <circle cx="70" cy="120" r="12" fill="#f4c98a" stroke="#c99a55" stroke-width="1.4"/>
+        <rect x="58" y="134" width="24" height="26" rx="8" fill="#a9c8e8" stroke="#6f93b6" stroke-width="1.4"/>
+        <text x="70" y="182" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#1f4e8c">2</text>
+        <!-- 1 -->
+        <circle cx="135" cy="132" r="12" fill="#f4c98a" stroke="#c99a55" stroke-width="1.4"/>
+        <rect x="123" y="146" width="24" height="14" rx="7" fill="#b8e0c2" stroke="#6fa882" stroke-width="1.4"/>
+        <text x="135" y="182" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#1f4e8c">1</text>
+        <!-- 2 -->
+        <circle cx="200" cy="120" r="12" fill="#f4c98a" stroke="#c99a55" stroke-width="1.4"/>
+        <rect x="188" y="134" width="24" height="26" rx="8" fill="#a9c8e8" stroke="#6f93b6" stroke-width="1.4"/>
+        <text x="200" y="182" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#1f4e8c">2</text>
+        <!-- 4 -->
+        <circle cx="280" cy="90" r="14" fill="#f4c98a" stroke="#c99a55" stroke-width="1.4"/>
+        <rect x="266" y="106" width="28" height="54" rx="10" fill="#ffd6e8" stroke="#c07fa2" stroke-width="1.6"/>
+        <text x="280" y="182" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#6b2447" font-weight="700">4</text>
+        <!-- 3 -->
+        <circle cx="355" cy="104" r="12" fill="#f4c98a" stroke="#c99a55" stroke-width="1.4"/>
+        <rect x="343" y="118" width="24" height="42" rx="8" fill="#ffe8b5" stroke="#c9a24a" stroke-width="1.4"/>
+        <text x="355" y="182" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#6b4a10">3</text>
+      </g>
+
+      <!-- eyes looking right arrows -->
+      <path d="M85 110 q30 10 55 20" fill="none" stroke="#b3372f" stroke-width="1.6" stroke-dasharray="3 3"/>
+      <path d="M150 125 q20 8 35 13" fill="none" stroke="#b3372f" stroke-width="1.6" stroke-dasharray="3 3"/>
+      <path d="M215 110 q30 10 50 22" fill="none" stroke="#b3372f" stroke-width="1.6" stroke-dasharray="3 3"/>
+
+      <text x="230" y="30" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#b3372f">everyone wants the first taller person ahead</text>
+      <text x="230" y="54" text-anchor="middle" font-family="Kalam, cursive" font-size="14" fill="#4a7fbf">short people behind a tall one are hidden forever → pop them</text>
+    </svg>
+    <div class="cap"><b>People in a line looking right.</b> Each wants the first taller person ahead. A short person behind a taller one is <b>hidden forever</b>, so throw them away.</div>
+  </div>
+
+  <p><span class="trigger">Trigger words</span> &nbsp;next greater, next smaller, previous
+  greater, <i>"how many days until"</i>, <i>"span"</i>,
+  <i>"first element to the right that…"</i>.</p>
+
+  <h3><span class="qnum">3.1</span> <span class="hl-y">Next Greater Element (classic)</span></h3>
+  <p>For each element, the <b>first greater element to its right</b>, or <b>−1</b>.</p>
+  <div class="dryrun">
+    <b>Input:</b> [2, 1, 2, 4, 3] → <b>[4, 2, 4, −1, −1]</b>
+  </div>
+
+  <div class="think">
+    <b>Think first:</b> brute force checks everything to the right. Scanning
+    <b>from the right</b>, which elements can <b>never be anyone's answer again</b>?
+  </div>
+
+  <h4>Approach 1 — Brute force: look right from every element</h4>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">next_greater_brute.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9</div>
+      <pre><span class="kw">function</span> <span class="fn">nextGreaterBrute</span><span class="punc">(</span>arr<span class="punc">)</span> <span class="punc">{</span>
+  <span class="kw">const</span> res <span class="op">=</span> <span class="kw">new</span> <span class="fn">Array</span><span class="punc">(</span>arr<span class="punc">.</span>length<span class="punc">)</span><span class="punc">.</span><span class="fn">fill</span><span class="punc">(</span><span class="op">-</span><span class="num">1</span><span class="punc">)</span><span class="punc">;</span>
+  <span class="kw">for</span> <span class="punc">(</span><span class="kw">let</span> i <span class="op">=</span> <span class="num">0</span><span class="punc">;</span> i <span class="op">&lt;</span> arr<span class="punc">.</span>length<span class="punc">;</span> i<span class="op">++</span><span class="punc">)</span>
+    <span class="kw">for</span> <span class="punc">(</span><span class="kw">let</span> j <span class="op">=</span> i <span class="op">+</span> <span class="num">1</span><span class="punc">;</span> j <span class="op">&lt;</span> arr<span class="punc">.</span>length<span class="punc">;</span> j<span class="op">++</span><span class="punc">)</span>
+      <span class="kw">if</span> <span class="punc">(</span>arr<span class="punc">[</span>j<span class="punc">]</span> <span class="op">&gt;</span> arr<span class="punc">[</span>i<span class="punc">]</span><span class="punc">)</span> <span class="punc">{</span>
+        res<span class="punc">[</span>i<span class="punc">]</span> <span class="op">=</span> arr<span class="punc">[</span>j<span class="punc">]</span><span class="punc">;</span> <span class="kw">break</span><span class="punc">;</span>
+      <span class="punc">}</span>
+  <span class="kw">return</span> res<span class="punc">;</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <table class="dry">
+    <thead><tr><th>i</th><th>arr[i]</th><th>Scans right</th><th>First greater</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>2</td><td>1, 2, 4</td><td class="yes">4</td></tr>
+      <tr><td>1</td><td>1</td><td>2</td><td class="yes">2</td></tr>
+      <tr><td>2</td><td>2</td><td>4</td><td class="yes">4</td></tr>
+      <tr><td>3</td><td>4</td><td>3</td><td class="no">−1</td></tr>
+      <tr><td>4</td><td>3</td><td>—</td><td class="no">−1</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    Worst case (a <b>decreasing array</b>) scans everything: <b>O(n²)</b>.
+  </div>
+
+  <h4>Approach 2 — Optimal: monotonic stack, scanning from the right</h4>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">next_greater.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10</div>
+      <pre><span class="kw">function</span> <span class="fn">nextGreater</span><span class="punc">(</span>arr<span class="punc">)</span> <span class="punc">{</span>
+  <span class="kw">const</span> res <span class="op">=</span> <span class="kw">new</span> <span class="fn">Array</span><span class="punc">(</span>arr<span class="punc">.</span>length<span class="punc">)</span><span class="punc">.</span><span class="fn">fill</span><span class="punc">(</span><span class="op">-</span><span class="num">1</span><span class="punc">)</span><span class="punc">,</span> st <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">;</span>
+  <span class="kw">for</span> <span class="punc">(</span><span class="kw">let</span> i <span class="op">=</span> arr<span class="punc">.</span>length <span class="op">-</span> <span class="num">1</span><span class="punc">;</span> i <span class="op">&gt;=</span> <span class="num">0</span><span class="punc">;</span> i<span class="op">--</span><span class="punc">)</span> <span class="punc">{</span>
+    <span class="kw">while</span> <span class="punc">(</span>st<span class="punc">.</span>length <span class="op">&amp;&amp;</span> st<span class="punc">[</span>st<span class="punc">.</span>length <span class="op">-</span> <span class="num">1</span><span class="punc">]</span> <span class="op">&lt;=</span> arr<span class="punc">[</span>i<span class="punc">]</span><span class="punc">)</span>
+      st<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span><span class="punc">;</span>                              <span class="cm">// hidden: discard</span>
+    <span class="kw">if</span> <span class="punc">(</span>st<span class="punc">.</span>length<span class="punc">)</span> res<span class="punc">[</span>i<span class="punc">]</span> <span class="op">=</span> st<span class="punc">[</span>st<span class="punc">.</span>length <span class="op">-</span> <span class="num">1</span><span class="punc">]</span><span class="punc">;</span>
+    st<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span>arr<span class="punc">[</span>i<span class="punc">]</span><span class="punc">)</span><span class="punc">;</span>
+  <span class="punc">}</span>
+  <span class="kw">return</span> res<span class="punc">;</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <table class="dry">
+    <thead>
+      <tr><th>i</th><th>arr[i]</th><th>Popped (&lt;= arr[i])</th><th>Top = answer</th><th>Stack after (bottom &gt; top)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>4</td><td>3</td><td>—</td><td>−1</td><td>[3]</td></tr>
+      <tr><td>3</td><td>4</td><td>3</td><td>−1</td><td>[4]</td></tr>
+      <tr><td>2</td><td>2</td><td>—</td><td>4</td><td>[4, 2]</td></tr>
+      <tr><td>1</td><td>1</td><td>—</td><td>2</td><td>[4, 2, 1]</td></tr>
+      <tr><td>0</td><td>2</td><td>1, 2</td><td>4</td><td>[4, 2]</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity">
+    <b>Result</b> [4, 2, 4, −1, −1]. Each element is <b>pushed once and popped at most
+    once</b> → <b>O(n)</b>, even with the inner while.
+  </div>
+
+  <div class="pnum">6</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">3.2</span> <span class="hl-b">Daily Temperatures (LC 739)</span></h3>
+  <p>Days to wait for a warmer day (0 if never).</p>
+  <div class="dryrun">
+    <b>Input:</b> [73, 74, 75, 71, 69, 72, 76, 73] → <b>[1, 1, 4, 2, 1, 1, 0, 0]</b>
+  </div>
+
+  <!-- ILLUSTRATION: waiting room -->
+  <div class="illustration">
+    <svg viewBox="0 0 460 200" width="460" height="200" role="img" aria-label="Waiting room for warmer days">
+      <!-- room -->
+      <rect x="20" y="30" width="330" height="140" rx="10" fill="#f4f8ff" stroke="#b9c6dc" stroke-width="2"/>
+      <text x="185" y="24" text-anchor="middle" font-family="Caveat, cursive" font-size="18" fill="#4a7fbf">waiting room (the stack)</text>
+
+      <!-- waiting days sitting -->
+      <g>
+        <rect x="40" y="70" width="60" height="60" rx="8" fill="#cfe6ff" stroke="#4a7fbf" stroke-width="1.8"/>
+        <text x="70" y="94" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#17375f">day 3</text>
+        <text x="70" y="116" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#17375f">71°</text>
+
+        <rect x="115" y="70" width="60" height="60" rx="8" fill="#cfe6ff" stroke="#4a7fbf" stroke-width="1.8"/>
+        <text x="145" y="94" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#17375f">day 4</text>
+        <text x="145" y="116" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#17375f">69°</text>
+
+        <rect x="190" y="70" width="60" height="60" rx="8" fill="#ffd6e8" stroke="#c07fa2" stroke-width="1.8"/>
+        <text x="220" y="94" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#6b2447">day 5</text>
+        <text x="220" y="116" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#6b2447">72°</text>
+
+        <rect x="265" y="70" width="60" height="60" rx="8" fill="#b8e0c2" stroke="#6fa882" stroke-width="1.8"/>
+        <text x="295" y="94" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#23502a">day 6</text>
+        <text x="295" y="116" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#23502a">76°</text>
+      </g>
+
+      <!-- warm day entering -->
+      <g>
+        <circle cx="405" cy="90" r="20" fill="#ffd479" stroke="#c9a24a" stroke-width="2"/>
+        <text x="405" y="97" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#6b4a10">76°</text>
+        <text x="405" y="126" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#b3372f">warm day</text>
+        <text x="405" y="148" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#b3372f">arrives</text>
+      </g>
+
+      <!-- arrows out -->
+      <path d="M370 100 L385 100" stroke="#b3372f" stroke-width="2.2"/>
+      <polygon points="385,100 378,95 378,105" fill="#b3372f"/>
+      <text x="400" y="170" text-anchor="middle" font-family="Kalam, cursive" font-size="13" fill="#9c2f2a">colder ones leave</text>
+    </svg>
+    <div class="cap"><b>The waiting room.</b> Each cold day sits in the room. When a warm day walks in, every waiting day that's <b>colder</b> gets its answer and leaves.</div>
+  </div>
+
+  <h4>Approach 1 — Brute force: for each day, walk forward</h4>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">daily_brute.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11</div>
+      <pre><span class="kw">function</span> <span class="fn">dailyBrute</span><span class="punc">(</span>t<span class="punc">)</span> <span class="punc">{</span>
+  <span class="kw">const</span> ans <span class="op">=</span> <span class="kw">new</span> <span class="fn">Array</span><span class="punc">(</span>t<span class="punc">.</span>length<span class="punc">)</span><span class="punc">.</span><span class="fn">fill</span><span class="punc">(</span><span class="num">0</span><span class="punc">)</span><span class="punc">;</span>
+  <span class="kw">for</span> <span class="punc">(</span><span class="kw">let</span> i <span class="op">=</span> <span class="num">0</span><span class="punc">;</span> i <span class="op">&lt;</span> t<span class="punc">.</span>length<span class="punc">;</span> i<span class="op">++</span><span class="punc">)</span> <span class="punc">{</span>
+    <span class="kw">for</span> <span class="punc">(</span><span class="kw">let</span> j <span class="op">=</span> i <span class="op">+</span> <span class="num">1</span><span class="punc">;</span> j <span class="op">&lt;</span> t<span class="punc">.</span>length<span class="punc">;</span> j<span class="op">++</span><span class="punc">)</span> <span class="punc">{</span>
+      <span class="kw">if</span> <span class="punc">(</span>t<span class="punc">[</span>j<span class="punc">]</span> <span class="op">&gt;</span> t<span class="punc">[</span>i<span class="punc">]</span><span class="punc">)</span> <span class="punc">{</span>
+        ans<span class="punc">[</span>i<span class="punc">]</span> <span class="op">=</span> j <span class="op">-</span> i<span class="punc">;</span> <span class="kw">break</span><span class="punc">;</span>
+      <span class="punc">}</span>
+    <span class="punc">}</span>
+  <span class="punc">}</span>
+  <span class="kw">return</span> ans<span class="punc">;</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <div class="dryrun">
+    <b>Day 2 (75)</b> walks 71, 69, 72, 76 ⇒ found at day 6 ⇒ <b>4</b>.
+    <b>O(n²)</b> in the worst case (temperatures falling every day).
+  </div>
+
+  <h4>Approach 2 — Optimal: stack of waiting indices, scanning left to right</h4>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">daily_temperatures.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10</div>
+      <pre><span class="kw">function</span> <span class="fn">dailyTemperatures</span><span class="punc">(</span>t<span class="punc">)</span> <span class="punc">{</span>
+  <span class="kw">const</span> ans <span class="op">=</span> <span class="kw">new</span> <span class="fn">Array</span><span class="punc">(</span>t<span class="punc">.</span>length<span class="punc">)</span><span class="punc">.</span><span class="fn">fill</span><span class="punc">(</span><span class="num">0</span><span class="punc">)</span><span class="punc">,</span> st <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">;</span> <span class="cm">// stack of indices</span>
+  <span class="kw">for</span> <span class="punc">(</span><span class="kw">let</span> i <span class="op">=</span> <span class="num">0</span><span class="punc">;</span> i <span class="op">&lt;</span> t<span class="punc">.</span>length<span class="punc">;</span> i<span class="op">++</span><span class="punc">)</span> <span class="punc">{</span>
+    <span class="kw">while</span> <span class="punc">(</span>st<span class="punc">.</span>length <span class="op">&amp;&amp;</span> t<span class="punc">[</span>i<span class="punc">]</span> <span class="op">&gt;</span> t<span class="punc">[</span>st<span class="punc">[</span>st<span class="punc">.</span>length <span class="op">-</span> <span class="num">1</span><span class="punc">]</span><span class="punc">]</span><span class="punc">)</span> <span class="punc">{</span>
+      <span class="kw">const</span> j <span class="op">=</span> st<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span><span class="punc">;</span>
+      ans<span class="punc">[</span>j<span class="punc">]</span> <span class="op">=</span> i <span class="op">-</span> j<span class="punc">;</span>            <span class="cm">// day j waited i - j</span>
+    <span class="punc">}</span>
+    st<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span>i<span class="punc">)</span><span class="punc">;</span>
+  <span class="punc">}</span>
+  <span class="kw">return</span> ans<span class="punc">;</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <table class="dry">
+    <thead>
+      <tr><th>i</th><th>t[i]</th><th>Answered (index: wait)</th><th>Waiting room (indices)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>73</td><td>—</td><td>[0]</td></tr>
+      <tr><td>1</td><td>74</td><td>0:1</td><td>[1]</td></tr>
+      <tr><td>2</td><td>75</td><td>1:1</td><td>[2]</td></tr>
+      <tr><td>3</td><td>71</td><td>—</td><td>[2, 3]</td></tr>
+      <tr><td>4</td><td>69</td><td>—</td><td>[2, 3, 4]</td></tr>
+      <tr><td>5</td><td>72</td><td>4:1, 3:2</td><td>[2, 5]</td></tr>
+      <tr><td>6</td><td>76</td><td>5:1, 2:4</td><td>[6]</td></tr>
+      <tr><td>7</td><td>73</td><td>—</td><td>[6, 7] → both stay 0</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity">
+    <b>Complexity:</b> O(n) time, O(n) space. <b>Store indices, not values</b>, when
+    the answer is a <b>distance</b>.
+  </div>
+
+  <div class="pnum">7</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">3.3</span> <span class="hl-o">The four monotonic-stack variants</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Want</th><th>Scan direction</th><th>Pop while top is…</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Next greater</td><td>right → left</td><td>≤ current</td></tr>
+      <tr><td>Next smaller</td><td>right → left</td><td>≥ current</td></tr>
+      <tr><td>Previous greater</td><td>left → right</td><td>≤ current</td></tr>
+      <tr><td>Previous smaller</td><td>left → right</td><td>≥ current</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sticky pink">
+    <b>Monotonic stack in one line 📈</b><br>
+    Pop everything that can <u>never be an answer again</u>.<br>
+    Each element is pushed once and popped once → <b>O(n)</b>.
+  </div>
+
+  <div class="pnum">8</div>
+</section>
+
+<!-- ============================ SECTION 4 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>4. Queue Problems</h2>
+    <p><span class="hl-g">Queue using stacks · Sliding window maximum</span></p>
+  </div>
+
+  <h3><span class="qnum">4.1</span> <span class="hl-y">Implement Queue using Stacks (LC 232)</span></h3>
+  <p>Build <code class="inline">push</code>, <code class="inline">pop</code>,
+  <code class="inline">peek</code>, <code class="inline">empty</code> for a
+  <b>FIFO</b> queue using only stack operations.</p>
+
+  <!-- ILLUSTRATION: pouring plates -->
+  <div class="illustration">
+    <svg viewBox="0 0 460 210" width="460" height="210" role="img" aria-label="Pouring plates between two stacks">
+      <!-- in-stack -->
+      <g>
+        <rect x="30" y="140" width="110" height="10" rx="4" fill="#b7a077"/>
+        <ellipse cx="85" cy="134" rx="52" ry="9" fill="#e7eefb" stroke="#9fb0cc" stroke-width="1.6"/>
+        <ellipse cx="85" cy="120" rx="52" ry="9" fill="#e7eefb" stroke="#9fb0cc" stroke-width="1.6"/>
+        <ellipse cx="85" cy="106" rx="52" ry="9" fill="#fff7d6" stroke="#b3372f" stroke-width="2"/>
+        <text x="85" y="110" text-anchor="middle" font-family="Kalam, cursive" font-size="12" fill="#b3372f">newest</text>
+        <text x="85" y="168" text-anchor="middle" font-family="Caveat, cursive" font-size="19" fill="#1f4e8c">in-stack</text>
+        <text x="85" y="188" text-anchor="middle" font-family="Kalam, cursive" font-size="13" fill="#4a7fbf">push here</text>
+      </g>
+
+      <!-- pour arrow -->
+      <path d="M150 60 Q 230 10 310 60" fill="none" stroke="#b3372f" stroke-width="3" stroke-dasharray="7 5"/>
+      <polygon points="310,60 300,54 302,66" fill="#b3372f"/>
+      <text x="230" y="34" text-anchor="middle" font-family="Caveat, cursive" font-size="19" fill="#b3372f">pour when out is empty</text>
+
+      <!-- out-stack -->
+      <g>
+        <rect x="320" y="140" width="110" height="10" rx="4" fill="#b7a077"/>
+        <ellipse cx="375" cy="134" rx="52" ry="9" fill="#e7eefb" stroke="#9fb0cc" stroke-width="1.6"/>
+        <ellipse cx="375" cy="120" rx="52" ry="9" fill="#e7eefb" stroke="#9fb0cc" stroke-width="1.6"/>
+        <ellipse cx="375" cy="106" rx="52" ry="9" fill="#b8e0c2" stroke="#6fa882" stroke-width="2"/>
+        <text x="375" y="110" text-anchor="middle" font-family="Kalam, cursive" font-size="12" fill="#23502a">oldest</text>
+        <text x="375" y="168" text-anchor="middle" font-family="Caveat, cursive" font-size="19" fill="#2f6b3a">out-stack</text>
+        <text x="375" y="188" text-anchor="middle" font-family="Kalam, cursive" font-size="13" fill="#2f6b3a">pop here</text>
+      </g>
+
+      <!-- tap -->
+      <text x="230" y="130" text-anchor="middle" font-family="Caveat, cursive" font-size="17" fill="#4a7fbf">two reversals = original order</text>
+    </svg>
+    <div class="cap"><b>Pouring plates.</b> Pour a stack of plates one by one into a second stack and the order <b>flips</b> — the oldest plate is now on top.</div>
+  </div>
+
+  <div class="think">
+    <b>Think first:</b> one stack reverses order. <b>What do two reversals give you?</b>
+  </div>
+
+  <h4>Approach 1 — Brute force: pour back and forth on every pop</h4>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">my_queue_brute.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9</div>
+      <pre><span class="kw">class</span> <span class="fn">MyQueueBrute</span> <span class="punc">{</span>
+  <span class="fn">constructor</span><span class="punc">(</span><span class="punc">)</span> <span class="punc">{</span> <span class="kw">this</span><span class="punc">.</span>st <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">;</span> <span class="punc">}</span>
+  <span class="fn">push</span><span class="punc">(</span>x<span class="punc">)</span> <span class="punc">{</span> <span class="kw">this</span><span class="punc">.</span>st<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span>x<span class="punc">)</span><span class="punc">;</span> <span class="punc">}</span>
+  <span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span> <span class="punc">{</span>
+    <span class="kw">const</span> tmp <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">;</span>
+    <span class="kw">while</span> <span class="punc">(</span><span class="kw">this</span><span class="punc">.</span>st<span class="punc">.</span>length <span class="op">&gt;</span> <span class="num">1</span><span class="punc">)</span> tmp<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span><span class="kw">this</span><span class="punc">.</span>st<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span><span class="punc">)</span><span class="punc">;</span> <span class="cm">// dig to bottom</span>
+    <span class="kw">const</span> front <span class="op">=</span> <span class="kw">this</span><span class="punc">.</span>st<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span><span class="punc">;</span>
+    <span class="kw">while</span> <span class="punc">(</span>tmp<span class="punc">.</span>length<span class="punc">)</span> <span class="kw">this</span><span class="punc">.</span>st<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span>tmp<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span><span class="punc">)</span><span class="punc">;</span> <span class="cm">// put back</span>
+    <span class="kw">return</span> front<span class="punc">;</span>
+  <span class="punc">}</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <div class="warn">
+    Every <code class="inline">pop</code> moves <b>all n plates</b> out and back:
+    <b>O(n) per pop</b>.
+  </div>
+
+  <h4>Approach 2 — Optimal: in-stack and out-stack, pour only when out is empty</h4>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">my_queue.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10</div>
+      <pre><span class="kw">class</span> <span class="fn">MyQueue</span> <span class="punc">{</span>
+  <span class="fn">constructor</span><span class="punc">(</span><span class="punc">)</span> <span class="punc">{</span> <span class="kw">this</span><span class="punc">.</span>in <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">;</span> <span class="kw">this</span><span class="punc">.</span>out <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">;</span> <span class="punc">}</span>
+  <span class="fn">push</span><span class="punc">(</span>x<span class="punc">)</span> <span class="punc">{</span> <span class="kw">this</span><span class="punc">.</span>in<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span>x<span class="punc">)</span><span class="punc">;</span> <span class="punc">}</span>
+  <span class="fn">move</span><span class="punc">(</span><span class="punc">)</span> <span class="punc">{</span>
+    <span class="kw">if</span> <span class="punc">(</span><span class="op">!</span><span class="kw">this</span><span class="punc">.</span>out<span class="punc">.</span>length<span class="punc">)</span>
+      <span class="kw">while</span> <span class="punc">(</span><span class="kw">this</span><span class="punc">.</span>in<span class="punc">.</span>length<span class="punc">)</span> <span class="kw">this</span><span class="punc">.</span>out<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span><span class="kw">this</span><span class="punc">.</span>in<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span><span class="punc">)</span><span class="punc">;</span>
+  <span class="punc">}</span>
+  <span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span>  <span class="punc">{</span> <span class="kw">this</span><span class="punc">.</span><span class="fn">move</span><span class="punc">(</span><span class="punc">)</span><span class="punc">;</span> <span class="kw">return</span> <span class="kw">this</span><span class="punc">.</span>out<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span><span class="punc">;</span> <span class="punc">}</span>
+  <span class="fn">peek</span><span class="punc">(</span><span class="punc">)</span> <span class="punc">{</span> <span class="kw">this</span><span class="punc">.</span><span class="fn">move</span><span class="punc">(</span><span class="punc">)</span><span class="punc">;</span> <span class="kw">return</span> <span class="kw">this</span><span class="punc">.</span>out<span class="punc">[</span><span class="kw">this</span><span class="punc">.</span>out<span class="punc">.</span>length <span class="op">-</span> <span class="num">1</span><span class="punc">]</span><span class="punc">;</span> <span class="punc">}</span>
+  <span class="fn">empty</span><span class="punc">(</span><span class="punc">)</span> <span class="punc">{</span> <span class="kw">return</span> <span class="op">!</span><span class="kw">this</span><span class="punc">.</span>in<span class="punc">.</span>length <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="kw">this</span><span class="punc">.</span>out<span class="punc">.</span>length<span class="punc">;</span> <span class="punc">}</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <table class="dry">
+    <thead><tr><th>Operation</th><th>in</th><th>out</th><th>Returns</th></tr></thead>
+    <tbody>
+      <tr><td>push 1, push 2</td><td>[1, 2]</td><td>[]</td><td>—</td></tr>
+      <tr><td>peek</td><td>[]</td><td>[2, 1] (poured)</td><td><b>1</b></td></tr>
+      <tr><td>pop</td><td>[]</td><td>[2]</td><td><b>1</b></td></tr>
+      <tr><td>push 3</td><td>[3]</td><td>[2]</td><td>—</td></tr>
+      <tr><td>pop</td><td>[3]</td><td>[]</td><td><b>2</b> (no pour: out wasn't empty)</td></tr>
+      <tr><td>pop</td><td>[]</td><td>[]</td><td><b>3</b> (poured 3 first)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity">
+    Each element is <b>poured once in its life</b> → <b>amortized O(1)</b> per operation.
+    <b>Interviewers love asking you to explain "amortized":</b> some pops are slow, but
+    the total work over n operations is <b>O(n)</b>.
+  </div>
+
+  <div class="pnum">9</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">4.2</span> <span class="hl-b">Sliding Window Maximum (LC 239)</span></h3>
+  <p>Max of every window of size k.</p>
+  <div class="dryrun">
+    <b>nums</b> = [1, 3, −1, −3, 5, 3, 6, 7], <b>k</b> = 3 → <b>[3, 3, 5, 5, 6, 7]</b>
+  </div>
+
+  <!-- ILLUSTRATION: talent show queue -->
+  <div class="illustration">
+    <svg viewBox="0 0 460 200" width="460" height="200" role="img" aria-label="Talent show line with stronger contestants pushing out weaker">
+      <!-- stage -->
+      <rect x="20" y="26" width="130" height="110" rx="10" fill="#ffe8b5" stroke="#c9a24a" stroke-width="2"/>
+      <text x="85" y="52" text-anchor="middle" font-family="Caveat, cursive" font-size="19" fill="#8a5a12">stage</text>
+      <text x="85" y="90" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#b3372f">champion</text>
+      <text x="85" y="112" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#b3372f">= front of line</text>
+
+      <!-- line of contestants -->
+      <g>
+        <!-- weakest leaving -->
+        <g opacity=".5">
+          <circle cx="195" cy="80" r="14" fill="#e7eefb" stroke="#9fb0cc" stroke-width="1.4"/>
+          <rect x="181" y="96" width="28" height="34" rx="10" fill="#e7eefb" stroke="#9fb0cc" stroke-width="1.4"/>
+          <text x="195" y="150" text-anchor="middle" font-family="Kalam, cursive" font-size="14" fill="#9fb0cc">3</text>
+        </g>
+        <g opacity=".75">
+          <circle cx="255" cy="80" r="14" fill="#e7eefb" stroke="#9fb0cc" stroke-width="1.4"/>
+          <rect x="241" y="96" width="28" height="34" rx="10" fill="#e7eefb" stroke="#9fb0cc" stroke-width="1.4"/>
+          <text x="255" y="150" text-anchor="middle" font-family="Kalam, cursive" font-size="14" fill="#9fb0cc">6</text>
+        </g>
+        <!-- strongest newcomer -->
+        <g>
+          <circle cx="325" cy="70" r="16" fill="#ffd6e8" stroke="#c07fa2" stroke-width="1.8"/>
+          <rect x="309" y="88" width="32" height="44" rx="12" fill="#ffd6e8" stroke="#c07fa2" stroke-width="1.8"/>
+          <text x="325" y="150" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#6b2447" font-weight="700">7</text>
+          <text x="325" y="174" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#b3372f">newcomer wins</text>
+        </g>
+      </g>
+
+      <!-- push out arrow -->
+      <path d="M300 60 q-45 20 -70 30" fill="none" stroke="#b3372f" stroke-width="2.2" stroke-dasharray="4 4"/>
+      <polygon points="230,90 238,86 238,96" fill="#b3372f"/>
+      <text x="250" y="46" text-anchor="middle" font-family="Kalam, cursive" font-size="13" fill="#9c2f2a">weaker ones leave</text>
+
+      <!-- window bracket -->
+      <path d="M175 168 L360 168" fill="none" stroke="#4a7fbf" stroke-width="2.4"/>
+      <path d="M175 162 L175 174 M360 162 L360 174" stroke="#4a7fbf" stroke-width="2.4"/>
+      <text x="267" y="188" text-anchor="middle" font-family="Caveat, cursive" font-size="17" fill="#1f4e8c">window (size k = 3)</text>
+    </svg>
+    <div class="cap"><b>Talent show queue.</b> Contestants join at the back; anyone <b>weaker than the newcomer</b> can never win while the newcomer is on stage, so they leave. The front is always the <b>current champion</b>.</div>
+  </div>
+
+  <div class="think">
+    <b>Think first:</b> recomputing each window costs <b>O(k)</b>. When a big number
+    enters, which numbers in the window become <b>useless forever</b>?
+  </div>
+
+  <h4>Approach 1 — Brute force: max of every window</h4>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">sliding_window_max_brute.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9</div>
+      <pre><span class="kw">function</span> <span class="fn">maxSlidingBrute</span><span class="punc">(</span>nums<span class="punc">,</span> k<span class="punc">)</span> <span class="punc">{</span>
+  <span class="kw">const</span> res <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">;</span>
+  <span class="kw">for</span> <span class="punc">(</span><span class="kw">let</span> i <span class="op">=</span> <span class="num">0</span><span class="punc">;</span> i <span class="op">+</span> k <span class="op">&lt;=</span> nums<span class="punc">.</span>length<span class="punc">;</span> i<span class="op">++</span><span class="punc">)</span> <span class="punc">{</span>
+    <span class="kw">let</span> m <span class="op">=</span> <span class="op">-</span>Infinity<span class="punc">;</span>
+    <span class="kw">for</span> <span class="punc">(</span><span class="kw">let</span> j <span class="op">=</span> i<span class="punc">;</span> j <span class="op">&lt;</span> i <span class="op">+</span> k<span class="punc">;</span> j<span class="op">++</span><span class="punc">)</span>
+      m <span class="op">=</span> Math<span class="punc">.</span><span class="fn">max</span><span class="punc">(</span>m<span class="punc">,</span> nums<span class="punc">[</span>j<span class="punc">]</span><span class="punc">)</span><span class="punc">;</span>
+    res<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span>m<span class="punc">)</span><span class="punc">;</span>
+  <span class="punc">}</span>
+  <span class="kw">return</span> res<span class="punc">;</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <div class="dryrun">
+    Windows [1,3,−1]→3, [3,−1,−3]→3, [−1,−3,5]→5…
+    <b>O(n · k)</b>; with n = 10⁵ and k = 5 × 10⁴ that's <b>billions of steps</b>.
+  </div>
+
+  <h4>Approach 2 — Optimal: monotonic deque of indices (values decreasing front → back)</h4>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">sliding_window_max.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12</div>
+      <pre><span class="kw">function</span> <span class="fn">maxSlidingWindow</span><span class="punc">(</span>nums<span class="punc">,</span> k<span class="punc">)</span> <span class="punc">{</span>
+  <span class="kw">const</span> dq <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">,</span> res <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">;</span>     <span class="cm">// dq holds indices; dq[head] = champion</span>
+  <span class="kw">let</span> head <span class="op">=</span> <span class="num">0</span><span class="punc">;</span>
+  <span class="kw">for</span> <span class="punc">(</span><span class="kw">let</span> i <span class="op">=</span> <span class="num">0</span><span class="punc">;</span> i <span class="op">&lt;</span> nums<span class="punc">.</span>length<span class="punc">;</span> i<span class="op">++</span><span class="punc">)</span> <span class="punc">{</span>
+    <span class="kw">if</span> <span class="punc">(</span>head <span class="op">&lt;</span> dq<span class="punc">.</span>length <span class="op">&amp;&amp;</span> dq<span class="punc">[</span>head<span class="punc">]</span> <span class="op">&lt;=</span> i <span class="op">-</span> k<span class="punc">)</span>
+      head<span class="op">++</span><span class="punc">;</span>                          <span class="cm">// champion's time is up</span>
+    <span class="kw">while</span> <span class="punc">(</span>dq<span class="punc">.</span>length <span class="op">&gt;</span> head <span class="op">&amp;&amp;</span> nums<span class="punc">[</span>dq<span class="punc">[</span>dq<span class="punc">.</span>length <span class="op">-</span> <span class="num">1</span><span class="punc">]</span><span class="punc">]</span> <span class="op">&lt;=</span> nums<span class="punc">[</span>i<span class="punc">]</span><span class="punc">)</span>
+      dq<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span><span class="punc">;</span>                 <span class="cm">// weaker ones leave</span>
+    dq<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span>i<span class="punc">)</span><span class="punc">;</span>
+    <span class="kw">if</span> <span class="punc">(</span>i <span class="op">&gt;=</span> k <span class="op">-</span> <span class="num">1</span><span class="punc">)</span> res<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span>nums<span class="punc">[</span>dq<span class="punc">[</span>head<span class="punc">]</span><span class="punc">]</span><span class="punc">)</span><span class="punc">;</span>
+  <span class="punc">}</span>
+  <span class="kw">return</span> res<span class="punc">;</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <table class="dry">
+    <thead>
+      <tr><th>i</th><th>nums[i]</th><th>Expired from front</th><th>Popped from back (weaker)</th><th>Deque (values)</th><th>Window max</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>1</td><td>—</td><td>—</td><td>[1]</td><td>—</td></tr>
+      <tr><td>1</td><td>3</td><td>—</td><td>1</td><td>[3]</td><td>—</td></tr>
+      <tr><td>2</td><td>−1</td><td>—</td><td>—</td><td>[3, −1]</td><td class="yes">3</td></tr>
+      <tr><td>3</td><td>−3</td><td>—</td><td>—</td><td>[3, −1, −3]</td><td class="yes">3</td></tr>
+      <tr><td>4</td><td>5</td><td>3 (index 1 left the window)</td><td>−3, −1</td><td>[5]</td><td class="yes">5</td></tr>
+      <tr><td>5</td><td>3</td><td>—</td><td>—</td><td>[5, 3]</td><td class="yes">5</td></tr>
+      <tr><td>6</td><td>6</td><td>—</td><td>3, 5</td><td>[6]</td><td class="yes">6</td></tr>
+      <tr><td>7</td><td>7</td><td>—</td><td>6</td><td>[7]</td><td class="yes">7</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity">
+    <b>Result</b> [3, 3, 5, 5, 6, 7]. Each index enters and leaves the deque
+    <b>once</b> → <b>O(n) time</b>, <b>O(k) space</b>.
+  </div>
+
+  <div class="pnum">10</div>
+</section>
+
+<!-- ============================ SECTION 5 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>5. Expressions &amp; Histograms</h2>
+    <p><span class="hl-y">Reverse Polish Notation · Largest Rectangle</span></p>
+  </div>
+
+  <h3><span class="qnum">5.1</span> <span class="hl-y">Evaluate Reverse Polish Notation (LC 150)</span></h3>
+  <div class="dryrun">
+    Tokens ["2", "1", "+", "3", "*"] mean <b>(2 + 1) × 3 ⇒ 9</b>.
+    <b>Division truncates toward zero.</b>
+  </div>
+
+  <!-- ILLUSTRATION: calculator memory tray -->
+  <div class="illustration">
+    <svg viewBox="0 0 440 210" width="440" height="210" role="img" aria-label="Calculator with a memory tray">
+      <!-- calculator body -->
+      <rect x="30" y="30" width="190" height="150" rx="14" fill="#2b3448" stroke="#151c29" stroke-width="2"/>
+      <rect x="44" y="44" width="162" height="36" rx="6" fill="#d7f5c9" stroke="#7fa86f" stroke-width="1.5"/>
+      <text x="125" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" fill="#23502a">9</text>
+      <!-- buttons -->
+      <g fill="#3a4761">
+        <circle cx="66" cy="108" r="11"/><circle cx="98" cy="108" r="11"/><circle cx="130" cy="108" r="11"/>
+        <circle cx="66" cy="142" r="11"/><circle cx="98" cy="142" r="11"/><circle cx="130" cy="142" r="11"/>
+        <circle cx="162" cy="108" r="11"/><circle cx="162" cy="142" r="11"/>
+      </g>
+      <text x="125" y="175" text-anchor="middle" font-family="Caveat, cursive" font-size="17" fill="#9fb0cc">calculator</text>
+
+      <!-- tray (stack) -->
+      <rect x="250" y="60" width="160" height="120" rx="10" fill="#f4f8ff" stroke="#b9c6dc" stroke-width="2"/>
+      <text x="330" y="48" text-anchor="middle" font-family="Caveat, cursive" font-size="18" fill="#4a7fbf">memory tray (stack)</text>
+
+      <!-- numbers on the tray -->
+      <rect x="270" y="140" width="60" height="26" rx="5" fill="#cfe6ff" stroke="#4a7fbf" stroke-width="1.6"/>
+      <text x="300" y="159" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#17375f">2</text>
+
+      <rect x="270" y="108" width="60" height="26" rx="5" fill="#cfe6ff" stroke="#4a7fbf" stroke-width="1.6"/>
+      <text x="300" y="127" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#17375f">1</text>
+
+      <text x="330" y="176" text-anchor="middle" font-family="Caveat, cursive" font-size="15" fill="#b3372f">waiting for an operator</text>
+
+      <!-- arrow from tray to calculator -->
+      <path d="M245 120 L225 120" stroke="#b3372f" stroke-width="2.4"/>
+      <polygon points="225,120 233,115 233,125" fill="#b3372f"/>
+    </svg>
+    <div class="cap"><b>A calculator with a memory tray.</b> Numbers go on the tray. When an operator arrives, it takes the <b>two most recent numbers</b>, combines them, puts the result back.</div>
+  </div>
+
+  <div class="think">
+    <b>Think first:</b> for <code class="inline">−</code> and <code class="inline">/</code>,
+    <b>which popped number is the left operand?</b>
+  </div>
+
+  <h4>Approach 1 — Brute force: find an operator, collapse, repeat</h4>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">rpn_brute.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10</div>
+      <pre><span class="kw">function</span> <span class="fn">evalRPNBrute</span><span class="punc">(</span>tokens<span class="punc">)</span> <span class="punc">{</span>
+  <span class="kw">const</span> t <span class="op">=</span> <span class="punc">[</span><span class="op">...</span>tokens<span class="punc">]</span><span class="punc">;</span>
+  <span class="kw">while</span> <span class="punc">(</span>t<span class="punc">.</span>length <span class="op">&gt;</span> <span class="num">1</span><span class="punc">)</span> <span class="punc">{</span>
+    <span class="kw">const</span> i <span class="op">=</span> t<span class="punc">.</span><span class="fn">findIndex</span><span class="punc">(</span>x <span class="op">=&gt;</span> <span class="str">"+-*/"</span><span class="punc">.</span><span class="fn">includes</span><span class="punc">(</span>x<span class="punc">)</span> <span class="op">&amp;&amp;</span> x<span class="punc">.</span>length <span class="op">===</span> <span class="num">1</span><span class="punc">)</span><span class="punc">;</span>
+    <span class="kw">const</span> a <span class="op">=</span> <span class="fn">Number</span><span class="punc">(</span>t<span class="punc">[</span>i <span class="op">-</span> <span class="num">2</span><span class="punc">]</span><span class="punc">)</span><span class="punc">,</span> b <span class="op">=</span> <span class="fn">Number</span><span class="punc">(</span>t<span class="punc">[</span>i <span class="op">-</span> <span class="num">1</span><span class="punc">]</span><span class="punc">)</span><span class="punc">;</span>
+    <span class="kw">const</span> v <span class="op">=</span> t<span class="punc">[</span>i<span class="punc">]</span> <span class="op">===</span> <span class="str">"+"</span> <span class="op">?</span> a <span class="op">+</span> b <span class="op">:</span> t<span class="punc">[</span>i<span class="punc">]</span> <span class="op">===</span> <span class="str">"-"</span> <span class="op">?</span> a <span class="op">-</span> b
+                <span class="op">:</span> t<span class="punc">[</span>i<span class="punc">]</span> <span class="op">===</span> <span class="str">"*"</span> <span class="op">?</span> a <span class="op">*</span> b <span class="op">:</span> Math<span class="punc">.</span><span class="fn">trunc</span><span class="punc">(</span>a <span class="op">/</span> b<span class="punc">)</span><span class="punc">;</span>
+    t<span class="punc">.</span><span class="fn">splice</span><span class="punc">(</span>i <span class="op">-</span> <span class="num">2</span><span class="punc">,</span> <span class="num">3</span><span class="punc">,</span> <span class="fn">String</span><span class="punc">(</span>v<span class="punc">)</span><span class="punc">)</span><span class="punc">;</span> <span class="cm">// replace "a b op" with value</span>
+  <span class="punc">}</span>
+  <span class="kw">return</span> <span class="fn">Number</span><span class="punc">(</span>t<span class="punc">[</span><span class="num">0</span><span class="punc">]</span><span class="punc">)</span><span class="punc">;</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <table class="dry">
+    <thead><tr><th>Round</th><th>Tokens</th><th>First operator</th><th>Collapsed to</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>2 1 + 3 *</td><td>+ (index 2)</td><td>3 3 *</td></tr>
+      <tr><td>2</td><td>3 3 *</td><td>*</td><td>9</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    Each round scans and splices: <b>O(n²)</b>.
+  </div>
+
+  <h4>Approach 2 — Optimal: stack</h4>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">rpn.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10</div>
+      <pre><span class="kw">function</span> <span class="fn">evalRPN</span><span class="punc">(</span>tokens<span class="punc">)</span> <span class="punc">{</span>
+  <span class="kw">const</span> st <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">;</span>
+  <span class="kw">for</span> <span class="punc">(</span><span class="kw">const</span> tok <span class="kw">of</span> tokens<span class="punc">)</span> <span class="punc">{</span>
+    <span class="kw">if</span> <span class="punc">(</span><span class="op">!</span><span class="str">"+-*/"</span><span class="punc">.</span><span class="fn">includes</span><span class="punc">(</span>tok<span class="punc">)</span> <span class="op">||</span> tok<span class="punc">.</span>length <span class="op">&gt;</span> <span class="num">1</span><span class="punc">)</span> <span class="punc">{</span>
+      st<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span><span class="fn">Number</span><span class="punc">(</span>tok<span class="punc">)</span><span class="punc">)</span><span class="punc">;</span> <span class="kw">continue</span><span class="punc">;</span>  <span class="cm">// "-11" is a number</span>
+    <span class="punc">}</span>
+    <span class="kw">const</span> b <span class="op">=</span> st<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span><span class="punc">,</span> a <span class="op">=</span> st<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span><span class="punc">;</span> <span class="cm">// b popped FIRST</span>
+    st<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span>tok <span class="op">===</span> <span class="str">"+"</span> <span class="op">?</span> a <span class="op">+</span> b
+          <span class="op">:</span> tok <span class="op">===</span> <span class="str">"-"</span> <span class="op">?</span> a <span class="op">-</span> b
+          <span class="op">:</span> tok <span class="op">===</span> <span class="str">"*"</span> <span class="op">?</span> a <span class="op">*</span> b
+          <span class="op">:</span> Math<span class="punc">.</span><span class="fn">trunc</span><span class="punc">(</span>a <span class="op">/</span> b<span class="punc">)</span><span class="punc">)</span><span class="punc">;</span>
+  <span class="punc">}</span>
+  <span class="kw">return</span> st<span class="punc">[</span><span class="num">0</span><span class="punc">]</span><span class="punc">;</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <table class="dry">
+    <thead><tr><th>Token</th><th>Action</th><th>Stack after</th></tr></thead>
+    <tbody>
+      <tr><td>2</td><td>push</td><td>[2]</td></tr>
+      <tr><td>1</td><td>push</td><td>[2, 1]</td></tr>
+      <tr><td>+</td><td>pop 1 (b), pop 2 (a) → 2 + 1</td><td>[3]</td></tr>
+      <tr><td>3</td><td>push</td><td>[3, 3]</td></tr>
+      <tr><td>*</td><td>pop 3, pop 3 → 3 × 3</td><td>[9] → 9</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity">
+    <b>Complexity:</b> O(n) time, O(n) space.
+  </div>
+
+  <div class="warn">
+    <b>Common bugs:</b><br>
+    ① computing <code class="inline">b - a</code> instead of <code class="inline">a - b</code><br>
+    ② treating <code class="inline">"-11"</code> as an operator<br>
+    ③ using <code class="inline">Math.floor</code> (wrong for negatives — use
+    <code class="inline">Math.trunc</code>)
+  </div>
+
+  <div class="pnum">11</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">5.2</span> <span class="hl-b">Largest Rectangle in Histogram (LC 84)</span></h3>
+  <p>Bar heights [2, 1, 5, 6, 2, 3], each width 1. Largest rectangle area →
+  <b>10</b> (bars 5 and 6, height 5 × width 2).</p>
+
+  <!-- ILLUSTRATION: skyline with tape measure -->
+  <div class="illustration">
+    <svg viewBox="0 0 480 220" width="480" height="220" role="img" aria-label="Skyline with tape measure">
+      <!-- ground -->
+      <line x1="30" y1="180" x2="450" y2="180" stroke="#b7a077" stroke-width="3"/>
+
+      <!-- bars -->
+      <g>
+        <rect x="50" y="140" width="50" height="40" fill="#cfe6ff" stroke="#4a7fbf" stroke-width="1.8"/>
+        <text x="75" y="196" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#17375f">2</text>
+
+        <rect x="110" y="160" width="50" height="20" fill="#cfe6ff" stroke="#4a7fbf" stroke-width="1.8"/>
+        <text x="135" y="196" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#17375f">1</text>
+
+        <rect x="170" y="80" width="50" height="100" fill="#ffd6e8" stroke="#b3372f" stroke-width="2.4"/>
+        <text x="195" y="196" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#b3372f" font-weight="700">5</text>
+
+        <rect x="230" y="60" width="50" height="120" fill="#ffd6e8" stroke="#b3372f" stroke-width="2.4"/>
+        <text x="255" y="196" text-anchor="middle" font-family="Kalam, cursive" font-size="16" fill="#b3372f" font-weight="700">6</text>
+
+        <rect x="290" y="140" width="50" height="40" fill="#cfe6ff" stroke="#4a7fbf" stroke-width="1.8"/>
+        <text x="315" y="196" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#17375f">2</text>
+
+        <rect x="350" y="120" width="50" height="60" fill="#cfe6ff" stroke="#4a7fbf" stroke-width="1.8"/>
+        <text x="375" y="196" text-anchor="middle" font-family="Kalam, cursive" font-size="15" fill="#17375f">3</text>
+      </g>
+
+      <!-- rectangle (bars 5 & 6, height 5, width 2) -->
+      <rect x="170" y="80" width="110" height="100" fill="rgba(255,214,150,.35)" stroke="#b3372f" stroke-width="2.4" stroke-dasharray="6 4"/>
+      <text x="225" y="70" text-anchor="middle" font-family="Caveat, cursive" font-size="19" fill="#b3372f">area = 5 × 2 = 10</text>
+
+      <!-- tape measure -->
+      <g>
+        <rect x="170" y="200" width="110" height="12" rx="3" fill="#fff7d6" stroke="#c9a24a" stroke-width="1.6"/>
+        <line x1="170" y1="200" x2="170" y2="212" stroke="#b3372f" stroke-width="1.6"/>
+        <line x1="280" y1="200" x2="280" y2="212" stroke="#b3372f" stroke-width="1.6"/>
+        <text x="225" y="220" text-anchor="middle" font-family="Caveat, cursive" font-size="15" fill="#8a5a12">width = 2</text>
+      </g>
+    </svg>
+    <div class="cap"><b>A skyline with a tape measure.</b> Every bar asks <i>"how far can I stretch left and right while all bars stay at least as tall as me?"</i> Its rectangle = its height × that width.</div>
+  </div>
+
+  <div class="think">
+    <b>Think first:</b> the best rectangle must use <b>some bar's full height</b>.
+    For each bar, what two boundaries do you need?
+    (<b>Previous smaller</b> and <b>next smaller</b> — section 3.3.)
+  </div>
+
+  <h4>Approach 1 — Brute force: expand from every bar</h4>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">largest_rect_brute.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10</div>
+      <pre><span class="kw">function</span> <span class="fn">largestRectBrute</span><span class="punc">(</span>h<span class="punc">)</span> <span class="punc">{</span>
+  <span class="kw">let</span> best <span class="op">=</span> <span class="num">0</span><span class="punc">;</span>
+  <span class="kw">for</span> <span class="punc">(</span><span class="kw">let</span> i <span class="op">=</span> <span class="num">0</span><span class="punc">;</span> i <span class="op">&lt;</span> h<span class="punc">.</span>length<span class="punc">;</span> i<span class="op">++</span><span class="punc">)</span> <span class="punc">{</span>
+    <span class="kw">let</span> l <span class="op">=</span> i<span class="punc">,</span> r <span class="op">=</span> i<span class="punc">;</span>
+    <span class="kw">while</span> <span class="punc">(</span>l <span class="op">&gt;</span> <span class="num">0</span> <span class="op">&amp;&amp;</span> h<span class="punc">[</span>l <span class="op">-</span> <span class="num">1</span><span class="punc">]</span> <span class="op">&gt;=</span> h<span class="punc">[</span>i<span class="punc">]</span><span class="punc">)</span> l<span class="op">--</span><span class="punc">;</span>
+    <span class="kw">while</span> <span class="punc">(</span>r <span class="op">&lt;</span> h<span class="punc">.</span>length <span class="op">-</span> <span class="num">1</span> <span class="op">&amp;&amp;</span> h<span class="punc">[</span>r <span class="op">+</span> <span class="num">1</span><span class="punc">]</span> <span class="op">&gt;=</span> h<span class="punc">[</span>i<span class="punc">]</span><span class="punc">)</span> r<span class="op">++</span><span class="punc">;</span>
+    best <span class="op">=</span> Math<span class="punc">.</span><span class="fn">max</span><span class="punc">(</span>best<span class="punc">,</span> h<span class="punc">[</span>i<span class="punc">]</span> <span class="op">*</span> <span class="punc">(</span>r <span class="op">-</span> l <span class="op">+</span> <span class="num">1</span><span class="punc">)</span><span class="punc">)</span><span class="punc">;</span>
+  <span class="punc">}</span>
+  <span class="kw">return</span> best<span class="punc">;</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <table class="dry">
+    <thead><tr><th>Bar (height)</th><th>Stretches over indices</th><th>Width</th><th>Area</th></tr></thead>
+    <tbody>
+      <tr><td>0 (2)</td><td>0</td><td>1</td><td>2</td></tr>
+      <tr><td>1 (1)</td><td>0–5</td><td>6</td><td>6</td></tr>
+      <tr><td>2 (5)</td><td>2–3</td><td>2</td><td><b>10</b></td></tr>
+      <tr><td>3 (6)</td><td>3</td><td>1</td><td>6</td></tr>
+      <tr><td>4 (2)</td><td>2–5</td><td>4</td><td>8</td></tr>
+      <tr><td>5 (3)</td><td>5</td><td>1</td><td>3</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <b>O(n²)</b> — each bar may scan the whole array.
+  </div>
+
+  <h4>Approach 2 — Optimal: increasing stack of indices</h4>
+  <p><b>Idea:</b> keep bar indices with <b>increasing heights</b>. When a shorter bar
+  arrives at <b>i</b>, every taller bar on top has found its <b>right boundary (i)</b>;
+  its <b>left boundary</b> is the new top of the stack after popping. Add a
+  <b>height-0 bar at the end</b> to flush everything.</p>
+
+  <div class="codecard">
+    <div class="chrome">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="filename">largest_rectangle.js</span>
+      <span class="lang">JS</span>
+    </div>
+    <div class="body">
+      <div class="ln">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12</div>
+      <pre><span class="kw">function</span> <span class="fn">largestRectangleArea</span><span class="punc">(</span>heights<span class="punc">)</span> <span class="punc">{</span>
+  <span class="kw">const</span> h <span class="op">=</span> <span class="punc">[</span><span class="op">...</span>heights<span class="punc">,</span> <span class="num">0</span><span class="punc">]</span><span class="punc">,</span> st <span class="op">=</span> <span class="punc">[</span><span class="punc">]</span><span class="punc">;</span>
+  <span class="kw">let</span> best <span class="op">=</span> <span class="num">0</span><span class="punc">;</span>
+  <span class="kw">for</span> <span class="punc">(</span><span class="kw">let</span> i <span class="op">=</span> <span class="num">0</span><span class="punc">;</span> i <span class="op">&lt;</span> h<span class="punc">.</span>length<span class="punc">;</span> i<span class="op">++</span><span class="punc">)</span> <span class="punc">{</span>
+    <span class="kw">while</span> <span class="punc">(</span>st<span class="punc">.</span>length <span class="op">&amp;&amp;</span> h<span class="punc">[</span>st<span class="punc">[</span>st<span class="punc">.</span>length <span class="op">-</span> <span class="num">1</span><span class="punc">]</span><span class="punc">]</span> <span class="op">&gt;</span> h<span class="punc">[</span>i<span class="punc">]</span><span class="punc">)</span> <span class="punc">{</span>
+      <span class="kw">const</span> height <span class="op">=</span> h<span class="punc">[</span>st<span class="punc">.</span><span class="fn">pop</span><span class="punc">(</span><span class="punc">)</span><span class="punc">]</span><span class="punc">;</span>
+      <span class="kw">const</span> left <span class="op">=</span> st<span class="punc">.</span>length <span class="op">?</span> st<span class="punc">[</span>st<span class="punc">.</span>length <span class="op">-</span> <span class="num">1</span><span class="punc">]</span> <span class="op">:</span> <span class="op">-</span><span class="num">1</span><span class="punc">;</span> <span class="cm">// prev smaller</span>
+      best <span class="op">=</span> Math<span class="punc">.</span><span class="fn">max</span><span class="punc">(</span>best<span class="punc">,</span> height <span class="op">*</span> <span class="punc">(</span>i <span class="op">-</span> left <span class="op">-</span> <span class="num">1</span><span class="punc">)</span><span class="punc">)</span><span class="punc">;</span>
+    <span class="punc">}</span>
+    st<span class="punc">.</span><span class="fn">push</span><span class="punc">(</span>i<span class="punc">)</span><span class="punc">;</span>
+  <span class="punc">}</span>
+  <span class="kw">return</span> best<span class="punc">;</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+
+  <table class="dry">
+    <thead>
+      <tr><th>i</th><th>h[i]</th><th>Popped (height × width)</th><th>Area</th><th>Stack after (indices)</th><th>best</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>2</td><td>—</td><td>—</td><td>[0]</td><td>0</td></tr>
+      <tr><td>1</td><td>1</td><td>idx 0: 2 × (1 − (−1) − 1) = 2 × 1</td><td>2</td><td>[1]</td><td>2</td></tr>
+      <tr><td>2</td><td>5</td><td>—</td><td>—</td><td>[1, 2]</td><td>2</td></tr>
+      <tr><td>3</td><td>6</td><td>—</td><td>—</td><td>[1, 2, 3]</td><td>2</td></tr>
+      <tr><td>4</td><td>2</td><td>idx 3: 6 × (4 − 2 − 1) = 6 × 1; idx 2: 5 × (4 − 1 − 1) = 5 × 2</td><td>6, <b>10</b></td><td>[1, 4]</td><td>10</td></tr>
+      <tr><td>5</td><td>3</td><td>—</td><td>—</td><td>[1, 4, 5]</td><td>10</td></tr>
+      <tr><td>6</td><td>0 (sentinel)</td><td>idx 5: 3 × 1; idx 4: 2 × 4; idx 1: 1 × 6</td><td>3, 8, 6</td><td>[6]</td><td>10</td></tr>
+    </tbody>
+  </table>
+
+  <div class="complexity">
+    <b>Complexity:</b> O(n) time — each bar is <b>pushed and popped once</b> — O(n) space.<br>
+    <b>Follow-up:</b> Maximal Rectangle (LC 85) runs this on <b>every row</b> of a binary
+    matrix.
+  </div>
+
+  <div class="pnum">12</div>
+</section>
+
+<!-- ============================ SECTION 6 ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>6. Interview Question Bank</h2>
+    <p><span class="hl-y">Theory + 20 coding problems</span></p>
+  </div>
+
+  <p>Practise saying each theory answer aloud in <b>under 30 seconds</b>. For every
+  coding question, <b>state the brute force and its cost first</b>, then improve it.</p>
+
+  <h3><span class="qnum">6.1</span> <span class="hl-y">Theory questions <span class="mini">(with model answers)</span></span></h3>
+
+  <table class="dry">
+    <thead><tr><th>Question</th><th>Model answer</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Stack vs queue?</td>
+        <td>Stack is <b>LIFO</b> (undo, recursion, matching); queue is <b>FIFO</b>
+        (BFS, scheduling, buffering).</td>
+      </tr>
+      <tr>
+        <td>How would you implement a queue in JS efficiently?</td>
+        <td>An array plus a <b>head index</b> (or a linked list); avoid
+        <code class="inline">shift()</code>, which is O(n).</td>
+      </tr>
+      <tr>
+        <td>What is the call stack?</td>
+        <td>The stack of active function calls; each call pushes a frame and returns
+        pop it. Too deep → <b>stack overflow</b>.</td>
+      </tr>
+      <tr>
+        <td>What is a monotonic stack?</td>
+        <td>A stack kept in increasing or decreasing order by popping elements that can
+        no longer be an answer; gives next/previous greater or smaller in O(n).</td>
+      </tr>
+      <tr>
+        <td>Why is the monotonic stack O(n) despite a nested while?</td>
+        <td>Each element is <b>pushed once and popped at most once</b>, so total work is
+        at most 2n.</td>
+      </tr>
+      <tr>
+        <td>What does amortized O(1) mean?</td>
+        <td>Some operations are expensive, but the total cost of n operations is O(n),
+        so the <b>average per operation is O(1)</b> (e.g. queue using two stacks).</td>
+      </tr>
+      <tr>
+        <td>What is a deque and where is it used?</td>
+        <td>A double-ended queue (add/remove both ends); used for <b>sliding window
+        maximum</b> and <b>0-1 BFS</b>.</td>
+      </tr>
+      <tr>
+        <td>What is a circular queue?</td>
+        <td>A fixed-size array where front and rear wrap around with
+        <code class="inline">% capacity</code>, reusing freed slots.</td>
+      </tr>
+      <tr>
+        <td>How does recursion relate to stacks?</td>
+        <td>Any recursion can be rewritten with an <b>explicit stack</b> — useful when
+        recursion depth would overflow.</td>
+      </tr>
+      <tr>
+        <td>Real-world uses?</td>
+        <td>Browser back/forward, undo/redo, expression evaluation, compilers checking
+        brackets, print and task queues, rate limiters.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="pnum">13</div>
+</section>
+
+<section class="page">
+  <h3><span class="qnum">6.2</span> <span class="hl-b">Coding questions — brute force vs optimal</span></h3>
+
+  <table class="dry">
+    <thead>
+      <tr>
+        <th>#</th><th>Problem</th><th>Brute force</th><th>Optimal</th><th>Optimal cost</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Valid Parentheses (LC 20)</td><td>Delete matched pairs repeatedly, O(n²)</td><td>Stack of openings</td><td>O(n)</td></tr>
+      <tr><td>2</td><td>Min Stack (LC 155)</td><td>Scan for min, O(n)</td><td>Store [value, minSoFar]</td><td>O(1) all ops</td></tr>
+      <tr><td>3</td><td>Implement Queue using Stacks (LC 232)</td><td>Pour out and back every pop</td><td>Pour only when out is empty</td><td>Amortized O(1)</td></tr>
+      <tr><td>4</td><td>Implement Stack using Queues (LC 225)</td><td>Two queues, move n − 1 on pop</td><td>One queue, rotate after push</td><td>O(n) push, O(1) pop</td></tr>
+      <tr><td>5</td><td>Backspace String Compare (LC 844)</td><td>Build both strings with stacks</td><td>Two pointers from the end</td><td>O(n), O(1)</td></tr>
+      <tr><td>6</td><td>Remove All Adjacent Duplicates in String (LC 1047)</td><td>Repeatedly scan and delete pairs</td><td>Stack: pop if top equals char</td><td>O(n)</td></tr>
+      <tr><td>7</td><td>Baseball Game (LC 682)</td><td>—</td><td>Stack of scores</td><td>O(n)</td></tr>
+      <tr><td>8</td><td>Next Greater Element I (LC 496)</td><td>Look right from each</td><td>Monotonic stack + Map</td><td>O(n + m)</td></tr>
+      <tr><td>9</td><td>Daily Temperatures (LC 739)</td><td>Walk forward from each day</td><td>Stack of waiting indices</td><td>O(n)</td></tr>
+      <tr><td>10</td><td>Evaluate Reverse Polish Notation (LC 150)</td><td>Collapse operators repeatedly</td><td>Stack of operands</td><td>O(n)</td></tr>
+      <tr><td>11</td><td>Next Greater Element II (LC 503)</td><td>Look around the circle from each</td><td>Loop 2n with <code class="inline">i % n</code></td><td>O(n)</td></tr>
+      <tr><td>12</td><td>Online Stock Span (LC 901)</td><td>Walk back each day</td><td>Stack of [price, span]</td><td>Amortized O(1)</td></tr>
+      <tr><td>13</td><td>Asteroid Collision (LC 735)</td><td>Simulate passes until stable</td><td>Stack; collide only right-mover vs left-mover</td><td>O(n)</td></tr>
+      <tr><td>14</td><td>Decode String (LC 394)</td><td>Repeatedly expand innermost bracket</td><td>Stack of [count, prefix]</td><td>O(output length)</td></tr>
+      <tr><td>15</td><td>Simplify Path (LC 71)</td><td>—</td><td>Split by "/", stack of folders; ".." pops</td><td>O(n)</td></tr>
+      <tr><td>16</td><td>Remove K Digits (LC 402)</td><td>Try removing each digit k times</td><td>Increasing stack, pop bigger digits</td><td>O(n)</td></tr>
+      <tr><td>17</td><td>Sliding Window Maximum (LC 239)</td><td>Max of each window, O(nk)</td><td>Monotonic deque</td><td>O(n)</td></tr>
+      <tr><td>18</td><td>Sum of Subarray Minimums (LC 907)</td><td>All subarrays, O(n²)</td><td>Previous/next smaller ⇒ contribution</td><td>O(n)</td></tr>
+      <tr><td>19</td><td>Largest Rectangle in Histogram (LC 84)</td><td>Expand from each bar, O(n²)</td><td>Increasing stack + sentinel</td><td>O(n)</td></tr>
+      <tr><td>20</td><td>Trapping Rain Water (LC 42)</td><td>For each bar, scan max left and right, O(n²)</td><td>Two pointers (or stack)</td><td>O(n), O(1)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <b>Suggested order:</b> <b>1–7 in week 1</b>, <b>8–14 in week 2</b>,
+    <b>15–20 as stretch</b>. For each, write the brute force first, then the optimal,
+    and fill a <b>dry-run table on a 5–6 element input</b>.
+  </div>
+
+  <h3><span class="qnum">6.3</span> <span class="hl-o">Teacher's notes</span></h3>
+
+  <ul class="arrows">
+    <li>Ask yourself: <i>"Does the <b>most recent unresolved</b> item decide what happens
+        next?"</i> → <b>stack</b>. <i>"Does the <b>oldest waiting</b> item go next?"</i>
+        → <b>queue</b>.</li>
+    <li>Store <b>indices</b> in monotonic stacks when you need <b>distances or widths</b>;
+        <b>values</b> when you only need the value.</li>
+    <li>Always check <code class="inline">st.length</code> before reading or popping the
+        top.</li>
+    <li><code class="inline">shift()</code> in a loop is the most common
+        <span class="red">hidden O(n²)</span> bug in JS solutions — <b>say it before the
+        interviewer does</b>.</li>
+    <li><b>Sentinel values</b> (a <code class="inline">0</code> at the end of the
+        histogram) flush the stack and remove special cases.</li>
+  </ul>
+
+  <div class="note">
+    <b>Interview flow that impresses:</b><br>
+    <i>"Brute force rescans to the right for every element, O(n²). Elements hidden behind
+    a bigger one can never be answers, so a monotonic stack discards them — each element
+    is pushed and popped once, O(n)."</i>
+  </div>
+
+  <div class="note">
+    <b>Next module:</b> Module 8 — Binary Trees.
+  </div>
+
+  <div class="pnum">14</div>
+</section>
+
+<!-- ============================ QUICK REFERENCE ============================ -->
+<section class="page">
+  <h2 class="section hl-y">Quick Reference — One-Page Recap</h2>
+
+  <h3 style="border-bottom:none;"><span class="qnum">A</span> <span class="hl-b">Stack vs queue</span></h3>
+  <table class="dry">
+    <thead><tr><th></th><th>Stack</th><th>Queue</th></tr></thead>
+    <tbody>
+      <tr><td>Order</td><td>LIFO</td><td>FIFO</td></tr>
+      <tr><td>Add / remove</td><td><code class="inline">push / pop</code> (top)</td><td><code class="inline">enqueue / dequeue</code> (back / front)</td></tr>
+      <tr><td>Use</td><td>matching, undo, next greater</td><td>BFS, scheduling, window</td></tr>
+      <tr><td>JS trick</td><td>array end, O(1)</td><td>array + <b>head index</b>, never <code class="inline">shift</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="border-bottom:none;"><span class="qnum">B</span> <span class="hl-y">The four monotonic-stack variants</span></h3>
+  <table class="dry">
+    <thead><tr><th>Want</th><th>Scan</th><th>Pop while top is…</th></tr></thead>
+    <tbody>
+      <tr><td>Next greater</td><td>right → left</td><td>≤ current</td></tr>
+      <tr><td>Next smaller</td><td>right → left</td><td>≥ current</td></tr>
+      <tr><td>Previous greater</td><td>left → right</td><td>≤ current</td></tr>
+      <tr><td>Previous smaller</td><td>left → right</td><td>≥ current</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="border-bottom:none;"><span class="qnum">C</span> <span class="hl-g">Complexity of the classics</span></h3>
+  <table class="dry">
+    <thead><tr><th>Problem</th><th>Time</th><th>Space</th></tr></thead>
+    <tbody>
+      <tr><td>Valid Parentheses</td><td>O(n)</td><td>O(n)</td></tr>
+      <tr><td>Min Stack (all ops)</td><td>O(1)</td><td>O(n)</td></tr>
+      <tr><td>Next Greater (monotonic)</td><td>O(n)</td><td>O(n)</td></tr>
+      <tr><td>Daily Temperatures</td><td>O(n)</td><td>O(n)</td></tr>
+      <tr><td>Queue using two stacks</td><td>amortized O(1)</td><td>O(n)</td></tr>
+      <tr><td>Sliding Window Maximum</td><td>O(n)</td><td>O(k)</td></tr>
+      <tr><td>Evaluate RPN</td><td>O(n)</td><td>O(n)</td></tr>
+      <tr><td>Largest Rectangle</td><td>O(n)</td><td>O(n)</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="border-bottom:none;"><span class="qnum">D</span> <span class="hl-o">Bugs to never repeat</span></h3>
+  <ul class="ticks">
+    <li><code class="inline">shift()</code> in a BFS loop → <b>O(n²)</b> silently.</li>
+    <li>Reading the top of an <b>empty</b> stack — always check
+        <code class="inline">st.length</code>.</li>
+    <li>In RPN, computing <code class="inline">b − a</code> instead of
+        <code class="inline">a − b</code>.</li>
+    <li>Using <code class="inline">Math.floor</code> for division —
+        <b>use <code class="inline">Math.trunc</code></b> for negatives.</li>
+    <li>In monotonic stack, storing values when you need <b>distances</b> — store
+        indices.</li>
+    <li>Forgetting the <b>sentinel</b> at the end of a histogram scan.</li>
+  </ul>
+
+  <hr class="hand">
+
+  <div class="note">
+    <b>Reminder:</b> draw the plates, the line, the waiting room, and the skyline. If you
+    can't trace the stack / deque on paper, you don't yet understand the solution.
+  </div>
+
+  <div class="sticky green" style="margin-top:36px;">
+    <b>You reached the end of Module 7. 🎉</b><br>
+    Close the notes, open a blank file, and re-write <u>Valid Parentheses</u>,
+    <u>Min Stack</u>, <u>Next Greater</u>, <u>Sliding Window Maximum</u> and
+    <u>Largest Rectangle</u> from memory — <b>with a dry-run table for each</b>.
+  </div>
+
+  <div class="center" style="margin-top:44px;">
+    <span class="stamp">END OF MODULE 7</span>
+  </div>
+
+  <div class="doodle-stars" style="margin-top:26px;">✦ ✧ ✦ ✧ ✦</div>
+
+  <div class="pnum">15</div>
+</section>
+
+</div>
+
+<!-- ============================================================
+     Tiny script: colour "// comment" text inside any legacy
+     pre blocks (not used by the new codecard blocks, kept for
+     safety if you paste older code).
+     ============================================================ -->
+<script>
+(function () {
+  document.querySelectorAll('pre.code').forEach(function (block) {
+    var lines = block.innerHTML.split('\n');
+    var out = lines.map(function (line) {
+      var inSingle = false, inDouble = false, inTemplate = false, idx = -1;
+      for (var i = 0; i < line.length; i++) {
+        var ch = line[i];
+        var prev = line[i - 1];
+        if (ch === "'" && !inDouble && !inTemplate && prev !== '\\') inSingle = !inSingle;
+        else if (ch === '"' && !inSingle && !inTemplate && prev !== '\\') inDouble = !inDouble;
+        else if (ch === '`' && !inSingle && !inDouble && prev !== '\\') inTemplate = !inTemplate;
+        else if (!inSingle && !inDouble && !inTemplate && ch === '/' && line[i + 1] === '/') {
+          idx = i; break;
+        }
+      }
+      if (idx > -1) {
+        return line.slice(0, idx) + '<span class="cm">' + line.slice(idx) + '</span>';
+      }
+      return line;
+    });
+    block.innerHTML = out.join('\n');
+  });
+})();
+</script>
+
+</body>
+</html>

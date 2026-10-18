@@ -12,6 +12,7 @@ import {
   seedMaterials,
 } from './course.seed.js';
 import { seedDemoProgress } from './progress.seed.js';
+import { resetStudyMaterials, seedStudyMaterials } from './studyMaterials.seed.js';
 
 const reset = process.argv.includes('--reset');
 
@@ -31,9 +32,9 @@ async function main() {
   );
 
   if (reset) {
-    await Promise.all([resetCourseData(), removeDemoStudents()]);
+    await Promise.all([resetCourseData(), removeDemoStudents(), resetStudyMaterials()]);
     logger.warn(
-      'Removed all courses, modules, lessons, materials, assignments, submissions, files, enrollments, progress and demo students (--reset)',
+      'Removed all courses, modules, lessons, materials, assignments, submissions, files, enrollments, progress, demo students and study materials (--reset)',
     );
   }
 
@@ -53,6 +54,11 @@ async function main() {
         : `Assignments for ${result.slug}: the course already has assignments, kept`,
     );
   }
+
+  const studyRes = await seedStudyMaterials({ createdBy: admin.user._id });
+  logger.info(
+    `Study Books: ${studyRes.books.length} books (${studyRes.books.map((b) => b.slug).join(', ')}), ${studyRes.modules.total} modules catalogued (${studyRes.modules.added} added, ${studyRes.modules.updated} kept/updated)`,
+  );
 
   const demoPassword = config.seed.demoStudentPassword;
   if (!demoPassword) {

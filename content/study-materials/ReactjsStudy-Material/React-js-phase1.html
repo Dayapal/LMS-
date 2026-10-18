@@ -1,0 +1,4325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React JS — Phase 1: React Foundations</title>
+<style>
+/* ============================================================
+   PREMIUM REACT FOUNDATIONS BOOK — PRINT / PDF STYLESHEET
+   ============================================================ */
+
+:root{
+  --ink:#131a2e;
+  --ink-soft:#38415e;
+  --muted:#6b7592;
+  --brand:#1e3a8a;
+  --brand-2:#3b5bdb;
+  --brand-3:#93b4ff;
+  --accent:#f59e0b;
+  --accent-2:#fb7185;
+  --line:#e3e7f2;
+  --bg-soft:#f5f8ff;
+  --bg-soft-2:#eef3ff;
+  --code-bg:#0d1424;
+  --code-head:#1a2438;
+}
+
+*{ box-sizing:border-box; }
+
+html{ -webkit-text-size-adjust:100%; }
+
+body{
+  margin:0;
+  background:#eef1f7;
+  color:var(--ink);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size:11.4pt;
+  line-height:1.78;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Book shell ---------- */
+.book{
+  max-width:960px;
+  margin:0 auto;
+  background:#fff;
+  padding:0 56px 80px;
+  box-shadow:0 0 60px rgba(20,30,70,.14);
+}
+
+/* ============================================================
+   COVER
+   ============================================================ */
+.cover{
+  position:relative;
+  margin:0 -56px 60px;
+  padding:78px 64px 70px;
+  background:
+    radial-gradient(1100px 600px at 12% -10%, #2b4bc4 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 110%, #0b1b4d 0%, transparent 60%),
+    linear-gradient(150deg,#0f1b45 0%, #16255c 42%, #1e3a8a 100%);
+  color:#fff;
+  overflow:hidden;
+}
+.cover::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(ellipse at 70% 20%, #000 0%, transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse at 70% 20%, #000 0%, transparent 78%);
+  pointer-events:none;
+}
+.cover::after{
+  content:"";
+  position:absolute;
+  width:520px; height:520px; right:-160px; bottom:-220px;
+  background:radial-gradient(circle, rgba(245,158,11,.30) 0%, transparent 68%);
+  border-radius:50%;
+  pointer-events:none;
+}
+.cover-inner{ position:relative; z-index:2; }
+
+.badge{
+  display:inline-block;
+  font-size:9.5pt;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  font-weight:700;
+  color:#ffd479;
+  border:1px solid rgba(255,212,121,.45);
+  background:rgba(255,212,121,.09);
+  padding:7px 16px;
+  border-radius:100px;
+  margin-bottom:34px;
+}
+.cover h1{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size:52pt;
+  line-height:1.03;
+  margin:0 0 6px;
+  letter-spacing:-.02em;
+  font-weight:700;
+}
+.cover h1 .grad{
+  background:linear-gradient(100deg,#7dd3fc 0%, #ffd479 55%, #fb7185 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.cover .sub{
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size:19pt;
+  color:#c3d1ff;
+  margin:14px 0 0;
+  font-weight:400;
+  letter-spacing:.01em;
+}
+.cover .rule{
+  width:110px; height:5px; border-radius:6px;
+  background:linear-gradient(90deg,#ffd479,#fb7185);
+  margin:32px 0 30px;
+}
+.cover .lede{
+  max-width:610px;
+  font-size:12.4pt;
+  line-height:1.85;
+  color:#d5ddfb;
+  margin:0 0 40px;
+}
+.cover-chips{ display:flex; flex-wrap:wrap; gap:10px; }
+.chip{
+  font-size:9.6pt;
+  font-weight:600;
+  letter-spacing:.02em;
+  padding:8px 15px;
+  border-radius:9px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.17);
+  color:#e6ecff;
+  backdrop-filter:blur(4px);
+}
+.cover-foot{
+  margin-top:56px;
+  padding-top:24px;
+  border-top:1px solid rgba(255,255,255,.16);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  flex-wrap:wrap;
+  font-size:10pt;
+  color:#a9b9ee;
+}
+.cover-foot strong{ color:#fff; font-weight:700; letter-spacing:.02em; }
+
+/* ============================================================
+   TABLE OF CONTENTS
+   ============================================================ */
+.toc{
+  background:linear-gradient(180deg,#f7f9ff 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:44px 46px;
+  margin-bottom:64px;
+}
+.toc h2{
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size:24pt;
+  margin:0 0 6px;
+  color:var(--brand);
+  letter-spacing:-.01em;
+}
+.toc .toc-sub{ color:var(--muted); font-size:10.4pt; margin:0 0 30px; }
+.toc ol{ list-style:none; margin:0; padding:0; counter-reset:toc; }
+.toc li{
+  counter-increment:toc;
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  padding:10px 0;
+  border-bottom:1px dashed #dfe4f2;
+  font-size:11.2pt;
+}
+.toc li:last-child{ border-bottom:none; }
+.toc li .n{
+  flex:0 0 34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(140deg,#1e3a8a,#3b5bdb);
+  color:#fff;
+  font-size:10pt;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transform:translateY(6px);
+}
+.toc li .t{ font-weight:600; color:var(--ink); }
+.toc li .t small{ display:block; font-weight:400; color:var(--muted); font-size:9.6pt; }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1,h2,h3,h4{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  color:var(--brand);
+  line-height:1.25;
+  letter-spacing:-.005em;
+}
+
+.topic-head{
+  margin:0 0 34px;
+  padding:34px 38px;
+  border-radius:18px;
+  background:linear-gradient(135deg,#101c48 0%, #1e3a8a 58%, #2f4fb5 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+}
+.topic-head::after{
+  content:"";
+  position:absolute; width:300px; height:300px; right:-90px; top:-140px;
+  background:radial-gradient(circle, rgba(245,158,11,.35), transparent 70%);
+  border-radius:50%;
+}
+.topic-head .kicker{
+  position:relative; z-index:2;
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#ffd479; font-weight:700; margin-bottom:12px;
+}
+.topic-head h2{
+  position:relative; z-index:2;
+  color:#fff; font-size:26pt; margin:0; letter-spacing:-.015em;
+}
+.topic-head p{
+  position:relative; z-index:2;
+  margin:12px 0 0; color:#c9d5ff; font-size:10.6pt; max-width:640px;
+}
+
+h3{
+  font-size:15.5pt;
+  margin:40px 0 12px;
+  padding-left:16px;
+  border-left:5px solid var(--accent);
+  color:#16255c;
+}
+h4{
+  font-size:12.6pt;
+  margin:26px 0 8px;
+  color:var(--brand-2);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-weight:700;
+  letter-spacing:0;
+}
+p{ margin:0 0 15px; color:var(--ink-soft); }
+strong{ color:var(--ink); font-weight:700; }
+
+ul,ol{ margin:0 0 16px; padding-left:24px; color:var(--ink-soft); }
+li{ margin-bottom:7px; }
+
+a{ color:var(--brand-2); text-decoration:none; border-bottom:1px solid var(--brand-3); }
+
+code{
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size:.87em;
+  background:#eef2fd;
+  color:#1b3a91;
+  padding:2px 6px;
+  border-radius:5px;
+  border:1px solid #dde5fa;
+  white-space:nowrap;
+}
+
+/* ============================================================
+   CODE CARDS ("images" of code)
+   ============================================================ */
+.code-card{
+  margin:22px 0 26px;
+  border-radius:13px;
+  overflow:hidden;
+  background:var(--code-bg);
+  box-shadow:0 10px 30px rgba(13,20,36,.22), 0 2px 6px rgba(13,20,36,.14);
+  border:1px solid #1e2a45;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.code-head{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  background:linear-gradient(180deg,#1c2740 0%, #16203a 100%);
+  border-bottom:1px solid #24314f;
+}
+.dot{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+.dot.r{ background:#ff5f57; } .dot.y{ background:#febc2e; } .dot.g{ background:#28c840; }
+.code-title{
+  margin-left:12px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.2pt;
+  color:#8fa4d4;
+  letter-spacing:.03em;
+}
+.code-lang{
+  margin-left:auto;
+  font-size:8pt;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#5f7099;
+  font-weight:700;
+}
+.code-card pre{
+  margin:0;
+  padding:20px 22px;
+  overflow-x:auto;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px) 0 0 / 46px 100%,
+    var(--code-bg);
+}
+.code-card pre code{
+  display:block;
+  background:none;
+  border:none;
+  padding:0;
+  color:#dbe4ff;
+  font-family:"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size:9.6pt;
+  line-height:1.72;
+  white-space:pre;
+  tab-size:2;
+}
+/* token colors */
+.tok-com{ color:#5c6b8f; font-style:italic; }
+.tok-str{ color:#7ee2a8; }
+.tok-kw { color:#c792ea; font-weight:600; }
+.tok-num{ color:#ffb86c; }
+.tok-tag{ color:#5cc8ff; }
+.tok-tagp{ color:#7f8fb5; }
+.tok-attr{ color:#ffd479; }
+
+/* Terminal / output blocks */
+.term{
+  margin:18px 0 24px;
+  border-radius:11px;
+  overflow:hidden;
+  border:1px solid #d8dff0;
+  background:#0f172a;
+  break-inside:avoid;
+}
+.term .term-head{
+  background:#1c2740; color:#8fa4d4;
+  font-size:8.6pt; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:700; padding:8px 16px;
+  border-bottom:1px solid #24314f;
+}
+.term pre{
+  margin:0; padding:16px 20px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.6pt; line-height:1.7; color:#a7f3d0; white-space:pre-wrap;
+}
+.term.out pre{ color:#ffe9a8; }
+
+/* ============================================================
+   CALLOUTS
+   ============================================================ */
+.callout{
+  border-radius:13px;
+  padding:20px 24px 18px;
+  margin:24px 0;
+  border:1px solid;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.callout .ct{
+  font-weight:800;
+  font-size:10pt;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:10px;
+  display:flex; align-items:center; gap:9px;
+}
+.callout p:last-child{ margin-bottom:0; }
+
+.callout.remember{
+  background:linear-gradient(135deg,#eef4ff 0%, #f8fbff 100%);
+  border-color:#c9d8ff;
+}
+.callout.remember .ct{ color:#1e3a8a; }
+.callout.remember::before{ content:none; }
+
+.callout.analogy{
+  background:linear-gradient(135deg,#fff8ec 0%, #fffdf8 100%);
+  border-color:#ffdfae;
+}
+.callout.analogy .ct{ color:#b45309; }
+
+.callout.warn{
+  background:linear-gradient(135deg,#fff1f2 0%, #fff8f8 100%);
+  border-color:#ffd0d5;
+}
+.callout.warn .ct{ color:#be123c; }
+
+.callout.info{
+  background:linear-gradient(135deg,#eefbf6 0%, #f7fffc 100%);
+  border-color:#b8ecd8;
+}
+.callout.info .ct{ color:#047857; }
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  margin:24px 0;
+  font-size:10.4pt;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+thead th{
+  background:linear-gradient(135deg,#1e3a8a,#3b5bdb);
+  color:#fff;
+  text-align:left;
+  padding:12px 16px;
+  font-weight:700;
+  font-size:9.8pt;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+tbody td{
+  padding:11px 16px;
+  border-top:1px solid var(--line);
+  color:var(--ink-soft);
+  vertical-align:top;
+}
+tbody tr:nth-child(even){ background:#f8faff; }
+tbody td:first-child{ font-weight:600; color:var(--ink); }
+
+/* ============================================================
+   FIGURES / ILLUSTRATIONS
+   ============================================================ */
+figure{
+  margin:28px 0;
+  padding:22px 22px 14px;
+  background:linear-gradient(180deg,#f8faff 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  border-radius:16px;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+figure svg{ width:100%; height:auto; display:block; }
+figcaption{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px dashed #dde3f2;
+  font-size:9.6pt;
+  color:var(--muted);
+  text-align:center;
+  font-style:italic;
+}
+figcaption b{ color:var(--brand); font-style:normal; }
+
+/* ============================================================
+   FILE TREE
+   ============================================================ */
+.tree{
+  background:#0d1424;
+  color:#cbd6f5;
+  border-radius:12px;
+  padding:20px 24px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.6pt;
+  line-height:1.75;
+  white-space:pre;
+  margin:22px 0;
+  border:1px solid #1e2a45;
+  overflow-x:auto;
+  break-inside:avoid;
+}
+.tree .dir{ color:#5cc8ff; font-weight:600; }
+.tree .file{ color:#dbe4ff; }
+.tree .note{ color:#5c6b8f; }
+
+/* ============================================================
+   MISC COMPONENTS
+   ============================================================ */
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:22px 0; }
+.mini-card{
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:18px 20px;
+  background:#fbfcff;
+  break-inside:avoid;
+}
+.mini-card h5{
+  margin:0 0 8px;
+  font-size:10.4pt;
+  color:var(--brand);
+  font-family: ui-sans-serif, sans-serif;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.mini-card p{ margin:0; font-size:10.2pt; }
+
+.steps{ counter-reset:st; list-style:none; padding:0; margin:24px 0; }
+.steps li{
+  counter-increment:st;
+  position:relative;
+  padding:14px 0 14px 58px;
+  border-bottom:1px dashed #e2e7f4;
+  margin:0;
+}
+.steps li:last-child{ border-bottom:none; }
+.steps li::before{
+  content:counter(st);
+  position:absolute; left:0; top:13px;
+  width:34px; height:34px; border-radius:10px;
+  background:linear-gradient(140deg,#1e3a8a,#3b5bdb);
+  color:#fff; font-weight:800; font-size:10.5pt;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.pill{
+  display:inline-block;
+  font-size:9pt; font-weight:700;
+  padding:3px 10px; border-radius:100px;
+  background:#e8efff; color:#1e3a8a;
+  border:1px solid #cfdcff;
+  margin-right:6px;
+}
+
+hr.sep{
+  border:none; height:1px;
+  background:linear-gradient(90deg,transparent,#dbe2f2,transparent);
+  margin:46px 0;
+}
+
+/* ============================================================
+   PRINT RULES
+   ============================================================ */
+@media print{
+  @page{
+    size:A4;
+    margin:15mm 13mm 16mm;
+  }
+  @page:first{
+    margin:0;
+  }
+  body{
+    background:#fff;
+    font-size:10.6pt;
+    line-height:1.7;
+  }
+  .book{
+    max-width:none;
+    margin:0;
+    padding:0;
+    box-shadow:none;
+    background:#fff;
+  }
+  .cover{
+    margin:0;
+    height:297mm;
+    padding:80px 60px 60px;
+    border-radius:0;
+    display:flex;
+    align-items:center;
+    break-after:page;
+    page-break-after:always;
+  }
+  .cover-inner{ width:100%; }
+  .toc{ break-after:page; page-break-after:always; }
+
+  .topic{ break-before:page; page-break-before:always; }
+  h1,h2,h3,h4{ break-after:avoid; page-break-after:avoid; }
+  p, li{ orphans:2; widows:2; }
+
+  .code-card, figure, table, .callout, .term{ break-inside:avoid; page-break-inside:avoid; }
+
+  a{ color:var(--brand-2); border-bottom:none; }
+  a[href^="http"]::after{
+    content:" (" attr(href) ")";
+    font-size:7.6pt;
+    color:#8794b5;
+    word-break:break-all;
+  }
+  .no-print{ display:none !important; }
+}
+
+/* Screen-only helper */
+@media screen{
+  .topic{ margin-top:70px; }
+}
+</style>
+</head>
+<body>
+<div class="book">
+
+<!-- ============================================================
+     COVER
+     ============================================================ -->
+<section class="cover">
+  <div class="cover-inner">
+    <span class="badge">Phase 1 · Foundations</span>
+
+    <h1>React&nbsp;JS<br><span class="grad">React Foundations</span></h1>
+
+    <p class="sub">Components, JSX, Props &amp; the Virtual DOM</p>
+
+    <div class="rule"></div>
+
+    <p class="lede">
+      A complete, beginner-friendly guide to building user interfaces with React.
+      Learn how to set up a project with Vite, write JSX, build reusable functional
+      components, pass props, use <code style="background:rgba(255,255,255,.12);color:#ffd479;border-color:rgba(255,212,121,.3)">children</code>,
+      and understand how React renders and updates the browser.
+    </p>
+
+    <div class="cover-chips">
+      <span class="chip">JSX &amp; Expressions</span>
+      <span class="chip">Functional Components</span>
+      <span class="chip">Props &amp; One-Way Flow</span>
+      <span class="chip">Fragments</span>
+      <span class="chip">Composition</span>
+      <span class="chip">Rendering &amp; Virtual DOM</span>
+      <span class="chip">React DevTools</span>
+    </div>
+
+    <div class="cover-foot">
+      <div>
+        <strong>Learning Track</strong><br>
+        Frontend Development · React Series
+      </div>
+      <div style="text-align:right">
+        <strong>Module</strong><br>
+        Phase 1 of the React Curriculum
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     HOW TO STUDY
+     ============================================================ -->
+<section class="toc" style="break-after:page;">
+  <h2>How to Study This Material</h2>
+  <p class="toc-sub">Follow this sequence for every topic in the book.</p>
+
+  <ol class="steps">
+    <li><strong>What:</strong> Understand what the concept means.</li>
+    <li><strong>Why:</strong> Understand why React developers use it.</li>
+    <li><strong>Analogy:</strong> Connect the concept to something familiar.</li>
+    <li><strong>How:</strong> Learn the syntax and implementation.</li>
+    <li><strong>Code explanation:</strong> Understand what each important line does.</li>
+    <li><strong>Practice:</strong> Try writing the example yourself without looking at the answer.</li>
+  </ol>
+
+  <p style="margin-top:22px">
+    By the end, you should be able to create a React project, write JSX, build reusable
+    functional components, pass props, use <code>children</code>, explain rendering and the
+    virtual DOM, and inspect components using React Developer Tools.
+  </p>
+</section>
+
+<!-- ============================================================
+     TABLE OF CONTENTS
+     ============================================================ -->
+<section class="toc">
+  <h2>Table of Contents</h2>
+  <p class="toc-sub">Thirteen topics, one practical project, and a full revision set.</p>
+
+  <ol>
+    <li><span class="n">1</span><span class="t">What Is React and Why Is It Used?<small>Library, components, reusability, JavaScript integration</small></span></li>
+    <li><span class="n">2</span><span class="t">SPA, Client-Side Rendering, and React's Role<small>Multi-page vs. single-page, CSR, mounting a root</small></span></li>
+    <li><span class="n">3</span><span class="t">Create a React Project Using Vite<small>Node.js, npm, scaffolding, dev server</small></span></li>
+    <li><span class="n">4</span><span class="t">Understand the React Project Structure<small>src, public, index.html, package.json, node_modules</small></span></li>
+    <li><span class="n">5</span><span class="t">JSX Syntax and Expressions<small>Markup in JavaScript, rules, curly braces</small></span></li>
+    <li><span class="n">6</span><span class="t">Embedding JavaScript in JSX<small>Variables, arithmetic, functions, conditionals, renderable values</small></span></li>
+    <li><span class="n">7</span><span class="t">Fragments and JSX Rules<small>Grouping elements without extra DOM nodes</small></span></li>
+    <li><span class="n">8</span><span class="t">Functional Components<small>Building blocks, PascalCase, separate files</small></span></li>
+    <li><span class="n">9</span><span class="t">Component Composition and Reuse<small>Component trees, breaking down big interfaces</small></span></li>
+    <li><span class="n">10</span><span class="t">Props and One-Way Data Flow<small>Parent to child, destructuring, read-only props</small></span></li>
+    <li><span class="n">11</span><span class="t">The <code>children</code> Prop<small>Flexible wrapper and layout components</small></span></li>
+    <li><span class="n">12</span><span class="t">Rendering and the Virtual DOM Concept<small>Trigger, render, commit, DOM tree</small></span></li>
+    <li><span class="n">13</span><span class="t">React Developer Tools<small>Components panel and Profiler</small></span></li>
+    <li><span class="n">★</span><span class="t">Practical Project: Student Learning Portal<small>Apply everything you have learned</small></span></li>
+    <li><span class="n">!</span><span class="t">Common Beginner Mistakes<small>Eight pitfalls and how to fix them</small></span></li>
+    <li><span class="n">↺</span><span class="t">Revision Notes &amp; Practice Exercises<small>Self-assessment and further reading</small></span></li>
+  </ol>
+</section>
+
+<!-- ============================================================
+     TOPIC 1
+     ============================================================ -->
+<section class="topic" id="t1">
+  <div class="topic-head">
+    <div class="kicker">Topic 01</div>
+    <h2>What Is React and Why Is It Used?</h2>
+    <p>The foundation: what React is, why it exists, and the problems it solves.</p>
+  </div>
+
+  <h3>1.1 What is React?</h3>
+  <p>React is a <strong>JavaScript library for building user interfaces (UIs)</strong>.</p>
+  <p>A user interface is the part of an application a user sees and interacts with, including buttons, forms, navigation bars, product cards, dashboards, and profile sections.</p>
+  <p>React allows us to divide a large interface into small, reusable pieces called <strong>components</strong>.</p>
+  <p>For example, consider an education website containing:</p>
+  <ul>
+    <li>A navigation bar</li>
+    <li>A course list</li>
+    <li>Course cards</li>
+    <li>A student profile</li>
+    <li>A footer</li>
+  </ul>
+  <p>Instead of writing the entire interface as one large block of code, we can create separate components for the navbar, course cards, profile, and footer.</p>
+
+  <h3>1.2 Analogy: Building a House</h3>
+  <p>Imagine you are constructing a house.</p>
+  <p>A house contains different parts:</p>
+  <ul>
+    <li>Doors</li>
+    <li>Windows</li>
+    <li>Walls</li>
+    <li>Rooms</li>
+    <li>A kitchen</li>
+    <li>A bathroom</li>
+  </ul>
+  <p>You do not need to invent an entirely new type of door for every room. You can reuse a common design wherever appropriate.</p>
+  <p>React follows a similar idea.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House analogy compared with React components">
+      <defs>
+        <linearGradient id="g1a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+        <linearGradient id="g1b" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ffd479"/><stop offset="100%" stop-color="#f59e0b"/>
+        </linearGradient>
+      </defs>
+
+      <!-- HOUSE -->
+      <polygon points="60,120 165,44 270,120" fill="url(#g1a)"/>
+      <rect x="82" y="120" width="166" height="118" fill="#dbe4ff" stroke="#1e3a8a" stroke-width="3" rx="3"/>
+      <rect x="140" y="176" width="50" height="62" fill="url(#g1b)" stroke="#1e3a8a" stroke-width="3" rx="3"/>
+      <circle cx="180" cy="208" r="3.5" fill="#1e3a8a"/>
+      <rect x="98" y="140" width="46" height="40" fill="#ffffff" stroke="#1e3a8a" stroke-width="3" rx="2"/>
+      <line x1="121" y1="140" x2="121" y2="180" stroke="#1e3a8a" stroke-width="2.5"/>
+      <line x1="98" y1="160" x2="144" y2="160" stroke="#1e3a8a" stroke-width="2.5"/>
+      <rect x="196" y="140" width="38" height="34" fill="#ffffff" stroke="#1e3a8a" stroke-width="3" rx="2"/>
+      <text x="165" y="262" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#6b7592" font-style="italic">A house made of reusable parts</text>
+
+      <!-- ARROW -->
+      <path d="M296 140 H 356" stroke="#93b4ff" stroke-width="3" stroke-dasharray="7 6"/>
+      <polygon points="356,132 372,140 356,148" fill="#3b5bdb"/>
+      <text x="326" y="126" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#3b5bdb">SAME IDEA</text>
+
+      <!-- COMPONENTS -->
+      <rect x="392" y="30" width="330" height="210" rx="16" fill="#f7faff" stroke="#d7e0f7" stroke-width="2"/>
+      <rect x="412" y="52" width="140" height="42" rx="10" fill="url(#g1a)"/>
+      <text x="482" y="79" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#fff">Navbar</text>
+
+      <rect x="566" y="52" width="136" height="42" rx="10" fill="#2f4fb5"/>
+      <text x="634" y="79" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#fff">Button</text>
+
+      <rect x="412" y="108" width="140" height="42" rx="10" fill="#3b5bdb"/>
+      <text x="482" y="135" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#fff">Image</text>
+
+      <rect x="566" y="108" width="136" height="42" rx="10" fill="#4c6ef5"/>
+      <text x="634" y="135" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#fff">PageSection</text>
+
+      <rect x="412" y="164" width="290" height="52" rx="12" fill="url(#g1b)"/>
+      <text x="557" y="196" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13.5" font-weight="800" fill="#4a2c00">Complete Application</text>
+    </svg>
+    <figcaption><b>Figure 1.1</b> — Just as a house reuses doors, windows and rooms, React reuses components to assemble a full application.</figcaption>
+  </figure>
+
+  <table>
+    <thead><tr><th>House</th><th>React</th></tr></thead>
+    <tbody>
+      <tr><td>Door</td><td>Button component</td></tr>
+      <tr><td>Window</td><td>Image component</td></tr>
+      <tr><td>Room</td><td>Page section component</td></tr>
+      <tr><td>Reusable room design</td><td>Reusable UI component</td></tr>
+      <tr><td>Complete house</td><td>Complete application</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout remember">
+    <div class="ct">◆ Main Idea</div>
+    <p>React helps us build a large user interface using smaller pieces that can be maintained and reused.</p>
+  </div>
+
+  <h3>1.3 Why Do We Need React?</h3>
+  <p>First, consider how we might build a simple interface using HTML.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">index.html</span><span class="code-lang">HTML</span></div>
+    <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Welcome to My Website&lt;/h1&gt;
+    &lt;p&gt;Learn web development.&lt;/p&gt;
+    &lt;button&gt;Explore Courses&lt;/button&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <p>This code creates a heading, paragraph, and button.</p>
+  <p>For a small static page, HTML is sufficient. However, a modern application may contain hundreds of interface elements and frequently changing information.</p>
+  <p>For example, an online shopping website may need to display product cards, shopping cart details, filters, search results, and user information.</p>
+  <p>As an application grows, organizing and updating its interface manually can become complicated.</p>
+  <p>React helps by providing several useful capabilities.</p>
+
+  <h4>A. Component-based development</h4>
+  <p>We can separate the interface into manageable components.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Welcome.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Welcome() {
+  return &lt;h1&gt;Welcome to React!&lt;/h1&gt;;
+}</code></pre>
+  </div>
+
+  <p>Here, <code>Welcome</code> is a component that describes a small part of the interface.</p>
+
+  <h4>B. Reusability</h4>
+  <p>We can use the same component multiple times.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function CourseCard() {
+  return &lt;article&gt;React Fundamentals&lt;/article&gt;;
+}
+
+function App() {
+  return (
+    &lt;main&gt;
+      &lt;CourseCard /&gt;
+      &lt;CourseCard /&gt;
+      &lt;CourseCard /&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>The <code>CourseCard</code> component is defined once but used three times.</p>
+
+  <h4>C. JavaScript integration</h4>
+  <p>React lets us combine JavaScript expressions with UI descriptions.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Welcome.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Welcome() {
+  const studentName = "Rahul";
+
+  return &lt;h1&gt;Welcome, {studentName}!&lt;/h1&gt;;
+}
+
+export default Welcome;</code></pre>
+  </div>
+
+  <div class="term out">
+    <div class="term-head">Output</div>
+    <pre>Welcome, Rahul!</pre>
+  </div>
+
+  <p>The value of <code>studentName</code> is inserted into the interface using curly braces.</p>
+
+  <h4>D. Easier interface updates</h4>
+  <p>React manages how the UI is updated when the output of a component changes.</p>
+  <p>You describe what the interface should look like. React then coordinates the necessary updates to the browser's DOM.</p>
+  <p>We will study rendering in Topic 12.</p>
+
+  <h3>1.4 When Is React Useful?</h3>
+  <p>React is commonly used to build:</p>
+  <ul>
+    <li>Admin dashboards and CRM applications</li>
+    <li>E-commerce websites</li>
+    <li>Social media interfaces</li>
+    <li>Learning management systems</li>
+    <li>Booking applications</li>
+    <li>Interactive forms and portals</li>
+  </ul>
+  <p>A static page does not necessarily need React. React becomes especially useful when an application has a complex interface, repeated UI patterns, and frequently changing content.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>React is a library, not a programming language. You use JavaScript to write React applications.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 2
+     ============================================================ -->
+<section class="topic" id="t2">
+  <div class="topic-head">
+    <div class="kicker">Topic 02</div>
+    <h2>SPA, Client-Side Rendering, and React's Role</h2>
+    <p>How modern web applications load, and where React fits into the picture.</p>
+  </div>
+
+  <p>Before learning how React creates interfaces, we need to understand how websites display pages.</p>
+
+  <h3>2.1 What Is a Traditional Multi-Page Application?</h3>
+  <p>In a traditional multi-page website, clicking a link often causes the browser to request a new HTML document from the server.</p>
+  <p>Imagine visiting an institute website:</p>
+  <ol>
+    <li>You open the home page.</li>
+    <li>You click About Us.</li>
+    <li>The browser requests and loads the About Us page.</li>
+    <li>You click Courses.</li>
+    <li>The browser requests and loads the Courses page.</li>
+  </ol>
+  <p>Each navigation may involve loading a new document from the server.</p>
+  <p>This approach is still used by many websites and can work very well.</p>
+
+  <h3>2.2 What Is a Single-Page Application (SPA)?</h3>
+  <p>A <strong>Single-Page Application (SPA)</strong> is an application that loads an initial HTML document and then updates the displayed interface as the user interacts with it, without requiring a complete document reload for every internal navigation.</p>
+  <p>Think about using an application such as an email dashboard.</p>
+  <p>You might switch between Inbox, Sent, and Drafts while the main application remains loaded.</p>
+  <p>A SPA can replace the content of the current interface instead of loading a completely new HTML document for each navigation.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Multi-page application versus single-page application">
+      <defs>
+        <linearGradient id="g2a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+        <linearGradient id="g2b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <!-- LEFT: MPA -->
+      <rect x="18" y="18" width="345" height="264" rx="16" fill="#fbfcff" stroke="#e0e6f6" stroke-width="2"/>
+      <text x="190" y="48" text-anchor="middle" font-family="Georgia, serif" font-size="16" font-weight="700" fill="#1e3a8a">Multi-Page Application</text>
+
+      <rect x="46" y="72" width="90" height="62" rx="9" fill="#fff" stroke="#93b4ff" stroke-width="2"/>
+      <text x="91" y="108" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" fill="#38415e">Home</text>
+
+      <rect x="158" y="72" width="90" height="62" rx="9" fill="#fff" stroke="#93b4ff" stroke-width="2"/>
+      <text x="203" y="108" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" fill="#38415e">About</text>
+
+      <rect x="270" y="72" width="70" height="62" rx="9" fill="#fff" stroke="#93b4ff" stroke-width="2"/>
+      <text x="305" y="108" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" fill="#38415e">Courses</text>
+
+      <path d="M136 103 H 152" stroke="#93b4ff" stroke-width="2.5"/>
+      <path d="M248 103 H 264" stroke="#93b4ff" stroke-width="2.5"/>
+
+      <rect x="46" y="164" width="294" height="96" rx="10" fill="#fff5e0" stroke="#f6c667" stroke-width="2"/>
+      <text x="193" y="192" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11.5" font-weight="700" fill="#8a5a00">Server request per page</text>
+      <text x="193" y="216" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#a97b2a">Each navigation loads a fresh HTML</text>
+      <text x="193" y="236" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#a97b2a">document from the server.</text>
+
+      <!-- RIGHT: SPA -->
+      <rect x="397" y="18" width="345" height="264" rx="16" fill="#fbfcff" stroke="#e0e6f6" stroke-width="2"/>
+      <text x="569" y="48" text-anchor="middle" font-family="Georgia, serif" font-size="16" font-weight="700" fill="#1e3a8a">Single-Page Application</text>
+
+      <rect x="425" y="72" width="290" height="188" rx="12" fill="url(#g2a)"/>
+      <rect x="443" y="90" width="254" height="24" rx="6" fill="rgba(255,255,255,.16)"/>
+      <circle cx="457" cy="102" r="4" fill="#ffd479"/>
+      <text x="472" y="106" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#dbe4ff">my-app.com</text>
+
+      <rect x="443" y="126" width="76" height="116" rx="8" fill="rgba(255,255,255,.13)"/>
+      <text x="481" y="148" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#dbe4ff">Inbox</text>
+      <text x="481" y="170" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#8fa8ff">Sent</text>
+      <text x="481" y="192" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#8fa8ff">Drafts</text>
+
+      <rect x="531" y="126" width="166" height="116" rx="8" fill="rgba(255,255,255,.20)"/>
+      <text x="614" y="152" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#fff">Content area</text>
+      <text x="614" y="176" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#dbe4ff">updates in place —</text>
+      <text x="614" y="194" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#dbe4ff">no full page reload</text>
+      <text x="614" y="222" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#ffd479">◉ app stays loaded</text>
+    </svg>
+    <figcaption><b>Figure 2.1</b> — A multi-page site reloads a document per navigation; an SPA keeps the shell alive and swaps content.</figcaption>
+  </figure>
+
+  <div class="callout analogy">
+    <div class="ct">◆ Analogy: A Restaurant</div>
+    <p>Imagine a restaurant with one dining area.</p>
+    <p>You can change your table arrangement, update a menu, or replace a dish without rebuilding the entire restaurant every time.</p>
+    <p>A SPA works in a similar way: the application remains in place while parts of the interface change.</p>
+  </div>
+
+  <h3>2.3 What Is Client-Side Rendering (CSR)?</h3>
+  <p><strong>Client-side rendering</strong> means that the browser executes JavaScript to produce or update the user interface.</p>
+  <p>In a typical React SPA, the process looks like this:</p>
+  <ol>
+    <li>The browser requests the website.</li>
+    <li>The server sends the initial HTML, JavaScript, and other required assets.</li>
+    <li>The browser downloads and executes the JavaScript.</li>
+    <li>React creates the interface and displays it.</li>
+    <li>React updates the interface as the application runs.</li>
+  </ol>
+
+  <p>A typical client-rendered React application starts with an HTML file containing a root element.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">index.html</span><span class="code-lang">HTML</span></div>
+    <pre><code class="lang-html">&lt;div id="root"&gt;&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>Initially, this element is the container into which React will render the application.</p>
+  <p>React connects to the element and displays the interface inside it.</p>
+
+  <h3>2.4 How Does React Fit Into This Process?</h3>
+  <p>Imagine building a student dashboard.</p>
+  <p>The browser provides the environment, JavaScript executes in that environment, and React manages the UI described by your components.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentDashboard.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentDashboard() {
+  return (
+    &lt;main&gt;
+      &lt;h1&gt;Student Dashboard&lt;/h1&gt;
+      &lt;p&gt;Welcome to your learning portal.&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default StudentDashboard;</code></pre>
+  </div>
+
+  <p>This component describes the dashboard's interface. It does not, by itself, tell the browser where the application should be mounted. The React entry point performs that task.</p>
+  <p>A typical entry point looks like this:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">main.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
+
+createRoot(document.getElementById("root")).render(
+  &lt;App /&gt;
+);</code></pre>
+  </div>
+
+  <p>What happens here?</p>
+  <ul>
+    <li><code>createRoot</code> creates a React root attached to the HTML element.</li>
+    <li><code>document.getElementById("root")</code> finds the HTML container.</li>
+    <li><code>&lt;App /&gt;</code> represents the root application component.</li>
+    <li><code>.render()</code> asks React to render that component into the container.</li>
+  </ul>
+  <p>We will examine the Vite project files in Topics 3 and 4.</p>
+
+  <h3>2.5 Is Every React Application a SPA?</h3>
+  <p>No.</p>
+  <p>React is a UI library. It can be used in a client-rendered SPA, but it can also be used with server rendering and other architectures.</p>
+  <p>A typical Vite React project is commonly configured as a client-rendered application. Frameworks such as Next.js can support server rendering and other rendering strategies.</p>
+  <p>For now, focus on this distinction:</p>
+
+  <table>
+    <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>React</td><td>A JavaScript library for creating interfaces</td></tr>
+      <tr><td>SPA</td><td>An application model that updates views without a full document reload for every internal navigation</td></tr>
+      <tr><td>CSR</td><td>Rendering or updating the UI in the browser using JavaScript</td></tr>
+      <tr><td>Vite</td><td>A development and build tool used to set up React projects and other frontend applications</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>SPA and CSR are related, but they are not the same thing. An SPA describes an application structure and navigation experience; CSR describes where rendering work takes place.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 3
+     ============================================================ -->
+<section class="topic" id="t3">
+  <div class="topic-head">
+    <div class="kicker">Topic 03</div>
+    <h2>Create a React Project Using Vite</h2>
+    <p>From an empty folder to a running React application in six steps.</p>
+  </div>
+
+  <h3>3.1 What Is Vite?</h3>
+  <p>Vite is a frontend development tool that helps you start and build modern web projects.</p>
+  <p>It provides a development server, fast feedback while coding, and a production build process.</p>
+
+  <div class="callout analogy">
+    <div class="ct">◆ Analogy: Setting Up a Classroom</div>
+    <p>Imagine you want to teach a class.</p>
+    <p>You could build the classroom, arrange the furniture, install lights, and prepare every item yourself.</p>
+    <p>Or you could use an already equipped classroom and start teaching.</p>
+    <p>Vite provides a ready-to-use project setup so you can focus on learning React instead of configuring every tool manually.</p>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 760 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vite as a ready-made classroom">
+      <defs>
+        <linearGradient id="g3a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+      </defs>
+
+      <!-- DIY side -->
+      <rect x="18" y="18" width="330" height="184" rx="15" fill="#fdf2f4" stroke="#fbc7cf" stroke-width="2"/>
+      <text x="183" y="46" text-anchor="middle" font-family="Georgia, serif" font-size="15" font-weight="700" fill="#be123c">Do It All Yourself</text>
+      <g font-family="Segoe UI, sans-serif" font-size="11.5" fill="#8c4152">
+        <text x="46" y="78">🔨  Build the room</text>
+        <text x="46" y="102">🪑  Arrange furniture</text>
+        <text x="46" y="126">💡  Install lights</text>
+        <text x="46" y="150">🧰  Configure tools</text>
+        <text x="46" y="174">⏳  …then finally start</text>
+      </g>
+
+      <!-- Arrow -->
+      <path d="M360 110 H 400" stroke="#93b4ff" stroke-width="3" stroke-dasharray="7 6"/>
+      <polygon points="400,102 416,110 400,118" fill="#3b5bdb"/>
+      <text x="380" y="96" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" fill="#3b5bdb">VITE</text>
+
+      <!-- Ready side -->
+      <rect x="428" y="18" width="314" height="184" rx="15" fill="#eefbf6" stroke="#b8ecd8" stroke-width="2"/>
+      <text x="585" y="46" text-anchor="middle" font-family="Georgia, serif" font-size="15" font-weight="700" fill="#047857">Ready-Made Classroom</text>
+      <g font-family="Segoe UI, sans-serif" font-size="11.5" fill="#0f6b52">
+        <text x="456" y="82">⚡  Dev server ready</text>
+        <text x="456" y="108">🔥  Hot updates on save</text>
+        <text x="456" y="134">📦  Build pipeline ready</text>
+        <text x="456" y="160">🚀  Start learning React</text>
+      </g>
+      <rect x="456" y="172" width="258" height="0" rx="0" fill="none"/>
+    </svg>
+    <figcaption><b>Figure 3.1</b> — Vite hands you a configured workspace so your first minute is spent writing React, not configuring tools.</figcaption>
+  </figure>
+
+  <h3>3.2 Step 1: Check Node.js and npm</h3>
+  <p>Vite requires Node.js to run its development tools.</p>
+  <p>Open your terminal, Command Prompt, or VS Code terminal and execute:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">node -v
+npm -v</code></pre>
+  </div>
+
+  <p>The first command displays your Node.js version. The second displays your npm version.</p>
+  <p>Use a Node.js version compatible with the current Vite requirements. Check the official Vite guide if you receive a version warning.</p>
+
+  <h3>3.3 Step 2: Create the Project</h3>
+  <p>Run:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm create vite@latest</code></pre>
+  </div>
+
+  <p>Vite asks you to enter or select the project name, framework, and variant.</p>
+  <p>Choose:</p>
+  <ul>
+    <li>Project name: <code>react-foundations</code></li>
+    <li>Framework: <code>React</code></li>
+    <li>Variant: <code>JavaScript</code></li>
+  </ul>
+  <p>Choose JavaScript rather than TypeScript for this phase, because these lessons focus on React fundamentals using JavaScript.</p>
+  <p>You can also create the project directly with a command:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm create vite@latest react-foundations -- --template react</code></pre>
+  </div>
+
+  <p>Explanation:</p>
+  <ul>
+    <li><code>npm create vite@latest</code> runs the Vite project scaffolding tool.</li>
+    <li><code>react-foundations</code> is the project directory name.</li>
+    <li><code>--template react</code> selects the React JavaScript template.</li>
+  </ul>
+
+  <h3>3.4 Step 3: Enter the Project Directory</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">cd react-foundations</code></pre>
+  </div>
+
+  <p>The <code>cd</code> command changes the current terminal directory to the newly created project.</p>
+
+  <h3>3.5 Step 4: Install Dependencies</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm install</code></pre>
+  </div>
+
+  <p>This installs the packages required by your project.</p>
+  <p>The project dependencies are declared in <code>package.json</code>. npm downloads the packages and creates a <code>node_modules</code> directory.</p>
+
+  <h3>3.6 Step 5: Start the Development Server</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm run dev</code></pre>
+  </div>
+
+  <p>Vite starts a local development server and displays a local URL, usually something similar to:</p>
+
+  <div class="term">
+    <div class="term-head">Local URL</div>
+    <pre>http://localhost:5173/</pre>
+  </div>
+
+  <p>Open the URL in your browser to view your React application.</p>
+  <p>The exact port can differ if another application is already using the default port.</p>
+
+  <h3>3.7 Step 6: Make Your First Change</h3>
+  <p>Open <code>src/App.jsx</code> and replace its contents with:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return (
+    &lt;main&gt;
+      &lt;h1&gt;My First React Application&lt;/h1&gt;
+      &lt;p&gt;I am learning React step by step.&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>Save the file.</p>
+  <p>You should see the new heading and paragraph in the browser. Vite's development server supports hot updates, so you usually do not need to manually refresh the page after editing a source file.</p>
+
+  <h3>3.8 What Did You Just Build?</h3>
+  <p>You created a React project that uses:</p>
+  <ul>
+    <li>Vite to run the development environment.</li>
+    <li>React to define and render the interface.</li>
+    <li>JSX to describe HTML-like UI structures.</li>
+    <li>A browser to display the resulting interface.</li>
+  </ul>
+
+  <div class="callout warn">
+    <div class="ct">▲ Common Setup Errors</div>
+    <p><strong>Error: <code>node</code> or <code>npm</code> is not recognized.</strong><br>
+    Node.js may not be installed, or your terminal may not have the correct PATH configuration.</p>
+    <p><strong>Error: <code>Missing script: "dev"</code>.</strong><br>
+    You may be in the wrong directory. Check that the current folder contains the project's <code>package.json</code>.</p>
+    <p><strong>The browser shows an error instead of your app.</strong><br>
+    Read the terminal and browser console errors. A misspelled import, missing file, or invalid JSX may prevent the project from running.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 4
+     ============================================================ -->
+<section class="topic" id="t4">
+  <div class="topic-head">
+    <div class="kicker">Topic 04</div>
+    <h2>Understand the React Project Structure</h2>
+    <p>Every file Vite creates — and what each one is responsible for.</p>
+  </div>
+
+  <p>When Vite creates a React project, it generates several files and directories.</p>
+  <p>A simplified structure looks like this:</p>
+
+  <div class="tree"><span class="dir">react-foundations/</span>
+│
+├── <span class="dir">node_modules/</span>
+│
+├── <span class="dir">public/</span>
+│
+├── <span class="dir">src/</span>
+│   ├── <span class="dir">assets/</span>
+│   ├── <span class="file">App.css</span>
+│   ├── <span class="file">App.jsx</span>
+│   ├── <span class="file">index.css</span>
+│   └── <span class="file">main.jsx</span>
+│
+├── <span class="file">.gitignore</span>
+├── <span class="file">index.html</span>
+├── <span class="file">package.json</span>
+├── <span class="file">package-lock.json</span>
+└── <span class="file">vite.config.js</span></div>
+
+  <p>The exact structure may vary slightly with template versions.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="React project structure map">
+      <defs>
+        <linearGradient id="g4a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+        <linearGradient id="g4b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Root box -->
+      <rect x="290" y="14" width="180" height="44" rx="11" fill="url(#g4a)"/>
+      <text x="380" y="42" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12.5" font-weight="700" fill="#fff">react-foundations/</text>
+
+      <!-- connectors -->
+      <path d="M380 58 V 82" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M100 82 H 660" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M100 82 V 100" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M240 82 V 100" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M380 82 V 100" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M520 82 V 100" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M660 82 V 100" stroke="#93b4ff" stroke-width="2"/>
+
+      <!-- src (highlight) -->
+      <rect x="310" y="100" width="140" height="40" rx="10" fill="url(#g4b)"/>
+      <text x="380" y="126" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12.5" font-weight="700" fill="#4a2c00">src/</text>
+
+      <!-- other top-level -->
+      <rect x="40" y="100" width="120" height="40" rx="10" fill="#eef3ff" stroke="#c9d8ff" stroke-width="1.8"/>
+      <text x="100" y="125" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#1e3a8a">public/</text>
+
+      <rect x="180" y="100" width="120" height="40" rx="10" fill="#eef3ff" stroke="#c9d8ff" stroke-width="1.8"/>
+      <text x="240" y="125" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#1e3a8a">node_modules/</text>
+
+      <rect x="460" y="100" width="120" height="40" rx="10" fill="#eef3ff" stroke="#c9d8ff" stroke-width="1.8"/>
+      <text x="520" y="125" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#1e3a8a">index.html</text>
+
+      <rect x="600" y="100" width="120" height="40" rx="10" fill="#eef3ff" stroke="#c9d8ff" stroke-width="1.8"/>
+      <text x="660" y="125" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#1e3a8a">package.json</text>
+
+      <!-- src children -->
+      <path d="M380 140 V 166" stroke="#f6c667" stroke-width="2"/>
+      <path d="M150 166 H 610" stroke="#f6c667" stroke-width="2"/>
+      <path d="M150 166 V 186" stroke="#f6c667" stroke-width="2"/>
+      <path d="M290 166 V 186" stroke="#f6c667" stroke-width="2"/>
+      <path d="M430 166 V 186" stroke="#f6c667" stroke-width="2"/>
+      <path d="M570 166 V 186" stroke="#f6c667" stroke-width="2"/>
+
+      <rect x="102" y="186" width="96" height="36" rx="9" fill="#fff8ec" stroke="#ffdfae" stroke-width="1.8"/>
+      <text x="150" y="209" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" fill="#8a5a00">main.jsx</text>
+
+      <rect x="242" y="186" width="96" height="36" rx="9" fill="#fff8ec" stroke="#ffdfae" stroke-width="1.8"/>
+      <text x="290" y="209" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" fill="#8a5a00">App.jsx</text>
+
+      <rect x="382" y="186" width="96" height="36" rx="9" fill="#fff8ec" stroke="#ffdfae" stroke-width="1.8"/>
+      <text x="430" y="209" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" fill="#8a5a00">App.css</text>
+
+      <rect x="522" y="186" width="96" height="36" rx="9" fill="#fff8ec" stroke="#ffdfae" stroke-width="1.8"/>
+      <text x="570" y="209" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" fill="#8a5a00">assets/</text>
+
+      <text x="380" y="264" text-anchor="middle" font-family="Georgia, serif" font-size="12.5" fill="#6b7592" font-style="italic">src/ is where you write your code. index.html and main.jsx start the app.</text>
+    </svg>
+    <figcaption><b>Figure 4.1</b> — The project map: one entry HTML file, one entry JavaScript file, and a <code>src/</code> folder holding your components.</figcaption>
+  </figure>
+
+  <h3>4.1 The <code>src</code> Directory</h3>
+  <p><code>src</code> stands for source. It contains the code you normally work with while developing the application.</p>
+
+  <h4><code>App.jsx</code></h4>
+  <p>This file commonly contains the main application component.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return &lt;h1&gt;Hello, React!&lt;/h1&gt;;
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p><code>App</code> describes a UI element that the application can render.</p>
+
+  <h4><code>main.jsx</code></h4>
+  <p>This is usually the entry point of a Vite React application.</p>
+  <p>Example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/main.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
+
+createRoot(document.getElementById("root")).render(
+  &lt;StrictMode&gt;
+    &lt;App /&gt;
+  &lt;/StrictMode&gt;
+);</code></pre>
+  </div>
+
+  <p>Explanation:</p>
+  <ul>
+    <li>The imports bring in React tools and the <code>App</code> component.</li>
+    <li><code>document.getElementById("root")</code> finds the mounting element from <code>index.html</code>.</li>
+    <li><code>createRoot(...)</code> creates the React root.</li>
+    <li><code>.render(...)</code> renders the component tree.</li>
+    <li><code>StrictMode</code> enables additional development checks. It does not create a visible UI element of its own.</li>
+  </ul>
+  <p>Notice that <code>App</code> is imported from <code>App.jsx</code>. This is how components can be defined in one file and used in another.</p>
+
+  <h4><code>App.css</code></h4>
+  <p>This file is commonly used for styling the application component.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/App.css</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">h1 {
+  color: royalblue;
+  text-align: center;
+}</code></pre>
+  </div>
+
+  <p>The CSS changes the appearance of matching headings.</p>
+
+  <h4><code>index.css</code></h4>
+  <p>This file often contains global styles, such as the page background, body font, and default margins.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/index.css</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}</code></pre>
+  </div>
+
+  <h4><code>assets/</code></h4>
+  <p>This directory is commonly used for assets imported by source code, such as images and other frontend resources.</p>
+
+  <h3>4.2 The <code>public</code> Directory</h3>
+  <p>The <code>public</code> directory is for static assets that need to be served directly.</p>
+  <p>For example, you might keep a file here:</p>
+
+  <div class="tree"><span class="dir">public/</span>
+└── <span class="file">logo.png</span></div>
+
+  <p>It can usually be referenced through the public URL:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Logo.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Logo() {
+  return &lt;img src="/logo.png" alt="Institute logo" /&gt;;
+}</code></pre>
+  </div>
+
+  <p>For source assets that you import into components, the <code>src/assets</code> directory is commonly appropriate.</p>
+
+  <h3>4.3 The <code>index.html</code> File</h3>
+  <p>Vite's <code>index.html</code> is the HTML entry point.</p>
+  <p>A simplified example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">index.html</span><span class="code-lang">HTML</span></div>
+    <pre><code class="lang-html">&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+    &lt;title&gt;React Foundations&lt;/title&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+    &lt;script type="module" src="/src/main.jsx"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+
+  <p>The important parts are:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">index.html</span><span class="code-lang">HTML</span></div>
+    <pre><code class="lang-html">&lt;div id="root"&gt;&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>This element provides the container for the React application.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">index.html</span><span class="code-lang">HTML</span></div>
+    <pre><code class="lang-html">&lt;script type="module" src="/src/main.jsx"&gt;&lt;/script&gt;</code></pre>
+  </div>
+
+  <p>This tells the browser to load the JavaScript module that initializes React.</p>
+
+  <h3>4.4 <code>package.json</code></h3>
+  <p>This file stores project information, dependencies, and scripts.</p>
+  <p>A simplified example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">package.json</span><span class="code-lang">JSON</span></div>
+    <pre><code class="lang-json">{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}</code></pre>
+  </div>
+
+  <p>These scripts allow you to use:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm run dev
+npm run build
+npm run preview</code></pre>
+  </div>
+
+  <ul>
+    <li><code>dev</code> starts the development server.</li>
+    <li><code>build</code> creates a production build.</li>
+    <li><code>preview</code> serves the production build locally for inspection.</li>
+  </ul>
+  <p>The complete generated <code>package.json</code> contains additional information and dependencies.</p>
+
+  <h3>4.5 <code>node_modules/</code></h3>
+  <p>This directory contains installed dependencies used by the project.</p>
+  <p>Do not normally edit package files directly inside <code>node_modules</code>. Manage dependencies through npm instead.</p>
+
+  <h3>4.6 <code>vite.config.js</code></h3>
+  <p>This file is used to configure Vite. You may not need to edit it during your first React lessons.</p>
+
+  <div class="callout info">
+    <div class="ct">◆ Understand the Complete Flow</div>
+    <p>The relationship among the main files can be summarized as:</p>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 760 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flow from index.html to main.jsx to App.jsx to the visible interface">
+      <defs>
+        <linearGradient id="g4c" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+        <linearGradient id="g4d" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="250" y="16" width="260" height="52" rx="12" fill="url(#g4c)"/>
+      <text x="380" y="40" text-anchor="middle" font-family="Consolas, monospace" font-size="14" font-weight="700" fill="#fff">index.html</text>
+      <text x="380" y="58" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#c3d1ff">provides &lt;div id="root"&gt;</text>
+
+      <path d="M380 68 V 96" stroke="#93b4ff" stroke-width="2.5"/>
+      <polygon points="372,96 380,110 388,96" fill="#3b5bdb"/>
+      <text x="440" y="92" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" fill="#3b5bdb">loads</text>
+
+      <rect x="250" y="110" width="260" height="52" rx="12" fill="#2f4fb5"/>
+      <text x="380" y="134" text-anchor="middle" font-family="Consolas, monospace" font-size="14" font-weight="700" fill="#fff">main.jsx</text>
+      <text x="380" y="152" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#c3d1ff">initializes React root</text>
+
+      <path d="M380 162 V 190" stroke="#93b4ff" stroke-width="2.5"/>
+      <polygon points="372,190 380,204 388,190" fill="#3b5bdb"/>
+      <text x="440" y="186" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" fill="#3b5bdb">renders</text>
+
+      <rect x="250" y="204" width="260" height="52" rx="12" fill="#4c6ef5"/>
+      <text x="380" y="228" text-anchor="middle" font-family="Consolas, monospace" font-size="14" font-weight="700" fill="#fff">App.jsx</text>
+      <text x="380" y="246" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#e0e8ff">main application component</text>
+
+      <path d="M380 256 V 284" stroke="#f6c667" stroke-width="2.5"/>
+      <polygon points="372,284 380,298 388,284" fill="#f59e0b"/>
+      <text x="440" y="280" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" fill="#b45309">contains</text>
+
+      <rect x="250" y="298" width="260" height="34" rx="11" fill="url(#g4d)"/>
+      <text x="380" y="320" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-weight="800" fill="#4a2c00">Visible interface in the browser</text>
+    </svg>
+    <figcaption><b>Figure 4.2</b> — The startup chain: <code>index.html</code> → <code>main.jsx</code> → <code>App.jsx</code> → other components → the screen.</figcaption>
+  </figure>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p><code>index.html</code> provides the root container, <code>main.jsx</code> initializes React, and <code>App.jsx</code> commonly describes the main application UI.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 5
+     ============================================================ -->
+<section class="topic" id="t5">
+  <div class="topic-head">
+    <div class="kicker">Topic 05</div>
+    <h2>JSX Syntax and Expressions</h2>
+    <p>Writing HTML-like markup inside JavaScript — and knowing the differences.</p>
+  </div>
+
+  <h3>5.1 What Is JSX?</h3>
+  <p>JSX stands for <strong>JavaScript XML</strong>.</p>
+  <p>It is a syntax extension for JavaScript that lets you write HTML-like markup inside JavaScript code.</p>
+  <p>Without JSX, creating React elements involves more function calls.</p>
+  <p>With JSX, the interface is easier to read and write.</p>
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">example.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">const heading = &lt;h1&gt;Hello, React!&lt;/h1&gt;;</code></pre>
+  </div>
+
+  <p>The markup looks similar to HTML, but it is JSX written within JavaScript.</p>
+  <p>JSX is transformed by the build tools into JavaScript that React can understand.</p>
+
+  <h3>5.2 Why Do We Use JSX?</h3>
+  <p>Imagine building an interface with many elements, including headings, images, paragraphs, and buttons.</p>
+  <p>Writing the interface using nested function calls would become difficult to read.</p>
+  <p>JSX lets us keep the UI structure close to the JavaScript logic that produces it.</p>
+
+  <div class="callout analogy">
+    <div class="ct">◆ Analogy: A Recipe</div>
+    <p>A recipe describes the ingredients and arrangement needed to make a dish.</p>
+    <p>JSX describes the UI elements and how they should be arranged.</p>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Recipe analogy for JSX">
+      <defs>
+        <linearGradient id="g5a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+        <linearGradient id="g5b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Recipe card -->
+      <rect x="26" y="24" width="300" height="202" rx="14" fill="#fffdf7" stroke="#ffdfae" stroke-width="2"/>
+      <rect x="26" y="24" width="300" height="42" rx="14" fill="url(#g5b)"/>
+      <rect x="26" y="52" width="300" height="14" fill="url(#g5b)"/>
+      <text x="176" y="52" text-anchor="middle" font-family="Georgia, serif" font-size="15" font-weight="700" fill="#4a2c00">Recipe Card</text>
+      <g font-family="Segoe UI, sans-serif" font-size="11.5" fill="#7a5a1e">
+        <text x="52" y="92">1.  Add a heading</text>
+        <text x="52" y="118">2.  Add a paragraph</text>
+        <text x="52" y="144">3.  Add a button</text>
+        <text x="52" y="170">4.  Arrange them in order</text>
+      </g>
+      <text x="176" y="206" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-style="italic" fill="#a97b2a">Ingredients + arrangement</text>
+
+      <!-- Arrow -->
+      <path d="M336 125 H 396" stroke="#93b4ff" stroke-width="3" stroke-dasharray="7 6"/>
+      <polygon points="396,117 412,125 396,133" fill="#3b5bdb"/>
+
+      <!-- JSX card -->
+      <rect x="434" y="24" width="300" height="202" rx="14" fill="#f7faff" stroke="#c9d8ff" stroke-width="2"/>
+      <rect x="434" y="24" width="300" height="42" rx="14" fill="url(#g5a)"/>
+      <rect x="434" y="52" width="300" height="14" fill="url(#g5a)"/>
+      <text x="584" y="52" text-anchor="middle" font-family="Georgia, serif" font-size="15" font-weight="700" fill="#fff">JSX</text>
+      <g font-family="Consolas, monospace" font-size="11" fill="#1b3a91">
+        <text x="460" y="94">&lt;section&gt;</text>
+        <text x="476" y="118">&lt;h1&gt;Student Profile&lt;/h1&gt;</text>
+        <text x="476" y="142">&lt;p&gt;Name: Rahul&lt;/p&gt;</text>
+        <text x="460" y="166">&lt;/section&gt;</text>
+      </g>
+      <text x="584" y="206" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-style="italic" fill="#6b7592">Elements + arrangement</text>
+    </svg>
+    <figcaption><b>Figure 5.1</b> — A recipe lists ingredients and their arrangement; JSX lists UI elements and their arrangement.</figcaption>
+  </figure>
+
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Profile.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Profile() {
+  return (
+    &lt;section&gt;
+      &lt;h1&gt;Student Profile&lt;/h1&gt;
+      &lt;p&gt;Name: Rahul&lt;/p&gt;
+    &lt;/section&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The JSX describes a section containing a heading and a paragraph.</p>
+
+  <h3>5.3 Basic JSX Syntax</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return &lt;h1&gt;Welcome to React&lt;/h1&gt;;
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>Explanation:</p>
+  <ul>
+    <li><code>function App()</code> declares a JavaScript function.</li>
+    <li><code>return</code> specifies the value that the function returns.</li>
+    <li><code>&lt;h1&gt;Welcome to React&lt;/h1&gt;</code> is JSX.</li>
+    <li><code>export default App</code> makes the component available to other modules as the default export.</li>
+  </ul>
+  <p>When React renders this component, the browser displays the heading.</p>
+
+  <h3>5.4 JSX Can Contain Nested Elements</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Course.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Course() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;React Fundamentals&lt;/h1&gt;
+      &lt;p&gt;Learn components and props.&lt;/p&gt;
+      &lt;button&gt;Start Learning&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default Course;</code></pre>
+  </div>
+
+  <p>The <code>div</code> is the parent element. The heading, paragraph, and button are its children.</p>
+  <p>The parentheses allow you to format a multiline JSX expression across several lines when necessary. Parentheses do not create the UI themselves.</p>
+
+  <h3>5.5 JSX Is Not Exactly HTML</h3>
+  <p>JSX looks like HTML, but there are differences.</p>
+
+  <h4>Use <code>className</code> instead of <code>class</code></h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return &lt;h1 className="title"&gt;Hello React&lt;/h1&gt;;
+}</code></pre>
+  </div>
+
+  <p>In JSX, use <code>className</code> to specify a CSS class.</p>
+
+  <h4>Use <code>htmlFor</code> instead of <code>for</code></h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">LoginForm.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function LoginForm() {
+  return (
+    &lt;div&gt;
+      &lt;label htmlFor="email"&gt;Email address&lt;/label&gt;
+      &lt;input id="email" type="email" /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Here, <code>htmlFor</code> associates the label with the input whose ID is <code>email</code>.</p>
+
+  <h4>Close elements properly</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Example.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Example() {
+  return (
+    &lt;div&gt;
+      &lt;img src="/logo.png" alt="Logo" /&gt;
+      &lt;input type="text" /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The <code>img</code> and <code>input</code> elements are self-closing in JSX.</p>
+
+  <h4>Use camelCase for many JSX attributes</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Button.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;button onClick={handleClick}&gt;Click Me&lt;/button&gt;</code></pre>
+  </div>
+
+  <p><code>onClick</code> uses camelCase. In this example, <code>handleClick</code> would need to be a function defined within scope.</p>
+  <p>Event handling will be studied separately in a later phase; here, this is simply an illustration of JSX syntax.</p>
+
+  <h3>5.6 Embedding JavaScript Expressions in JSX</h3>
+  <p>One of JSX's most useful features is the ability to embed JavaScript expressions using curly braces <code>{}</code>.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  const studentName = "Priya";
+  const age = 21;
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Hello, {studentName}&lt;/h1&gt;
+      &lt;p&gt;Age: {age}&lt;/p&gt;
+      &lt;p&gt;Next year: {age + 1}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <div class="term out">
+    <div class="term-head">Output</div>
+    <pre>Hello, Priya
+Age: 21
+Next year: 22</pre>
+  </div>
+
+  <p>Explanation:</p>
+  <ul>
+    <li><code>{studentName}</code> displays the string stored in the variable.</li>
+    <li><code>{age}</code> displays the age.</li>
+    <li><code>{age + 1}</code> evaluates the JavaScript arithmetic expression and displays its result.</li>
+  </ul>
+  <p>The key rule is that curly braces let you use JavaScript expressions within JSX.</p>
+
+  <h3>5.7 JavaScript Expressions vs. Statements</h3>
+  <p>An expression produces a value.</p>
+  <p>Examples:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">expressions</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">{10 + 5}
+{studentName}
+{age &gt;= 18}</code></pre>
+  </div>
+
+  <p>A statement performs an action or controls program execution.</p>
+  <p>Examples:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">statements.js</span><span class="code-lang">JavaScript</span></div>
+    <pre><code class="lang-js">const age = 21;
+
+if (age &gt;= 18) {
+  console.log("Adult");
+}</code></pre>
+  </div>
+
+  <p>You cannot put a standard <code>if</code> statement directly inside JSX curly braces.</p>
+  <p>Instead, you can use an expression such as a ternary operator.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">AgeMessage.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function AgeMessage() {
+  const age = 21;
+
+  return (
+    &lt;p&gt;
+      {age &gt;= 18 ? "You are an adult." : "You are a minor."}
+    &lt;/p&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The ternary expression evaluates to one of two strings.</p>
+
+  <h3>5.8 JSX Can Be Stored in Variables</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  const heading = &lt;h1&gt;Welcome to React&lt;/h1&gt;;
+
+  return (
+    &lt;main&gt;
+      {heading}
+      &lt;p&gt;Let's begin learning.&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>The <code>heading</code> variable stores a JSX element, and <code>{heading}</code> places that element in the returned JSX.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>JSX is the syntax used to describe the interface. Curly braces let you insert JavaScript expressions into that interface.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 6
+     ============================================================ -->
+<section class="topic" id="t6">
+  <div class="topic-head">
+    <div class="kicker">Topic 06</div>
+    <h2>Embedding JavaScript in JSX</h2>
+    <p>Variables, calculations, function calls, objects, and conditionals — inside the UI.</p>
+  </div>
+
+  <p>Topic 5 introduced JSX. Now let's focus on the different kinds of JavaScript values and expressions that you can display inside it.</p>
+
+  <h3>6.1 Displaying Variables</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Student.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Student() {
+  const name = "Aarav";
+  const course = "Full Stack Development";
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;{name}&lt;/h1&gt;
+      &lt;p&gt;Course: {course}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The curly braces insert the values of <code>name</code> and <code>course</code> into the JSX.</p>
+  <p>This avoids hardcoding the same values directly into the UI.</p>
+
+  <h3>6.2 Using Arithmetic Expressions</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Price.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Price() {
+  const price = 1000;
+  const tax = 180;
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Price: ₹{price}&lt;/p&gt;
+      &lt;p&gt;Tax: ₹{tax}&lt;/p&gt;
+      &lt;p&gt;Total: ₹{price + tax}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The expression <code>price + tax</code> evaluates to <code>1180</code>.</p>
+  <p>This demonstrates that JSX can display the results of JavaScript calculations.</p>
+
+  <h3>6.3 Calling Functions Inside JSX</h3>
+  <p>A JavaScript function can calculate a value that is inserted into JSX.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function getGreeting() {
+  return "Good morning!";
+}
+
+function App() {
+  return &lt;h1&gt;{getGreeting()}&lt;/h1&gt;;
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>Explanation:</p>
+  <ul>
+    <li><code>getGreeting()</code> returns a string.</li>
+    <li><code>{getGreeting()}</code> calls the function.</li>
+    <li>React renders the returned string as text within the heading.</li>
+  </ul>
+  <p>The function should be safe to call during rendering. Components and functions used to calculate rendered output should not perform unrelated side effects.</p>
+
+  <h3>6.4 Displaying Object Properties</h3>
+  <p>Since React is built around JavaScript, you can use ordinary object properties.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentProfile.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentProfile() {
+  const student = {
+    name: "Meera",
+    course: "React",
+    city: "Rajkot"
+  };
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;{student.name}&lt;/h2&gt;
+      &lt;p&gt;Course: {student.course}&lt;/p&gt;
+      &lt;p&gt;City: {student.city}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <div class="term out">
+    <div class="term-head">Output</div>
+    <pre>Meera
+Course: React
+City: Rajkot</pre>
+  </div>
+
+  <p>You are inserting individual string values from the object. You generally cannot place an ordinary object directly into JSX and expect React to display it as readable text.</p>
+  <p>For example, <code>{student}</code> is not an appropriate way to display the entire object.</p>
+
+  <h3>6.5 Conditional Output with a Ternary Operator</h3>
+  <p>A ternary operator has this structure:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">pattern</span><span class="code-lang">JavaScript</span></div>
+    <pre><code class="lang-js">condition ? valueIfTrue : valueIfFalse</code></pre>
+  </div>
+
+  <p>Example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">AdmissionStatus.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function AdmissionStatus() {
+  const isAdmitted = true;
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Admission Status&lt;/h2&gt;
+      &lt;p&gt;
+        {isAdmitted ? "Admission confirmed" : "Admission pending"}
+      &lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Since <code>isAdmitted</code> is <code>true</code>, the displayed message is <code>Admission confirmed</code>.</p>
+  <p>This is useful for choosing what text or element to display based on a value.</p>
+
+  <h3>6.6 Conditional Output with Logical AND (<code>&amp;&amp;</code>)</h3>
+  <p>The logical AND operator can show something when a condition is true.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Notice.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Notice() {
+  const showNotice = true;
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Student Portal&lt;/h1&gt;
+      {showNotice &amp;&amp; &lt;p&gt;Your classes begin on Monday.&lt;/p&gt;}
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>When <code>showNotice</code> is <code>true</code>, the paragraph is included in the rendered output. When it is <code>false</code>, it is not shown.</p>
+  <p>Be careful when using numbers with <code>&amp;&amp;</code>. For example, <code>{0 &amp;&amp; &lt;p&gt;Notice&lt;/p&gt;}</code> evaluates to <code>0</code>, and React displays that number. If the intention is to show a message only when a number is positive, use a condition such as <code>{count &gt; 0 &amp;&amp; &lt;p&gt;Notice&lt;/p&gt;}</code>.</p>
+
+  <h3>6.7 Understanding Values That Don't Display as You Might Expect</h3>
+  <p>React does not render every JavaScript value as visible text.</p>
+  <p>Commonly:</p>
+  <ul>
+    <li>A string displays as text.</li>
+    <li>A number displays as text.</li>
+    <li>A boolean by itself does not display visible text.</li>
+    <li><code>null</code> and <code>undefined</code> do not display visible content.</li>
+    <li>A normal JavaScript object cannot be displayed directly as a React child.</li>
+  </ul>
+  <p>Example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Values.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Values() {
+  return (
+    &lt;div&gt;
+      &lt;p&gt;{"React"}&lt;/p&gt;
+      &lt;p&gt;{100}&lt;/p&gt;
+      &lt;p&gt;{true}&lt;/p&gt;
+      &lt;p&gt;{null}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Visible output:</p>
+
+  <div class="term out">
+    <div class="term-head">Visible Output</div>
+    <pre>React
+100</pre>
+  </div>
+
+  <p>The boolean <code>true</code> and <code>null</code> do not create visible text.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>You can use JavaScript variables, arithmetic, function calls, object properties, and conditional expressions inside JSX. The expression must produce a valid renderable result.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 7
+     ============================================================ -->
+<section class="topic" id="t7">
+  <div class="topic-head">
+    <div class="kicker">Topic 07</div>
+    <h2>Fragments and JSX Rules</h2>
+    <p>Grouping elements cleanly — and the six rules every JSX file must follow.</p>
+  </div>
+
+  <h3>7.1 What Is a React Fragment?</h3>
+  <p>A Fragment lets you group multiple JSX elements without adding an extra DOM element solely for the grouping.</p>
+  <p>React's shorthand syntax is:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">fragment shorthand</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;&gt;
+  {/* JSX elements */}
+&lt;/&gt;</code></pre>
+  </div>
+
+  <p>The longer syntax is:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">fragment long form</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { Fragment } from "react";
+
+&lt;Fragment&gt;
+  {/* JSX elements */}
+&lt;/Fragment&gt;</code></pre>
+  </div>
+
+  <p>For ordinary grouping, the shorthand is usually sufficient.</p>
+
+  <h3>7.2 Why Do We Need Fragments?</h3>
+  <p>Consider this component:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentInfo.jsx — INVALID</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentInfo() {
+  return (
+    &lt;h1&gt;Student Profile&lt;/h1&gt;
+    &lt;p&gt;Name: Rahul&lt;/p&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>This is invalid JSX because a component cannot directly return two adjacent JSX elements without a shared enclosing structure.</p>
+  <p>One solution is to use a <code>div</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentInfo.jsx — with div</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentInfo() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Student Profile&lt;/h1&gt;
+      &lt;p&gt;Name: Rahul&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>However, that creates an extra <code>div</code> in the DOM.</p>
+  <p>Another solution is a Fragment:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentInfo.jsx — with Fragment</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentInfo() {
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Student Profile&lt;/h1&gt;
+      &lt;p&gt;Name: Rahul&lt;/p&gt;
+    &lt;/&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>This groups both elements without adding a wrapper element to the DOM.</p>
+
+  <div class="callout analogy">
+    <div class="ct">◆ Analogy: A Transparent Folder</div>
+    <p>Imagine putting two documents into a transparent folder.</p>
+    <p>The folder helps you group them, but it does not change the documents themselves.</p>
+    <p>A Fragment groups multiple JSX elements without creating an additional HTML wrapper.</p>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 760 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fragment as a transparent folder">
+      <defs>
+        <linearGradient id="g7a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+      </defs>
+
+      <!-- without fragment -->
+      <rect x="20" y="18" width="350" height="194" rx="14" fill="#fff1f2" stroke="#ffd0d5" stroke-width="2"/>
+      <text x="195" y="46" text-anchor="middle" font-family="Georgia, serif" font-size="14.5" font-weight="700" fill="#be123c">Without Fragment</text>
+      <rect x="46" y="66" width="298" height="46" rx="9" fill="#fff" stroke="#f6a8b3" stroke-width="2"/>
+      <text x="195" y="94" text-anchor="middle" font-family="Consolas, monospace" font-size="11.5" fill="#8c4152">&lt;h1&gt;Student Profile&lt;/h1&gt;</text>
+      <rect x="46" y="122" width="298" height="46" rx="9" fill="#fff" stroke="#f6a8b3" stroke-width="2"/>
+      <text x="195" y="150" text-anchor="middle" font-family="Consolas, monospace" font-size="11.5" fill="#8c4152">&lt;p&gt;Name: Rahul&lt;/p&gt;</text>
+      <text x="195" y="194" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" fill="#be123c">✕ Two roots — invalid JSX</text>
+
+      <!-- with fragment -->
+      <rect x="390" y="18" width="350" height="194" rx="14" fill="#eefbf6" stroke="#b8ecd8" stroke-width="2"/>
+      <text x="565" y="46" text-anchor="middle" font-family="Georgia, serif" font-size="14.5" font-weight="700" fill="#047857">With Fragment</text>
+
+      <rect x="416" y="62" width="298" height="118" rx="12" fill="none" stroke="#0f9d76" stroke-width="2.4" stroke-dasharray="8 6"/>
+      <text x="565" y="84" text-anchor="middle" font-family="Consolas, monospace" font-size="11" font-weight="700" fill="#0f9d76">&lt;&gt;  …  &lt;/&gt;</text>
+
+      <rect x="440" y="94" width="250" height="34" rx="8" fill="#fff" stroke="#8fdcbf" stroke-width="2"/>
+      <text x="565" y="116" text-anchor="middle" font-family="Consolas, monospace" font-size="11" fill="#0f6b52">&lt;h1&gt;Student Profile&lt;/h1&gt;</text>
+
+      <rect x="440" y="136" width="250" height="34" rx="8" fill="#fff" stroke="#8fdcbf" stroke-width="2"/>
+      <text x="565" y="158" text-anchor="middle" font-family="Consolas, monospace" font-size="11" fill="#0f6b52">&lt;p&gt;Name: Rahul&lt;/p&gt;</text>
+
+      <text x="565" y="198" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" fill="#047857">✓ Grouped — no extra DOM element</text>
+    </svg>
+    <figcaption><b>Figure 7.1</b> — A Fragment is a transparent folder: it groups the elements but leaves no trace in the DOM.</figcaption>
+  </figure>
+
+  <h3>7.3 Rule 1: Return One Enclosing JSX Structure</h3>
+  <p>Incorrect:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Incorrect</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return (
+    &lt;h1&gt;Hello&lt;/h1&gt;
+    &lt;p&gt;Welcome&lt;/p&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Correct:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ Correct</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Hello&lt;/h1&gt;
+      &lt;p&gt;Welcome&lt;/p&gt;
+    &lt;/&gt;
+  );
+}</code></pre>
+  </div>
+
+  <h3>7.4 Rule 2: Close All Elements</h3>
+  <p>Incorrect:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Incorrect</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return &lt;div&gt;&lt;h1&gt;Hello&lt;/div&gt;;
+}</code></pre>
+  </div>
+
+  <p>Correct:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ Correct</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Hello&lt;/h1&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Every opening element must have a matching closing tag, except self-closing elements.</p>
+
+  <h3>7.5 Rule 3: Self-Close Empty Elements</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return (
+    &lt;div&gt;
+      &lt;img src="/logo.png" alt="Logo" /&gt;
+      &lt;input type="text" /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The <code>img</code> and <code>input</code> elements do not wrap other content, so they are written using self-closing syntax in JSX.</p>
+
+  <h3>7.6 Rule 4: Use <code>className</code></h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return &lt;h1 className="main-heading"&gt;React Learning&lt;/h1&gt;;
+}</code></pre>
+  </div>
+
+  <p>The <code>className</code> attribute specifies the CSS class.</p>
+
+  <h3>7.7 Rule 5: Put JavaScript Expressions Inside Curly Braces</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  const name = "Aarav";
+
+  return &lt;h1&gt;Hello, {name}!&lt;/h1&gt;;
+}</code></pre>
+  </div>
+
+  <p>Without curly braces, React would treat the variable name as ordinary text.</p>
+
+  <h3>7.8 Rule 6: Use Parentheses for Readable Multiline JSX</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return (
+    &lt;main&gt;
+      &lt;h1&gt;Learning React&lt;/h1&gt;
+      &lt;p&gt;One concept at a time.&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The parentheses make the multiline return easier to read.</p>
+
+  <h3>7.9 When Should You Use a Fragment or a <code>div</code>?</h3>
+  <p>Use a Fragment when you only need to group multiple JSX elements.</p>
+  <p>Use a <code>div</code> or an appropriate semantic element such as <code>main</code>, <code>section</code>, or <code>article</code> when the wrapper represents a real structure in your page or needs to carry attributes or styling.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>Fragments help keep your DOM clean. JSX must have valid nesting, properly closed tags, and one enclosing structure for adjacent returned elements.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 8
+     ============================================================ -->
+<section class="topic" id="t8">
+  <div class="topic-head">
+    <div class="kicker">Topic 08</div>
+    <h2>Functional Components</h2>
+    <p>The reusable building blocks of every React application.</p>
+  </div>
+
+  <h3>8.1 What Is a Functional Component?</h3>
+  <p>A functional component is a JavaScript function that returns React-renderable content, usually JSX.</p>
+  <p>Example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Welcome.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Welcome() {
+  return &lt;h1&gt;Welcome to React!&lt;/h1&gt;;
+}</code></pre>
+  </div>
+
+  <p>Here, <code>Welcome</code> is a React component.</p>
+  <p>Components are the building blocks of React applications.</p>
+
+  <h3>8.2 Why Do We Need Components?</h3>
+  <p>Imagine creating a page that contains a navbar, a profile, a course list, and a footer.</p>
+  <p>Writing the entire interface in one enormous component can make the code hard to understand and maintain.</p>
+  <p>By creating separate components, you can divide the interface according to its responsibilities.</p>
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Navbar() {
+  return &lt;nav&gt;My Institute&lt;/nav&gt;;
+}
+
+function Profile() {
+  return &lt;h2&gt;Student Profile&lt;/h2&gt;;
+}
+
+function Footer() {
+  return &lt;footer&gt;© 2026 My Institute&lt;/footer&gt;;
+}
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Navbar /&gt;
+      &lt;Profile /&gt;
+      &lt;Footer /&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>The <code>App</code> component combines the three smaller components.</p>
+
+  <h3>8.3 Analogy: A Teaching Team</h3>
+  <p>Imagine an institute where:</p>
+  <ul>
+    <li>One teacher handles React.</li>
+    <li>Another handles JavaScript.</li>
+    <li>Another manages student assignments.</li>
+  </ul>
+  <p>Each teacher has a defined responsibility, but their combined work supports the institute.</p>
+  <p>Components work similarly. Smaller components can handle specific parts of an interface, while the main component combines them to create a complete page.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Teaching team analogy for components">
+      <defs>
+        <linearGradient id="g8a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+        <linearGradient id="g8b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <!-- App at top -->
+      <rect x="280" y="14" width="200" height="46" rx="12" fill="url(#g8b)"/>
+      <text x="380" y="43" text-anchor="middle" font-family="Consolas, monospace" font-size="14" font-weight="700" fill="#4a2c00">&lt;App /&gt;</text>
+
+      <!-- connectors -->
+      <path d="M380 60 V 86" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M130 86 H 630" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M130 86 V 108" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M380 86 V 108" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M630 86 V 108" stroke="#93b4ff" stroke-width="2"/>
+
+      <!-- Three components -->
+      <rect x="46" y="108" width="168" height="110" rx="13" fill="#eef3ff" stroke="#c9d8ff" stroke-width="2"/>
+      <circle cx="130" cy="142" r="19" fill="url(#g8a)"/>
+      <text x="130" y="148" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="15" font-weight="800" fill="#fff">R</text>
+      <text x="130" y="180" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-weight="700" fill="#1e3a8a">Navbar</text>
+      <text x="130" y="200" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6b7592">handles navigation</text>
+
+      <rect x="296" y="108" width="168" height="110" rx="13" fill="#eef3ff" stroke="#c9d8ff" stroke-width="2"/>
+      <circle cx="380" cy="142" r="19" fill="#2f4fb5"/>
+      <text x="380" y="148" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="15" font-weight="800" fill="#fff">J</text>
+      <text x="380" y="180" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-weight="700" fill="#1e3a8a">Profile</text>
+      <text x="380" y="200" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6b7592">handles student data</text>
+
+      <rect x="546" y="108" width="168" height="110" rx="13" fill="#eef3ff" stroke="#c9d8ff" stroke-width="2"/>
+      <circle cx="630" cy="142" r="19" fill="#4c6ef5"/>
+      <text x="630" y="148" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="15" font-weight="800" fill="#fff">F</text>
+      <text x="630" y="180" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-weight="700" fill="#1e3a8a">Footer</text>
+      <text x="630" y="200" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#6b7592">handles closing info</text>
+    </svg>
+    <figcaption><b>Figure 8.1</b> — Like a teaching team, each component has a focused responsibility, and the main component combines them.</figcaption>
+  </figure>
+
+  <h3>8.4 Component Naming Rules</h3>
+  <p>React components should generally use PascalCase.</p>
+  <p>Correct:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentProfile.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentProfile() {
+  return &lt;h1&gt;Student Profile&lt;/h1&gt;;
+}</code></pre>
+  </div>
+
+  <p>Then use the component as:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">usage</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;StudentProfile /&gt;</code></pre>
+  </div>
+
+  <p>Avoid defining your own component using a lowercase name such as <code>studentProfile</code> and expecting JSX to identify it as a React component.</p>
+  <p>In JSX, lowercase tags such as <code>&lt;div&gt;</code> refer to built-in HTML elements, while names such as <code>&lt;StudentProfile /&gt;</code> refer to components.</p>
+
+  <h3>8.5 Components Can Be Stored in Separate Files</h3>
+  <p>For example, create a file named <code>Header.jsx</code>.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Header.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Header() {
+  return &lt;h1&gt;My Learning Portal&lt;/h1&gt;;
+}
+
+export default Header;</code></pre>
+  </div>
+
+  <p>Then use it inside <code>App.jsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import Header from "./Header.jsx";
+
+function App() {
+  return (
+    &lt;main&gt;
+      &lt;Header /&gt;
+      &lt;p&gt;Welcome to the portal.&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>The <code>import</code> statement brings in the exported component. The <code>&lt;Header /&gt;</code> expression tells React to render it at that position in the component tree.</p>
+  <p>This is a common way to organize larger projects.</p>
+
+  <h3>8.6 A Component Is Not the Same as Calling an Ordinary Function</h3>
+  <p>You might be tempted to call a component like this:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">not recommended</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Welcome() {
+  return &lt;h1&gt;Welcome&lt;/h1&gt;;
+}
+
+function App() {
+  return &lt;main&gt;{Welcome()}&lt;/main&gt;;
+}</code></pre>
+  </div>
+
+  <p>Although this can evaluate the function's returned JSX in a simple example, it is not the usual way to use React components.</p>
+  <p>The normal approach is:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">recommended</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return (
+    &lt;main&gt;
+      &lt;Welcome /&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Using <code>&lt;Welcome /&gt;</code> lets React manage the component as part of its component tree and rendering process.</p>
+
+  <h3>8.7 Components Should Describe Their Output</h3>
+  <p>A functional component should normally calculate and return its UI rather than manually manipulating the DOM.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">CourseTitle.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function CourseTitle() {
+  const title = "React Fundamentals";
+
+  return &lt;h2&gt;{title}&lt;/h2&gt;;
+}</code></pre>
+  </div>
+
+  <p>The component describes what should appear. React handles displaying the resulting UI.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>A functional component is a reusable unit of UI defined using a JavaScript function. Use PascalCase names and render components with JSX syntax such as <code>&lt;Welcome /&gt;</code>.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 9
+     ============================================================ -->
+<section class="topic" id="t9">
+  <div class="topic-head">
+    <div class="kicker">Topic 09</div>
+    <h2>Component Composition and Reuse</h2>
+    <p>Combining small pieces into large, maintainable interfaces.</p>
+  </div>
+
+  <h3>9.1 What Is Component Composition?</h3>
+  <p>Component composition means combining smaller components to create a larger interface.</p>
+  <p>A component can include other components inside its JSX. The result forms a component tree.</p>
+  <p>For example:</p>
+
+  <div class="tree">App
+├── Navbar
+├── MainContent
+│   ├── CourseCard
+│   ├── CourseCard
+│   └── CourseCard
+└── Footer</div>
+
+  <p>The main <code>App</code> component combines the navbar, main content, and footer. The main content combines multiple course cards.</p>
+
+  <h3>9.2 Why Is Composition Useful?</h3>
+  <p>Composition helps us:</p>
+  <ul>
+    <li>Break large interfaces into smaller parts.</li>
+    <li>Reuse existing components.</li>
+    <li>Make code easier to understand.</li>
+    <li>Update one reusable design without duplicating it everywhere.</li>
+    <li>Give each component a clear purpose.</li>
+  </ul>
+
+  <h3>9.3 Example: Build a Course Card</h3>
+  <p>First, create a reusable <code>CourseCard</code> component.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">CourseCard.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function CourseCard() {
+  return (
+    &lt;article&gt;
+      &lt;h2&gt;React Fundamentals&lt;/h2&gt;
+      &lt;p&gt;Learn the basics of React.&lt;/p&gt;
+      &lt;button&gt;View Course&lt;/button&gt;
+    &lt;/article&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Next, create a component that uses it several times.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">CourseSection.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function CourseSection() {
+  return (
+    &lt;section&gt;
+      &lt;h1&gt;Available Courses&lt;/h1&gt;
+
+      &lt;CourseCard /&gt;
+      &lt;CourseCard /&gt;
+      &lt;CourseCard /&gt;
+    &lt;/section&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Finally, use the section inside <code>App</code>.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return (
+    &lt;main&gt;
+      &lt;CourseSection /&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>The component tree looks like:</p>
+
+  <div class="tree">App
+└── CourseSection
+    ├── CourseCard
+    ├── CourseCard
+    └── CourseCard</div>
+
+  <p>The <code>CourseCard</code> is written once but composed into the page three times.</p>
+  <p>All three currently display the same content. We will make the content different using props in Topic 10.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Component tree diagram">
+      <defs>
+        <linearGradient id="g9a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+        <linearGradient id="g9b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="305" y="14" width="150" height="42" rx="11" fill="url(#g9a)"/>
+      <text x="380" y="41" text-anchor="middle" font-family="Consolas, monospace" font-size="13" font-weight="700" fill="#fff">App</text>
+
+      <path d="M380 56 V 82" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M380 82 H 200" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M380 82 H 380" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M200 82 V 104" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M380 82 V 104" stroke="#93b4ff" stroke-width="2"/>
+
+      <rect x="118" y="104" width="164" height="42" rx="11" fill="#4c6ef5"/>
+      <text x="200" y="131" text-anchor="middle" font-family="Consolas, monospace" font-size="12" font-weight="700" fill="#fff">CourseSection</text>
+
+      <rect x="304" y="104" width="152" height="42" rx="11" fill="#849bd9"/>
+      <text x="380" y="131" text-anchor="middle" font-family="Consolas, monospace" font-size="12" font-weight="700" fill="#fff">Footer</text>
+
+      <path d="M200 146 V 174" stroke="#f6c667" stroke-width="2"/>
+      <path d="M120 174 H 280" stroke="#f6c667" stroke-width="2"/>
+      <path d="M120 174 V 196" stroke="#f6c667" stroke-width="2"/>
+      <path d="M200 174 V 196" stroke="#f6c667" stroke-width="2"/>
+      <path d="M280 174 V 196" stroke="#f6c667" stroke-width="2"/>
+
+      <rect x="58" y="196" width="124" height="42" rx="10" fill="url(#g9b)"/>
+      <text x="120" y="222" text-anchor="middle" font-family="Consolas, monospace" font-size="11.5" font-weight="700" fill="#4a2c00">CourseCard</text>
+
+      <rect x="138" y="196" width="124" height="42" rx="10" fill="url(#g9b)"/>
+      <text x="200" y="222" text-anchor="middle" font-family="Consolas, monospace" font-size="11.5" font-weight="700" fill="#4a2c00">CourseCard</text>
+
+      <rect x="218" y="196" width="124" height="42" rx="10" fill="url(#g9b)"/>
+      <text x="280" y="222" text-anchor="middle" font-family="Consolas, monospace" font-size="11.5" font-weight="700" fill="#4a2c00">CourseCard</text>
+
+      <text x="580" y="130" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#6b7592">One definition,</text>
+      <text x="580" y="154" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#6b7592">three instances.</text>
+    </svg>
+    <figcaption><b>Figure 9.1</b> — Composition builds a component tree: a single <code>CourseCard</code> definition appears three times in the tree.</figcaption>
+  </figure>
+
+  <h3>9.4 Composition Does Not Require Repeating the Same Layout</h3>
+  <p>A component can contain several different components.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Navbar() {
+  return &lt;nav&gt;My Institute&lt;/nav&gt;;
+}
+
+function WelcomeMessage() {
+  return &lt;h1&gt;Welcome, Student!&lt;/h1&gt;;
+}
+
+function Footer() {
+  return &lt;footer&gt;Keep Learning&lt;/footer&gt;;
+}
+
+function App() {
+  return (
+    &lt;&gt;
+      &lt;Navbar /&gt;
+      &lt;WelcomeMessage /&gt;
+      &lt;Footer /&gt;
+    &lt;/&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The page is assembled from three components.</p>
+
+  <h3>9.5 How Composition Helps in Real Projects</h3>
+  <p>For a CRM dashboard, you might divide the page into:</p>
+  <ul>
+    <li><code>Sidebar</code></li>
+    <li><code>Topbar</code></li>
+    <li><code>DashboardSummary</code></li>
+    <li><code>LeadCard</code></li>
+    <li><code>LeadTable</code></li>
+    <li><code>Footer</code></li>
+  </ul>
+  <p>You can reuse small components wherever appropriate rather than copying their markup into multiple screens.</p>
+  <p>However, not every line of JSX needs to become its own component. Create components when they represent a useful unit of interface or behavior.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>Composition is the practice of combining components. Reuse is the practice of using a component more than once. Both are fundamental to structuring maintainable React applications.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 10
+     ============================================================ -->
+<section class="topic" id="t10">
+  <div class="topic-head">
+    <div class="kicker">Topic 10</div>
+    <h2>Props and One-Way Data Flow</h2>
+    <p>How parents pass information down to children — and why props are read-only.</p>
+  </div>
+
+  <h3>10.1 What Are Props?</h3>
+  <p>Props are short for <strong>properties</strong>.</p>
+  <p>Props allow a parent component to pass information to a child component.</p>
+  <p>They are similar to the attributes you write in HTML, but React props can also contain JavaScript values such as numbers, arrays, objects, and functions.</p>
+  <p>Consider this component:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentCard.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentCard(props) {
+  return &lt;h2&gt;{props.name}&lt;/h2&gt;;
+}</code></pre>
+  </div>
+
+  <p>The component receives a parameter called <code>props</code>. React supplies the props passed to that component.</p>
+  <p>Now use it:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return &lt;StudentCard name="Rahul" /&gt;;
+}
+
+export default App;</code></pre>
+  </div>
+
+  <div class="term out">
+    <div class="term-head">Output</div>
+    <pre>Rahul</pre>
+  </div>
+
+  <p>The parent passes the string <code>"Rahul"</code> through the <code>name</code> prop. The child reads it using <code>props.name</code>.</p>
+
+  <h3>10.2 Analogy: An Order Form</h3>
+  <p>Imagine a restaurant order form.</p>
+  <p>The customer provides information:</p>
+  <ul>
+    <li>Customer name</li>
+    <li>Food item</li>
+    <li>Quantity</li>
+  </ul>
+  <p>The kitchen receives that information and prepares the requested food.</p>
+  <p>Similarly, a parent component provides values through props, and the child component uses them to determine its output.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Order form analogy for props">
+      <defs>
+        <linearGradient id="g10a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+        <linearGradient id="g10b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Order form -->
+      <rect x="26" y="24" width="300" height="202" rx="14" fill="#fff" stroke="#c9d8ff" stroke-width="2"/>
+      <rect x="26" y="24" width="300" height="44" rx="14" fill="url(#g10a)"/>
+      <rect x="26" y="54" width="300" height="14" fill="url(#g10a)"/>
+      <text x="176" y="53" text-anchor="middle" font-family="Georgia, serif" font-size="14.5" font-weight="700" fill="#fff">Order Form (Parent)</text>
+
+      <text x="52" y="96" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#1e3a8a">Customer name</text>
+      <rect x="52" y="104" width="248" height="26" rx="6" fill="#f7faff" stroke="#dde5fa"/>
+      <text x="62" y="122" font-family="Consolas, monospace" font-size="11" fill="#38415e">"Rahul"</text>
+
+      <text x="52" y="152" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#1e3a8a">Food item</text>
+      <rect x="52" y="160" width="248" height="26" rx="6" fill="#f7faff" stroke="#dde5fa"/>
+      <text x="62" y="178" font-family="Consolas, monospace" font-size="11" fill="#38415e">"React Burger"</text>
+
+      <text x="52" y="204" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#1e3a8a">Quantity</text>
+      <rect x="118" y="190" width="80" height="24" rx="6" fill="#f7faff" stroke="#dde5fa"/>
+      <text x="128" y="207" font-family="Consolas, monospace" font-size="11" fill="#38415e">2</text>
+
+      <!-- Arrow -->
+      <path d="M336 125 H 396" stroke="#f6c667" stroke-width="3" stroke-dasharray="7 6"/>
+      <polygon points="396,117 412,125 396,133" fill="#f59e0b"/>
+      <text x="366" y="112" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#b45309">props</text>
+
+      <!-- Kitchen / child -->
+      <rect x="434" y="24" width="300" height="202" rx="14" fill="#fff8ec" stroke="#ffdfae" stroke-width="2"/>
+      <rect x="434" y="24" width="300" height="44" rx="14" fill="url(#g10b)"/>
+      <rect x="434" y="54" width="300" height="14" fill="url(#g10b)"/>
+      <text x="584" y="53" text-anchor="middle" font-family="Georgia, serif" font-size="14.5" font-weight="700" fill="#4a2c00">Kitchen (Child)</text>
+
+      <text x="460" y="94" font-family="Segoe UI, sans-serif" font-size="11.5" fill="#7a5a1e">function StudentCard({ name, course, qty })</text>
+      <rect x="460" y="106" width="248" height="96" rx="9" fill="#fff" stroke="#f6c667" stroke-width="1.8"/>
+      <text x="474" y="130" font-family="Consolas, monospace" font-size="11" fill="#8a5a00">&lt;article&gt;</text>
+      <text x="488" y="150" font-family="Consolas, monospace" font-size="11" fill="#8a5a00">&lt;h2&gt;{name}&lt;/h2&gt;</text>
+      <text x="488" y="170" font-family="Consolas, monospace" font-size="11" fill="#8a5a00">&lt;p&gt;{course}&lt;/p&gt;</text>
+      <text x="474" y="190" font-family="Consolas, monospace" font-size="11" fill="#8a5a00">&lt;/article&gt;</text>
+
+      <text x="584" y="216" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#a97b2a">Uses the values it received</text>
+    </svg>
+    <figcaption><b>Figure 10.1</b> — A parent fills an order form; the child component reads those values and produces the output.</figcaption>
+  </figure>
+
+  <h3>10.3 Why Do We Need Props?</h3>
+  <p>Without props, a reusable component might always display the same information.</p>
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentCard.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentCard() {
+  return &lt;h2&gt;Rahul&lt;/h2&gt;;
+}</code></pre>
+  </div>
+
+  <p>Every time you use this component, it displays Rahul.</p>
+  <p>Props let you reuse the same structure with different values.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentCard(props) {
+  return &lt;h2&gt;{props.name}&lt;/h2&gt;;
+}
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;StudentCard name="Rahul" /&gt;
+      &lt;StudentCard name="Priya" /&gt;
+      &lt;StudentCard name="Aarav" /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The output contains three different names.</p>
+
+  <h3>10.4 Passing Multiple Props</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentCard(props) {
+  return (
+    &lt;article&gt;
+      &lt;h2&gt;{props.name}&lt;/h2&gt;
+      &lt;p&gt;Course: {props.course}&lt;/p&gt;
+      &lt;p&gt;City: {props.city}&lt;/p&gt;
+    &lt;/article&gt;
+  );
+}
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;StudentCard
+        name="Rahul"
+        course="React"
+        city="Rajkot"
+      /&gt;
+
+      &lt;StudentCard
+        name="Priya"
+        course="JavaScript"
+        city="Ahmedabad"
+      /&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>Explanation:</p>
+  <ul>
+    <li>The first card receives Rahul, React, and Rajkot.</li>
+    <li>The second receives Priya, JavaScript, and Ahmedabad.</li>
+    <li>Both cards use the same component structure but display different content.</li>
+  </ul>
+
+  <h3>10.5 Destructuring Props</h3>
+  <p>You can read props using ordinary JavaScript destructuring.</p>
+  <p>Instead of:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">without destructuring</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentCard(props) {
+  return &lt;h2&gt;{props.name}&lt;/h2&gt;;
+}</code></pre>
+  </div>
+
+  <p>You can write:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">with destructuring</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentCard({ name }) {
+  return &lt;h2&gt;{name}&lt;/h2&gt;;
+}</code></pre>
+  </div>
+
+  <p>The object passed to the function is destructured, and the <code>name</code> property becomes a local variable.</p>
+  <p>For multiple props:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">destructuring multiple props</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentCard({ name, course, city }) {
+  return (
+    &lt;article&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;Course: {course}&lt;/p&gt;
+      &lt;p&gt;City: {city}&lt;/p&gt;
+    &lt;/article&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Destructuring changes how you access the properties, not how props work.</p>
+
+  <h3>10.6 Passing Numbers and Boolean Values</h3>
+  <p>A string prop can use quotation marks:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">string prop</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;StudentCard name="Rahul" /&gt;</code></pre>
+  </div>
+
+  <p>To pass a number or a boolean, use curly braces:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function CourseCard({ title, duration, available }) {
+  return (
+    &lt;article&gt;
+      &lt;h2&gt;{title}&lt;/h2&gt;
+      &lt;p&gt;Duration: {duration} months&lt;/p&gt;
+      &lt;p&gt;{available ? "Available" : "Unavailable"}&lt;/p&gt;
+    &lt;/article&gt;
+  );
+}
+
+function App() {
+  return (
+    &lt;CourseCard
+      title="React"
+      duration={3}
+      available={true}
+    /&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>The value <code>3</code> is passed as a number, and <code>true</code> is passed as a boolean. These are not the same as the strings <code>"3"</code> and <code>"true"</code>.</p>
+
+  <h3>10.7 What Is One-Way Data Flow?</h3>
+  <p>In normal React component relationships, data is passed from a parent to a child through props.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="One-way data flow from parent to child">
+      <defs>
+        <linearGradient id="g10c" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+        <linearGradient id="g10d" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="250" y="20" width="260" height="60" rx="13" fill="url(#g10c)"/>
+      <text x="380" y="46" text-anchor="middle" font-family="Consolas, monospace" font-size="13.5" font-weight="700" fill="#fff">&lt;App /&gt;</text>
+      <text x="380" y="66" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#c3d1ff">Parent component</text>
+
+      <path d="M380 80 V 126" stroke="#f6c667" stroke-width="3.5"/>
+      <polygon points="370,126 380,142 390,126" fill="#f59e0b"/>
+      <text x="470" y="112" font-family="Segoe UI, sans-serif" font-size="11.5" font-weight="800" fill="#b45309">props</text>
+      <text x="470" y="130" font-family="Segoe UI, sans-serif" font-size="10" fill="#a97b2a">name={studentName}</text>
+
+      <rect x="250" y="146" width="260" height="60" rx="13" fill="url(#g10d)"/>
+      <text x="380" y="172" text-anchor="middle" font-family="Consolas, monospace" font-size="13.5" font-weight="700" fill="#4a2c00">&lt;Greeting /&gt;</text>
+      <text x="380" y="192" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#8a5a00">Child component</text>
+
+      <path d="M380 206 V 240" stroke="#93b4ff" stroke-width="2.5"/>
+      <polygon points="372,240 380,254 388,240" fill="#3b5bdb"/>
+
+      <rect x="230" y="248" width="300" height="0" rx="0" fill="none"/>
+      <text x="380" y="256" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11.5" font-weight="700" fill="#1e3a8a">Uses values to describe its UI</text>
+
+      <!-- side note -->
+      <rect x="552" y="146" width="182" height="60" rx="11" fill="#eefbf6" stroke="#b8ecd8" stroke-width="1.8"/>
+      <text x="643" y="170" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" fill="#047857">One direction only</text>
+      <text x="643" y="190" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#0f6b52">parent ➜ child</text>
+    </svg>
+    <figcaption><b>Figure 10.2</b> — One-way data flow: information travels down the component hierarchy through props.</figcaption>
+  </figure>
+
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Greeting({ name }) {
+  return &lt;h1&gt;Hello, {name}!&lt;/h1&gt;;
+}
+
+function App() {
+  const studentName = "Meera";
+
+  return &lt;Greeting name={studentName} /&gt;;
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>The parent component provides the value of <code>studentName</code>. The child receives it as <code>name</code>.</p>
+  <p>This is called one-way data flow because information is passed down through the component hierarchy.</p>
+
+  <h3>10.8 Props Should Be Treated as Read-Only</h3>
+  <p>A child should not directly change the props it receives.</p>
+  <p>Incorrect:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Incorrect — mutating props</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Greeting(props) {
+  props.name = "Priya";
+
+  return &lt;h1&gt;Hello, {props.name}&lt;/h1&gt;;
+}</code></pre>
+  </div>
+
+  <p>You should not mutate props. They are inputs provided by the parent.</p>
+  <p>Correct:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ Correct</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Greeting({ name }) {
+  return &lt;h1&gt;Hello, {name}!&lt;/h1&gt;;
+}</code></pre>
+  </div>
+
+  <p>If an application needs to change shared information, React provides patterns for coordinating data and interactions between components. Those patterns will be covered in a later phase when you study state and event handling.</p>
+  <p>For now, remember that props provide input; a component uses that input to describe its output.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>Props make components customizable. Data normally flows from parent to child, and child components should treat received props as read-only.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 11
+     ============================================================ -->
+<section class="topic" id="t11">
+  <div class="topic-head">
+    <div class="kicker">Topic 11</div>
+    <h2>The <code style="background:rgba(255,255,255,.14);color:#ffd479;border-color:rgba(255,212,121,.35)">children</code> Prop</h2>
+    <p>Building flexible wrappers and layout components that accept any content.</p>
+  </div>
+
+  <h3>11.1 What Is the <code>children</code> Prop?</h3>
+  <p>The special <code>children</code> prop represents the content placed between a component's opening and closing tags.</p>
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Card.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Card({ children }) {
+  return &lt;div className="card"&gt;{children}&lt;/div&gt;;
+}
+
+function App() {
+  return (
+    &lt;Card&gt;
+      &lt;h2&gt;React Fundamentals&lt;/h2&gt;
+      &lt;p&gt;Learn the basics of React.&lt;/p&gt;
+    &lt;/Card&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>The <code>Card</code> component receives the heading and paragraph as <code>children</code>.</p>
+  <p>They are rendered inside the card's <code>div</code>.</p>
+
+  <h3>11.2 Analogy: A Reusable Container</h3>
+  <p>Imagine a box that can hold different objects.</p>
+  <p>The box has a consistent shape, but the contents may change.</p>
+  <p>The component is the reusable container. Its <code>children</code> are the contents placed inside it.</p>
+  <p>The same pattern works for cards, layouts, panels, and page sections.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Children as contents inside a reusable container">
+      <defs>
+        <linearGradient id="g11a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+        <linearGradient id="g11b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Panel A -->
+      <rect x="34" y="30" width="320" height="192" rx="15" fill="#eef3ff" stroke="#c9d8ff" stroke-width="2.4"/>
+      <text x="194" y="56" text-anchor="middle" font-family="Consolas, monospace" font-size="12" font-weight="700" fill="#1e3a8a">&lt;Panel&gt; ... &lt;/Panel&gt;</text>
+
+      <rect x="58" y="72" width="272" height="58" rx="10" fill="#fff" stroke="#b9caf7" stroke-width="1.8"/>
+      <text x="194" y="98" text-anchor="middle" font-family="Consolas, monospace" font-size="11.5" fill="#1b3a91">&lt;h2&gt;Student Details&lt;/h2&gt;</text>
+      <text x="194" y="118" text-anchor="middle" font-family="Consolas, monospace" font-size="11.5" fill="#1b3a91">&lt;p&gt;Name: Rahul&lt;/p&gt;</text>
+
+      <rect x="58" y="140" width="272" height="58" rx="10" fill="#fff" stroke="#b9caf7" stroke-width="1.8"/>
+      <text x="194" y="166" text-anchor="middle" font-family="Consolas, monospace" font-size="11.5" fill="#1b3a91">&lt;h2&gt;Course Details&lt;/h2&gt;</text>
+      <text x="194" y="186" text-anchor="middle" font-family="Consolas, monospace" font-size="11.5" fill="#1b3a91">&lt;p&gt;Course: React&lt;/p&gt;</text>
+
+      <!-- Arrow to render -->
+      <path d="M366 126 H 418" stroke="#93b4ff" stroke-width="3" stroke-dasharray="7 6"/>
+      <polygon points="418,118 434,126 418,134" fill="#3b5bdb"/>
+
+      <!-- Rendered -->
+      <rect x="452" y="30" width="274" height="192" rx="15" fill="#fff" stroke="#e0e6f6" stroke-width="2"/>
+      <rect x="472" y="56" width="234" height="70" rx="10" fill="url(#g11a)"/>
+      <text x="589" y="84" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Student Details</text>
+      <text x="589" y="106" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#c3d1ff">Name: Rahul</text>
+
+      <rect x="472" y="138" width="234" height="70" rx="10" fill="url(#g11b)"/>
+      <text x="589" y="166" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#4a2c00">Course Details</text>
+      <text x="589" y="188" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#8a5a00">Course: React</text>
+
+      <text x="589" y="238" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-style="italic" fill="#6b7592">Same wrapper, different contents</text>
+      <text x="194" y="238" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-style="italic" fill="#6b7592">One reusable container</text>
+    </svg>
+    <figcaption><b>Figure 11.1</b> — The component is the container; <code>children</code> are whatever you place inside it.</figcaption>
+  </figure>
+
+  <h3>11.3 Why Do We Need <code>children</code>?</h3>
+  <p>Suppose you want to create several cards with the same border, padding, and background but different content.</p>
+  <p>Without <code>children</code>, you might need to add specific props for every possible type of content.</p>
+  <p>With <code>children</code>, you can pass different JSX structures into the same component.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Panel({ children }) {
+  return (
+    &lt;section className="panel"&gt;
+      {children}
+    &lt;/section&gt;
+  );
+}
+
+function App() {
+  return (
+    &lt;main&gt;
+      &lt;Panel&gt;
+        &lt;h2&gt;Student Details&lt;/h2&gt;
+        &lt;p&gt;Name: Rahul&lt;/p&gt;
+      &lt;/Panel&gt;
+
+      &lt;Panel&gt;
+        &lt;h2&gt;Course Details&lt;/h2&gt;
+        &lt;p&gt;Course: React Fundamentals&lt;/p&gt;
+      &lt;/Panel&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>Both panels share the same wrapper, but each contains different JSX.</p>
+
+  <h3>11.4 How Does <code>children</code> Get Its Value?</h3>
+  <p>Consider:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">usage</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;Card&gt;
+  &lt;h2&gt;Welcome&lt;/h2&gt;
+  &lt;p&gt;Learn React.&lt;/p&gt;
+&lt;/Card&gt;</code></pre>
+  </div>
+
+  <p>React makes the nested content available to the <code>Card</code> component through the <code>children</code> prop.</p>
+  <p>You can access it with destructuring:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Card.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Card({ children }) {
+  return &lt;div&gt;{children}&lt;/div&gt;;
+}</code></pre>
+  </div>
+
+  <p>The <code>children</code> variable holds the nested content supplied to the component.</p>
+
+  <h3>11.5 Props vs. Children</h3>
+  <p>Compare the two approaches.</p>
+
+  <h4>Passing content using a named prop</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">named prop</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Message({ text }) {
+  return &lt;p&gt;{text}&lt;/p&gt;;
+}
+
+function App() {
+  return &lt;Message text="Welcome to React!" /&gt;;
+}</code></pre>
+  </div>
+
+  <p>Here, the parent explicitly passes the content through the <code>text</code> prop.</p>
+
+  <h4>Passing content using <code>children</code></h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">children</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Message({ children }) {
+  return &lt;div&gt;{children}&lt;/div&gt;;
+}
+
+function App() {
+  return (
+    &lt;Message&gt;
+      &lt;h2&gt;Welcome to React!&lt;/h2&gt;
+      &lt;p&gt;Start learning today.&lt;/p&gt;
+    &lt;/Message&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Here, the parent places the desired content between the component's opening and closing tags.</p>
+  <p>Both patterns are useful.</p>
+  <p>Use named props when a value has a specific meaning, such as <code>name</code>, <code>title</code>, or <code>price</code>. Use <code>children</code> when the component should wrap or display content supplied by its parent.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p><code>children</code> is a prop that gives a component access to nested content. It makes reusable layout components much more flexible.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 12
+     ============================================================ -->
+<section class="topic" id="t12">
+  <div class="topic-head">
+    <div class="kicker">Topic 12</div>
+    <h2>Rendering and the Virtual DOM Concept</h2>
+    <p>How components become pixels — trigger, render, and commit.</p>
+  </div>
+
+  <p>This topic explains how your React components become visible on the screen.</p>
+
+  <h3>12.1 What Is Rendering?</h3>
+  <p>In React, rendering means React calls your components to determine what should appear in the UI.</p>
+  <p>Consider this component:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Welcome.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Welcome() {
+  return &lt;h1&gt;Hello, React!&lt;/h1&gt;;
+}</code></pre>
+  </div>
+
+  <p>The function describes the element structure React should display.</p>
+  <p>However, declaring the function does not automatically put it into the browser. React must render it through a React root.</p>
+
+  <h3>12.2 How Does React Render a Component?</h3>
+  <p>A typical Vite React application contains the following code in <code>main.jsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/main.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
+
+const rootElement = document.getElementById("root");
+const root = createRoot(rootElement);
+
+root.render(&lt;App /&gt;);</code></pre>
+  </div>
+
+  <p>Let's examine each line.</p>
+
+  <h4>Line 1</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">line 1</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { createRoot } from "react-dom/client";</code></pre>
+  </div>
+
+  <p>This imports the function used to create a React root for a DOM container.</p>
+
+  <h4>Line 2</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">line 2</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import App from "./App.jsx";</code></pre>
+  </div>
+
+  <p>This imports the application's root component.</p>
+
+  <h4>Line 3</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">line 3</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">const rootElement = document.getElementById("root");</code></pre>
+  </div>
+
+  <p>This asks the browser to locate the HTML element with the ID <code>root</code>.</p>
+
+  <h4>Line 4</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">line 4</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">const root = createRoot(rootElement);</code></pre>
+  </div>
+
+  <p>This creates the React root associated with that element.</p>
+
+  <h4>Line 5</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">line 5</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">root.render(&lt;App /&gt;);</code></pre>
+  </div>
+
+  <p>This tells React to render the <code>App</code> component into the root container.</p>
+  <p>The browser can then display the resulting UI.</p>
+
+  <h3>12.3 Three Stages: Trigger, Render, and Commit</h3>
+  <p>React's rendering process can be understood through three stages.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three stages of rendering: trigger, render, commit">
+      <defs>
+        <linearGradient id="g12a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+        <linearGradient id="g12b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#2f4fb5"/><stop offset="100%" stop-color="#4c6ef5"/>
+        </linearGradient>
+        <linearGradient id="g12c" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Stage 1 -->
+      <rect x="26" y="30" width="216" height="196" rx="15" fill="#f7faff" stroke="#c9d8ff" stroke-width="2"/>
+      <circle cx="134" cy="76" r="26" fill="url(#g12a)"/>
+      <text x="134" y="83" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="17" font-weight="800" fill="#fff">1</text>
+      <text x="134" y="126" text-anchor="middle" font-family="Georgia, serif" font-size="14.5" font-weight="700" fill="#1e3a8a">Trigger</text>
+      <text x="134" y="152" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#6b7592">Something causes</text>
+      <text x="134" y="170" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#6b7592">React to render.</text>
+      <text x="134" y="200" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.8" font-style="italic" fill="#8794b5">initial render / state change</text>
+
+      <!-- Arrow -->
+      <path d="M248 128 H 268" stroke="#93b4ff" stroke-width="3"/>
+      <polygon points="268,120 284,128 268,136" fill="#3b5bdb"/>
+
+      <!-- Stage 2 -->
+      <rect x="290" y="30" width="216" height="196" rx="15" fill="#f7faff" stroke="#c9d8ff" stroke-width="2"/>
+      <circle cx="398" cy="76" r="26" fill="url(#g12b)"/>
+      <text x="398" y="83" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="17" font-weight="800" fill="#fff">2</text>
+      <text x="398" y="126" text-anchor="middle" font-family="Georgia, serif" font-size="14.5" font-weight="700" fill="#1e3a8a">Render</text>
+      <text x="398" y="152" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#6b7592">React calls your</text>
+      <text x="398" y="170" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#6b7592">components.</text>
+      <text x="398" y="200" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.8" font-style="italic" fill="#8794b5">calculates the UI description</text>
+
+      <!-- Arrow -->
+      <path d="M512 128 H 532" stroke="#93b4ff" stroke-width="3"/>
+      <polygon points="532,120 548,128 532,136" fill="#3b5bdb"/>
+
+      <!-- Stage 3 -->
+      <rect x="554" y="30" width="180" height="196" rx="15" fill="#fff8ec" stroke="#ffdfae" stroke-width="2"/>
+      <circle cx="644" cy="76" r="26" fill="url(#g12c)"/>
+      <text x="644" y="83" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="17" font-weight="800" fill="#4a2c00">3</text>
+      <text x="644" y="126" text-anchor="middle" font-family="Georgia, serif" font-size="14.5" font-weight="700" fill="#b45309">Commit</text>
+      <text x="644" y="152" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#8a5a00">React applies changes</text>
+      <text x="644" y="170" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#8a5a00">to the browser DOM.</text>
+      <text x="644" y="200" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.8" font-style="italic" fill="#a97b2a">browser paints the screen</text>
+
+      <text x="380" y="262" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11.5" font-weight="700" fill="#1e3a8a">Trigger  ➜  Render  ➜  Commit  ➜  Painted UI</text>
+      <text x="380" y="284" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#6b7592">You describe what the UI should look like; React handles the updates.</text>
+    </svg>
+    <figcaption><b>Figure 12.1</b> — The three stages of the React rendering pipeline.</figcaption>
+  </figure>
+
+  <h4>Stage 1: Trigger</h4>
+  <p>Something causes React to perform a render.</p>
+  <p>The initial render happens when the application starts. Later renders may happen when component state or other relevant inputs change.</p>
+  <p>State is outside the current phase, but it is important to know that rendering can occur more than once.</p>
+
+  <h4>Stage 2: Render</h4>
+  <p>React calls the relevant components to calculate what the UI should look like.</p>
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  return (
+    &lt;main&gt;
+      &lt;h1&gt;Student Dashboard&lt;/h1&gt;
+      &lt;p&gt;Welcome back!&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>React evaluates the component and its JSX to determine the UI structure.</p>
+
+  <h4>Stage 3: Commit</h4>
+  <p>React applies necessary changes to the browser's DOM.</p>
+  <p>On the first render, it creates and inserts the required DOM elements. On subsequent renders, React applies the necessary changes rather than rebuilding the entire DOM tree without regard to what changed.</p>
+  <p>The browser then paints the resulting interface.</p>
+
+  <h3>12.4 What Is the DOM?</h3>
+  <p>DOM stands for <strong>Document Object Model</strong>.</p>
+  <p>The browser represents an HTML document as a structured tree of nodes that JavaScript can inspect and modify.</p>
+  <p>For this HTML:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">markup</span><span class="code-lang">HTML</span></div>
+    <pre><code class="lang-html">&lt;main&gt;
+  &lt;h1&gt;Student Dashboard&lt;/h1&gt;
+  &lt;p&gt;Welcome back!&lt;/p&gt;
+&lt;/main&gt;</code></pre>
+  </div>
+
+  <p>The DOM has a structure similar to:</p>
+
+  <figure>
+    <svg viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DOM tree structure">
+      <defs>
+        <linearGradient id="g12d" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="318" y="18" width="124" height="44" rx="11" fill="url(#g12d)"/>
+      <text x="380" y="46" text-anchor="middle" font-family="Consolas, monospace" font-size="13" font-weight="700" fill="#fff">main</text>
+
+      <path d="M380 62 V 88" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M380 88 H 190" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M380 88 H 570" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M190 88 V 110" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M570 88 V 110" stroke="#93b4ff" stroke-width="2"/>
+
+      <rect x="128" y="110" width="124" height="44" rx="11" fill="#2f4fb5"/>
+      <text x="190" y="138" text-anchor="middle" font-family="Consolas, monospace" font-size="13" font-weight="700" fill="#fff">h1</text>
+
+      <rect x="508" y="110" width="124" height="44" rx="11" fill="#2f4fb5"/>
+      <text x="570" y="138" text-anchor="middle" font-family="Consolas, monospace" font-size="13" font-weight="700" fill="#fff">p</text>
+
+      <path d="M190 154 V 178" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M570 154 V 178" stroke="#93b4ff" stroke-width="2"/>
+
+      <rect x="86" y="178" width="208" height="44" rx="11" fill="#fff8ec" stroke="#ffdfae" stroke-width="2"/>
+      <text x="190" y="206" text-anchor="middle" font-family="Georgia, serif" font-size="12.5" fill="#8a5a00">"Student Dashboard"</text>
+
+      <rect x="466" y="178" width="208" height="44" rx="11" fill="#fff8ec" stroke="#ffdfae" stroke-width="2"/>
+      <text x="570" y="206" text-anchor="middle" font-family="Georgia, serif" font-size="12.5" fill="#8a5a00">"Welcome back!"</text>
+
+      <text x="380" y="242" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-style="italic" fill="#6b7592">The browser's DOM: a tree of nodes that JavaScript can inspect and modify.</text>
+    </svg>
+    <figcaption><b>Figure 12.2</b> — The DOM is the browser's structured representation of the HTML document.</figcaption>
+  </figure>
+
+  <p>JavaScript can interact with the DOM using browser APIs. React provides a declarative way to describe the desired UI and manages the associated DOM updates.</p>
+
+  <h3>12.5 What Is the Virtual DOM?</h3>
+  <p>The <strong>virtual DOM</strong> is a commonly used term for React's in-memory representation of the UI.</p>
+  <p>Instead of asking you to manually create and update every browser DOM node, React lets you describe your interface using components and JSX.</p>
+  <p>React uses the resulting UI representation to work out which changes need to be committed to the actual DOM.</p>
+  <p>The virtual DOM is a conceptual model; modern React uses internal data structures and rendering mechanisms to coordinate this work. You do not need to implement a virtual DOM yourself.</p>
+
+  <div class="callout analogy">
+    <div class="ct">◆ Analogy: Editing a Document</div>
+    <p>Imagine you have a long document and need to correct one sentence.</p>
+    <p>You would usually change that sentence rather than rewrite the entire document from scratch.</p>
+    <p>React follows a comparable goal: it determines the necessary UI changes and applies them to the DOM.</p>
+    <p>The analogy is useful, but do not interpret it to mean that every React update changes only one element. The number of DOM operations depends on what changed in the rendered tree.</p>
+  </div>
+
+  <h3>12.6 How Does React Use This Idea?</h3>
+  <p>Suppose you have a component:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentProfile.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentProfile() {
+  return (
+    &lt;section&gt;
+      &lt;h1&gt;Rahul&lt;/h1&gt;
+      &lt;p&gt;Course: React&lt;/p&gt;
+      &lt;p&gt;Institute: BR TECHGEEKS&lt;/p&gt;
+    &lt;/section&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>React renders this structure.</p>
+  <p>If a later render produces different content, React compares the latest output with the previous result to determine the required DOM changes.</p>
+  <p>If the institute name remains the same, React generally does not need to replace that paragraph simply because another part of the output changed.</p>
+  <p>The important point is that React manages these updates; you do not manually rebuild the complete interface each time.</p>
+
+  <h3>12.7 Virtual DOM Does Not Mean Every React App Is Automatically Faster</h3>
+  <p>The virtual DOM is part of React's rendering architecture. It is not a guarantee that every React application will outperform every manually written JavaScript application.</p>
+  <p>Actual performance depends on the application structure, the work performed during rendering, and the DOM updates required.</p>
+  <p>React's main benefit at this stage is that it gives you a structured and declarative way to build and manage interfaces.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>Rendering calculates what the UI should look like. Committing applies the required DOM changes. The virtual DOM concept helps explain how React coordinates updates, but it should not be treated as a guarantee of universal performance improvements.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 13
+     ============================================================ -->
+<section class="topic" id="t13">
+  <div class="topic-head">
+    <div class="kicker">Topic 13</div>
+    <h2>React Developer Tools</h2>
+    <p>Inspecting your component tree, props, and rendering performance.</p>
+  </div>
+
+  <h3>13.1 What Are React Developer Tools?</h3>
+  <p>React Developer Tools is a debugging tool for React applications.</p>
+  <p>It is available as a browser extension and provides two especially useful panels:</p>
+  <ul>
+    <li><strong>Components:</strong> Inspect the React component tree and examine component props and other available information.</li>
+    <li><strong>Profiler:</strong> Record rendering activity to help investigate performance.</li>
+  </ul>
+  <p>It complements the browser's normal Developer Tools.</p>
+
+  <h3>13.2 Why Do We Need It?</h3>
+  <p>Imagine your application has this structure:</p>
+
+  <div class="tree">App
+├── Navbar
+├── StudentProfile
+└── CourseSection
+    ├── CourseCard
+    └── CourseCard</div>
+
+  <p>When a page becomes complicated, it may be difficult to understand which component is responsible for a specific section.</p>
+  <p>React Developer Tools lets you inspect the component hierarchy instead of relying only on the browser's HTML elements panel.</p>
+  <p>This is helpful when debugging props, understanding component composition, and investigating rendering performance.</p>
+
+  <h3>13.3 Install the Browser Extension</h3>
+  <p>Use the official React Developer Tools page:</p>
+  <p><a href="https://react.dev/learn/react-developer-tools">https://react.dev/learn/react-developer-tools</a></p>
+  <p>From there, choose the supported browser extension for your browser.</p>
+  <p>For Chrome, the installation process generally involves:</p>
+  <ol>
+    <li>Open the Chrome Web Store from the official React Developer Tools instructions.</li>
+    <li>Find the React Developer Tools extension.</li>
+    <li>Install it.</li>
+    <li>Open or refresh your Vite React application.</li>
+    <li>Open browser Developer Tools.</li>
+  </ol>
+  <p>You should see React-specific panels when the extension recognizes a React application.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="React Developer Tools Components panel illustration">
+      <defs>
+        <linearGradient id="g13a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Browser chrome -->
+      <rect x="24" y="20" width="712" height="256" rx="14" fill="#f2f5fc" stroke="#d5ddef" stroke-width="2"/>
+      <rect x="24" y="20" width="712" height="42" rx="14" fill="url(#g13a)"/>
+      <rect x="24" y="48" width="712" height="14" fill="url(#g13a)"/>
+      <circle cx="48" cy="41" r="5" fill="#ff5f57"/>
+      <circle cx="66" cy="41" r="5" fill="#febc2e"/>
+      <circle cx="84" cy="41" r="5" fill="#28c840"/>
+      <rect x="110" y="30" width="380" height="22" rx="6" fill="rgba(255,255,255,.15)"/>
+      <text x="126" y="46" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#c3d1ff">localhost:5173</text>
+
+      <!-- DevTools tabs -->
+      <rect x="24" y="62" width="712" height="34" fill="#1b2740"/>
+      <text x="46" y="84" font-family="Segoe UI, sans-serif" font-size="11" fill="#8fa4d4">Elements</text>
+      <text x="126" y="84" font-family="Segoe UI, sans-serif" font-size="11" fill="#8fa4d4">Console</text>
+      <text x="200" y="84" font-family="Segoe UI, sans-serif" font-size="11" fill="#8fa4d4">Sources</text>
+      <rect x="266" y="66" width="110" height="26" rx="6" fill="#f59e0b"/>
+      <text x="321" y="84" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#4a2c00">⚛ Components</text>
+      <text x="398" y="84" font-family="Segoe UI, sans-serif" font-size="11" fill="#8fa4d4">Profiler</text>
+
+      <!-- Panel body -->
+      <rect x="24" y="96" width="712" height="180" fill="#ffffff"/>
+
+      <!-- component tree -->
+      <rect x="42" y="112" width="330" height="150" rx="9" fill="#f8faff" stroke="#e0e6f6"/>
+      <text x="58" y="134" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="800" fill="#1e3a8a">Components</text>
+
+      <text x="58" y="160" font-family="Consolas, monospace" font-size="11.5" fill="#1b3a91">&lt;App&gt;</text>
+      <text x="80" y="184" font-family="Consolas, monospace" font-size="11.5" fill="#1b3a91">&lt;main&gt;</text>
+      <text x="102" y="208" font-family="Consolas, monospace" font-size="11.5" fill="#1b3a91">&lt;StudentCard&gt;</text>
+      <text x="102" y="232" font-family="Consolas, monospace" font-size="11.5" fill="#8794b5">&lt;StudentCard&gt;</text>
+
+      <!-- props panel -->
+      <rect x="392" y="112" width="326" height="150" rx="9" fill="#fff8ec" stroke="#ffdfae"/>
+      <text x="408" y="134" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="800" fill="#b45309">Selected: &lt;StudentCard&gt;</text>
+
+      <rect x="408" y="146" width="294" height="30" rx="7" fill="#fff" stroke="#f6c667"/>
+      <text x="420" y="166" font-family="Consolas, monospace" font-size="11" fill="#8a5a00">name</text>
+      <text x="620" y="166" font-family="Consolas, monospace" font-size="11" fill="#0f9d76">"Rahul"</text>
+
+      <rect x="408" y="182" width="294" height="30" rx="7" fill="#fff" stroke="#f6c667"/>
+      <text x="420" y="202" font-family="Consolas, monospace" font-size="11" fill="#8a5a00">course</text>
+      <text x="604" y="202" font-family="Consolas, monospace" font-size="11" fill="#0f9d76">"React"</text>
+
+      <rect x="408" y="218" width="294" height="30" rx="7" fill="#fff" stroke="#f6c667"/>
+      <text x="420" y="238" font-family="Consolas, monospace" font-size="11" fill="#8a5a00">city</text>
+      <text x="592" y="238" font-family="Consolas, monospace" font-size="11" fill="#0f9d76">"Rajkot"</text>
+
+      <text x="380" y="292" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#6b7592">The Components panel shows the React tree — not the raw HTML DOM.</text>
+    </svg>
+    <figcaption><b>Figure 13.1</b> — The Components panel lets you inspect the React tree and the props each instance received.</figcaption>
+  </figure>
+
+  <h3>13.4 Inspect a Component</h3>
+  <p>Use this example in <code>App.jsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentCard({ name, course }) {
+  return (
+    &lt;article&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;Course: {course}&lt;/p&gt;
+    &lt;/article&gt;
+  );
+}
+
+function App() {
+  return (
+    &lt;main&gt;
+      &lt;StudentCard name="Rahul" course="React" /&gt;
+      &lt;StudentCard name="Priya" course="JavaScript" /&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>When you open the Components panel, you can inspect the rendered component tree.</p>
+  <p>You should be able to locate <code>App</code> and its <code>StudentCard</code> children.</p>
+  <p>Selecting a <code>StudentCard</code> lets you examine the props being passed to that instance.</p>
+  <p>For example, the first card receives:</p>
+
+  <div class="term out">
+    <div class="term-head">First Card Props</div>
+    <pre>name = "Rahul"
+course = "React"</pre>
+  </div>
+
+  <p>The second receives:</p>
+
+  <div class="term out">
+    <div class="term-head">Second Card Props</div>
+    <pre>name = "Priya"
+course = "JavaScript"</pre>
+  </div>
+
+  <p>This helps you verify that the parent is passing the expected information.</p>
+
+  <h3>13.5 Understanding the Components Panel</h3>
+  <p>The Components panel is useful for questions such as:</p>
+  <ul>
+    <li>Which component renders this section?</li>
+    <li>What props did the parent pass?</li>
+    <li>How are the components nested?</li>
+    <li>Which part of the component tree should I inspect while debugging?</li>
+  </ul>
+  <p>The panel shows React's component structure, which is different from the raw HTML DOM tree.</p>
+
+  <h3>13.6 Understanding the Profiler Panel</h3>
+  <p>The Profiler helps record rendering activity.</p>
+  <p>For example, a large dashboard may contain many components. If a performance problem occurs, profiling can help you investigate which components rendered and how much time was associated with that work.</p>
+  <p>Do not worry about advanced performance optimization yet. For Week 1, learn where the Profiler is and what problem it is designed to help diagnose.</p>
+
+  <h3>13.7 React Developer Tools vs. Browser Developer Tools</h3>
+
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Browser Developer Tools</th><th>React Developer Tools</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Inspect HTML DOM</td><td>Yes</td><td>Not its primary purpose</td></tr>
+      <tr><td>Inspect CSS styles</td><td>Yes</td><td>Not its primary purpose</td></tr>
+      <tr><td>Inspect React component hierarchy</td><td>Limited</td><td>Yes</td></tr>
+      <tr><td>Inspect React component props</td><td>Not directly in component terms</td><td>Yes</td></tr>
+      <tr><td>Investigate React rendering performance</td><td>General browser tools are useful</td><td>React Profiler is specialized for React</td></tr>
+    </tbody>
+  </table>
+
+  <p>Both tools are useful, and they complement each other.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>Use the Components panel to understand your React component hierarchy and props. Use the Profiler when you need to investigate React rendering performance.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     PRACTICAL PROJECT
+     ============================================================ -->
+<section class="topic" id="project">
+  <div class="topic-head">
+    <div class="kicker">Practical Project</div>
+    <h2>Build a Student Learning Portal</h2>
+    <p>Combine every fundamental from Phase 1 into one small, complete React application.</p>
+  </div>
+
+  <p>Now combine the fundamentals into one small React application.</p>
+  <p>This project uses only concepts covered in this guide:</p>
+  <ul>
+    <li>JSX</li>
+    <li>JavaScript expressions</li>
+    <li>Functional components</li>
+    <li>Component composition</li>
+    <li>Props</li>
+    <li>One-way data flow</li>
+    <li>The <code>children</code> prop</li>
+  </ul>
+  <p>It does not require React state, effects, routing, API calls, or other later-phase topics.</p>
+
+  <h3>Step 1: Create the Components</h3>
+  <p>Inside the <code>src</code> directory, create a folder named <code>components</code>.</p>
+  <p>Your structure should now look like:</p>
+
+  <div class="tree"><span class="dir">src/</span>
+├── <span class="dir">components/</span>
+│   ├── <span class="file">Header.jsx</span>
+│   ├── <span class="file">StudentCard.jsx</span>
+│   └── <span class="file">InfoPanel.jsx</span>
+├── <span class="file">App.jsx</span>
+├── <span class="file">App.css</span>
+├── <span class="file">index.css</span>
+└── <span class="file">main.jsx</span></div>
+
+  <h3>Step 2: Create <code>Header.jsx</code></h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/components/Header.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Header() {
+  return (
+    &lt;header&gt;
+      &lt;h1&gt;My Learning Portal&lt;/h1&gt;
+      &lt;p&gt;Learn. Practice. Grow.&lt;/p&gt;
+    &lt;/header&gt;
+  );
+}
+
+export default Header;</code></pre>
+  </div>
+
+  <p>Explanation:</p>
+  <ul>
+    <li><code>Header</code> is a functional component.</li>
+    <li>It returns JSX describing a header.</li>
+    <li><code>export default Header</code> allows the component to be imported elsewhere.</li>
+  </ul>
+
+  <h3>Step 3: Create <code>StudentCard.jsx</code></h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/components/StudentCard.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentCard({ name, course, city }) {
+  return (
+    &lt;article&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;Course: {course}&lt;/p&gt;
+      &lt;p&gt;City: {city}&lt;/p&gt;
+    &lt;/article&gt;
+  );
+}
+
+export default StudentCard;</code></pre>
+  </div>
+
+  <p>Explanation:</p>
+  <ul>
+    <li>The component accepts three props.</li>
+    <li>Destructuring makes <code>name</code>, <code>course</code>, and <code>city</code> available as local variables.</li>
+    <li>The JSX displays those values.</li>
+    <li>The same component can display different students without changing its source code.</li>
+  </ul>
+
+  <h3>Step 4: Create <code>InfoPanel.jsx</code></h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/components/InfoPanel.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function InfoPanel({ children }) {
+  return (
+    &lt;section&gt;
+      {children}
+    &lt;/section&gt;
+  );
+}
+
+export default InfoPanel;</code></pre>
+  </div>
+
+  <p>Explanation:</p>
+  <p><code>InfoPanel</code> is a reusable wrapper. Whatever JSX is nested inside it becomes its <code>children</code> and is rendered inside the <code>section</code>.</p>
+
+  <h3>Step 5: Compose Everything in <code>App.jsx</code></h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import Header from "./components/Header.jsx";
+import StudentCard from "./components/StudentCard.jsx";
+import InfoPanel from "./components/InfoPanel.jsx";
+
+function App() {
+  const instituteName = "BR TECHGEEKS";
+
+  return (
+    &lt;main&gt;
+      &lt;Header /&gt;
+
+      &lt;h2&gt;Student Directory&lt;/h2&gt;
+
+      &lt;StudentCard
+        name="Rahul"
+        course="React Fundamentals"
+        city="Rajkot"
+      /&gt;
+
+      &lt;StudentCard
+        name="Priya"
+        course="JavaScript"
+        city="Ahmedabad"
+      /&gt;
+
+      &lt;InfoPanel&gt;
+        &lt;h2&gt;About Our Institute&lt;/h2&gt;
+        &lt;p&gt;We learn through practical projects.&lt;/p&gt;
+      &lt;/InfoPanel&gt;
+
+      &lt;p&gt;Institute: {instituteName}&lt;/p&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <h4>What Is Happening Here?</h4>
+  <ol>
+    <li>The <code>Header</code>, <code>StudentCard</code>, and <code>InfoPanel</code> components are imported.</li>
+    <li>The <code>instituteName</code> variable stores a string.</li>
+    <li><code>&lt;Header /&gt;</code> renders the reusable header component.</li>
+    <li>Two <code>StudentCard</code> instances receive different props.</li>
+    <li><code>InfoPanel</code> receives a heading and paragraph as its children.</li>
+    <li><code>{instituteName}</code> embeds the variable's value in JSX.</li>
+  </ol>
+  <p>This is a small example of a component-based interface in which parent components compose child components and pass information downward.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Component tree for the Student Learning Portal project">
+      <defs>
+        <linearGradient id="gpa" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b5bdb"/>
+        </linearGradient>
+        <linearGradient id="gpb" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="305" y="14" width="150" height="44" rx="11" fill="url(#gpa)"/>
+      <text x="380" y="42" text-anchor="middle" font-family="Consolas, monospace" font-size="13" font-weight="700" fill="#fff">App</text>
+
+      <path d="M380 58 V 82" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M110 82 H 650" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M110 82 V 104" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M290 82 V 104" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M470 82 V 104" stroke="#93b4ff" stroke-width="2"/>
+      <path d="M650 82 V 104" stroke="#93b4ff" stroke-width="2"/>
+
+      <rect x="52" y="104" width="116" height="42" rx="10" fill="#4c6ef5"/>
+      <text x="110" y="131" text-anchor="middle" font-family="Consolas, monospace" font-size="11.5" font-weight="700" fill="#fff">Header</text>
+
+      <rect x="196" y="104" width="188" height="42" rx="10" fill="url(#gpb)"/>
+      <text x="290" y="131" text-anchor="middle" font-family="Consolas, monospace" font-size="11.5" font-weight="700" fill="#4a2c00">StudentCard ×2</text>
+
+      <rect x="408" y="104" width="124" height="42" rx="10" fill="#2f4fb5"/>
+      <text x="470" y="131" text-anchor="middle" font-family="Consolas, monospace" font-size="11.5" font-weight="700" fill="#fff">InfoPanel</text>
+
+      <rect x="556" y="104" width="188" height="42" rx="10" fill="#849bd9"/>
+      <text x="650" y="131" text-anchor="middle" font-family="Consolas, monospace" font-size="11.5" font-weight="700" fill="#fff">instituteName text</text>
+
+      <text x="380" y="184" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#1e3a8a">Rendered on screen</text>
+
+      <rect x="120" y="200" width="520" height="80" rx="12" fill="#f7faff" stroke="#dbe3f5" stroke-width="2"/>
+      <rect x="138" y="214" width="484" height="24" rx="7" fill="#e3f2fd"/>
+      <text x="150" y="231" font-family="Georgia, serif" font-size="11.5" font-weight="700" fill="#0d47a1">My Learning Portal</text>
+      <rect x="138" y="244" width="238" height="26" rx="7" fill="#fff" stroke="#90caf9"/>
+      <text x="150" y="262" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#38415e">Rahul — React Fundamentals — Rajkot</text>
+      <rect x="384" y="244" width="238" height="26" rx="7" fill="#fff" stroke="#90caf9"/>
+      <text x="396" y="262" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#38415e">Priya — JavaScript — Ahmedabad</text>
+    </svg>
+    <figcaption><b>Figure P.1</b> — The finished project: one <code>App</code> composing four child components.</figcaption>
+  </figure>
+
+  <h3>Step 6: Add a Little Styling in <code>App.css</code></h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/App.css</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">main {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  padding: 24px;
+  background: #e3f2fd;
+  border-radius: 12px;
+}
+
+article,
+section {
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px solid #90caf9;
+  border-radius: 10px;
+}
+
+h1,
+h2 {
+  color: #0d47a1;
+}</code></pre>
+  </div>
+
+  <p>Make sure <code>App.jsx</code> imports the stylesheet at its top:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">import</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import "./App.css";</code></pre>
+  </div>
+
+  <p>The CSS styles the header, cards, and information panel. It does not change how the React components receive props or compose their content.</p>
+
+  <h3>Step 7: Run and Verify the Project</h3>
+  <p>Run:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm run dev</code></pre>
+  </div>
+
+  <p>Open the local URL displayed in the terminal.</p>
+  <p>You should see the learning portal with:</p>
+  <ul>
+    <li>A header</li>
+    <li>A student directory</li>
+    <li>Two student cards with different information</li>
+    <li>An information panel</li>
+    <li>The institute name</li>
+  </ul>
+
+  <h3>What Have You Practised?</h3>
+
+  <table>
+    <thead><tr><th>React concept</th><th>Where it appears</th></tr></thead>
+    <tbody>
+      <tr><td>JSX</td><td>All component return values</td></tr>
+      <tr><td>JavaScript expressions</td><td><code>{instituteName}</code></td></tr>
+      <tr><td>Functional components</td><td><code>Header</code>, <code>StudentCard</code>, <code>InfoPanel</code>, <code>App</code></td></tr>
+      <tr><td>Composition</td><td><code>App</code> combines the smaller components</td></tr>
+      <tr><td>Reuse</td><td><code>StudentCard</code> is used twice</td></tr>
+      <tr><td>Props</td><td><code>name</code>, <code>course</code>, and <code>city</code></td></tr>
+      <tr><td>One-way data flow</td><td><code>App</code> passes information to <code>StudentCard</code></td></tr>
+      <tr><td><code>children</code></td><td><code>InfoPanel</code> receives nested JSX</td></tr>
+      <tr><td>Rendering</td><td><code>main.jsx</code> renders <code>&lt;App /&gt;</code></td></tr>
+      <tr><td>Developer Tools</td><td>Inspect the project in the Components panel</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================================================
+     COMMON MISTAKES
+     ============================================================ -->
+<section class="topic" id="mistakes">
+  <div class="topic-head">
+    <div class="kicker">Reference</div>
+    <h2>Common Beginner Mistakes</h2>
+    <p>Eight pitfalls every new React developer runs into — and how to fix them.</p>
+  </div>
+
+  <h3>Mistake 1: Using <code>class</code> Instead of <code>className</code></h3>
+  <p>Incorrect:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Incorrect</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div class="card"&gt;Hello&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>Correct:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ Correct</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="card"&gt;Hello&lt;/div&gt;</code></pre>
+  </div>
+
+  <h3>Mistake 2: Returning Multiple Adjacent JSX Elements</h3>
+  <p>Incorrect:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Incorrect</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">return (
+  &lt;h1&gt;Hello&lt;/h1&gt;
+  &lt;p&gt;Welcome&lt;/p&gt;
+);</code></pre>
+  </div>
+
+  <p>Correct:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ Correct</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">return (
+  &lt;&gt;
+    &lt;h1&gt;Hello&lt;/h1&gt;
+    &lt;p&gt;Welcome&lt;/p&gt;
+  &lt;/&gt;
+);</code></pre>
+  </div>
+
+  <h3>Mistake 3: Forgetting Curly Braces for Variables</h3>
+  <p>Incorrect:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Incorrect</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  const name = "Rahul";
+  return &lt;h1&gt;name&lt;/h1&gt;;
+}</code></pre>
+  </div>
+
+  <p>This displays the literal word <code>name</code>.</p>
+  <p>Correct:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ Correct</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function App() {
+  const name = "Rahul";
+  return &lt;h1&gt;{name}&lt;/h1&gt;;
+}</code></pre>
+  </div>
+
+  <h3>Mistake 4: Using a Component Name with a Lowercase First Letter</h3>
+  <p>Prefer:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ Preferred</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StudentCard() {
+  return &lt;article&gt;Student&lt;/article&gt;;
+}</code></pre>
+  </div>
+
+  <p>Use it as:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">usage</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;StudentCard /&gt;</code></pre>
+  </div>
+
+  <p>React interprets JSX tags beginning with lowercase letters as built-in HTML elements.</p>
+
+  <h3>Mistake 5: Passing a Number as a String Accidentally</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">string</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;StudentCard duration="3" /&gt;</code></pre>
+  </div>
+
+  <p>Here, <code>duration</code> is a string.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">number</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;StudentCard duration={3} /&gt;</code></pre>
+  </div>
+
+  <p>Here, <code>duration</code> is a number.</p>
+  <p>Use the type appropriate to the data you need.</p>
+
+  <h3>Mistake 6: Trying to Modify Props</h3>
+  <p>Props are inputs supplied by a parent. Do not assign new values to <code>props.name</code> or mutate received props.</p>
+  <p>Instead, use the value received by the component to describe the UI.</p>
+
+  <h3>Mistake 7: Confusing JSX with HTML</h3>
+  <p>JSX looks similar to HTML, but it is syntax used inside JavaScript. It has its own rules, including <code>className</code>, <code>htmlFor</code>, and the requirement to close elements correctly.</p>
+
+  <h3>Mistake 8: Editing the Wrong File</h3>
+  <p>If you change <code>App.jsx</code>, your root component output should change. If the browser still displays the old page, inspect the terminal and browser console and confirm that you are editing the correct project directory.</p>
+</section>
+
+<!-- ============================================================
+     REVISION NOTES
+     ============================================================ -->
+<section class="topic" id="revision">
+  <div class="topic-head">
+    <div class="kicker">Revision</div>
+    <h2>Revision Notes</h2>
+    <p>Before moving to the next phase, make sure you can explain each of these points in your own words.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="mini-card">
+      <h5>React</h5>
+      <p>A JavaScript library used to build user interfaces with reusable components.</p>
+    </div>
+    <div class="mini-card">
+      <h5>SPA</h5>
+      <p>An application structure where internal navigation and UI updates can happen without reloading the entire HTML document on each navigation.</p>
+    </div>
+    <div class="mini-card">
+      <h5>CSR</h5>
+      <p>A rendering approach in which browser-side JavaScript creates or updates the UI.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Vite</h5>
+      <p>A tool used to scaffold, develop, and build frontend applications.</p>
+    </div>
+    <div class="mini-card">
+      <h5>JSX</h5>
+      <p>HTML-like syntax embedded in JavaScript for describing React interfaces.</p>
+    </div>
+    <div class="mini-card">
+      <h5>JavaScript expressions in JSX</h5>
+      <p>Curly braces allow variables, calculations, and other suitable JavaScript expressions to be used inside JSX.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Fragment</h5>
+      <p>A way to group multiple JSX elements without creating an extra wrapper element in the DOM.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Functional component</h5>
+      <p>A JavaScript function that returns UI content.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Composition</h5>
+      <p>Combining smaller components to build a larger interface.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Props</h5>
+      <p>Inputs passed from a parent component to a child component.</p>
+    </div>
+    <div class="mini-card">
+      <h5>One-way data flow</h5>
+      <p>The normal pattern in which data is passed down through the component hierarchy.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Children</h5>
+      <p>The nested content supplied between a component's opening and closing tags.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Rendering</h5>
+      <p>React calling components to calculate the UI they describe.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Virtual DOM</h5>
+      <p>A common term for React's in-memory representation of the UI, used as part of its rendering and update process.</p>
+    </div>
+    <div class="mini-card" style="grid-column: span 2;">
+      <h5>React Developer Tools</h5>
+      <p>A browser tool for inspecting React components, their props, and rendering performance.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PRACTICE EXERCISES
+     ============================================================ -->
+<section class="topic" id="exercises">
+  <div class="topic-head">
+    <div class="kicker">Practice</div>
+    <h2>Practice Exercises</h2>
+    <p>Try these exercises after studying the examples. They test only the concepts covered in Phase 1.</p>
+  </div>
+
+  <h3>Easy Level</h3>
+  <ol>
+    <li>Create a component named <code>Welcome</code> that displays <code>Welcome to React</code>.</li>
+    <li>Create a component named <code>StudentInfo</code> that displays your name, course, and city.</li>
+    <li>Create a component named <code>Footer</code> and render it inside <code>App</code>.</li>
+    <li>Display a JavaScript variable inside an <code>h1</code> element using JSX.</li>
+    <li>Create a <code>CourseCard</code> component and use it three times.</li>
+    <li>Build a <code>Card</code> component that uses <code>children</code> to display nested JSX.</li>
+    <li>Correct a JSX example that contains an unclosed <code>img</code> or <code>input</code> element.</li>
+    <li>Explain the roles of <code>App.jsx</code>, <code>main.jsx</code>, and <code>index.html</code>.</li>
+  </ol>
+
+  <h3>Medium Level</h3>
+  <ol start="9">
+    <li>Create a reusable <code>StudentCard</code> component that accepts <code>name</code>, <code>course</code>, and <code>city</code> props. Render three students with different values.</li>
+    <li>Create a <code>CourseInfo</code> component that accepts <code>title</code> and <code>duration</code> props, and displays a ternary-based message using a boolean prop called <code>available</code>.</li>
+    <li>Create a page containing <code>Header</code>, <code>MainContent</code>, and <code>Footer</code> components. Compose all three inside <code>App</code>.</li>
+    <li>Create a reusable <code>InfoPanel</code> component that accepts several nested JSX elements using <code>children</code>.</li>
+    <li>Explain the difference between SPA, CSR, and React. Include one example of each concept in the context of a web application.</li>
+    <li>Explain the three stages of rendering: trigger, render, and commit. Then describe the purpose of the virtual DOM.</li>
+    <li>Use React Developer Tools to inspect your student portal. Identify the <code>App</code> component, inspect its child components, and examine the props passed to each <code>StudentCard</code>.</li>
+  </ol>
+</section>
+
+<!-- ============================================================
+     FINAL SELF-ASSESSMENT
+     ============================================================ -->
+<section class="topic" id="assessment">
+  <div class="topic-head">
+    <div class="kicker">Wrap-Up</div>
+    <h2>Final Self-Assessment</h2>
+    <p>You are ready to move on when you can do the following without copying a tutorial.</p>
+  </div>
+
+  <ul>
+    <li>Create and run a Vite React project.</li>
+    <li>Explain the important files in the project structure.</li>
+    <li>Write valid JSX and embed JavaScript expressions.</li>
+    <li>Use Fragments when multiple elements need grouping.</li>
+    <li>Define functional components and compose them into a page.</li>
+    <li>Pass props from parent to child and treat props as read-only.</li>
+    <li>Use <code>children</code> to build a flexible wrapper component.</li>
+    <li>Explain the difference between rendering and committing DOM updates.</li>
+    <li>Describe the virtual DOM concept accurately.</li>
+    <li>Inspect your component tree using React Developer Tools.</li>
+  </ul>
+
+  <h3>Official Documentation for Further Reading</h3>
+  <ul>
+    <li>React — <a href="https://react.dev/learn">Quick Start</a></li>
+    <li>React — <a href="https://react.dev/learn/writing-markup-with-jsx">Writing Markup with JSX</a></li>
+    <li>React — <a href="https://react.dev/learn/passing-props-to-a-component">Passing Props to a Component</a></li>
+    <li>React — <a href="https://react.dev/learn/render-and-commit">Render and Commit</a></li>
+    <li>React — <a href="https://react.dev/learn/react-developer-tools">React Developer Tools</a></li>
+    <li>Vite — <a href="https://vite.dev/guide/">Getting Started</a></li>
+  </ul>
+
+  <div class="callout remember" style="margin-top:34px;">
+    <div class="ct">◆ Your Phase 1 Goal</div>
+    <p>Understand the React component model, build and run a small application, and become comfortable reading and writing JSX. Do not worry about hooks, state, event handling, routing, APIs, or advanced optimization yet. Those concepts will build on the foundation established here.</p>
+  </div>
+</section>
+
+</div><!-- /book -->
+
+<script>
+/* ============================================================
+   Lightweight, dependency-free syntax highlighter.
+   Runs in the browser before you print to PDF.
+   ============================================================ */
+(function () {
+  function esc(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +          // 1 comment
+    "|(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'|`(?:[^`\\\\]|\\\\.)*`)" + // 2 string
+    "|(<\\/?)([A-Za-z][A-Za-z0-9.]*)" +                 // 3,4 tag open
+    "|(\\/?>)" +                                        // 5 tag close
+    "|\\b(const|let|var|function|return|import|from|export|default|if|else|for|while|class|new|this|true|false|null|undefined|typeof|async|await|of|in)\\b" + // 6 keyword
+    "|\\b(\\d+(?:\\.\\d+)?)\\b",                        // 7 number
+    "g"
+  );
+
+  function highlight(src) {
+    var out = "", last = 0, m;
+    RE.lastIndex = 0;
+    while ((m = RE.exec(src)) !== null) {
+      out += esc(src.slice(last, m.index));
+      if (m[1] !== undefined)      out += '<span class="tok-com">' + esc(m[1]) + "</span>";
+      else if (m[2] !== undefined) out += '<span class="tok-str">' + esc(m[2]) + "</span>";
+      else if (m[4] !== undefined) out += '<span class="tok-tagp">' + esc(m[3]) + '</span><span class="tok-tag">' + esc(m[4]) + "</span>";
+      else if (m[5] !== undefined) out += '<span class="tok-tagp">' + esc(m[5]) + "</span>";
+      else if (m[6] !== undefined) out += '<span class="tok-kw">' + esc(m[6]) + "</span>";
+      else if (m[7] !== undefined) out += '<span class="tok-num">' + esc(m[7]) + "</span>";
+      last = RE.lastIndex;
+    }
+    out += esc(src.slice(last));
+    return out;
+  }
+
+  function run() {
+    var blocks = document.querySelectorAll("pre > code");
+    for (var i = 0; i < blocks.length; i++) {
+      var el = blocks[i];
+      if (el.dataset.highlighted === "1") continue;
+      var cls = el.className || "";
+      // Skip non-code blocks (terminal output inside .term handled separately)
+      if (el.parentElement && el.parentElement.parentElement &&
+          el.parentElement.parentElement.classList.contains("term")) {
+        el.dataset.highlighted = "1";
+        continue;
+      }
+      var text = el.textContent;
+      el.innerHTML = highlight(text);
+      el.dataset.highlighted = "1";
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run);
+  } else {
+    run();
+  }
+  window.addEventListener("beforeprint", run);
+})();
+</script>
+</body>
+</html>

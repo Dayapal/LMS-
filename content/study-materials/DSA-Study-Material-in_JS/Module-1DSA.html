@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript DSA Foundation — Handmade Solutions &amp; Dry-Run Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Kalam:wght@300;400;700&family=Patrick+Hand&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THE HANDMADE NOTEBOOK  —  premium paper + ink styling
+   ============================================================ */
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  padding: 34px 14px 70px;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(214,197,166,.55), transparent 46%),
+    radial-gradient(circle at 84% 78%, rgba(198,181,150,.5), transparent 52%),
+    repeating-linear-gradient(115deg, rgba(140,115,80,.05) 0 3px, transparent 3px 7px),
+    #c8b295;
+  font-family: 'Patrick Hand', 'Kalam', cursive;
+  color: #21304a;
+  font-size: 18px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- the "sheet of paper" ---------- */
+.book {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.page {
+  position: relative;
+  background-color: #fdfaf1;
+  background-image:
+    /* ruled lines */
+    repeating-linear-gradient(to bottom,
+      transparent 0px, transparent 30px,
+      #c9d6ea 30px, #c9d6ea 31px),
+    /* faint paper fibres */
+    repeating-linear-gradient(90deg, rgba(160,140,110,.035) 0 1px, transparent 1px 5px);
+  border-radius: 3px 10px 10px 3px;
+  box-shadow:
+    0 1px 0 #e8e0cd inset,
+    0 18px 34px -14px rgba(40,25,10,.55),
+    0 3px 0 rgba(255,255,255,.35) inset;
+  padding: 46px 46px 60px 96px;
+  margin: 0 0 40px;
+  overflow: hidden;
+}
+
+/* red margin rule */
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 74px;
+  width: 2px;
+  background: linear-gradient(to bottom, rgba(203,78,78,.15), rgba(203,78,78,.75) 6%, rgba(203,78,78,.75) 94%, rgba(203,78,78,.15));
+}
+
+/* punch holes */
+.page::after {
+  content: "";
+  position: absolute;
+  left: 24px; top: 0; bottom: 0;
+  width: 24px;
+  background-image: radial-gradient(circle at 50% 50%, #cdbca0 0 8px, rgba(0,0,0,.12) 8px 9px, transparent 10px);
+  background-size: 24px 150px;
+  background-repeat: repeat-y;
+  background-position: 0 40px;
+  opacity: .85;
+}
+
+/* ---------- headings ---------- */
+h1, h2, h3, h4 {
+  font-family: 'Caveat', cursive;
+  color: #1b2a45;
+  margin: 0 0 .35em;
+  line-height: 1.15;
+}
+
+.cover h1 {
+  font-size: clamp(46px, 9vw, 84px);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: center;
+  margin: 0;
+  text-shadow: 2px 2px 0 rgba(255,241,118,.85), 4px 4px 0 rgba(0,0,0,.07);
+}
+
+.cover .sub {
+  text-align: center;
+  font-family: 'Caveat', cursive;
+  font-size: 30px;
+  color: #b3372f;
+  margin-top: 6px;
+}
+
+h2.section {
+  font-size: 46px;
+  display: inline-block;
+  padding: 2px 16px 6px;
+  margin-bottom: 4px;
+  transform: rotate(-1.2deg);
+}
+
+h3 {
+  font-size: 29px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+  border-bottom: 1.5px dashed #b9c6dc;
+  padding-bottom: 4px;
+}
+
+h4 { font-size: 24px; color: #2b3d5e; }
+
+/* question number badge — like a circled pen number */
+.qnum {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 27px;
+  color: #b3372f;
+  border: 2.2px solid #b3372f;
+  border-radius: 50%;
+  min-width: 56px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  flex: 0 0 auto;
+  transform: rotate(-3deg);
+  background: rgba(255,255,255,.6);
+}
+
+/* ---------- highlighter pens ---------- */
+.hl-y, .hl-p, .hl-g, .hl-b, .hl-o {
+  padding: 0 3px;
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.hl-y { background: linear-gradient(100deg, rgba(255,241,118,0) 0%, rgba(255,238,88,.85) 2%, rgba(255,238,88,.85) 97%, rgba(255,238,88,0) 100%); }
+.hl-p { background: linear-gradient(100deg, rgba(255,190,215,0) 0%, rgba(255,183,208,.8) 2%, rgba(255,183,208,.8) 97%, rgba(255,190,215,0) 100%); }
+.hl-g { background: linear-gradient(100deg, rgba(178,240,180,0) 0%, rgba(167,238,170,.85) 2%, rgba(167,238,170,.85) 97%, rgba(178,240,180,0) 100%); }
+.hl-b { background: linear-gradient(100deg, rgba(175,220,255,0) 0%, rgba(163,214,255,.8) 2%, rgba(163,214,255,.8) 97%, rgba(175,220,255,0) 100%); }
+.hl-o { background: linear-gradient(100deg, rgba(255,214,150,0) 0%, rgba(255,209,138,.85) 2%, rgba(255,209,138,.85) 97%, rgba(255,214,150,0) 100%); }
+
+/* red-pen emphasis */
+.red { color: #b3372f; }
+.blue { color: #1f4e8c; }
+.pen-underline {
+  border-bottom: 2.5px solid #b3372f;
+  padding-bottom: 1px;
+}
+.wavy {
+  text-decoration: underline wavy #b3372f;
+  text-underline-offset: 4px;
+}
+.scribble-out { text-decoration: line-through; color: #8a8a8a; }
+
+/* ---------- code blocks ---------- */
+pre.code {
+  font-family: 'Kalam', cursive;
+  font-size: 16.5px;
+  line-height: 1.75;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 26px, rgba(160,185,220,.35) 26px 27px),
+    #f4f8ff;
+  border: 1.6px solid #b9c9e2;
+  border-left: 6px solid #8fb3e0;
+  border-radius: 4px 8px 8px 4px;
+  padding: 14px 16px 16px 18px;
+  margin: 14px 0 12px;
+  overflow-x: auto;
+  color: #1c2b47;
+  white-space: pre;
+  box-shadow: 2px 3px 0 rgba(120,150,190,.22);
+  position: relative;
+}
+pre.code::before {
+  content: "code";
+  position: absolute;
+  top: -12px; right: 12px;
+  font-family: 'Caveat', cursive;
+  font-size: 17px;
+  color: #6d8db8;
+  background: #fdfaf1;
+  padding: 0 7px;
+  transform: rotate(3deg);
+}
+.cm { color: #2e8b57; font-style: italic; }   /* comment — green pen */
+.kw { color: #9b2c8f; }                       /* keyword */
+.st { color: #b3541e; }                       /* string  */
+
+code.inline {
+  font-family: 'Kalam', cursive;
+  background: rgba(180,210,245,.32);
+  border-radius: 3px;
+  padding: 0 5px;
+  font-size: .95em;
+  color: #14315c;
+}
+
+/* ---------- callouts / sticky notes ---------- */
+.note, .warn, .tip, .complexity, .dryrun, .edge {
+  position: relative;
+  border-radius: 5px;
+  padding: 12px 16px 12px 18px;
+  margin: 14px 0;
+  font-size: 17px;
+}
+
+.dryrun {
+  background: linear-gradient(180deg, rgba(255,246,196,.75), rgba(255,240,160,.5));
+  border-left: 6px solid #e3b93c;
+  box-shadow: 2px 3px 0 rgba(200,160,40,.18);
+}
+.dryrun b:first-child { color: #a5761a; }
+
+.complexity {
+  background: linear-gradient(180deg, rgba(200,240,205,.7), rgba(175,232,182,.45));
+  border-left: 6px solid #4e9b5b;
+  box-shadow: 2px 3px 0 rgba(70,150,85,.16);
+  font-family: 'Kalam', cursive;
+}
+.complexity b:first-child { color: #2f6b3a; }
+
+.note {
+  background: linear-gradient(180deg, rgba(205,228,255,.7), rgba(180,212,250,.45));
+  border-left: 6px solid #4a7fbf;
+  box-shadow: 2px 3px 0 rgba(70,120,180,.16);
+}
+
+.warn {
+  background: linear-gradient(180deg, rgba(255,215,215,.8), rgba(255,190,190,.5));
+  border-left: 6px solid #c0403a;
+  box-shadow: 2px 3px 0 rgba(180,60,55,.16);
+}
+.warn b:first-child { color: #9c2f2a; }
+
+.edge {
+  background: linear-gradient(180deg, rgba(255,225,245,.7), rgba(250,205,235,.45));
+  border-left: 6px solid #b martes;
+  border-left: 6px solid #b55a9e;
+  box-shadow: 2px 3px 0 rgba(170,80,150,.15);
+}
+
+/* sticky note */
+.sticky {
+  background: #fff8a8;
+  background-image: linear-gradient(180deg, rgba(255,255,255,.35), transparent 40%);
+  padding: 18px 20px;
+  margin: 20px 0;
+  border-radius: 2px;
+  box-shadow: 3px 6px 14px -6px rgba(90,70,20,.55);
+  transform: rotate(-.8deg);
+  font-family: 'Caveat', cursive;
+  font-size: 23px;
+  line-height: 1.4;
+  color: #4a3d10;
+  position: relative;
+}
+.sticky.pink { background: #ffd6e8; color: #6b2447; transform: rotate(1deg); }
+.sticky.green { background: #d3f7cf; color: #23502a; transform: rotate(-1.4deg); }
+.sticky.blue { background: #cfe6ff; color: #17375f; transform: rotate(.6deg); }
+
+/* tape */
+.tape {
+  position: absolute;
+  width: 108px; height: 28px;
+  background: rgba(255,255,255,.55);
+  border-left: 1px dashed rgba(0,0,0,.12);
+  border-right: 1px dashed rgba(0,0,0,.12);
+  box-shadow: 0 2px 5px rgba(0,0,0,.12);
+  top: -14px; left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+}
+
+/* ---------- lists ---------- */
+ul.ticks { list-style: none; padding-left: 4px; }
+ul.ticks li { position: relative; padding-left: 30px; margin-bottom: 6px; }
+ul.ticks li::before {
+  content: "✔";
+  position: absolute; left: 0; top: -1px;
+  color: #3f8f4f;
+  font-size: 19px;
+}
+ul.arrows { list-style: none; padding-left: 4px; }
+ul.arrows li { position: relative; padding-left: 28px; margin-bottom: 5px; }
+ul.arrows li::before {
+  content: "➜";
+  position: absolute; left: 0; top: -1px;
+  color: #b3372f;
+  font-size: 17px;
+}
+
+/* ---------- tables (dry-run tables drawn by hand) ---------- */
+table.dry {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+  font-family: 'Kalam', cursive;
+  font-size: 16.5px;
+  background: rgba(255,255,255,.55);
+  box-shadow: 2px 3px 0 rgba(120,150,190,.16);
+}
+table.dry caption {
+  font-family: 'Caveat', cursive;
+  font-size: 23px;
+  color: #b3372f;
+  text-align: left;
+  padding-bottom: 6px;
+}
+table.dry th, table.dry td {
+  border: 1.6px solid #8fa8c9;
+  padding: 6px 10px;
+  text-align: left;
+}
+table.dry th {
+  background: rgba(200,222,250,.6);
+  font-weight: 700;
+  color: #17335c;
+}
+table.dry tr:nth-child(even) td { background: rgba(240,246,255,.55); }
+
+/* ---------- page number ---------- */
+.pnum {
+  position: absolute;
+  right: 26px; bottom: 16px;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  color: #8a9bb5;
+}
+.pnum::before { content: "— "; }
+.pnum::after { content: " —"; }
+
+/* ---------- divider ---------- */
+.divider {
+  text-align: center;
+  font-family: 'Caveat', cursive;
+  font-size: 26px;
+  color: #b0a184;
+  letter-spacing: 8px;
+  margin: 34px 0;
+  user-select: none;
+}
+
+/* section banner */
+.banner {
+  background: linear-gradient(120deg, #1b2a45, #2f4a76);
+  color: #fdfaf1;
+  padding: 22px 28px;
+  border-radius: 4px;
+  box-shadow: 0 12px 22px -12px rgba(20,30,50,.8), 3px 4px 0 rgba(0,0,0,.15);
+  margin-bottom: 26px;
+  transform: rotate(-.4deg);
+  position: relative;
+}
+.banner h2 { color: #fdfaf1; margin: 0; font-size: 42px; }
+.banner p { margin: 4px 0 0; font-family: 'Kalam', cursive; font-size: 16px; opacity: .9; }
+.banner .hl-y { color: #21304a; }
+
+/* two-column mini grid */
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 640px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .page { padding: 36px 20px 54px 60px; }
+  .page::before { left: 44px; }
+  .page::after { display: none; }
+  body { font-size: 17px; }
+  pre.code { font-size: 15px; }
+}
+
+/* small print helpers */
+.mini { font-size: 15px; color: #6c7d97; font-family: 'Kalam', cursive; }
+.center { text-align: center; }
+.stamp {
+  display: inline-block;
+  border: 3px double #b3372f;
+  color: #b3372f;
+  font-family: 'Caveat', cursive;
+  font-size: 24px;
+  padding: 4px 16px;
+  border-radius: 6px;
+  transform: rotate(-6deg);
+  opacity: .85;
+}
+
+/* cover decorations */
+.doodle-stars { font-size: 26px; letter-spacing: 12px; color: #d9a441; text-align: center; }
+
+hr.hand {
+  border: none;
+  height: 2px;
+  background: repeating-linear-gradient(to right, #b9c6dc 0 10px, transparent 10px 18px);
+  margin: 26px 0;
+}
+</style>
+</head>
+<body>
+
+<div class="book">
+
+<!-- ============================ COVER ============================ -->
+<section class="page cover">
+  <div class="tape"></div>
+  <div class="doodle-stars">✦ ✧ ✦ ✧ ✦</div>
+
+  <h1>JAVASCRIPT<br>DSA FOUNDATION</h1>
+  <div class="sub">SOLUTIONS &amp; DRY-RUN GUIDE</div>
+
+  <p class="center" style="font-family:'Caveat',cursive;font-size:26px;margin-top:14px;">
+    <span class="hl-y">Complete answer key for the 72-question Practice Workbook</span>
+  </p>
+
+  <hr class="hand">
+
+  <h2 style="font-size:36px;transform:rotate(-1deg);">📘 What is inside</h2>
+  <ul class="ticks">
+    <li>Answers to <b class="red">every question</b> — <span class="hl-g">A1 – E20</span></li>
+    <li>Complete JavaScript solutions</li>
+    <li>Step-by-step dry runs for algorithmic questions</li>
+    <li>Edge cases and time / space complexity</li>
+    <li>Node.js input examples</li>
+  </ul>
+
+  <div class="sticky pink" style="margin-top:34px;">
+    <b>My note to self:</b><br>
+    Don't just read the answer — <u>cover it, try it, then check</u>.
+    The dry run is where the real learning happens. ✍️
+  </div>
+
+  <div class="center" style="margin-top:30px;">
+    <span class="stamp">HANDMADE NOTES</span>
+  </div>
+
+  <div class="pnum">cover</div>
+</section>
+
+<!-- ============================ HOW TO USE ============================ -->
+<section class="page">
+  <h2 class="section hl-y">How to Use This Answer Key</h2>
+
+  <p>This guide follows the original <b>JavaScript DSA Foundation Practice Workbook</b> in the
+  same order. For code questions, <span class="hl-y">read the approach first</span>,
+  <span class="hl-b">trace the sample values by hand</span>, and <span class="hl-g">then run the code</span>.
+  The solutions are <i>model answers</i>; equivalent correct approaches are possible.</p>
+
+  <div class="note">
+    <b>Dry-run method:</b> write down the important variables after each loop iteration or recursive call.
+    <span class="red">Do not skip updates.</span> For complexity, count how the work grows with input size
+    rather than timing one run.
+  </div>
+
+  <hr class="hand">
+
+  <h2 style="font-size:34px;">📑 Contents</h2>
+  <ul class="arrows">
+    <li><b>Section A</b> — Quick Concepts &amp; Output Prediction <span class="hl-y">(A1–A12)</span></li>
+    <li><b>Section B</b> — Strings &amp; Arrays <span class="hl-b">(B1–B15)</span></li>
+    <li><b>Section C</b> — Objects, Nested Data &amp; Array Methods <span class="hl-g">(C1–C15)</span></li>
+    <li><b>Section D</b> — Recursion, Node.js Input &amp; Problem Solving <span class="hl-o">(D1–D10)</span></li>
+    <li><b>Section E</b> — DSA Patterns &amp; Complexity <span class="hl-p">(E1–E20)</span></li>
+  </ul>
+
+  <hr class="hand">
+
+  <h2 style="font-size:34px;">📌 Assumptions used in this key</h2>
+  <ul class="ticks">
+    <li>Unless stated otherwise, array questions receive <b>valid arrays</b>.</li>
+    <li>The <b>minimum / maximum</b> questions use <b>non-empty arrays</b>.</li>
+    <li><b>Two Sum</b> returns the <b>first pair</b> of indices found.</li>
+    <li>The <b>missing-number</b> problem assumes <b>distinct integers</b> drawn from
+        <code class="inline">1</code> through <code class="inline">n</code> with <b>exactly one missing</b>.</li>
+    <li><b>Anagram checking</b> below ignores <b>letter case and whitespace</b>.</li>
+  </ul>
+
+  <div class="pnum">2</div>
+</section>
+
+<!-- ============================ SECTION A ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>SECTION A</h2>
+    <p>Quick Concepts &amp; Output Prediction &nbsp;•&nbsp; <span class="hl-y">A1 – A12</span></p>
+  </div>
+
+  <!-- A1 -->
+  <h3><span class="qnum">A1</span> <span class="hl-y">String "25" versus number 25</span></h3>
+  <p>The string <code class="inline">"25"</code> is <b>text</b>; the number <code class="inline">25</code>
+  is <b>numeric</b>. With strings, <code class="inline">+</code> <span class="hl-p">concatenates</span>;
+  with numbers, <code class="inline">+</code> <span class="hl-g">performs arithmetic</span>.</p>
+
+<pre class="code">let textValue = "25";
+let numberValue = 25;
+console.log(typeof textValue);   // string
+console.log(typeof numberValue); // number
+console.log(textValue + 5);      // "255"
+console.log(numberValue + 5);    // 30</pre>
+
+  <div class="dryrun"><b>Dry run:</b> The string operation <b>joins characters</b>;
+  the numeric operation <b>adds values</b>.</div>
+
+  <!-- A2 -->
+  <h3><span class="qnum">A2</span> <span class="hl-b">Predict the output</span></h3>
+  <p>String + string <b>concatenates</b>. <code class="inline">Number()</code> converts each string
+  before numeric addition.</p>
+
+<pre class="code">let a = "10";
+let b = "20";
+console.log(a + b);
+console.log(Number(a) + Number(b));</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <span class="hl-y">"1020"</span> then
+  <span class="hl-g">30</span>.</div>
+
+  <!-- A3 -->
+  <h3><span class="qnum">A3</span> <span class="hl-p">Four falsy values</span></h3>
+  <p>Examples include <code class="inline">false</code>, <code class="inline">0</code>, an empty string
+  (<code class="inline">""</code>), <code class="inline">null</code>, <code class="inline">undefined</code>,
+  and <code class="inline">NaN</code>. <b>Any four are sufficient.</b></p>
+
+  <div class="dryrun"><b>Dry run:</b> For example: <code class="inline">Boolean(0)</code> is
+  <b>false</b> and <code class="inline">Boolean("")</code> is <b>false</b>.</div>
+
+  <!-- A4 -->
+  <h3><span class="qnum">A4</span> <span class="hl-o">Predict the output for an empty name</span></h3>
+  <p>An empty string is <b>falsy</b>, so the <code class="inline">else</code> branch executes.</p>
+
+<pre class="code">let name = "";
+if (name) {
+  console.log("Exists");
+} else {
+  console.log("Empty");
+}</pre>
+
+  <div class="dryrun"><b>Dry run:</b> The condition is <b>false</b>; output is
+  <span class="hl-y">Empty</span>.</div>
+
+  <!-- A5 -->
+  <h3><span class="qnum">A5</span> <span class="hl-g">Last character using str[str.length - 1]</span></h3>
+  <p>It returns the final character of a <b>non-empty string</b> because string indexes begin at
+  <code class="inline">0</code>. For an <b>empty string</b>, it returns <code class="inline">undefined</code>.</p>
+
+<pre class="code">let str = "Hello";
+console.log(str[str.length - 1]); // o</pre>
+
+  <div class="dryrun"><b>Dry run:</b> length is <b>5</b>; index <b>5 − 1 = 4</b>, and
+  <code class="inline">str[4]</code> is <span class="hl-y">"o"</span>.</div>
+
+  <div class="pnum">3</div>
+</section>
+
+<section class="page">
+  <!-- A6 -->
+  <h3><span class="qnum">A6</span> <span class="hl-b">slice() versus splice()</span></h3>
+
+<pre class="code">let a = [10, 20, 30, 40];
+console.log(a.slice(1, 3));   // [20, 30]
+console.log(a);               // [10, 20, 30, 40]
+let removed = a.splice(1, 2);
+console.log(removed);         // [20, 30]
+console.log(a);               // [10, 40]</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <b>slice</b> end index is <b>exclusive</b>;
+  <b>splice</b> <span class="red">modifies</span> <code class="inline">a</code>.</div>
+
+  <!-- A7 -->
+  <h3><span class="qnum">A7</span> <span class="hl-y">Which method transforms every element into a new array?</span></h3>
+  <p><code class="inline">map()</code> applies a callback to each element and returns a
+  <b>new array of the same length</b>.</p>
+
+<pre class="code">const doubled = [1, 2, 3].map(n => n * 2);
+console.log(doubled); // [2, 4, 6]</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Three input elements produce <b>three</b> mapped elements.</div>
+
+  <!-- A8 -->
+  <h3><span class="qnum">A8</span> <span class="hl-g">First match: find() or filter()?</span></h3>
+  <p><code class="inline">find()</code> returns the <b>first matching element</b>
+  (or <code class="inline">undefined</code>). <code class="inline">filter()</code> returns an
+  <b>array</b> containing every matching element.</p>
+
+<pre class="code">const values = [10, 30, 40];
+console.log(values.find(n => n > 20));   // 30
+console.log(values.filter(n => n > 20)); // [30, 40]</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <b>find</b> stops at the first match;
+  <b>filter</b> collects all matches.</div>
+
+  <!-- A9 -->
+  <h3><span class="qnum">A9</span> <span class="hl-p">for...of versus for...in</span></h3>
+  <p><code class="inline">for...of</code> iterates over <b>values</b> from an iterable such as an array or
+  string. <code class="inline">for...in</code> iterates over <b>enumerable property keys</b>,
+  commonly object keys.</p>
+
+<pre class="code">const nums = [7, 8];
+for (const value of nums) console.log(value); // 7, 8
+for (const index in nums) console.log(index); // "0", "1"</pre>
+
+  <div class="dryrun"><b>Dry run:</b> The first loop yields <b>values</b>;
+  the second yields <b>keys / index strings</b>.</div>
+
+  <!-- A10 -->
+  <h3><span class="qnum">A10</span> <span class="hl-o">Recursion base case</span></h3>
+  <p>A <b>base case</b> is the condition that <b>stops recursive calls</b>. Without a reachable base case,
+  calls can continue until the runtime throws a <span class="red">stack overflow error</span>.</p>
+
+<pre class="code">function countDown(n) {
+  if (n <= 0) return;   // base case
+  console.log(n);
+  countDown(n - 1);
+}</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <code class="inline">countDown(3)</code> prints
+  <span class="hl-y">3, 2, 1</span>, then stops at <b>n = 0</b>.</div>
+
+  <div class="pnum">4</div>
+</section>
+
+<section class="page">
+  <!-- A11 -->
+  <h3><span class="qnum">A11</span> <span class="hl-b">indexOf returns an index or −1</span></h3>
+
+<pre class="code">console.log([4, 8, 12].indexOf(8)); // 1
+console.log([4, 8, 12].indexOf(9)); // -1</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Searches must distinguish <b>index 0</b> from <b>−1</b>.</div>
+
+  <!-- A12 -->
+  <h3><span class="qnum">A12</span> <span class="hl-g">Time complexity versus space complexity</span></h3>
+  <p><b>Time complexity</b> describes how the amount of <b>work</b> grows with input size.
+  <b>Space complexity</b> describes how <b>memory usage</b> grows.
+  <b>Auxiliary space</b> usually means <b>extra memory beyond the input</b>.</p>
+
+<pre class="code">function firstItem(arr) {
+  return arr[0]; // constant work, no growing extra structure
+}</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Direct indexing is <b>O(1) time</b> and
+  <b>O(1) auxiliary space</b>.</div>
+
+  <div class="sticky green" style="margin-top:40px;">
+    <b>Section A takeaway:</b><br>
+    Type coercion, falsy values, <code>slice</code> vs <code>splice</code>,
+    <code>find</code> vs <code>filter</code>, and base cases —
+    these six ideas cover <u>almost every output-prediction trap</u>. 🎯
+  </div>
+
+  <div class="pnum">5</div>
+</section>
+
+<!-- ============================ SECTION B ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>SECTION B</h2>
+    <p>Strings &amp; Arrays &nbsp;•&nbsp; <span class="hl-b">B1 – B15</span></p>
+  </div>
+
+  <!-- B1 -->
+  <h3><span class="qnum">B1</span> <span class="hl-y">Number("45") + 5</span></h3>
+
+<pre class="code">const result = Number("45") + 5;
+console.log(result); // 50</pre>
+
+  <div class="dryrun"><b>Dry run:</b> "45" → 45 → 45 + 5 = <b>50</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(1) time, O(1) auxiliary space.</div>
+
+  <!-- B2 -->
+  <h3><span class="qnum">B2</span> <span class="hl-b">First character, last character, and length</span></h3>
+  <p>Use index <code class="inline">0</code>, index <code class="inline">length - 1</code>,
+  and the <code class="inline">length</code> property.</p>
+
+<pre class="code">const word = "JavaScript";
+console.log(word[0]);
+console.log(word[word.length - 1]);
+console.log(word.length);</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Output: <span class="hl-y">J, t, 10</span>.</div>
+  <div class="complexity"><b>Complexity:</b> O(1) for these property / index operations;
+  O(1) extra space.</div>
+
+  <!-- B3 -->
+  <h3><span class="qnum">B3</span> <span class="hl-g">Print each character with its index</span></h3>
+  <p>Loop over valid indexes from <code class="inline">0</code> up to <b>but not including</b>
+  the string length.</p>
+
+<pre class="code">const word = "HELLO";
+for (let i = 0; i &lt; word.length; i++) {
+  console.log(i, word[i]);
+}</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Rows: <b>0 H; 1 E; 2 L; 3 L; 4 O</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+
+  <!-- B4 -->
+  <h3><span class="qnum">B4</span> <span class="hl-p">Split a sentence into words</span></h3>
+  <p><code class="inline">split(" ")</code> separates at spaces. This simple version assumes
+  <b>single spaces</b> between words.</p>
+
+<pre class="code">const sentence = "I love JavaScript";
+const words = sentence.split(" ");
+console.log(words); // ["I", "love", "JavaScript"]</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Three space-separated words become <b>three array entries</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time and O(n) output space.</div>
+
+  <div class="pnum">6</div>
+</section>
+
+<section class="page">
+  <!-- B5 -->
+  <h3><span class="qnum">B5</span> <span class="hl-y">Count vowels case-insensitively</span></h3>
+  <p>Convert each character to lowercase, then count <b>a / e / i / o / u</b>.
+  This solution uses a <b>loop</b> rather than a regular-expression shortcut.</p>
+
+<pre class="code">function countVowels(str) {
+  let count = 0;
+  for (const ch of str.toLowerCase()) {
+    if ("aeiou".includes(ch)) count++;
+  }
+  return count;
+}
+console.log(countVowels("JavaScript")); // 3</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <b>JavaScript</b> lowercases to
+  <b>javascript</b>; <span class="hl-y">a, a, and i</span> are vowels.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time; O(n) space for the lowercase copy
+  (or O(1) extra if lowercasing each character).</div>
+
+  <!-- B6 -->
+  <h3><span class="qnum">B6</span> <span class="hl-b">Print first, third, and last array elements</span></h3>
+  <p>Array indexes are <b>zero-based</b>: first = index <code class="inline">0</code>,
+  third = index <code class="inline">2</code>, last = index <code class="inline">length - 1</code>.</p>
+
+<pre class="code">const nums = [10, 20, 30, 40];
+console.log(nums[0]);
+console.log(nums[2]);
+console.log(nums[nums.length - 1]);</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Output: <span class="hl-y">10, 30, 40</span>.</div>
+  <div class="complexity"><b>Complexity:</b> O(1) time, O(1) auxiliary space.</div>
+
+  <!-- B7 -->
+  <h3><span class="qnum">B7</span> <span class="hl-g">Change the second element to 200</span></h3>
+  <p>The second element is at index <code class="inline">1</code>.</p>
+
+<pre class="code">const nums = [10, 20, 30];
+nums[1] = 200;
+console.log(nums); // [10, 200, 30]</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Only the value at <b>index 1</b> changes.</div>
+  <div class="complexity"><b>Complexity:</b> O(1) time, O(1) auxiliary space.</div>
+
+  <!-- B8 -->
+  <h3><span class="qnum">B8</span> <span class="hl-o">Sum an array using a loop</span></h3>
+  <p>Start the sum at <b>zero</b> and add each element <b>exactly once</b>.</p>
+
+<pre class="code">function sumArray(arr) {
+  let sum = 0;
+  for (const value of arr) sum += value;
+  return sum;
+}
+console.log(sumArray([1, 2, 3, 4])); // 10</pre>
+
+  <div class="dryrun"><b>Dry run:</b> sum: <b>0 → 1 → 3 → 6 → 10</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+
+  <div class="pnum">7</div>
+</section>
+
+<section class="page">
+  <!-- B9 -->
+  <h3><span class="qnum">B9</span> <span class="hl-p">push() and pop()</span></h3>
+
+<pre class="code">const nums = [1, 2];
+nums.push(3);
+const removed = nums.pop();
+console.log(removed); // 3
+console.log(nums);    // [1, 2]</pre>
+
+  <div class="dryrun"><b>Dry run:</b> After push: <b>[1, 2, 3]</b>; pop returns <b>3</b>
+  and restores <b>[1, 2]</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(1) amortized per operation.</div>
+
+  <!-- B10 -->
+  <h3><span class="qnum">B10</span> <span class="hl-y">Why default sort() surprises numeric sorting</span></h3>
+  <p>Default <code class="inline">sort</code> compares <b>string representations</b>, so numeric values may be
+  ordered <b>lexicographically</b>. Supply a <b>numeric comparator</b> for ascending numeric order.</p>
+
+<pre class="code">const nums = [1, 30, 4, 21];
+nums.sort();
+console.log(nums); // string-like order
+const ascending = [1, 30, 4, 21].sort((a, b) => a - b);
+console.log(ascending); // [1, 4, 21, 30]</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Comparator <code class="inline">a - b</code> is <b>negative</b>
+  when <code class="inline">a</code> should come before <code class="inline">b</code>.</div>
+  <div class="complexity"><b>Complexity:</b> Sorting is typically <b>O(n log n)</b> average in modern
+  engines; exact implementation details are engine-dependent.</div>
+
+  <!-- B11 -->
+  <h3><span class="qnum">B11</span> <span class="hl-g">Count even values</span></h3>
+  <p>An even integer has <b>remainder 0</b> when divided by 2.</p>
+
+<pre class="code">function countEven(arr) {
+  let count = 0;
+  for (const n of arr) {
+    if (n % 2 === 0) count++;
+  }
+  return count;
+}
+console.log(countEven([2, 7, 8, 5, 10])); // 3</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <span class="hl-y">2, 8, and 10</span> increment the count.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+
+  <div class="pnum">8</div>
+</section>
+
+<section class="page">
+  <!-- B12 -->
+  <h3><span class="qnum">B12</span> <span class="hl-b">Find the minimum value in an array</span></h3>
+
+<pre class="code">function findMin(arr) {
+  let min = arr[0];
+  for (let i = 1; i &lt; arr.length; i++) {
+    if (arr[i] &lt; min) min = arr[i];
+  }
+  return min;
+}
+console.log(findMin([8, -2, 4, -5])); // -5</pre>
+
+  <div class="dryrun"><b>Dry run:</b> min: <b>8 → −2 → −2 → −5</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+  <div class="warn"><b>Note:</b> Input must be <b>non-empty</b>; an empty array needs an explicitly
+  chosen result or validation.</div>
+
+  <!-- B13 -->
+  <h3><span class="qnum">B13</span> <span class="hl-o">Linear search returns index or −1</span></h3>
+  <p>Compare each value with the target; <b>return immediately</b> when a match is found.</p>
+
+<pre class="code">function linearSearch(arr, target) {
+  for (let i = 0; i &lt; arr.length; i++) {
+    if (arr[i] === target) return i;
+  }
+  return -1;
+}
+console.log(linearSearch([5, 8, 1, 9, 4], 9)); // 3</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Check indexes <b>0, 1, 2</b>, then <b>3</b>;
+  value <span class="hl-y">9</span> matches at index 3.</div>
+  <div class="complexity"><b>Complexity:</b> Best <b>O(1)</b>, worst <b>O(n)</b> time;
+  O(1) auxiliary space.</div>
+
+  <!-- B14 -->
+  <h3><span class="qnum">B14</span> <span class="hl-p">Reverse an array in place with two pointers</span></h3>
+  <p>Swap the left and right elements, then move both pointers toward the center.
+  <b>No second array is created.</b></p>
+
+<pre class="code">function reverseInPlace(arr) {
+  let left = 0;
+  let right = arr.length - 1;
+  while (left &lt; right) {
+    [arr[left], arr[right]] = [arr[right], arr[left]];
+    left++;
+    right--;
+  }
+  return arr;
+}
+console.log(reverseInPlace([1, 2, 3, 4, 5]));</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Swap indexes <b>0 and 4</b> → [5,2,3,4,1];
+  swap <b>1 and 3</b> → [5,4,3,2,1]; <b>stop</b> when pointers meet.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+
+  <div class="pnum">9</div>
+</section>
+
+<section class="page">
+  <!-- B15 -->
+  <h3><span class="qnum">B15</span> <span class="hl-y">Palindrome check with two pointers</span></h3>
+
+<pre class="code">function isPalindrome(word) {
+  let left = 0;
+  let right = word.length - 1;
+  while (left &lt; right) {
+    if (word[left] !== word[right]) return false;
+    left++;
+    right--;
+  }
+  return true;
+}
+console.log(isPalindrome("level")); // true
+console.log(isPalindrome("hello")); // false</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <b>level</b>: l = l, e = e, center reached →
+  <span class="hl-g">true</span>. Empty and one-character strings also return <b>true</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+
+  <div class="sticky blue" style="margin-top:44px;">
+    <b>Section B pattern box 🧠</b><br>
+    • String indexing → O(1)<br>
+    • One pass over a string/array → O(n)<br>
+    • Two pointers from both ends → O(n) time, O(1) space<br>
+    • Any method that <u>builds a new array</u> → O(n) extra space
+  </div>
+
+  <div class="pnum">10</div>
+</section>
+
+<!-- ============================ SECTION C ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>SECTION C</h2>
+    <p>Objects, Nested Data &amp; Array Methods &nbsp;•&nbsp; <span class="hl-g">C1 – C15</span></p>
+  </div>
+
+  <!-- C1 -->
+  <h3><span class="qnum">C1</span> <span class="hl-b">Read object properties with dot and bracket notation</span></h3>
+
+<pre class="code">const student = { name: "Asha", age: 20, marks: 88 };
+console.log(student.name);    // Asha
+console.log(student["age"]);  // 20
+console.log(student.marks);   // 88</pre>
+
+  <div class="dryrun"><b>Dry run:</b> The object stores <b>key–value pairs</b>.</div>
+
+  <!-- C2 -->
+  <h3><span class="qnum">C2</span> <span class="hl-y">Why student[key] works</span></h3>
+  <p>If <code class="inline">key</code> contains the string <code class="inline">"marks"</code>,
+  <code class="inline">student[key]</code> evaluates the property whose <b>name is held in that variable</b>.
+  <code class="inline">student.key</code> would look for a <b>literal property named key</b>.</p>
+
+<pre class="code">const student = { name: "Asha", marks: 88 };
+const key = "marks";
+console.log(student[key]); // 88
+console.log(student.key);  // undefined</pre>
+
+  <div class="dryrun"><b>Dry run:</b> key → "marks" → student["marks"] →
+  <span class="hl-g">88</span>.</div>
+
+  <!-- C3 -->
+  <h3><span class="qnum">C3</span> <span class="hl-p">Print each key and value with for...in</span></h3>
+  <p><code class="inline">for...in</code> gives <b>enumerable property keys</b>.
+  Use <code class="inline">student[key]</code> to retrieve each value.</p>
+
+<pre class="code">const student = { name: "Asha", age: 20, marks: 88 };
+for (const key in student) {
+  console.log(key, student[key]);
+}</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Output includes <b>name Asha, age 20, marks 88</b>;
+  key order follows JavaScript <b>property-order rules</b>.</div>
+
+  <!-- C4 -->
+  <h3><span class="qnum">C4</span> <span class="hl-o">Second student name and topper</span></h3>
+  <p>Use index <code class="inline">1</code> for the second student. Track the student with the
+  <b>highest marks</b> during one traversal.</p>
+
+<pre class="code">const students = [
+  { name: "Asha", marks: 88 },
+  { name: "Ravi", marks: 95 },
+  { name: "Mina", marks: 91 }
+];
+console.log(students[1].name); // Ravi
+let topper = students[0];
+for (const student of students) {
+  if (student.marks &gt; topper.marks) topper = student;
+}
+console.log(topper.name); // Ravi</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Start <b>topper = Asha(88)</b>; Ravi(95) replaces it;
+  Mina(91) does not.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space after the input array.</div>
+
+  <div class="pnum">11</div>
+</section>
+
+<section class="page">
+  <!-- C5 -->
+  <h3><span class="qnum">C5</span> <span class="hl-b">Access a value in a 2D array</span></h3>
+
+<pre class="code">const matrix = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9]
+];
+console.log(matrix[1][2]); // 6</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <code class="inline">matrix[1]</code> is <b>[4, 5, 6]</b>;
+  its <b>index 2</b> value is <span class="hl-y">6</span>.</div>
+
+  <!-- C6 -->
+  <h3><span class="qnum">C6</span> <span class="hl-g">Sum a 2D array using nested loops</span></h3>
+  <p>The <b>outer</b> loop visits each row; the <b>inner</b> loop visits each value in that row.</p>
+
+<pre class="code">function sumMatrix(matrix) {
+  let sum = 0;
+  for (let r = 0; r &lt; matrix.length; r++) {
+    for (let c = 0; c &lt; matrix[r].length; c++) {
+      sum += matrix[r][c];
+    }
+  }
+  return sum;
+}
+console.log(sumMatrix([[1, 2], [3, 4]])); // 10</pre>
+
+  <div class="dryrun"><b>Dry run:</b> sum: <b>0 → 1 → 3 → 6 → 10</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(r × c) time, O(1) auxiliary space
+  for r rows and c columns.</div>
+
+  <!-- C7 -->
+  <h3><span class="qnum">C7</span> <span class="hl-p">Double each number with map()</span></h3>
+  <p><code class="inline">map</code> returns a <b>new array</b> containing each transformed value.</p>
+
+<pre class="code">const doubled = [2, 4, 6, 8].map(n => n * 2);
+console.log(doubled); // [4, 8, 12, 16]</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Each input value is multiplied by 2;
+  the <b>original array remains unchanged</b>.</div>
+
+  <!-- C8 -->
+  <h3><span class="qnum">C8</span> <span class="hl-o">Filter marks &gt;= 40</span></h3>
+  <p><code class="inline">filter</code> keeps values for which the callback returns <b>true</b>.</p>
+
+<pre class="code">const passing = [30, 70, 45, 20, 90].filter(mark => mark &gt;= 40);
+console.log(passing); // [70, 45, 90]</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <b>30</b> and <b>20</b> are rejected;
+  <span class="hl-g">70, 45, and 90</span> are kept.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, up to O(n) output space.</div>
+
+  <div class="pnum">12</div>
+</section>
+
+<section class="page">
+  <!-- C9 -->
+  <h3><span class="qnum">C9</span> <span class="hl-y">Sum with reduce()</span></h3>
+
+<pre class="code">const total = [5, 10, 15].reduce((sum, value) => sum + value, 0);
+console.log(total); // 30</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Accumulator: <b>0 → 5 → 15 → 30</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+
+  <!-- C10 -->
+  <h3><span class="qnum">C10</span> <span class="hl-b">Find first value greater than 25</span></h3>
+  <p><code class="inline">find</code> returns the <b>first element</b> satisfying the condition.</p>
+
+<pre class="code">const result = [10, 20, 30, 40].find(n => n &gt; 25);
+console.log(result); // 30</pre>
+
+  <div class="dryrun"><b>Dry run:</b> 10 fails, 20 fails, <b>30 matches</b>;
+  <code class="inline">find</code> <b>stops there</b>.</div>
+
+  <!-- C11 -->
+  <h3><span class="qnum">C11</span> <span class="hl-g">Example for some() true and every() false</span></h3>
+  <p><code class="inline">some</code> is <b>true</b> when <b>at least one</b> element passes;
+  <code class="inline">every</code> is <b>false</b> as soon as <b>one element fails</b>.</p>
+
+<pre class="code">const nums = [2, 5, 8];
+console.log(nums.some(n => n % 2 === 0));  // true
+console.log(nums.every(n => n % 2 === 0)); // false</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <code class="inline">some</code> sees <b>2</b> (even)
+  and can return <b>true</b>; <code class="inline">every</code> fails when it sees <b>5</b>.</div>
+
+  <!-- C12 -->
+  <h3><span class="qnum">C12</span> <span class="hl-p">Copy and merge arrays with spread</span></h3>
+  <p>Spread <b>expands iterable elements</b> into a new array. These are <b>shallow copies</b>.</p>
+
+<pre class="code">const original = [1, 2];
+const copy = [...original];
+const merged = [...[1, 2], ...[3, 4]];
+console.log(copy);   // [1, 2]
+console.log(merged); // [1, 2, 3, 4]</pre>
+
+  <div class="dryrun"><b>Dry run:</b> The arrays contain the <b>same primitive values</b>
+  but are <b>separate array objects</b>.</div>
+
+  <!-- C13 -->
+  <h3><span class="qnum">C13</span> <span class="hl-o">Rest-parameter sum function</span></h3>
+  <p>The <code class="inline">...args</code> parameter <b>gathers any number of arguments</b>
+  into an array.</p>
+
+<pre class="code">function sumAll(...args) {
+  let sum = 0;
+  for (const value of args) sum += value;
+  return sum;
+}
+console.log(sumAll(2, 4, 6)); // 12
+console.log(sumAll());        // 0</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <code class="inline">args</code> is <b>[2, 4, 6]</b>
+  in the first call and <b>[]</b> in the second.</div>
+  <div class="complexity"><b>Complexity:</b> O(k) time for k arguments, O(1) extra space
+  beyond the rest array created by JavaScript.</div>
+
+  <div class="pnum">13</div>
+</section>
+
+<section class="page">
+  <!-- C14 -->
+  <h3><span class="qnum">C14</span> <span class="hl-b">Array and object destructuring</span></h3>
+
+<pre class="code">const colors = ["red", "blue"];
+const [firstColor, secondColor] = colors;
+const user = { name: "Sam", age: 22 };
+const { name, age } = user;
+console.log(firstColor, secondColor); // red blue
+console.log(name, age);               // Sam 22</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Array variables follow <b>position</b>;
+  object variables match <b>property names</b>.</div>
+
+  <!-- C15 -->
+  <h3><span class="qnum">C15</span> <span class="hl-y">Default parameter greeting</span></h3>
+  <p>The default value is used when the argument is <b>omitted or undefined</b>,
+  <span class="red">not for every falsy value</span>.</p>
+
+<pre class="code">function greet(name = "Student") {
+  console.log(`Hello, ${name}!`);
+}
+greet();
+greet("Asha");</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Output: <span class="hl-g">Hello, Student!</span>
+  and <span class="hl-g">Hello, Asha!</span>.</div>
+
+  <div class="sticky" style="margin-top:46px;">
+    <b>Section C cheat strip 📎</b><br>
+    <code>map</code> → transform all &nbsp;|&nbsp; <code>filter</code> → keep some<br>
+    <code>find</code> → first match &nbsp;|&nbsp; <code>reduce</code> → collapse to one<br>
+    <code>some</code> → at least one &nbsp;|&nbsp; <code>every</code> → all of them
+  </div>
+
+  <div class="pnum">14</div>
+</section>
+
+<!-- ============================ SECTION D ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>SECTION D</h2>
+    <p>Recursion, Node.js Input &amp; Problem Solving &nbsp;•&nbsp; <span class="hl-o">D1 – D10</span></p>
+  </div>
+
+  <!-- D1 -->
+  <h3><span class="qnum">D1</span> <span class="hl-y">Recursively print n down to 1</span></h3>
+  <p>Print <code class="inline">n</code>, then call the function with <code class="inline">n - 1</code>.
+  Stop when <code class="inline">n</code> is <b>below 1</b>.</p>
+
+<pre class="code">function countDown(n) {
+  if (n &lt; 1) return;
+  console.log(n);
+  countDown(n - 1);
+}
+countDown(4);</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Calls: countDown(4) prints <b>4</b> → countDown(3) prints
+  <b>3 → 2 → 1</b> → countDown(0) <b>returns</b>. Base case: <b>n &lt; 1</b>.</div>
+
+  <!-- D2 -->
+  <h3><span class="qnum">D2</span> <span class="hl-b">Recursive factorial</span></h3>
+  <p>For <b>n ≥ 1</b>, <b>n! = n × (n − 1)!</b>. The base case is <b>0! = 1</b>
+  (also <b>1! = 1</b>).</p>
+
+<pre class="code">function factorial(n) {
+  if (n &lt; 0 || !Number.isInteger(n)) {
+    throw new Error("n must be a non-negative integer");
+  }
+  if (n &lt;= 1) return 1;
+  return n * factorial(n - 1);
+}
+console.log(factorial(4)); // 24</pre>
+
+  <div class="dryrun"><b>Dry run:</b> factorial(4) = 4 × factorial(3)
+  = <b>4 × 3 × 2 × 1 = 24</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time and O(n) call-stack space.</div>
+
+  <!-- D3 -->
+  <h3><span class="qnum">D3</span> <span class="hl-g">Recursive sum from 1 through n</span></h3>
+  <p>Use <b>sum(n) = n + sum(n − 1)</b>, with <b>sum(0) = 0</b>.</p>
+
+<pre class="code">function sumToN(n) {
+  if (n &lt;= 0) return 0;
+  return n + sumToN(n - 1);
+}
+console.log(sumToN(4)); // 10</pre>
+
+  <div class="dryrun"><b>Dry run:</b> sumToN(4) = <b>4 + 3 + 2 + 1 + 0 = 10</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(n) call-stack space;
+  assumes n is a <b>non-negative integer</b>.</div>
+
+  <!-- D4 -->
+  <h3><span class="qnum">D4</span> <span class="hl-o">If recursion has no reachable base case</span></h3>
+  <p>Recursive calls may continue until JavaScript <b>exceeds the call stack</b> and throws a
+  <span class="red">RangeError</span>. A base case that <b>exists but can never be reached</b>
+  has the <b>same problem</b>.</p>
+
+  <div class="dryrun"><b>Dry run:</b> Trace whether each recursive call
+  <b>moves toward the base case</b>.</div>
+
+  <div class="pnum">15</div>
+</section>
+
+<section class="page">
+  <!-- D5 -->
+  <h3><span class="qnum">D5</span> <span class="hl-p">Read one number from stdin and print its square</span></h3>
+
+<pre class="code">const fs = require('fs');
+const input = fs.readFileSync(0, "utf8").trim();
+const n = Number(input);
+console.log(n * n);</pre>
+
+  <div class="dryrun"><b>Dry run:</b> If input is <b>7</b>, n = 7 and n * n = <b>49</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(1) time for one number;
+  input buffer size depends on input length.</div>
+
+  <!-- D6 -->
+  <h3><span class="qnum">D6</span> <span class="hl-y">Read space-separated integers safely</span></h3>
+  <p><code class="inline">trim()</code> removes outer whitespace;
+  <code class="inline">split(/\s+/)</code> accepts <b>one or more</b> whitespace characters.
+  <b>Guard the empty-input case</b> before converting.</p>
+
+<pre class="code">const fs = require('fs');
+const input = fs.readFileSync(0, "utf8").trim();
+const nums = input === ""
+  ? []
+  : input.split(/\s+/).map(Number);
+console.log(nums);</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Input <b>"10 20\n30"</b> becomes
+  <span class="hl-g">[10, 20, 30]</span>. Empty input becomes <span class="hl-g">[]</span>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time and O(n) space for n parsed numbers.</div>
+
+  <!-- D7 -->
+  <h3><span class="qnum">D7</span> <span class="hl-b">Dry-run maximum on [10, 50, 20, 80, 30]</span></h3>
+  <p>Initialize <code class="inline">max</code> to the <b>first item</b>, then compare each remaining value.</p>
+
+<pre class="code">const arr = [10, 50, 20, 80, 30];
+let max = arr[0];
+for (let i = 1; i &lt; arr.length; i++) {
+  if (arr[i] &gt; max) max = arr[i];
+  console.log(`after ${arr[i]}: max = ${max}`);
+}</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Start max = <b>10</b>; compare <b>50</b> → max = 50;
+  compare <b>20</b> → max = 50; compare <b>80</b> → max = 80;
+  compare <b>30</b> → max = 80.</div>
+
+  <!-- D8 -->
+  <h3><span class="qnum">D8</span> <span class="hl-g">Plain-language algorithm for minimum</span></h3>
+  <ol>
+    <li>Assume the <b>first array element</b> is the minimum.</li>
+    <li>Visit each remaining element.</li>
+    <li>If the current value is <b>smaller</b>, update the minimum.</li>
+    <li><b>Return</b> the minimum.</li>
+  </ol>
+
+<pre class="code">function findMin(arr) {
+  if (arr.length === 0) throw new Error("Array must not be empty");
+  let min = arr[0];
+  for (let i = 1; i &lt; arr.length; i++) {
+    if (arr[i] &lt; min) min = arr[i];
+  }
+  return min;
+}</pre>
+
+  <div class="dryrun"><b>Dry run:</b> For <b>[7, 3, 5]</b>, min begins at <b>7</b>,
+  changes to <b>3</b>, then remains <b>3</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+
+  <div class="pnum">16</div>
+</section>
+
+<section class="page">
+  <!-- D9 -->
+  <h3><span class="qnum">D9</span> <span class="hl-y">Maximum with edge-case tests</span></h3>
+
+<pre class="code">function findMax(arr) {
+  let max = arr[0];
+  for (let i = 1; i &lt; arr.length; i++) {
+    if (arr[i] &gt; max) max = arr[i];
+  }
+  return max;
+}
+console.log(findMax([10]));           // 10
+console.log(findMax([-8, -4, -10]));  // -4
+console.log(findMax([5, 5, 5]));      // 5</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Expected outputs: <span class="hl-g">10, −4, 5</span>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+
+  <!-- D10 -->
+  <h3><span class="qnum">D10</span> <span class="hl-p">Why max initialized to zero fails for all-negative arrays</span></h3>
+  <p>If <code class="inline">max</code> starts at <b>0</b>, no negative value is greater than 0,
+  so the function <span class="red">incorrectly returns 0</span> even though 0 is
+  <b>not in the array</b>. Initialize from <code class="inline">arr[0]</code> or use
+  <b>negative infinity</b> after validating non-empty input.</p>
+
+  <div class="dryrun"><b>Dry run:</b> max: <b>−8 → −4 → −4</b>.</div>
+
+  <div class="sticky pink" style="margin-top:46px;">
+    <b>Recursion rule of three 🪜</b><br>
+    1. Find the <u>base case</u>.<br>
+    2. Make the <u>recursive call smaller</u>.<br>
+    3. Trust the recursion — don't trace it all in your head.
+  </div>
+
+  <div class="pnum">17</div>
+</section>
+
+<!-- ============================ SECTION E ============================ -->
+<section class="page">
+  <div class="banner">
+    <h2>SECTION E</h2>
+    <p>DSA Patterns &amp; Complexity &nbsp;•&nbsp; <span class="hl-p">E1 – E20</span></p>
+  </div>
+
+  <!-- E1 -->
+  <h3><span class="qnum">E1</span> <span class="hl-b">Return both minimum and maximum</span></h3>
+
+<pre class="code">function minMax(arr) {
+  if (arr.length === 0) throw new Error("Array must not be empty");
+  let min = arr[0], max = arr[0];
+  for (let i = 1; i &lt; arr.length; i++) {
+    if (arr[i] &lt; min) min = arr[i];
+    if (arr[i] &gt; max) max = arr[i];
+  }
+  return { min, max };
+}
+console.log(minMax([7, 2, 9, -1, 5]));</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Start min = max = <b>7</b>; <b>2</b> updates min;
+  <b>9</b> updates max; <b>−1</b> updates min; <b>5</b> changes neither.
+  Result <span class="hl-g">(min: −1, max: 9)</span>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+
+  <!-- E2 -->
+  <h3><span class="qnum">E2</span> <span class="hl-g">Count positive, negative, and zero values</span></h3>
+  <p>Use <b>three counters</b> and return them as object properties.</p>
+
+<pre class="code">function countSigns(arr) {
+  const counts = { positive: 0, negative: 0, zero: 0 };
+  for (const n of arr) {
+    if (n &gt; 0) counts.positive++;
+    else if (n &lt; 0) counts.negative++;
+    else counts.zero++;
+  }
+  return counts;
+}
+console.log(countSigns([-2, 0, 4, 0, -1, 7]));</pre>
+
+  <div class="dryrun"><b>Dry run:</b> The values yield
+  <span class="hl-g">(positive: 2, negative: 2, zero: 2)</span>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+
+  <div class="pnum">18</div>
+</section>
+
+<section class="page">
+  <!-- E3 -->
+  <h3><span class="qnum">E3</span> <span class="hl-y">Find second-largest distinct number</span></h3>
+  <p>Track the <b>largest</b> and <b>second-largest distinct</b> values.
+  Return <code class="inline">null</code> if <b>fewer than two distinct values</b> exist.</p>
+
+<pre class="code">function secondLargest(arr) {
+  let largest = -Infinity;
+  let second = -Infinity;
+  for (const n of arr) {
+    if (n &gt; largest) {
+      second = largest;
+      largest = n;
+    } else if (n &lt; largest &amp;&amp; n &gt; second) {
+      second = n;
+    }
+  }
+  return second === -Infinity ? null : second;
+}
+console.log(secondLargest([10, 5, 8, 10, 3])); // 8
+console.log(secondLargest([4, 4]));            // null</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <b>10</b> sets largest; <b>5</b> sets second;
+  <b>8</b> replaces second; repeated <b>10</b> is ignored because it is not distinct.
+  Result <span class="hl-g">8</span>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+  <div class="warn"><b>Note:</b> This version assumes <b>finite numeric values</b>;
+  if <b>−Infinity</b> can be valid input, use explicit <b>found flags</b> instead of
+  <b>−Infinity sentinels</b>.</div>
+
+  <!-- E4 -->
+  <h3><span class="qnum">E4</span> <span class="hl-b">Count target frequency without filter() or reduce()</span></h3>
+  <p>Increment a counter for each <b>strict equality match</b>.</p>
+
+<pre class="code">function frequency(arr, target) {
+  let count = 0;
+  for (const value of arr) {
+    if (value === target) count++;
+  }
+  return count;
+}
+console.log(frequency([2, 3, 2, 5, 3, 3], 3)); // 3</pre>
+
+  <div class="dryrun"><b>Dry run:</b> The target <b>3</b> appears at indexes
+  <span class="hl-y">1, 4, and 5</span>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+
+  <!-- E5 -->
+  <h3><span class="qnum">E5</span> <span class="hl-g">Return distinct duplicate values</span></h3>
+  <p>Use one <b>set</b> to track seen values and another to store values that repeat.
+  A duplicate is added <b>only once</b>.</p>
+
+<pre class="code">function findDuplicates(arr) {
+  const seen = new Set();
+  const duplicates = new Set();
+  for (const value of arr) {
+    if (seen.has(value)) duplicates.add(value);
+    else seen.add(value);
+  }
+  return [...duplicates];
+}
+console.log(findDuplicates([1, 2, 1, 3, 2, 2])); // [1, 2]</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <b>1</b> repeats → duplicates = {1};
+  <b>2</b> repeats → {1, 2}; later <b>2</b> repeats but <b>Set prevents a second report</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) expected time, O(n) auxiliary space.</div>
+
+  <div class="pnum">19</div>
+</section>
+
+<section class="page">
+  <!-- E6 -->
+  <h3><span class="qnum">E6</span> <span class="hl-y">Missing number</span></h3>
+
+<pre class="code">function missingNumber(arr) {
+  const n = arr.length + 1;
+  const expected = n * (n + 1) / 2;
+  let actual = 0;
+  for (const value of arr) actual += value;
+  return expected - actual;
+}
+console.log(missingNumber([1, 2, 3, 5])); // 4</pre>
+
+  <div class="dryrun"><b>Dry run:</b> n = <b>5</b>; expected sum = 5 × 6 / 2 = <b>15</b>;
+  actual = 1 + 2 + 3 + 5 = <b>11</b>; missing = 15 − 11 = <span class="hl-g">4</span>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+  <div class="warn"><b>Note:</b> Assumes <b>no duplicates</b>, values <b>within 1..n</b>,
+  and <b>exactly one missing value</b>.</div>
+
+  <!-- E7 -->
+  <h3><span class="qnum">E7</span> <span class="hl-b">Move zeroes to the end in place</span></h3>
+  <p>Use a <b>write pointer</b> for the next non-zero slot. First copy non-zero values forward in
+  their <b>original order</b>; then fill the remaining slots with <b>zero</b>.</p>
+
+<pre class="code">function moveZeroes(arr) {
+  let write = 0;
+  for (let read = 0; read &lt; arr.length; read++) {
+    if (arr[read] !== 0) arr[write++] = arr[read];
+  }
+  while (write &lt; arr.length) arr[write++] = 0;
+  return arr;
+}
+console.log(moveZeroes([0, 1, 0, 3, 12]));</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Non-zero values compact to <b>[1, 3, 12, _, _]</b>;
+  fill blanks with zeros → <span class="hl-g">[1, 3, 12, 0, 0]</span>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space;
+  <b>mutates input</b>.</div>
+
+  <!-- E8 -->
+  <h3><span class="qnum">E8</span> <span class="hl-g">Common distinct elements of two arrays</span></h3>
+  <p>Build a <b>set from the second array</b> and collect matches from the first array into a
+  <b>result set</b> to avoid duplicates.</p>
+
+<pre class="code">function intersection(a, b) {
+  const valuesB = new Set(b);
+  const result = new Set();
+  for (const value of a) {
+    if (valuesB.has(value)) result.add(value);
+  }
+  return [...result];
+}
+console.log(intersection([1, 2, 2, 3, 4], [2, 2, 4, 6])); // [2, 4]</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <b>2</b> and <b>4</b> exist in both arrays;
+  duplicate appearances are <b>collapsed</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n + m) expected time,
+  O(m + k) auxiliary space, where <b>k</b> is result size.</div>
+
+  <div class="pnum">20</div>
+</section>
+
+<section class="page">
+  <!-- E9 -->
+  <h3><span class="qnum">E9</span> <span class="hl-o">Rotate an array right by one position</span></h3>
+
+<pre class="code">function rotateRight(arr) {
+  if (arr.length === 0) return arr;
+  const last = arr[arr.length - 1];
+  for (let i = arr.length - 1; i &gt; 0; i--) {
+    arr[i] = arr[i - 1];
+  }
+  arr[0] = last;
+  return arr;
+}
+console.log(rotateRight([1, 2, 3, 4])); // [4, 1, 2, 3]
+console.log(rotateRight([]));           // []</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Save <b>4</b>; shift <b>3 → index 3</b>,
+  <b>2 → index 2</b>, <b>1 → index 1</b>; put <b>4 at index 0</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space;
+  <b>mutates input</b>.</div>
+
+  <!-- E10 -->
+  <h3><span class="qnum">E10</span> <span class="hl-p">Two Sum by checking every pair</span></h3>
+  <p>Check all pairs <b>i &lt; j</b>. Return their indexes when their values add to
+  <code class="inline">target</code>; otherwise return <code class="inline">null</code>.</p>
+
+<pre class="code">function twoSumBrute(arr, target) {
+  for (let i = 0; i &lt; arr.length; i++) {
+    for (let j = i + 1; j &lt; arr.length; j++) {
+      if (arr[i] + arr[j] === target) return [i, j];
+    }
+  }
+  return null;
+}
+console.log(twoSumBrute([2, 7, 11, 15], 9)); // [0, 1]</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Check <b>(2, 7)</b> first: 2 + 7 = 9 so return
+  <span class="hl-g">[0, 1]</span> immediately.</div>
+  <div class="complexity"><b>Complexity:</b> O(n²) worst-case time, O(1) auxiliary space.</div>
+
+  <!-- E11 -->
+  <h3><span class="qnum">E11</span> <span class="hl-y">Optimize Two Sum with a hash map</span></h3>
+  <p>Store each <b>previously seen number and its index</b>. For current value
+  <code class="inline">x</code>, look for <code class="inline">target − x</code>;
+  this avoids checking every pair.</p>
+
+<pre class="code">function twoSum(arr, target) {
+  const indexByValue = new Map();
+  for (let i = 0; i &lt; arr.length; i++) {
+    const needed = target - arr[i];
+    if (indexByValue.has(needed)) {
+      return [indexByValue.get(needed), i];
+    }
+    indexByValue.set(arr[i], i);
+  }
+  return null;
+}
+console.log(twoSum([2, 7, 11, 15], 9)); // [0, 1]</pre>
+
+  <div class="dryrun"><b>Dry run:</b> i = 0: need <b>7</b>, not seen; store <b>2 → 0</b>.
+  i = 1: need <b>2</b>, found at index <b>0</b> → <span class="hl-g">[0, 1]</span>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) expected time, O(n) auxiliary space.
+  Map operations are expected <b>O(1)</b>.</div>
+
+  <div class="pnum">21</div>
+</section>
+
+<section class="page">
+  <!-- E12 -->
+  <h3><span class="qnum">E12</span> <span class="hl-b">Maximum subarray sum (Kadane's algorithm)</span></h3>
+
+<pre class="code">function maxSubarraySum(arr) {
+  if (arr.length === 0) return null;
+  let current = arr[0];
+  let best = arr[0];
+  for (let i = 1; i &lt; arr.length; i++) {
+    current = Math.max(arr[i], current + arr[i]);
+    best = Math.max(best, current);
+  }
+  return best;
+}
+console.log(maxSubarraySum([-2, 1, -3, 4, -1, 2, 1, -5, 4])); // 6</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Key states: at <b>4</b> current = 4;
+  then <b>−1</b> gives 3; <b>+2</b> gives 5; <b>+1</b> gives <b>6</b>;
+  <b>−5</b> gives 1; <b>+4</b> gives 5. Best remains <span class="hl-g">6</span>
+  from <b>[4, −1, 2, 1]</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+  <div class="warn"><b>Note:</b> Initializing from <code class="inline">arr[0]</code>
+  correctly handles <b>all-negative arrays</b>.</div>
+
+  <!-- E13 -->
+  <h3><span class="qnum">E13</span> <span class="hl-g">Check whether two strings are anagrams</span></h3>
+  <p>Normalize by <b>lowercasing</b> and <b>removing whitespace</b>, then compare
+  <b>character frequencies</b>. This policy treats case and spaces as irrelevant.</p>
+
+<pre class="code">function areAnagrams(a, b) {
+  const normalize = s => s.toLowerCase().replace(/\s+/g, "");
+  const x = normalize(a), y = normalize(b);
+  if (x.length !== y.length) return false;
+  const counts = new Map();
+  for (const ch of x) counts.set(ch, (counts.get(ch) || 0) + 1);
+  for (const ch of y) {
+    if (!counts.has(ch)) return false;
+    counts.set(ch, counts.get(ch) - 1);
+    if (counts.get(ch) === 0) counts.delete(ch);
+  }
+  return counts.size === 0;
+}
+console.log(areAnagrams("Dormitory", "Dirty room")); // true</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Both normalize to <b>dormitory / dirtyroom</b>;
+  character counts match exactly.</div>
+  <div class="complexity"><b>Complexity:</b> O(n + m) expected time,
+  O(k) space for distinct characters.</div>
+
+  <!-- E14 -->
+  <h3><span class="qnum">E14</span> <span class="hl-o">Classify common operation patterns</span></h3>
+  <p>Direct indexing performs a <b>fixed amount of work</b>; one full loop scales
+  <b>linearly</b>; two nested loops each ranging over n values scale <b>quadratically</b>.</p>
+
+  <div class="dryrun"><b>Dry run:</b> Direct <code class="inline">arr[0]</code>:
+  <b>O(1)</b>. One loop over n elements: <b>O(n)</b>. Nested n-by-n loops:
+  <b>O(n²)</b>.</div>
+
+  <div class="pnum">22</div>
+</section>
+
+<section class="page">
+  <!-- E15 -->
+  <h3><span class="qnum">E15</span> <span class="hl-y">Loop creates a second array of n items</span></h3>
+  <p>If the loop visits n elements <b>once</b>, time is <b>O(n)</b>. The new array stores
+  n items, so <b>auxiliary/output space is O(n)</b>.</p>
+
+<pre class="code">function doubledCopy(arr) {
+  const result = [];
+  for (const value of arr) result.push(value * 2);
+  return result;
+}</pre>
+
+  <div class="dryrun"><b>Dry run:</b> For <b>n</b> input items, the loop runs <b>n</b> times
+  and <code class="inline">result</code> grows to <b>n</b> items.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(n) additional space.</div>
+
+  <!-- E16 -->
+  <h3><span class="qnum">E16</span> <span class="hl-b">n × n comparisons for n = 100</span></h3>
+  <p><b>100 × 100 = 10,000 comparisons.</b> If both loops scale with n, complexity is
+  <b>O(n²)</b>.</p>
+
+<pre class="code">let comparisons = 0;
+for (let i = 0; i &lt; 100; i++) {
+  for (let j = 0; j &lt; 100; j++) comparisons++;
+}
+console.log(comparisons); // 10000</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Each of <b>100</b> outer iterations performs
+  <b>100</b> inner iterations: <b>100 × 100 = 10,000</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n²) time.</div>
+
+  <!-- E17 -->
+  <h3><span class="qnum">E17</span> <span class="hl-g">Complexity of in-place two-pointer reversal</span></h3>
+  <p>The pointers move <b>inward</b> and each pair is swapped <b>once</b>.
+  The array is modified directly <b>without creating a second array</b>.</p>
+
+<pre class="code">function reverseInPlace(arr) {
+  let left = 0, right = arr.length - 1;
+  while (left &lt; right) {
+    [arr[left], arr[right]] = [arr[right], arr[left]];
+    left++;
+    right--;
+  }
+  return arr;
+}</pre>
+
+  <div class="dryrun"><b>Dry run:</b> For <b>n = 6</b> there are <b>3 swaps</b>;
+  for <b>n = 5</b> there are <b>2 swaps</b>. The number of swaps grows
+  <b>proportional to n</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+
+  <div class="pnum">23</div>
+</section>
+
+<section class="page">
+  <!-- E18 -->
+  <h3><span class="qnum">E18</span> <span class="hl-p">Palindrome edge cases: empty and one-character strings</span></h3>
+
+<pre class="code">function isPalindrome(str) {
+  let left = 0, right = str.length - 1;
+  while (left &lt; right) {
+    if (str[left] !== str[right]) return false;
+    left++;
+    right--;
+  }
+  return true;
+}
+console.log(isPalindrome(""));      // true
+console.log(isPalindrome("x"));     // true
+console.log(isPalindrome("level")); // true</pre>
+
+  <div class="dryrun"><b>Dry run:</b> <b>Empty:</b> left = 0, right = −1, loop skipped.
+  <b>One char:</b> left = 0, loop skipped. Both return <span class="hl-g">true</span>.</div>
+  <div class="complexity"><b>Complexity:</b> O(n) time, O(1) auxiliary space.</div>
+
+  <!-- E19 -->
+  <h3><span class="qnum">E19</span> <span class="hl-y">Full matrix traversal for r rows and c columns</span></h3>
+  <p>Every cell is visited <b>exactly once</b>. A rectangular matrix has
+  <b>r × c</b> cells.</p>
+
+<pre class="code">function visitAll(matrix) {
+  for (let r = 0; r &lt; matrix.length; r++) {
+    for (let c = 0; c &lt; matrix[r].length; c++) {
+      console.log(matrix[r][c]);
+    }
+  }
+}</pre>
+
+  <div class="dryrun"><b>Dry run:</b> For <b>3 rows and 4 columns</b>:
+  3 × 4 = <b>12 cell visits</b>.</div>
+  <div class="complexity"><b>Complexity:</b> O(r × c) time. O(1) auxiliary space
+  excluding output/logging.</div>
+
+  <!-- E20 -->
+  <h3><span class="qnum">E20</span> <span class="hl-o">Document three solutions: approach, dry run, edge cases, complexity, optimization</span></h3>
+  <p>This is a <b>process question</b> rather than one fixed algorithm. For each chosen problem,
+  use a <b>consistent template</b>. Example: <b>linear search, array sum, and maximum element</b>.</p>
+
+<pre class="code">/* TEMPLATE FOR EACH SOLUTION
+  1. Problem and assumptions
+  2. Approach in plain language
+  3. Algorithm / pseudocode
+  4. JavaScript implementation
+  5. Dry-run table: input, index/value, important variables
+  6. Edge cases: empty, one item, duplicates, negatives
+  7. Time complexity
+  8. Auxiliary space complexity
+  9. Possible optimization and trade-offs
+*/</pre>
+
+  <div class="dryrun"><b>Dry run:</b> Example linear search dry run:
+  <b>arr = [5, 8, 1, 9], target = 9</b>. i = 0: no; i = 1: no; i = 2: no;
+  i = 3: <b>match, return 3</b>.</div>
+  <div class="complexity"><b>Complexity:</b> For linear search, sum, and max: each is
+  <b>O(n) time</b> and <b>O(1) auxiliary space</b>. Optimization depends on the problem
+  and its constraints.</div>
+
+  <div class="pnum">24</div>
+</section>
+
+<!-- ============================ DRY-RUN TABLES ============================ -->
+<section class="page">
+  <h2 class="section hl-y">Dry-Run Reference Tables</h2>
+
+  <p>Use these tables as <b>models</b> when tracing your own solutions. A dry run should record the
+  value of the variables that <b>affect the next decision</b>.</p>
+
+  <h3 style="border-bottom:none;margin-top:26px;">
+    <span class="qnum">1</span> <span class="hl-g">Example 1 — Find maximum</span>
+  </h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Step</th><th>Value checked</th><th>max before</th><th>max after</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Initialize</td><td>10</td><td>—</td><td>10</td></tr>
+      <tr><td>1</td><td>50</td><td>10</td><td>50</td></tr>
+      <tr><td>2</td><td>20</td><td>50</td><td>50</td></tr>
+      <tr><td>3</td><td>80</td><td>50</td><td>80</td></tr>
+      <tr><td>4</td><td>30</td><td>80</td><td>80</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="border-bottom:none;margin-top:36px;">
+    <span class="qnum">2</span> <span class="hl-b">Example 2 — Kadane's maximum subarray sum</span>
+  </h3>
+
+  <table class="dry">
+    <thead>
+      <tr><th>Value</th><th>current calculation</th><th>current</th><th>best</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>−2</td><td>initialize</td><td>−2</td><td>−2</td></tr>
+      <tr><td>1</td><td>max(1, −2+1)</td><td>1</td><td>1</td></tr>
+      <tr><td>−3</td><td>max(−3, 1−3)</td><td>−2</td><td>1</td></tr>
+      <tr><td>4</td><td>max(4, −2+4)</td><td>4</td><td>4</td></tr>
+      <tr><td>−1</td><td>max(−1, 4−1)</td><td>3</td><td>4</td></tr>
+      <tr><td>2</td><td>max(2, 3+2)</td><td>5</td><td>5</td></tr>
+      <tr><td>1</td><td>max(1, 5+1)</td><td>6</td><td>6</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    The best sum is <b>6</b>, produced by the contiguous subarray <b>[4, −1, 2, 1]</b>.
+    The full input contains negative values, so <b>initializing current and best from the first
+    element is essential</b>.
+  </div>
+
+  <div class="pnum">25</div>
+</section>
+
+<!-- ============================ FINAL CHECKLIST ============================ -->
+<section class="page">
+  <h2 class="section hl-p">Final checklist before submitting</h2>
+
+  <ul class="ticks">
+    <li>Did I identify <b>assumptions</b> and <b>empty-input behaviour</b>?</li>
+    <li>Did I choose the <b>correct initial value</b> for counters, sums, minimums, and maximums?</li>
+    <li>Did I <b>trace each loop update in order</b>?</li>
+    <li>Did I test <b>duplicates, negatives, empty arrays, and one-element arrays</b> where relevant?</li>
+    <li>Did I explain <b>why the algorithm works</b>, not only what the code prints?</li>
+    <li>Did I state <b>time and auxiliary space complexity</b> accurately?</li>
+  </ul>
+
+  <hr class="hand">
+
+  <div class="sticky green" style="margin-top:30px;">
+    <b>You finished the whole book. 🎉</b><br>
+    Now close it, open a blank file, and rewrite three solutions from memory.
+    <u>That</u> is the real dry run.
+  </div>
+
+  <div class="center" style="margin-top:50px;">
+    <span class="stamp">THE END</span>
+  </div>
+
+  <div class="doodle-stars" style="margin-top:30px;">✦ ✧ ✦ ✧ ✦</div>
+
+  <div class="pnum">26</div>
+</section>
+
+</div>
+
+<!-- ============================================================
+     Tiny script: turn "// comment" text inside code blocks
+     into green-pen comments, so the notes look hand-annotated.
+     ============================================================ -->
+<script>
+(function () {
+  document.querySelectorAll('pre.code').forEach(function (block) {
+    var lines = block.innerHTML.split('\n');
+    var out = lines.map(function (line) {
+      // find a // that is not inside quotes
+      var inSingle = false, inDouble = false, inTemplate = false, idx = -1;
+      for (var i = 0; i < line.length; i++) {
+        var ch = line[i];
+        var prev = line[i - 1];
+        if (ch === "'" && !inDouble && !inTemplate && prev !== '\\') inSingle = !inSingle;
+        else if (ch === '"' && !inSingle && !inTemplate && prev !== '\\') inDouble = !inDouble;
+        else if (ch === '`' && !inSingle && !inDouble && prev !== '\\') inTemplate = !inTemplate;
+        else if (!inSingle && !inDouble && !inTemplate && ch === '/' && line[i + 1] === '/') {
+          idx = i; break;
+        }
+      }
+      if (idx > -1) {
+        return line.slice(0, idx) + '<span class="cm">' + line.slice(idx) + '</span>';
+      }
+      return line;
+    });
+    block.innerHTML = out.join('\n');
+  });
+})();
+</script>
+
+</body>
+</html>

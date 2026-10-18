@@ -1,0 +1,4047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React JS — Phase 2: State, Events and Hooks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Kalam:wght@300;400;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#22262c;
+  --ink-soft:#454b54;
+  --ink-faint:#767d88;
+  --paper:#f9fbfd;
+  --paper-2:#f1f5fa;
+  --rule:#d3dde9;
+  --red:#c0392b;
+  --red-soft:#eba69d;
+  --blue:#1565c0;
+  --blue-soft:#9ec8ec;
+  --blue-deep:#0d47a1;
+  --cyan:#0097a7;
+  --cyan-soft:#8fd5dc;
+  --react:#61dafb;
+  --gold:#b8892b;
+  --green:#1f6b47;
+  --purple:#6b4a9c;
+  --code-bg:#131b28;
+  --code-bg-2:#1c2738;
+  --code-text:#dbe4f0;
+  --k:#82b1ff;
+  --f:#b388ff;
+  --s:#a5d6a7;
+  --n:#ffcc80;
+  --c:#7b8a9e;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'Lora',Georgia,serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 12% 8%, #dde7f2 0%, transparent 45%),
+    radial-gradient(circle at 88% 92%, #d5e1ee 0%, transparent 50%),
+    linear-gradient(160deg,#c9d6e4 0%, #b8c8da 45%, #c5d3e2 100%);
+  background-attachment:fixed;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  padding:36px 16px 90px;
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:9998;
+  opacity:.2;
+  mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+.book{
+  max-width:920px;
+  margin:0 auto;
+  background:
+    linear-gradient(90deg, rgba(21,101,192,.05) 0%, transparent 6%),
+    var(--paper);
+  border-radius:4px 14px 14px 4px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.9) inset,
+    0 0 0 1px rgba(70,90,120,.2),
+    14px 18px 50px rgba(30,50,80,.3),
+    4px 6px 14px rgba(30,50,80,.16);
+  position:relative;
+  overflow:hidden;
+  padding:0 0 60px;
+}
+
+.book::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;bottom:0;
+  width:26px;
+  background:linear-gradient(90deg,
+    rgba(40,65,100,.24) 0%,
+    rgba(40,65,100,.1) 35%,
+    rgba(255,255,255,.35) 72%,
+    rgba(255,255,255,0) 100%);
+  pointer-events:none;
+  z-index:2;
+}
+.book::after{
+  content:"";
+  position:absolute;
+  top:0;left:26px;bottom:0;
+  width:1px;
+  background:rgba(70,90,120,.25);
+  pointer-events:none;
+  z-index:2;
+}
+
+.page{
+  padding:52px 62px 10px 82px;
+  position:relative;
+}
+
+/* COVER */
+.cover{
+  background:
+    radial-gradient(circle at 25% 10%, #1e3a5f 0%, transparent 55%),
+    radial-gradient(circle at 85% 95%, #16304d 0%, transparent 55%),
+    linear-gradient(150deg,#0d1e33 0%, #12293f 45%, #071524 100%);
+  color:#e8f0f8;
+  padding:76px 62px 66px 82px;
+  position:relative;
+  overflow:hidden;
+}
+.cover::before{
+  content:"";
+  position:absolute;
+  inset:20px;
+  border:1.5px solid rgba(97,218,251,.5);
+  border-radius:2px;
+  pointer-events:none;
+}
+.cover::after{
+  content:"";
+  position:absolute;
+  inset:27px;
+  border:1px solid rgba(97,218,251,.2);
+  border-radius:2px;
+  pointer-events:none;
+}
+.cover-inner{position:relative;z-index:3;}
+
+.cover-kicker{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:6px;
+  color:var(--react);
+  text-transform:uppercase;
+  margin-bottom:26px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.cover-kicker::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,var(--react),transparent);
+}
+
+.cover h1{
+  font-family:'Lora',serif;
+  font-weight:700;
+  font-size:clamp(40px,7vw,66px);
+  line-height:1.02;
+  letter-spacing:-1.5px;
+  color:#f5faff;
+  text-shadow:0 3px 18px rgba(0,0,0,.5);
+}
+.cover h1 .accent{
+  display:block;
+  color:var(--react);
+  font-style:italic;
+  font-weight:400;
+}
+
+.cover-rule{
+  width:110px;
+  height:3px;
+  background:linear-gradient(90deg,var(--react),rgba(97,218,251,0));
+  margin:30px 0;
+  border-radius:2px;
+}
+
+.cover-sub{
+  font-family:'Kalam',cursive;
+  font-size:22px;
+  color:#c6dcf0;
+  line-height:1.5;
+  max-width:560px;
+}
+
+.cover-badge{
+  display:inline-block;
+  margin-top:34px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:#071524;
+  background:linear-gradient(180deg,#8ee3fb,#3fc3e3);
+  padding:9px 20px;
+  border-radius:2px;
+  box-shadow:0 6px 18px rgba(0,0,0,.32);
+}
+
+.cover-note{
+  margin-top:44px;
+  padding-top:26px;
+  border-top:1px dashed rgba(97,218,251,.35);
+  font-family:'Caveat',cursive;
+  font-size:24px;
+  color:#8ee3fb;
+  line-height:1.45;
+}
+.cover-note span{color:#9fc0dd;}
+
+/* INTRO */
+.intro-card{
+  background:
+    repeating-linear-gradient(180deg, transparent 0 33px, rgba(70,90,120,.1) 33px 34px),
+    linear-gradient(180deg,#ffffff,#f4f8fc);
+  border:1px solid var(--rule);
+  border-left:6px solid var(--blue);
+  border-radius:3px;
+  padding:30px 34px;
+  margin:0 0 44px;
+  box-shadow:0 8px 22px rgba(30,50,80,.09);
+}
+.intro-card h2{
+  font-family:'Lora',serif;
+  font-size:26px;
+  color:var(--blue-deep);
+  margin-bottom:14px;
+  letter-spacing:-.3px;
+}
+.intro-card p{font-size:16.5px;color:var(--ink-soft);}
+.intro-card p + p{margin-top:12px;}
+
+.intro-card ol.objectives{
+  margin:16px 0 6px 22px;
+  font-size:16px;
+  color:var(--ink-soft);
+}
+.intro-card ol.objectives li{margin-bottom:8px;padding-left:4px;}
+.intro-card ol.objectives li::marker{color:var(--cyan);font-weight:700;}
+
+/* TOC */
+.toc{
+  margin:0 0 60px;
+  padding:34px 34px 30px;
+  background:linear-gradient(180deg,#ffffff,#f2f7fb);
+  border:1px solid var(--rule);
+  border-radius:3px;
+  box-shadow:0 8px 22px rgba(30,50,80,.09);
+}
+.toc h2{
+  font-family:'Lora',serif;
+  font-size:28px;
+  color:var(--ink);
+  margin-bottom:6px;
+  letter-spacing:-.5px;
+}
+.toc-sub{
+  font-family:'Kalam',cursive;
+  font-size:18px;
+  color:var(--ink-faint);
+  margin-bottom:24px;
+}
+.toc-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:2px 26px;
+}
+.toc-item{
+  display:flex;
+  align-items:baseline;
+  gap:9px;
+  padding:7px 0;
+  border-bottom:1px dotted rgba(70,90,120,.25);
+  text-decoration:none;
+  color:var(--ink-soft);
+  font-size:15px;
+  transition:color .18s, transform .18s;
+}
+.toc-item:hover{color:var(--blue);transform:translateX(3px);}
+.toc-item .num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  font-weight:700;
+  color:var(--cyan);
+  min-width:24px;
+}
+.toc-item .t{flex:1;}
+
+/* CHAPTER */
+.chapter{
+  margin:0 0 62px;
+  scroll-margin-top:24px;
+}
+.chapter-head{
+  display:flex;
+  align-items:flex-start;
+  gap:20px;
+  margin-bottom:26px;
+  padding-bottom:18px;
+  border-bottom:2px solid var(--ink);
+  position:relative;
+}
+.chapter-head::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:-7px;
+  height:1px;
+  background:var(--rule);
+}
+.chapter-num{
+  flex:0 0 auto;
+  width:60px;height:60px;
+  display:grid;place-items:center;
+  font-family:'Lora',serif;
+  font-weight:700;
+  font-size:24px;
+  color:var(--blue);
+  border:2.5px solid var(--blue);
+  border-radius:48% 52% 45% 55% / 52% 45% 55% 48%;
+  background:rgba(21,101,192,.05);
+  transform:rotate(-3deg);
+  box-shadow:2px 3px 0 rgba(21,101,192,.15);
+}
+.chapter-num.part{
+  font-size:10px;
+  font-family:'JetBrains Mono',monospace;
+  letter-spacing:1px;
+  color:var(--cyan);
+  border-color:var(--cyan);
+  background:rgba(0,151,167,.05);
+  box-shadow:2px 3px 0 rgba(0,151,167,.15);
+  line-height:1.1;
+  text-align:center;
+}
+.chapter-title-wrap{flex:1;padding-top:4px;}
+.chapter-part{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:4px;
+  color:var(--cyan);
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+.chapter h2{
+  font-family:'Lora',serif;
+  font-size:clamp(25px,4vw,33px);
+  line-height:1.16;
+  letter-spacing:-.7px;
+  color:var(--ink);
+  font-weight:700;
+}
+
+/* HEADINGS */
+h3{
+  font-family:'Lora',serif;
+  font-size:21px;
+  font-weight:700;
+  color:var(--blue-deep);
+  margin:38px 0 14px;
+  letter-spacing:-.3px;
+  position:relative;
+  padding-left:20px;
+}
+h3::before{
+  content:"";
+  position:absolute;
+  left:0;top:50%;
+  transform:translateY(-50%) rotate(-8deg);
+  width:8px;height:8px;
+  background:var(--cyan);
+  border-radius:2px 6px 2px 6px;
+}
+h4{
+  font-family:'Lora',serif;
+  font-size:17.5px;
+  font-weight:600;
+  color:var(--ink);
+  margin:26px 0 10px;
+  font-style:italic;
+}
+p{
+  font-size:16.5px;
+  color:var(--ink-soft);
+  margin-bottom:14px;
+}
+p strong{color:var(--ink);font-weight:600;}
+ul.plain, ol.plain{
+  margin:12px 0 18px 22px;
+  color:var(--ink-soft);
+  font-size:16px;
+}
+ul.plain li, ol.plain li{margin-bottom:7px;padding-left:4px;}
+ul.plain li::marker{color:var(--cyan);}
+ol.plain li::marker{color:var(--cyan);font-weight:700;}
+
+code.inline{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13.5px;
+  background:rgba(21,101,192,.1);
+  color:#0b3d78;
+  padding:2px 6px;
+  border-radius:4px;
+  border:1px solid rgba(21,101,192,.18);
+  white-space:nowrap;
+}
+
+/* DEFINITION */
+.definition{
+  background:linear-gradient(180deg,#f1f7fd,#e4effa);
+  border:1px solid #b9d4ec;
+  border-left:5px solid var(--blue);
+  border-radius:3px;
+  padding:18px 22px;
+  margin:18px 0 22px;
+  box-shadow:0 4px 12px rgba(21,101,192,.07);
+}
+.definition .label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--blue);
+  display:block;
+  margin-bottom:8px;
+}
+.definition p{margin:0;font-size:16.5px;color:#153a63;}
+.definition p + p{margin-top:8px;}
+
+/* ANALOGY */
+.analogy{
+  background:linear-gradient(175deg,#fff8c9 0%, #fff2a8 100%);
+  border-radius:3px;
+  padding:24px 26px 20px;
+  margin:26px 0 26px;
+  transform:rotate(-.7deg);
+  box-shadow:
+    3px 5px 14px rgba(120,90,20,.2),
+    0 1px 0 rgba(255,255,255,.7) inset;
+  position:relative;
+}
+.analogy::before{
+  content:"";
+  position:absolute;
+  top:-11px;left:50%;
+  transform:translateX(-50%) rotate(-2deg);
+  width:96px;height:23px;
+  background:linear-gradient(180deg, rgba(220,190,120,.55), rgba(200,170,100,.42));
+  border-left:1px dashed rgba(160,130,60,.5);
+  border-right:1px dashed rgba(160,130,60,.5);
+  box-shadow:0 2px 5px rgba(120,90,20,.15);
+}
+.analogy .label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:#8a6d15;
+  display:block;
+  margin-bottom:9px;
+}
+.analogy p{
+  font-family:'Kalam',cursive;
+  font-size:18px;
+  line-height:1.6;
+  color:#4a3c0c;
+  margin:0;
+}
+.analogy p + p{margin-top:9px;}
+
+/* CODE */
+.code{
+  background:var(--code-bg);
+  border-radius:9px;
+  margin:18px 0;
+  box-shadow:
+    0 10px 26px rgba(15,25,40,.3),
+    0 1px 0 rgba(255,255,255,.05) inset;
+  overflow:hidden;
+  border:1px solid #080f18;
+}
+.code-label{
+  display:inline-block;
+  background:var(--code-bg-2);
+  color:var(--k);
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:3px;
+  padding:7px 16px;
+  border-bottom-right-radius:8px;
+}
+.code pre{
+  margin:0;
+  padding:16px 20px 18px;
+  overflow-x:auto;
+}
+.code code{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13.5px;
+  line-height:1.85;
+  color:var(--code-text);
+  white-space:pre;
+  display:block;
+}
+.code code .k{color:var(--k);}
+.code code .f{color:var(--f);}
+.code code .s{color:var(--s);}
+.code code .n{color:var(--n);}
+.code code .c{color:var(--c);font-style:italic;}
+.code code .p{color:#ff9d8a;}
+.code code .t{color:var(--react);font-weight:500;}
+
+.code pre::-webkit-scrollbar{height:8px;}
+.code pre::-webkit-scrollbar-track{background:#0d131c;}
+.code pre::-webkit-scrollbar-thumb{background:#2a3a55;border-radius:4px;}
+
+/* OUTPUT */
+.output{
+  background:linear-gradient(180deg,#eef4fa,#e2ecf6);
+  border-left:4px solid #8aaccc;
+  border-radius:0 8px 8px 0;
+  padding:13px 18px;
+  margin:10px 0 24px;
+  box-shadow:0 3px 9px rgba(30,50,80,.1);
+}
+.output .label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9.5px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:#5f7a9c;
+  display:block;
+  margin-bottom:6px;
+}
+.output pre{
+  margin:0;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13.5px;
+  line-height:1.7;
+  color:#2c3d56;
+  white-space:pre-wrap;
+}
+
+/* REMEMBER */
+.remember{
+  background:linear-gradient(180deg,#eef8f2,#e2f3ea);
+  border:1.5px dashed #6fb894;
+  border-radius:10px;
+  padding:16px 20px;
+  margin:22px 0;
+}
+.remember .label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--green);
+  display:block;
+  margin-bottom:8px;
+}
+.remember p{font-size:15.5px;color:#1c4d36;margin:0;}
+.remember p + p{margin-top:8px;}
+.remember ul{margin:8px 0 0 20px;font-size:15.5px;color:#1c4d36;}
+.remember ul li{margin-bottom:5px;}
+.remember ul li::marker{color:var(--green);}
+
+/* WARN */
+.warn{
+  background:linear-gradient(180deg,#fdf0ee,#fbe4e0);
+  border:1.5px dashed var(--red-soft);
+  border-radius:10px;
+  padding:16px 20px;
+  margin:22px 0;
+}
+.warn .label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--red);
+  display:block;
+  margin-bottom:8px;
+}
+.warn p{font-size:15.5px;color:#6b1f18;margin:0;}
+.warn p + p{margin-top:8px;}
+
+/* TIP */
+.tip{
+  font-family:'Caveat',cursive;
+  font-size:21px;
+  line-height:1.45;
+  color:#0b3d5a;
+  background:linear-gradient(180deg,#eef9fd,#e0f3fa);
+  border-left:3px solid var(--cyan);
+  border-radius:0 10px 10px 0;
+  padding:14px 20px 14px 46px;
+  margin:24px 0;
+  position:relative;
+  box-shadow:0 4px 12px rgba(0,151,167,.08);
+}
+.tip::before{
+  content:"✎";
+  position:absolute;
+  left:14px;top:12px;
+  font-size:20px;
+  color:var(--cyan);
+}
+
+/* TABLES */
+.tbl{
+  width:100%;
+  border-collapse:collapse;
+  margin:20px 0 26px;
+  font-size:15px;
+  background:#ffffff;
+  box-shadow:0 4px 14px rgba(30,50,80,.09);
+  border-radius:6px;
+  overflow:hidden;
+}
+.tbl thead th{
+  background:linear-gradient(180deg,#1c3a5c,#122b47);
+  color:#e8f0f8;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  padding:11px 14px;
+  text-align:left;
+  font-weight:500;
+}
+.tbl td{
+  padding:11px 14px;
+  border-bottom:1px solid #dfe7f0;
+  color:var(--ink-soft);
+  vertical-align:top;
+}
+.tbl tbody tr:nth-child(even){background:#f5f9fc;}
+.tbl tbody tr:last-child td{border-bottom:none;}
+.tbl td code{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  color:#0b3d78;
+  background:rgba(21,101,192,.08);
+  padding:1px 5px;
+  border-radius:3px;
+}
+
+/* FLOW */
+.flow{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  margin:22px 0 26px;
+  padding:20px;
+  background:linear-gradient(180deg,#f5f9fd,#eaf2fa);
+  border:1px solid var(--rule);
+  border-radius:10px;
+}
+.flow .step{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11.5px;
+  letter-spacing:1px;
+  color:var(--blue-deep);
+  background:#fff;
+  border:1.5px solid #b9d4ec;
+  border-radius:20px;
+  padding:7px 15px;
+  box-shadow:0 2px 6px rgba(21,101,192,.08);
+}
+.flow .arrow{color:var(--cyan);font-size:15px;font-weight:700;}
+
+/* TREE */
+.tree{
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  line-height:1.8;
+  color:var(--ink-soft);
+  background:linear-gradient(180deg,#ffffff,#f3f7fb);
+  border:1px solid var(--rule);
+  border-radius:10px;
+  padding:20px 24px;
+  margin:18px 0 24px;
+  box-shadow:0 4px 12px rgba(30,50,80,.07);
+  white-space:pre;
+  overflow-x:auto;
+}
+.tree .accent{color:var(--blue-deep);font-weight:700;}
+.tree .child{color:var(--cyan);}
+
+/* PATTERN */
+.pattern{
+  border:1px solid var(--rule);
+  border-top:4px solid var(--cyan);
+  border-radius:4px 4px 8px 8px;
+  background:linear-gradient(180deg,#ffffff,#f5f9fc);
+  padding:22px 26px;
+  margin:26px 0;
+  box-shadow:0 6px 18px rgba(0,151,167,.08);
+}
+.pattern h4{
+  font-style:normal;
+  font-family:'Lora',serif;
+  font-size:18px;
+  color:var(--blue-deep);
+  margin:0 0 6px;
+  letter-spacing:-.2px;
+}
+.pattern .ptag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:#5fb8c7;
+  display:block;
+  margin-bottom:8px;
+}
+
+/* CHECKLIST */
+.checklist{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:7px 26px;
+  margin:18px 0 26px;
+  padding:0;
+  list-style:none;
+}
+.checklist li{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  font-size:15.5px;
+  color:var(--ink-soft);
+  padding:6px 0;
+  border-bottom:1px dotted rgba(70,90,120,.22);
+}
+.checklist li::before{
+  content:"";
+  flex:0 0 auto;
+  width:16px;height:16px;
+  margin-top:4px;
+  border:1.8px solid var(--cyan);
+  border-radius:4px;
+  background:#fff;
+  box-shadow:1px 1px 0 rgba(0,151,167,.2);
+}
+
+/* LEVEL */
+.level{
+  border:1px solid var(--rule);
+  border-radius:8px;
+  padding:22px 26px;
+  margin:22px 0;
+  background:linear-gradient(180deg,#ffffff,#f5f9fc);
+  box-shadow:0 5px 16px rgba(30,50,80,.08);
+}
+.level h4{
+  font-style:normal;
+  margin-top:0;
+  font-size:19px;
+  color:var(--blue-deep);
+  letter-spacing:-.2px;
+}
+.level ol{
+  margin:14px 0 0 24px;
+}
+.level ol li{
+  margin-bottom:9px;
+  font-size:16px;
+  color:var(--ink-soft);
+  break-inside:avoid;
+}
+.level ol li::marker{
+  color:var(--cyan);
+  font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+}
+
+/* MISTAKE */
+.mistake{
+  border:1px solid var(--rule);
+  border-left:5px solid var(--red);
+  border-radius:4px;
+  background:linear-gradient(180deg,#ffffff,#fbf5f4);
+  padding:20px 26px;
+  margin:22px 0;
+  box-shadow:0 5px 14px rgba(192,57,43,.07);
+}
+.mistake h4{
+  font-style:normal;
+  font-size:17px;
+  color:var(--red);
+  margin:0 0 12px;
+  letter-spacing:-.2px;
+}
+.mistake .bad, .mistake .good{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  display:inline-block;
+  padding:2px 10px;
+  border-radius:12px;
+  margin-bottom:6px;
+}
+.mistake .bad{background:#fbe4e0;color:var(--red);}
+.mistake .good{background:#e2f3ea;color:var(--green);}
+
+/* TERM */
+.term{
+  border-bottom:1px dotted var(--rule);
+  padding:14px 0;
+}
+.term:last-child{border-bottom:none;}
+.term strong{
+  font-family:'Lora',serif;
+  color:var(--blue-deep);
+  font-size:17px;
+  font-weight:700;
+  margin-right:6px;
+}
+.term span{color:var(--ink-soft);font-size:16px;}
+
+/* READY BANNER */
+.ready{
+  text-align:center;
+  padding:56px 30px 46px;
+  margin:50px 0 10px;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(97,218,251,.16), transparent 65%),
+    linear-gradient(180deg,#ffffff,#e8f1f9);
+  border:2px dashed var(--cyan);
+  border-radius:12px;
+}
+.ready .big{
+  font-family:'Lora',serif;
+  font-size:clamp(32px,6vw,46px);
+  font-weight:700;
+  letter-spacing:2px;
+  color:var(--blue-deep);
+  text-shadow:0 2px 0 rgba(255,255,255,.7);
+  margin-bottom:12px;
+}
+.ready .msg{
+  font-family:'Kalam',cursive;
+  font-size:21px;
+  color:var(--ink-soft);
+  max-width:520px;
+  margin:0 auto 26px;
+  line-height:1.5;
+}
+.ready .next{
+  display:inline-block;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  letter-spacing:2px;
+  color:#fff;
+  background:linear-gradient(180deg,#1c3a5c,#122b47);
+  padding:12px 26px;
+  border-radius:30px;
+  box-shadow:0 8px 20px rgba(18,43,71,.32);
+}
+
+/* DIVIDER */
+.divider{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  margin:52px 0;
+  color:var(--blue-soft);
+}
+.divider::before,.divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--rule),transparent);
+}
+.divider span{
+  font-size:16px;
+  letter-spacing:8px;
+  color:var(--cyan);
+  opacity:.7;
+}
+
+/* FOOTER */
+.footer{
+  text-align:center;
+  padding:38px 20px 10px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  border-top:1px solid var(--rule);
+  margin:40px 62px 0 82px;
+}
+.footer .hand{
+  font-family:'Caveat',cursive;
+  font-size:20px;
+  letter-spacing:0;
+  text-transform:none;
+  color:var(--cyan);
+  margin-bottom:8px;
+  display:block;
+}
+
+@media (max-width:760px){
+  body{padding:16px 8px 60px;}
+  .page{padding:34px 22px 10px 30px;}
+  .cover{padding:50px 26px 46px 34px;}
+  .cover::before{inset:12px;}
+  .cover::after{inset:18px;}
+  .book::before{width:16px;}
+  .book::after{left:16px;}
+  .chapter-head{gap:14px;}
+  .chapter-num{width:48px;height:48px;font-size:19px;}
+  .chapter-num.part{font-size:8.5px;}
+  .footer{margin:40px 22px 0 30px;}
+  .toc-grid{grid-template-columns:1fr;}
+  .code code{font-size:12.5px;}
+  .tree{font-size:12px;}
+}
+
+@media print{
+  body{background:#fff;padding:0;}
+  .book{box-shadow:none;border-radius:0;max-width:100%;}
+  .chapter{page-break-inside:avoid;}
+  body::after{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="book">
+
+<!-- COVER -->
+<header class="cover">
+  <div class="cover-inner">
+    <div class="cover-kicker">Phase 2 · Study Book</div>
+    <h1>React JS<span class="accent">State, Events &amp; Hooks</span></h1>
+    <div class="cover-rule"></div>
+    <p class="cover-sub">From clicking a button to coordinating shared state across components — the interactivity layer that turns a static UI into a living application.</p>
+    <div class="cover-badge">Events · useState · Immutability · Lifting State</div>
+    <div class="cover-note">
+      <span>“</span>State is the memory of a component. Events are how the user <em>talks</em> to it.<span>”</span>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+<!-- LEARNING OBJECTIVES -->
+<div class="intro-card">
+  <h2>Learning Objectives</h2>
+  <p>By the end of this study material, you should be able to:</p>
+  <ol class="objectives">
+    <li>Handle button clicks, input changes, and form submissions.</li>
+    <li>Understand event objects and how to use them.</li>
+    <li>Use the <code class="inline">useState</code> hook to store information in a component.</li>
+    <li>Explain why React state is different from ordinary JavaScript variables.</li>
+    <li>Update state without mutating objects or arrays.</li>
+    <li>Render different UI elements according to conditions.</li>
+    <li>Display lists with <code class="inline">map()</code> and identify items using stable keys.</li>
+    <li>Update individual properties inside an object stored in state.</li>
+    <li>Add, update, and remove items from an array stored in state.</li>
+    <li>Lift state up to coordinate multiple components.</li>
+    <li>Build controlled input fields and forms.</li>
+    <li>Share information and event handlers between parent and child components.</li>
+    <li>Calculate derived values without storing unnecessary duplicate state.</li>
+  </ol>
+</div>
+
+<!-- HOW TO STUDY -->
+<div class="intro-card" style="border-left-color:var(--cyan);">
+  <h2>How to Study This Material</h2>
+  <p>For each topic, understand <strong>what</strong> it means, <strong>why</strong> React uses it, and <strong>how</strong> to implement it. Then explain the code in your own words and write it again without looking at the solution.</p>
+  <p>Throughout this guide, we will use examples from a <strong>student portal</strong>, a <strong>course dashboard</strong>, and a <strong>task management application</strong>.</p>
+</div>
+
+<!-- TOC -->
+<nav class="toc">
+  <h2>Contents</h2>
+  <p class="toc-sub">Thirteen topics, one full project, and everything you need to make a React UI come alive.</p>
+  <div class="toc-grid">
+    <a class="toc-item" href="#t1"><span class="num">01</span><span class="t">Event Handling and Event Objects</span></a>
+    <a class="toc-item" href="#t2"><span class="num">02</span><span class="t"><code>useState</code> and State Updates</span></a>
+    <a class="toc-item" href="#t3"><span class="num">03</span><span class="t">State Versus Ordinary Variables</span></a>
+    <a class="toc-item" href="#t4"><span class="num">04</span><span class="t">State Immutability</span></a>
+    <a class="toc-item" href="#t5"><span class="num">05</span><span class="t">Conditional Rendering</span></a>
+    <a class="toc-item" href="#t6"><span class="num">06</span><span class="t">Rendering Lists with <code>map()</code></span></a>
+    <a class="toc-item" href="#t7"><span class="num">07</span><span class="t">Keys and Stable Identity</span></a>
+    <a class="toc-item" href="#t8"><span class="num">08</span><span class="t">Updating Objects in State</span></a>
+    <a class="toc-item" href="#t9"><span class="num">09</span><span class="t">Updating Arrays in State</span></a>
+    <a class="toc-item" href="#t10"><span class="num">10</span><span class="t">Lifting State Up</span></a>
+    <a class="toc-item" href="#t11"><span class="num">11</span><span class="t">Controlled Inputs</span></a>
+    <a class="toc-item" href="#t12"><span class="num">12</span><span class="t">Sharing Data Between Components</span></a>
+    <a class="toc-item" href="#t13"><span class="num">13</span><span class="t">Derived State &amp; Avoiding Redundancy</span></a>
+    <a class="toc-item" href="#project"><span class="num">★</span><span class="t">Practical Project: Task Tracker</span></a>
+    <a class="toc-item" href="#mistakes"><span class="num">!</span><span class="t">Common Beginner Mistakes</span></a>
+    <a class="toc-item" href="#revision"><span class="num">R</span><span class="t">Revision Notes</span></a>
+    <a class="toc-item" href="#exercises"><span class="num">E</span><span class="t">Practice Exercises</span></a>
+    <a class="toc-item" href="#assessment"><span class="num">✓</span><span class="t">Final Self-Assessment</span></a>
+  </div>
+</nav>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- TOPIC 1 -->
+<section class="chapter" id="t1">
+  <div class="chapter-head">
+    <div class="chapter-num part">TOPIC<br>01</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">Interactivity</div>
+      <h2>Event Handling and Event Objects</h2>
+    </div>
+  </div>
+
+  <h3>1.1 What Is Event Handling?</h3>
+  <div class="definition">
+    <span class="label">Simple Definition</span>
+    <p>An <strong>event</strong> is an action or occurrence that a program can respond to. <strong>Event handling</strong> means writing code that runs when a particular event occurs.</p>
+  </div>
+
+  <p>In a web application, events include:</p>
+  <ul class="plain">
+    <li>Clicking a button</li>
+    <li>Typing into an input field</li>
+    <li>Submitting a form</li>
+    <li>Moving the mouse over an element</li>
+    <li>Focusing on an input field</li>
+  </ul>
+
+  <p>For example, when a student clicks the Login button, the application might validate the form or begin a login process.</p>
+  <p>React lets you connect JavaScript functions to events through JSX event-handler props.</p>
+
+  <h3>1.2 Analogy: A Doorbell</h3>
+  <div class="analogy">
+    <span class="label">Real-Life Analogy</span>
+    <p>Imagine someone presses a doorbell.</p>
+    <p>The button press is the event. The sound produced by the bell is the response.</p>
+    <p>In a React application:</p>
+    <p>• User action = event<br>• Event-handler function = response logic<br>• Updated interface or other action = result</p>
+  </div>
+  <p>For example, clicking a button can display a welcome message.</p>
+
+  <h3>1.3 Create Your First Click Event</h3>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">App</span>() {
+  <span class="k">function</span> <span class="t">handleClick</span>() {
+    <span class="f">alert</span>(<span class="s">"Button clicked!"</span>);
+  }
+
+  <span class="k">return</span> (
+    &lt;button onClick={<span class="t">handleClick</span>}&gt;
+      Click Me
+    &lt;/button&gt;
+  );
+}
+
+<span class="k">export default</span> App;</code></pre>
+  </div>
+
+  <h4>Explanation</h4>
+  <p><strong>Step 1: Define a function</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">handleClick</span>() {
+  <span class="f">alert</span>(<span class="s">"Button clicked!"</span>);
+}</code></pre>
+  </div>
+  <p>This function contains the work you want to perform when the button is clicked.</p>
+
+  <p><strong>Step 2: Connect the function to the button</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;button onClick={<span class="t">handleClick</span>}&gt;
+  Click Me
+&lt;/button&gt;</code></pre>
+  </div>
+  <p>The <code class="inline">onClick</code> prop tells React which event handler to use for a click.</p>
+
+  <p><strong>Step 3: The user clicks the button</strong></p>
+  <p>React invokes the handler, and the browser displays an alert.</p>
+
+  <div class="warn">
+    <span class="label">Watch the Parentheses</span>
+    <p>Notice that we write <code class="inline">onClick={handleClick}</code>, <strong>not</strong> <code class="inline">onClick={handleClick()}</code>. The first passes the function for React to call later; the second calls the function immediately while rendering.</p>
+  </div>
+
+  <h3>1.4 Why Does React Use <code class="inline">onClick</code> Instead of <code class="inline">onclick</code>?</h3>
+  <p>In regular HTML, an event may be written as an HTML attribute such as <code class="inline">onclick</code>. In React JSX, event-handler props use <strong>camelCase</strong>.</p>
+
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;button onClick={<span class="t">handleClick</span>}&gt;Click&lt;/button&gt;</code></pre>
+  </div>
+
+  <p>Similarly, a text input commonly uses <code class="inline">onChange</code>:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;input onChange={<span class="t">handleChange</span>} /&gt;</code></pre>
+  </div>
+
+  <p>And a form commonly uses <code class="inline">onSubmit</code>:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;form onSubmit={<span class="t">handleSubmit</span>}&gt;
+  {<span class="c">/* Form controls */</span>}
+&lt;/form&gt;</code></pre>
+  </div>
+
+  <p>React event handlers are functions passed to JSX elements.</p>
+
+  <h3>1.5 Common React Events</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th>Event handler</th><th>When it runs</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>onClick</code></td><td>An element is clicked</td></tr>
+      <tr><td><code>onChange</code></td><td>The value of an input changes</td></tr>
+      <tr><td><code>onSubmit</code></td><td>A form is submitted</td></tr>
+      <tr><td><code>onFocus</code></td><td>An element receives focus</td></tr>
+      <tr><td><code>onBlur</code></td><td>An element loses focus</td></tr>
+      <tr><td><code>onMouseEnter</code></td><td>The mouse enters an element</td></tr>
+    </tbody>
+  </table>
+  <p>You do not need to memorize every event now. Learn the commonly used ones first.</p>
+
+  <h3>1.6 What Is an Event Object?</h3>
+  <div class="definition">
+    <span class="label">Simple Definition</span>
+    <p>When an event occurs, its handler receives an <strong>event object</strong> containing information about that event.</p>
+  </div>
+
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">App</span>() {
+  <span class="k">function</span> <span class="t">handleClick</span>(event) {
+    <span class="f">console</span>.log(event.type);
+    <span class="f">console</span>.log(event.currentTarget);
+  }
+
+  <span class="k">return</span> (
+    &lt;button onClick={<span class="t">handleClick</span>}&gt;
+      Inspect Event
+    &lt;/button&gt;
+  );
+}
+
+<span class="k">export default</span> App;</code></pre>
+  </div>
+
+  <p>When the user clicks the button, the console shows information about the click event and the button to which the handler is attached.</p>
+  <p>In the example, <code class="inline">event</code> is a parameter. You could also name it <code class="inline">e</code>.</p>
+
+  <h4>Understanding <code class="inline">event.target</code></h4>
+  <p><code class="inline">event.target</code> refers to the element where the event <strong>originated</strong>. For example, it can identify the input element whose value changed.</p>
+
+  <h4>Understanding <code class="inline">event.currentTarget</code></h4>
+  <p><code class="inline">event.currentTarget</code> refers to the element <strong>on which the current handler is registered</strong>. This distinction is useful when events bubble from nested elements.</p>
+
+  <h3>1.7 Read the Value of an Input</h3>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">App</span>() {
+  <span class="k">function</span> <span class="t">handleChange</span>(event) {
+    <span class="f">console</span>.log(event.target.value);
+  }
+
+  <span class="k">return</span> (
+    &lt;input
+      type=<span class="s">"text"</span>
+      placeholder=<span class="s">"Enter your name"</span>
+      onChange={<span class="t">handleChange</span>}
+    /&gt;
+  );
+}
+
+<span class="k">export default</span> App;</code></pre>
+  </div>
+
+  <p>Explanation:</p>
+  <ol class="plain">
+    <li>The user types into the input.</li>
+    <li>React calls <code class="inline">handleChange</code>.</li>
+    <li>The handler receives the event object.</li>
+    <li><code class="inline">event.target.value</code> provides the current input value.</li>
+    <li><code class="inline">console.log()</code> prints that value.</li>
+  </ol>
+
+  <p>For a React text input, <code class="inline">onChange</code> is normally used to respond as the user edits the value.</p>
+  <p>At this point, the example only prints the value. We will connect input values to React state in Topic 11.</p>
+
+  <h3>1.8 Preventing the Default Form Action</h3>
+  <p>A browser form may attempt to navigate or reload the page when submitted, depending on the form's setup.</p>
+  <p>In a React form, you often want to handle submission in JavaScript instead.</p>
+  <p>Use <code class="inline">event.preventDefault()</code> to prevent the browser's default submission behavior.</p>
+
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">App</span>() {
+  <span class="k">function</span> <span class="t">handleSubmit</span>(event) {
+    event.<span class="f">preventDefault</span>();
+
+    <span class="f">alert</span>(<span class="s">"Form submitted!"</span>);
+  }
+
+  <span class="k">return</span> (
+    &lt;form onSubmit={<span class="t">handleSubmit</span>}&gt;
+      &lt;input type=<span class="s">"text"</span> placeholder=<span class="s">"Enter your name"</span> /&gt;
+
+      &lt;button type=<span class="s">"submit"</span>&gt;
+        Submit
+      &lt;/button&gt;
+    &lt;/form&gt;
+  );
+}
+
+<span class="k">export default</span> App;</code></pre>
+  </div>
+
+  <p>Explanation:</p>
+  <ul class="plain">
+    <li><code class="inline">onSubmit={handleSubmit}</code> connects the form to a handler.</li>
+    <li>The browser creates a submit event when the user submits the form.</li>
+    <li><code class="inline">event.preventDefault()</code> prevents the default page submission.</li>
+    <li>The alert displays a message.</li>
+  </ul>
+
+  <p>Preventing the default action does not automatically validate the form or send its data to a server. Those tasks require additional logic.</p>
+
+  <h3>1.9 What Is Event Bubbling?</h3>
+  <p>Event bubbling occurs when an event on a nested element <strong>propagates to ancestor elements</strong> that have handlers.</p>
+
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">App</span>() {
+  <span class="k">return</span> (
+    &lt;div onClick={() =&gt; <span class="f">console</span>.log(<span class="s">"Parent clicked"</span>)}&gt;
+      &lt;button onClick={() =&gt; <span class="f">console</span>.log(<span class="s">"Button clicked"</span>)}&gt;
+        Click Me
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Clicking the button normally logs:</p>
+  <div class="output">
+    <span class="label">Output</span>
+    <pre>Button clicked
+Parent clicked</pre>
+  </div>
+
+  <p>The click handler attached to the button runs, and the event bubbles to the parent <code class="inline">div</code>.</p>
+  <p>If you need to stop the event from propagating further, the event object provides <code class="inline">stopPropagation()</code>.</p>
+
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">App</span>() {
+  <span class="k">function</span> <span class="t">handleButtonClick</span>(event) {
+    event.<span class="f">stopPropagation</span>();
+    <span class="f">console</span>.log(<span class="s">"Button clicked"</span>);
+  }
+
+  <span class="k">return</span> (
+    &lt;div onClick={() =&gt; <span class="f">console</span>.log(<span class="s">"Parent clicked"</span>)}&gt;
+      &lt;button onClick={<span class="t">handleButtonClick</span>}&gt;
+        Click Me
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Now clicking the button does not trigger the parent's click handler through that bubbling path.</p>
+  <p>Use <code class="inline">stopPropagation()</code> only when you have a specific reason to prevent propagation. It is not needed for ordinary button clicks.</p>
+
+  <div class="remember">
+    <span class="label">Remember</span>
+    <p>An event handler is a function that responds to user interaction. The event object provides information about what happened and methods for controlling event behavior.</p>
+  </div>
+
+  <div class="tip">The event object is a goldmine of information — coordinates, key presses, the element that fired it, and more. For Phase 2, the three methods you'll use most often are <code class="inline">event.target.value</code>, <code class="inline">event.preventDefault()</code>, and (occasionally) <code class="inline">event.stopPropagation()</code>.</div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- TOPIC 2 -->
+<section class="chapter" id="t2">
+  <div class="chapter-head">
+    <div class="chapter-num part">TOPIC<br>02</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">State</div>
+      <h2><code>useState</code> and State Updates</h2>
+    </div>
+  </div>
+
+  <h3>2.1 What Is State in React?</h3>
+  <div class="definition">
+    <span class="label">Simple Definition</span>
+    <p><strong>State is information that a component remembers between renders.</strong></p>
+  </div>
+
+  <p>Examples include:</p>
+  <ul class="plain">
+    <li>A counter's current number</li>
+    <li>Whether a dropdown is open</li>
+    <li>The text entered into an input</li>
+    <li>A list of tasks</li>
+    <li>Whether a task is completed</li>
+    <li>A selected filter</li>
+  </ul>
+
+  <p>When the state changes, React can render the component again so its interface reflects the new value.</p>
+
+  <h3>2.2 What Is the <code class="inline">useState</code> Hook?</h3>
+  <div class="definition">
+    <span class="label">Simple Definition</span>
+    <p><code class="inline">useState</code> is a React Hook that lets a functional component <strong>store and update state</strong>.</p>
+  </div>
+
+  <p>Basic syntax:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [state, setState] = <span class="f">useState</span>(initialValue);</code></pre>
+  </div>
+
+  <p>Here:</p>
+  <ul class="plain">
+    <li><code class="inline">state</code> is the current state value for that render.</li>
+    <li><code class="inline">setState</code> is the function used to request a state update.</li>
+    <li><code class="inline">initialValue</code> is the starting value.</li>
+  </ul>
+  <p>The variable names are up to you. For example, for a counter you might use <code class="inline">count</code> and <code class="inline">setCount</code>.</p>
+
+  <h3>2.3 Your First Counter</h3>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">Counter</span>() {
+  <span class="k">const</span> [count, setCount] = <span class="f">useState</span>(<span class="n">0</span>);
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;h1&gt;Count: {count}&lt;/h1&gt;
+
+      &lt;button onClick={() =&gt; <span class="f">setCount</span>(count + <span class="n">1</span>)}&gt;
+        Increase
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="k">export default</span> Counter;</code></pre>
+  </div>
+
+  <h4>Step-by-Step Explanation</h4>
+
+  <p><strong>Step 1: Import <code class="inline">useState</code></strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;</code></pre>
+  </div>
+  <p>This imports the React Hook used to declare state.</p>
+
+  <p><strong>Step 2: Create a state variable</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [count, setCount] = <span class="f">useState</span>(<span class="n">0</span>);</code></pre>
+  </div>
+  <p>The initial count is <code class="inline">0</code>.</p>
+
+  <p><strong>Step 3: Display the state</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;h1&gt;Count: {count}&lt;/h1&gt;</code></pre>
+  </div>
+  <p>The current value of <code class="inline">count</code> is inserted into the heading.</p>
+
+  <p><strong>Step 4: Update the state</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;button onClick={() =&gt; <span class="f">setCount</span>(count + <span class="n">1</span>)}&gt;
+  Increase
+&lt;/button&gt;</code></pre>
+  </div>
+  <p>When the button is clicked, the setter requests an update that increments the count by one. React then renders the updated value.</p>
+
+  <div class="output">
+    <span class="label">Progression</span>
+    <pre>Initial value:     Count: 0
+After one click:   Count: 1
+After two clicks:  Count: 2
+After three clicks: Count: 3</pre>
+  </div>
+
+  <h3>2.4 Analogy: A Notebook</h3>
+  <div class="analogy">
+    <span class="label">Analogy</span>
+    <p>Imagine keeping a notebook of your daily expenses.</p>
+    <p>You write the total in the notebook, and whenever you add an expense, you update the total.</p>
+    <p>In React:</p>
+    <p>• The current total is <strong>state</strong>.<br>• <code class="inline">useState</code> stores that value for the component.<br>• The setter updates it.<br>• React renders the new total in the interface.</p>
+  </div>
+
+  <p>An ordinary local variable does not provide this same persistent, rendering-aware behavior.</p>
+
+  <h3>2.5 <code class="inline">useState</code> Can Store Different Types of Values</h3>
+
+  <h4>Number</h4>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [age, setAge] = <span class="f">useState</span>(<span class="n">18</span>);</code></pre>
+  </div>
+
+  <h4>String</h4>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [name, setName] = <span class="f">useState</span>(<span class="s">"Rahul"</span>);</code></pre>
+  </div>
+
+  <h4>Boolean</h4>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [isVisible, setIsVisible] = <span class="f">useState</span>(<span class="k">true</span>);</code></pre>
+  </div>
+
+  <h4>Array</h4>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [courses, setCourses] = <span class="f">useState</span>([
+  <span class="s">"React"</span>,
+  <span class="s">"JavaScript"</span>
+]);</code></pre>
+  </div>
+
+  <h4>Object</h4>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [student, setStudent] = <span class="f">useState</span>({
+  name: <span class="s">"Priya"</span>,
+  course: <span class="s">"React"</span>
+});</code></pre>
+  </div>
+
+  <p>State can contain any JavaScript value, including numbers, strings, booleans, arrays, objects, and other values appropriate to the application.</p>
+
+  <h3>2.6 What Happens When State Changes?</h3>
+  <p>Consider this simplified flow:</p>
+
+  <div class="tree">User clicks button
+        |
+        v
+Event handler runs
+        |
+        v
+State setter is called
+        |
+        v
+React schedules an update
+        |
+        v
+Component renders again
+        |
+        v
+Updated UI is committed to the DOM</div>
+
+  <p>For example, if the current count is <code class="inline">4</code>, then <code class="inline">setCount(5)</code> asks React to update the state to <code class="inline">5</code>. A subsequent render will use the updated value.</p>
+  <p>Calling the setter does not immediately change the state variable in the currently executing render. We will explore that behavior in the next topic.</p>
+
+  <h3>2.7 State Updates Using the Previous Value</h3>
+  <p>You can update state using a function:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="f">setCount</span>(previousCount =&gt; previousCount + <span class="n">1</span>);</code></pre>
+  </div>
+
+  <p>The updater function receives the previous state value and returns the next value. This is particularly useful when the next value depends on the previous value.</p>
+
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">Counter</span>() {
+  <span class="k">const</span> [count, setCount] = <span class="f">useState</span>(<span class="n">0</span>);
+
+  <span class="k">function</span> <span class="t">increaseThreeTimes</span>() {
+    <span class="f">setCount</span>(current =&gt; current + <span class="n">1</span>);
+    <span class="f">setCount</span>(current =&gt; current + <span class="n">1</span>);
+    <span class="f">setCount</span>(current =&gt; current + <span class="n">1</span>);
+  }
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;h1&gt;{count}&lt;/h1&gt;
+
+      &lt;button onClick={<span class="t">increaseThreeTimes</span>}&gt;
+        Increase by 3
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="k">export default</span> Counter;</code></pre>
+  </div>
+
+  <p>Each updater function receives the result of the previous queued updater. Starting at <code class="inline">0</code>, clicking the button produces <code class="inline">3</code>.</p>
+
+  <h4>When Should You Use a Functional Updater?</h4>
+  <p>Use this form when the next state depends on the previous state, especially when several updates may be queued together.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="f">setCount</span>(current =&gt; current + <span class="n">1</span>);</code></pre>
+  </div>
+  <p>For a simple update where the next value does not depend on the previous value, a direct setter may be enough:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="f">setName</span>(<span class="s">"Priya"</span>);</code></pre>
+  </div>
+
+  <h3>2.8 Rules for Using <code class="inline">useState</code></h3>
+  <ol class="plain">
+    <li>Import the Hook when you need it.</li>
+    <li>Call <code class="inline">useState</code> at the top level of a functional component or another custom Hook.</li>
+    <li>Do not call Hooks inside loops, conditions, or nested functions.</li>
+    <li>Use the setter to update state instead of assigning a new value directly to the state variable.</li>
+    <li>Remember that state values are snapshots for the render in which they were read.</li>
+  </ol>
+
+  <div class="remember">
+    <span class="label">Remember</span>
+    <p><code class="inline">useState</code> stores information for a component. Its setter requests an update, and React can render the new state in the interface.</p>
+  </div>
+
+  <div class="tip">Those five rules are not arbitrary — they are the reason Hooks work at all. React tracks your state by the <em>order</em> in which Hooks are called. Break the order, break the state.</div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- TOPIC 3 -->
+<section class="chapter" id="t3">
+  <div class="chapter-head">
+    <div class="chapter-num part">TOPIC<br>03</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">State</div>
+      <h2>State Versus Ordinary JavaScript Variables</h2>
+    </div>
+  </div>
+
+  <p>This is one of the most important concepts for React beginners.</p>
+
+  <h3>3.1 What Is an Ordinary Variable?</h3>
+  <p>An ordinary JavaScript variable stores a value.</p>
+  <div class="code">
+    <span class="code-label">JS</span>
+    <pre><code><span class="k">let</span> count = <span class="n">0</span>;
+
+count = count + <span class="n">1</span>;
+
+<span class="f">console</span>.log(count); <span class="c">// 1</span></code></pre>
+  </div>
+  <p>This behaves exactly as you would expect in regular JavaScript.</p>
+  <p>However, changing an ordinary local variable does not itself tell React to render the component again.</p>
+
+  <h3>3.2 What Happens If You Use a Variable in a Component?</h3>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">Counter</span>() {
+  <span class="k">let</span> count = <span class="n">0</span>;
+
+  <span class="k">function</span> <span class="t">increase</span>() {
+    count = count + <span class="n">1</span>;
+    <span class="f">console</span>.log(count);
+  }
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;h1&gt;Count: {count}&lt;/h1&gt;
+      &lt;button onClick={<span class="t">increase</span>}&gt;
+        Increase
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="k">export default</span> Counter;</code></pre>
+  </div>
+
+  <p>When you click the button, the console can log <code class="inline">1</code>, then <code class="inline">2</code>, and so on.</p>
+  <p><strong>But the heading does not update as expected.</strong></p>
+
+  <p>Why?</p>
+  <p>The variable changes, but no state update is requested. React therefore has no reason to render the updated value as a result of that assignment.</p>
+  <p>Even if another event causes the component to render, a local variable initialized inside the component starts from <code class="inline">0</code> again.</p>
+
+  <h3>3.3 The Same Example with <code class="inline">useState</code></h3>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">Counter</span>() {
+  <span class="k">const</span> [count, setCount] = <span class="f">useState</span>(<span class="n">0</span>);
+
+  <span class="k">function</span> <span class="t">increase</span>() {
+    <span class="f">setCount</span>(count + <span class="n">1</span>);
+  }
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;h1&gt;Count: {count}&lt;/h1&gt;
+      &lt;button onClick={<span class="t">increase</span>}&gt;
+        Increase
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="k">export default</span> Counter;</code></pre>
+  </div>
+
+  <p>Now React is asked to update the count whenever the button is clicked. The new value appears in the heading after the component renders again.</p>
+
+  <h3>3.4 Analogy: A Temporary Note Versus a Saved Record</h3>
+  <div class="analogy">
+    <span class="label">Analogy</span>
+    <p>Imagine writing a number on a scrap of paper and then replacing the scrap each time you restart a task.</p>
+    <p>That is similar to a local variable initialized during a component render.</p>
+    <p>Now imagine saving the number in a persistent record that can be updated and displayed again. That is closer to React state.</p>
+  </div>
+
+  <p>This analogy highlights the main difference:</p>
+  <ul class="plain">
+    <li>An ordinary local variable stores a value only within normal JavaScript execution and is recreated when the component function runs again.</li>
+    <li>React state is managed by React, retained between renders for that component, and updated through its setter.</li>
+  </ul>
+
+  <h3>3.5 Comparison Table</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th>Feature</th><th>Ordinary local variable</th><th>React state</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Stores a value</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Retained automatically between component renders</td><td>No, not for a local variable initialized in the component body</td><td>Yes</td></tr>
+      <tr><td>Updating it requests a React render</td><td>No</td><td>Yes, the setter requests an update</td></tr>
+      <tr><td>Appropriate for values displayed and changed in the UI</td><td>Usually not by itself</td><td>Yes</td></tr>
+      <tr><td>Suitable for a temporary calculation during rendering</td><td>Yes</td><td>Often unnecessary</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.6 When Should You Use an Ordinary Variable?</h3>
+  <p>Not every value needs to be stored in state.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">Price</span>() {
+  <span class="k">const</span> price = <span class="n">1000</span>;
+  <span class="k">const</span> tax = <span class="n">180</span>;
+
+  <span class="k">const</span> total = price + tax;
+
+  <span class="k">return</span> &lt;h1&gt;Total: ₹{total}&lt;/h1&gt;;
+}</code></pre>
+  </div>
+  <p>Here, <code class="inline">total</code> is just a calculation based on two constant values. It does not need separate state.</p>
+  <p>You should use state when a value needs to persist across renders and its changes should influence the rendered interface.</p>
+
+  <div class="remember">
+    <span class="label">Remember</span>
+    <p>An ordinary variable is useful for calculations and temporary values. React state is appropriate for information the component needs to remember and display across renders.</p>
+  </div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- TOPIC 4 -->
+<section class="chapter" id="t4">
+  <div class="chapter-head">
+    <div class="chapter-num part">TOPIC<br>04</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">State</div>
+      <h2>State Immutability</h2>
+    </div>
+  </div>
+
+  <h3>4.1 What Does Immutability Mean?</h3>
+  <div class="definition">
+    <span class="label">Simple Definition</span>
+    <p>Immutability means treating existing data as <strong>read-only</strong> rather than directly changing it.</p>
+  </div>
+
+  <p>JavaScript permits objects and arrays to be mutated. However, when objects or arrays are stored in React state, you should create <strong>updated copies</strong> rather than directly modifying the existing values.</p>
+  <p>This is important because React uses state values as inputs to rendering, and replacing them provides React with a clear new value to work with.</p>
+
+  <h3>4.2 Analogy: Editing a Photocopy</h3>
+  <div class="analogy">
+    <span class="label">Analogy</span>
+    <p>Imagine you have an original document that you need to preserve.</p>
+    <p>Instead of changing the original, you make a copy and edit the copy.</p>
+    <p>In React state:</p>
+    <p>• Existing state = original document<br>• New copied value = updated document<br>• State setter = request to use the new document</p>
+  </div>
+  <p>The old value remains unchanged, and React receives a new value.</p>
+
+  <h3>4.3 The Wrong Way: Mutating State</h3>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">Student</span>() {
+  <span class="k">const</span> [student, setStudent] = <span class="f">useState</span>({
+    name: <span class="s">"Rahul"</span>,
+    city: <span class="s">"Rajkot"</span>
+  });
+
+  <span class="k">function</span> <span class="t">changeCity</span>() {
+    student.city = <span class="s">"Ahmedabad"</span>;
+  }
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;p&gt;Name: {student.name}&lt;/p&gt;
+      &lt;p&gt;City: {student.city}&lt;/p&gt;
+      &lt;button onClick={<span class="t">changeCity</span>}&gt;
+        Change City
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The handler directly modifies <code class="inline">student.city</code>, but it does <strong>not</strong> call the state setter. React is not asked to render again.</p>
+  <p>This is not the recommended way to update state.</p>
+
+  <h3>4.4 The Correct Way: Create a New Object</h3>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">Student</span>() {
+  <span class="k">const</span> [student, setStudent] = <span class="f">useState</span>({
+    name: <span class="s">"Rahul"</span>,
+    city: <span class="s">"Rajkot"</span>
+  });
+
+  <span class="k">function</span> <span class="t">changeCity</span>() {
+    <span class="f">setStudent</span>(currentStudent =&gt; ({
+      ...currentStudent,
+      city: <span class="s">"Ahmedabad"</span>
+    }));
+  }
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;p&gt;Name: {student.name}&lt;/p&gt;
+      &lt;p&gt;City: {student.city}&lt;/p&gt;
+      &lt;button onClick={<span class="t">changeCity</span>}&gt;
+        Change City
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="k">export default</span> Student;</code></pre>
+  </div>
+
+  <h4>Explanation</h4>
+  <p>The expression:</p>
+  <div class="code">
+    <span class="code-label">JS</span>
+    <pre><code>{
+  ...currentStudent,
+  city: <span class="s">"Ahmedabad"</span>
+}</code></pre>
+  </div>
+  <p>creates a <strong>new object</strong>.</p>
+  <p>The spread syntax copies the existing properties, and the <code class="inline">city</code> property is replaced by <code class="inline">"Ahmedabad"</code>.</p>
+  <p>The setter then requests that React use the new object as the state value.</p>
+
+  <h3>4.5 Why Is Direct Mutation a Problem?</h3>
+  <p>Direct mutation can cause several issues:</p>
+  <ul class="plain">
+    <li>React may not receive a new reference to the changed object or array.</li>
+    <li>The UI may not update when you expect it to.</li>
+    <li>Past state values can appear to have changed unexpectedly.</li>
+    <li>Debugging becomes more difficult.</li>
+    <li>Features that rely on comparing old and new values become harder to reason about.</li>
+  </ul>
+  <p>Treating state as immutable makes updates more predictable.</p>
+
+  <h3>4.6 What Does the Spread Operator Do?</h3>
+  <p>For an object:</p>
+  <div class="code">
+    <span class="code-label">JS</span>
+    <pre><code><span class="k">const</span> original = {
+  name: <span class="s">"Priya"</span>,
+  course: <span class="s">"JavaScript"</span>
+};
+
+<span class="k">const</span> updated = {
+  ...original,
+  course: <span class="s">"React"</span>
+};</code></pre>
+  </div>
+
+  <p>The <code class="inline">updated</code> object contains:</p>
+  <div class="code">
+    <span class="code-label">JS</span>
+    <pre><code>{
+  name: <span class="s">"Priya"</span>,
+  course: <span class="s">"React"</span>
+}</code></pre>
+  </div>
+
+  <p>The original object remains unchanged.</p>
+
+  <div class="warn">
+    <span class="label">Important</span>
+    <p>Object spread creates a <strong>shallow copy</strong>, not a full deep copy. Nested objects need to be copied separately when you update their contents. We will practise that in Topic 8.</p>
+  </div>
+
+  <div class="remember">
+    <span class="label">Remember</span>
+    <p>Do not directly mutate an object or array stored in state. Create an updated value, then pass it to the state setter.</p>
+  </div>
+
+  <div class="tip">"Immutable" sounds intimidating, but it really means one rule: <em>don't change the original; make a copy with your change baked in.</em> Every array and object update in React follows this rule.</div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- TOPIC 5 -->
+<section class="chapter" id="t5">
+  <div class="chapter-head">
+    <div class="chapter-num part">TOPIC<br>05</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">Conditional UI</div>
+      <h2>Conditional Rendering</h2>
+    </div>
+  </div>
+
+  <h3>5.1 What Is Conditional Rendering?</h3>
+  <div class="definition">
+    <span class="label">Simple Definition</span>
+    <p>Conditional rendering means <strong>showing different UI content according to a condition</strong>.</p>
+  </div>
+
+  <p>For example:</p>
+  <ul class="plain">
+    <li>Show a welcome message when a user is logged in.</li>
+    <li>Show an empty-state message when no courses exist.</li>
+    <li>Display a badge if a student is active.</li>
+    <li>Show a warning when a form field is missing.</li>
+    <li>Display different buttons based on a task's completion status.</li>
+  </ul>
+
+  <h3>5.2 Analogy: A Traffic Light</h3>
+  <div class="analogy">
+    <span class="label">Analogy</span>
+    <p>A traffic light displays different signals depending on the current condition.</p>
+    <p>• Red: Stop<br>• Yellow: Prepare<br>• Green: Go</p>
+    <p>Similarly, a React component can display one element when a condition is true and another when it is false.</p>
+  </div>
+
+  <h3>5.3 Method 1: The <code class="inline">if</code> Statement</h3>
+  <p>You can use a normal JavaScript condition before returning JSX.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">LoginMessage</span>() {
+  <span class="k">const</span> isLoggedIn = <span class="k">true</span>;
+
+  <span class="k">if</span> (isLoggedIn) {
+    <span class="k">return</span> &lt;h1&gt;Welcome Back!&lt;/h1&gt;;
+  }
+
+  <span class="k">return</span> &lt;h1&gt;Please Log In&lt;/h1&gt;;
+}
+
+<span class="k">export default</span> LoginMessage;</code></pre>
+  </div>
+  <p>Since <code class="inline">isLoggedIn</code> is <code class="inline">true</code>, the component returns the welcome heading.</p>
+  <p>An <code class="inline">if</code> statement is useful when a component has several possible outputs or when the condition is easier to understand outside JSX.</p>
+
+  <h3>5.4 Method 2: The Ternary Operator</h3>
+  <p>A ternary expression has this form:</p>
+  <div class="code">
+    <span class="code-label">JS</span>
+    <pre><code>condition ? valueIfTrue : valueIfFalse</code></pre>
+  </div>
+
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">AdmissionStatus</span>() {
+  <span class="k">const</span> isAdmitted = <span class="k">false</span>;
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;h2&gt;Admission Status&lt;/h2&gt;
+
+      &lt;p&gt;
+        {isAdmitted ? <span class="s">"Admission Confirmed"</span> : <span class="s">"Admission Pending"</span>}
+      &lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Because <code class="inline">isAdmitted</code> is false, the paragraph displays <code class="inline">Admission Pending</code>.</p>
+  <p>The ternary operator is useful when you want to choose between two values or UI elements inside JSX.</p>
+
+  <h3>5.5 Method 3: Logical AND (<code class="inline">&amp;&amp;</code>)</h3>
+  <p>Sometimes, you want to display an element only when a condition is true.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">Notification</span>() {
+  <span class="k">const</span> hasNotification = <span class="k">true</span>;
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;h1&gt;Student Dashboard&lt;/h1&gt;
+
+      {hasNotification &amp;&amp; (
+        &lt;p&gt;You have a new notification.&lt;/p&gt;
+      )}
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+  <p>When <code class="inline">hasNotification</code> is true, the paragraph appears. When it is false, the condition evaluates to false and the paragraph is not rendered.</p>
+
+  <div class="warn">
+    <span class="label">Watch Out</span>
+    <p>Be careful when using numbers directly with <code class="inline">&amp;&amp;</code>. For instance, <code class="inline">{0 &amp;&amp; &lt;p&gt;Hello&lt;/p&gt;}</code> renders the number <code class="inline">0</code>. For a count-based condition, use an explicit comparison: <code class="inline">{notificationCount &gt; 0 &amp;&amp; &lt;p&gt;You have notifications.&lt;/p&gt;}</code></p>
+  </div>
+
+  <h3>5.6 Method 4: Render Nothing with <code class="inline">null</code></h3>
+  <p>A component can return <code class="inline">null</code> when it should display nothing.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">Warning</span>({ show }) {
+  <span class="k">if</span> (!show) {
+    <span class="k">return</span> <span class="k">null</span>;
+  }
+
+  <span class="k">return</span> &lt;p&gt;Please complete all required fields.&lt;/p&gt;;
+}</code></pre>
+  </div>
+  <p>When <code class="inline">show</code> is false, the component does not render visible content.</p>
+
+  <h3>5.7 Conditional Rendering with State</h3>
+  <p>Conditional rendering becomes especially useful when combined with <code class="inline">useState</code>.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">ToggleMessage</span>() {
+  <span class="k">const</span> [isVisible, setIsVisible] = <span class="f">useState</span>(<span class="k">false</span>);
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;button onClick={() =&gt; <span class="f">setIsVisible</span>(current =&gt; !current)}&gt;
+        {isVisible ? <span class="s">"Hide Message"</span> : <span class="s">"Show Message"</span>}
+      &lt;/button&gt;
+
+      {isVisible &amp;&amp; &lt;p&gt;Hello! Welcome to React.&lt;/p&gt;}
+    &lt;/div&gt;
+  );
+}
+
+<span class="k">export default</span> ToggleMessage;</code></pre>
+  </div>
+
+  <p>Explanation:</p>
+  <ol class="plain">
+    <li>The initial value of <code class="inline">isVisible</code> is false.</li>
+    <li>The message is initially hidden.</li>
+    <li>Clicking the button changes the boolean to its opposite.</li>
+    <li>React renders the updated button text.</li>
+    <li>The paragraph appears or disappears according to the new state.</li>
+  </ol>
+
+  <p>The expression:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>current =&gt; !current</code></pre>
+  </div>
+  <p>returns the opposite boolean value.</p>
+
+  <div class="remember">
+    <span class="label">Remember</span>
+    <p>Use <code class="inline">if</code> for separate rendering paths, a ternary for two alternatives, and <code class="inline">&amp;&amp;</code> when an element should appear only if a condition is true.</p>
+  </div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- TOPIC 6 -->
+<section class="chapter" id="t6">
+  <div class="chapter-head">
+    <div class="chapter-num part">TOPIC<br>06</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">Lists</div>
+      <h2>Rendering Lists with <code>map()</code></h2>
+    </div>
+  </div>
+
+  <h3>6.1 What Is List Rendering?</h3>
+  <div class="definition">
+    <span class="label">Simple Definition</span>
+    <p>List rendering means <strong>using a collection of data to display multiple UI elements</strong>.</p>
+  </div>
+
+  <p>Examples include:</p>
+  <ul class="plain">
+    <li>A list of students</li>
+    <li>A list of available courses</li>
+    <li>A list of products</li>
+    <li>A table of CRM leads</li>
+    <li>A list of tasks or assignments</li>
+  </ul>
+  <p>JavaScript's <code class="inline">map()</code> method is commonly used for this in React.</p>
+
+  <h3>6.2 What Is <code class="inline">map()</code> in JavaScript?</h3>
+  <p>The <code class="inline">map()</code> method creates a new array by calling a function for every element of an existing array.</p>
+  <div class="code">
+    <span class="code-label">JS</span>
+    <pre><code><span class="k">const</span> numbers = [<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>];
+
+<span class="k">const</span> doubled = numbers.<span class="f">map</span>(number =&gt; number * <span class="n">2</span>);
+
+<span class="f">console</span>.log(doubled);</code></pre>
+  </div>
+  <div class="output">
+    <span class="label">Output</span>
+    <pre>[2, 4, 6]</pre>
+  </div>
+  <p>For every number, the function returns double its value.</p>
+  <p>In React, the returned array can contain JSX elements.</p>
+
+  <h3>6.3 Display a List of Names</h3>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">StudentList</span>() {
+  <span class="k">const</span> students = [<span class="s">"Rahul"</span>, <span class="s">"Priya"</span>, <span class="s">"Aarav"</span>];
+
+  <span class="k">return</span> (
+    &lt;ul&gt;
+      {students.<span class="f">map</span>(student =&gt; (
+        &lt;li key={student}&gt;{student}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+
+<span class="k">export default</span> StudentList;</code></pre>
+  </div>
+
+  <div class="output">
+    <span class="label">Output</span>
+    <pre>• Rahul
+• Priya
+• Aarav</pre>
+  </div>
+
+  <h4>Explanation</h4>
+  <p>The expression:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>students.<span class="f">map</span>(student =&gt; (
+  &lt;li key={student}&gt;{student}&lt;/li&gt;
+))</code></pre>
+  </div>
+  <p>runs once for every student in the array.</p>
+  <p>For each name, it returns a list item. The result is an array of JSX elements that React can render inside the <code class="inline">ul</code>.</p>
+  <p>A <code class="inline">key</code> is included because React needs a stable way to identify items in a rendered list. We will explore that in Topic 7.</p>
+
+  <h3>6.4 Display Objects from an Array</h3>
+  <p>In real applications, data usually contains several properties.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">CourseList</span>() {
+  <span class="k">const</span> courses = [
+    { id: <span class="n">1</span>, title: <span class="s">"HTML and CSS"</span>, duration: <span class="s">"1 month"</span> },
+    { id: <span class="n">2</span>, title: <span class="s">"JavaScript"</span>, duration: <span class="s">"2 months"</span> },
+    { id: <span class="n">3</span>, title: <span class="s">"React"</span>, duration: <span class="s">"2 months"</span> }
+  ];
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;h1&gt;Available Courses&lt;/h1&gt;
+
+      {courses.<span class="f">map</span>(course =&gt; (
+        &lt;article key={course.id}&gt;
+          &lt;h2&gt;{course.title}&lt;/h2&gt;
+          &lt;p&gt;Duration: {course.duration}&lt;/p&gt;
+        &lt;/article&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+
+<span class="k">export default</span> CourseList;</code></pre>
+  </div>
+
+  <p>Explanation:</p>
+  <ul class="plain">
+    <li><code class="inline">courses</code> is an array of course objects.</li>
+    <li>Each object contains an <code class="inline">id</code>, <code class="inline">title</code>, and <code class="inline">duration</code>.</li>
+    <li><code class="inline">map()</code> goes through the array.</li>
+    <li>Each course produces an <code class="inline">article</code>.</li>
+    <li>Its values are displayed using JSX expressions.</li>
+    <li><code class="inline">course.id</code> is used as the key.</li>
+  </ul>
+
+  <h3>6.5 Displaying Lists with a Component</h3>
+  <p>You can also render a reusable child component for each item.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">StudentCard</span>({ name, course }) {
+  <span class="k">return</span> (
+    &lt;article&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;Course: {course}&lt;/p&gt;
+    &lt;/article&gt;
+  );
+}
+
+<span class="k">function</span> <span class="t">StudentList</span>() {
+  <span class="k">const</span> students = [
+    { id: <span class="n">1</span>, name: <span class="s">"Rahul"</span>, course: <span class="s">"React"</span> },
+    { id: <span class="n">2</span>, name: <span class="s">"Priya"</span>, course: <span class="s">"JavaScript"</span> }
+  ];
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      {students.<span class="f">map</span>(student =&gt; (
+        &lt;<span class="t">StudentCard</span>
+          key={student.id}
+          name={student.name}
+          course={student.course}
+        /&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+
+<span class="k">export default</span> StudentList;</code></pre>
+  </div>
+
+  <p>This combines the Phase 1 topics of components and props with the Phase 2 topic of list rendering.</p>
+  <p>React renders one <code class="inline">StudentCard</code> for each item, and the props customize each card.</p>
+
+  <div class="remember">
+    <span class="label">Remember</span>
+    <p><code class="inline">map()</code> transforms each item in an array into a new value. In React, that value is often JSX describing an element or a component instance.</p>
+  </div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- TOPIC 7 -->
+<section class="chapter" id="t7">
+  <div class="chapter-head">
+    <div class="chapter-num part">TOPIC<br>07</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">Lists</div>
+      <h2>Keys and Stable Identity</h2>
+    </div>
+  </div>
+
+  <h3>7.1 What Is a Key in React?</h3>
+  <div class="definition">
+    <span class="label">Simple Definition</span>
+    <p>A key is a special value that helps React <strong>identify an element within a list of sibling elements</strong>.</p>
+  </div>
+
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> students = [
+  { id: <span class="n">101</span>, name: <span class="s">"Rahul"</span> },
+  { id: <span class="n">102</span>, name: <span class="s">"Priya"</span> }
+];
+
+<span class="k">function</span> <span class="t">StudentList</span>() {
+  <span class="k">return</span> (
+    &lt;ul&gt;
+      {students.<span class="f">map</span>(student =&gt; (
+        &lt;li key={student.id}&gt;
+          {student.name}
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}</code></pre>
+  </div>
+  <p>Here, each list item uses the student's unique ID as its key.</p>
+
+  <h3>7.2 Why Does React Need Keys?</h3>
+  <p>Imagine a list containing:</p>
+  <div class="output">
+    <span class="label">List</span>
+    <pre>Rahul
+Priya
+Aarav</pre>
+  </div>
+  <p>Suppose Priya is removed.</p>
+  <p>React needs to recognize which data item was removed and how the remaining items correspond to the previous render.</p>
+  <p>Keys provide that identity information.</p>
+  <p>Without good keys, React may have trouble matching items correctly when elements are inserted, deleted, or rearranged.</p>
+
+  <h3>7.3 Analogy: Student Roll Numbers</h3>
+  <div class="analogy">
+    <span class="label">Analogy</span>
+    <p>Imagine an institute with hundreds of students.</p>
+    <p>If you identify students only by their current position in a list, a student can move from position three to position two when someone leaves.</p>
+    <p>A roll number identifies the student independently of their position.</p>
+    <p>React list keys serve a similar purpose.</p>
+  </div>
+
+  <h3>7.4 What Makes a Good Key?</h3>
+  <p>A good key should be:</p>
+  <ul class="plain">
+    <li>Unique among sibling elements.</li>
+    <li>Stable across renders.</li>
+    <li>Associated with the actual data item.</li>
+  </ul>
+  <p>For data from a database, the record's unique ID is usually a good choice.</p>
+  <p>For locally created items, an ID can be generated when the item is created and then stored with it.</p>
+
+  <h3>7.5 Why Is <code class="inline">key={index}</code> Often a Bad Choice?</h3>
+  <p>Consider:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>{students.<span class="f">map</span>((student, index) =&gt; (
+  &lt;li key={index}&gt;{student.name}&lt;/li&gt;
+))}</code></pre>
+  </div>
+
+  <p>This uses an item's <strong>current position</strong> as its identity.</p>
+  <p>If items are added, removed, or reordered, their indexes can change. That can cause React to associate a rendered item with the wrong identity, particularly when list elements contain local state or user input.</p>
+  <p>Index keys can be acceptable for a truly static list that will not be reordered, inserted into, or deleted from. For lists that change, a stable data ID is usually preferable.</p>
+
+  <h3>7.6 Do Not Generate Keys During Rendering</h3>
+  <p><strong>Avoid this:</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>{students.<span class="f">map</span>(student =&gt; (
+  &lt;li key={<span class="f">Math.random</span>()}&gt;{student.name}&lt;/li&gt;
+))}</code></pre>
+  </div>
+
+  <p>The generated key changes every time the list renders. React then sees items as different elements rather than continuing identities, potentially recreating DOM elements and losing input state.</p>
+  <p>Generate an ID <strong>when the item is created</strong>, not every time it is rendered.</p>
+
+  <h3>7.7 Is <code class="inline">key</code> Passed as a Normal Prop?</h3>
+  <p><strong>No.</strong> React uses <code class="inline">key</code> for its internal reconciliation process.</p>
+  <p>If the child component needs to use the ID, pass it as a <strong>separate prop</strong>:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;<span class="t">StudentCard</span>
+  key={student.id}
+  studentId={student.id}
+  name={student.name}
+/&gt;</code></pre>
+  </div>
+  <p><code class="inline">key</code> identifies the list element to React. <code class="inline">studentId</code> is an ordinary prop that the component can read.</p>
+
+  <div class="remember">
+    <span class="label">Remember</span>
+    <p>Keys help React match list items between renders. Use stable IDs when available, especially for dynamic lists.</p>
+  </div>
+
+  <div class="tip">A useful thought experiment: if you delete the second item and the third item's input value suddenly appears in the second row, your keys are wrong. That is the exact bug index-keys cause.</div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- TOPIC 8 -->
+<section class="chapter" id="t8">
+  <div class="chapter-head">
+    <div class="chapter-num part">TOPIC<br>08</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">State Updates</div>
+      <h2>Updating Objects in State</h2>
+    </div>
+  </div>
+
+  <h3>8.1 Can State Contain an Object?</h3>
+  <div class="definition">
+    <span class="label">Simple Definition</span>
+    <p>Yes. React state can contain any kind of JavaScript value, including objects.</p>
+  </div>
+
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [student, setStudent] = <span class="f">useState</span>({
+  name: <span class="s">"Rahul"</span>,
+  age: <span class="n">21</span>,
+  city: <span class="s">"Rajkot"</span>
+});</code></pre>
+  </div>
+  <p>This single state variable stores information about a student.</p>
+
+  <h3>8.2 Why Would We Store an Object in State?</h3>
+  <p>Imagine a student profile form.</p>
+  <p>A student has a name, age, city, and course. These values describe one entity, so an object is a natural way to organize them.</p>
+  <p>Using an object can also make it convenient to pass related properties together.</p>
+
+  <h3>8.3 Updating One Property</h3>
+  <p>Suppose you want to change the city while preserving the student's name and age.</p>
+  <p>The recommended pattern is:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="f">setStudent</span>(currentStudent =&gt; ({
+  ...currentStudent,
+  city: <span class="s">"Ahmedabad"</span>
+}));</code></pre>
+  </div>
+
+  <p>This:</p>
+  <ol class="plain">
+    <li>Reads the previous object.</li>
+    <li>Copies its existing properties.</li>
+    <li>Replaces <code class="inline">city</code> with the new value.</li>
+    <li>Passes the new object to the setter.</li>
+  </ol>
+
+  <h3>8.4 Complete Example</h3>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">StudentProfile</span>() {
+  <span class="k">const</span> [student, setStudent] = <span class="f">useState</span>({
+    name: <span class="s">"Rahul"</span>,
+    age: <span class="n">21</span>,
+    city: <span class="s">"Rajkot"</span>
+  });
+
+  <span class="k">function</span> <span class="t">changeCity</span>() {
+    <span class="f">setStudent</span>(currentStudent =&gt; ({
+      ...currentStudent,
+      city: <span class="s">"Ahmedabad"</span>
+    }));
+  }
+
+  <span class="k">function</span> <span class="t">increaseAge</span>() {
+    <span class="f">setStudent</span>(currentStudent =&gt; ({
+      ...currentStudent,
+      age: currentStudent.age + <span class="n">1</span>
+    }));
+  }
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;h2&gt;{student.name}&lt;/h2&gt;
+      &lt;p&gt;Age: {student.age}&lt;/p&gt;
+      &lt;p&gt;City: {student.city}&lt;/p&gt;
+
+      &lt;button onClick={<span class="t">changeCity</span>}&gt;
+        Change City
+      &lt;/button&gt;
+
+      &lt;button onClick={<span class="t">increaseAge</span>}&gt;
+        Increase Age
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="k">export default</span> StudentProfile;</code></pre>
+  </div>
+
+  <p>Both buttons update the state object immutably.</p>
+  <p>When the city changes, the name and age remain the same. When the age changes, the name and city remain the same.</p>
+
+  <h3>8.5 Updating a Nested Object</h3>
+  <p>Consider a state object containing another object:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [student, setStudent] = <span class="f">useState</span>({
+  name: <span class="s">"Priya"</span>,
+  address: {
+    city: <span class="s">"Rajkot"</span>,
+    state: <span class="s">"Gujarat"</span>
+  }
+});</code></pre>
+  </div>
+
+  <p>Suppose you want to change the city inside <code class="inline">address</code>.</p>
+  <p>You must create a <strong>new <code class="inline">address</code> object</strong> and a <strong>new outer <code class="inline">student</code> object</strong>.</p>
+
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="f">setStudent</span>(currentStudent =&gt; ({
+  ...currentStudent,
+  address: {
+    ...currentStudent.address,
+    city: <span class="s">"Ahmedabad"</span>
+  }
+}));</code></pre>
+  </div>
+
+  <h4>Why Are Two Copies Needed?</h4>
+  <p>Object spread only creates a <strong>shallow copy</strong>. Copying the outer object does not automatically create a new copy of every nested object.</p>
+  <p>The nested <code class="inline">address</code> object must also be copied because one of its properties is being changed.</p>
+  <p>This principle applies at every level of a nested structure that you need to update.</p>
+
+  <div class="remember">
+    <span class="label">Remember</span>
+    <p>When updating state objects, copy the existing properties, replace the specific value, and submit the new object through the setter. For nested objects, copy <strong>each level</strong> that you need to change.</p>
+  </div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- TOPIC 9 -->
+<section class="chapter" id="t9">
+  <div class="chapter-head">
+    <div class="chapter-num part">TOPIC<br>09</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">State Updates</div>
+      <h2>Updating Arrays in State</h2>
+    </div>
+  </div>
+
+  <h3>9.1 Why Do We Use Arrays in State?</h3>
+  <p>Arrays are useful for storing collections that change over time.</p>
+  <p>Examples include:</p>
+  <ul class="plain">
+    <li>Student records</li>
+    <li>Tasks</li>
+    <li>Selected courses</li>
+    <li>Shopping cart items</li>
+    <li>Notifications</li>
+    <li>Form entries</li>
+  </ul>
+  <p>When the collection changes, the component may need to render the new list.</p>
+
+  <h3>9.2 Creating an Array in State</h3>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">CourseList</span>() {
+  <span class="k">const</span> [courses, setCourses] = <span class="f">useState</span>([
+    <span class="s">"HTML"</span>,
+    <span class="s">"CSS"</span>,
+    <span class="s">"JavaScript"</span>
+  ]);
+
+  <span class="k">return</span> (
+    &lt;ul&gt;
+      {courses.<span class="f">map</span>(course =&gt; (
+        &lt;li key={course}&gt;{course}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}</code></pre>
+  </div>
+  <p>The array is held in state and transformed into list items using <code class="inline">map()</code>.</p>
+
+  <h3>9.3 Adding an Item</h3>
+  <p>When adding an item, create a new array.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="f">setCourses</span>(currentCourses =&gt; [
+  ...currentCourses,
+  <span class="s">"React"</span>
+]);</code></pre>
+  </div>
+  <p>The spread syntax copies the existing items into a new array and adds <code class="inline">"React"</code> at the end.</p>
+  <p>Avoid changing the original state array with <code class="inline">push()</code>.</p>
+
+  <p><strong>Incorrect:</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>courses.<span class="f">push</span>(<span class="s">"React"</span>);
+<span class="f">setCourses</span>(courses);</code></pre>
+  </div>
+  <p>This directly mutates the existing array and passes the same array reference to the setter.</p>
+
+  <p><strong>Correct:</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="f">setCourses</span>(currentCourses =&gt; [
+  ...currentCourses,
+  <span class="s">"React"</span>
+]);</code></pre>
+  </div>
+
+  <h3>9.4 Removing an Item</h3>
+  <p>Use <code class="inline">filter()</code> to create a new array containing only the items you want to keep.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="f">setCourses</span>(currentCourses =&gt;
+  currentCourses.<span class="f">filter</span>(course =&gt; course !== <span class="s">"CSS"</span>)
+);</code></pre>
+  </div>
+  <p>Every course except <code class="inline">"CSS"</code> remains in the new array.</p>
+
+  <h3>9.5 Updating an Item</h3>
+  <p>Use <code class="inline">map()</code> when you want to replace one or more items based on a condition.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="f">setCourses</span>(currentCourses =&gt;
+  currentCourses.<span class="f">map</span>(course =&gt;
+    course === <span class="s">"CSS"</span> ? <span class="s">"Advanced CSS"</span> : course
+  )
+);</code></pre>
+  </div>
+  <p>The expression checks each course:</p>
+  <ul class="plain">
+    <li>If it is <code class="inline">"CSS"</code>, the new item becomes <code class="inline">"Advanced CSS"</code>.</li>
+    <li>Otherwise, the original value is returned.</li>
+  </ul>
+  <p>The new array contains all the items, with the chosen item updated.</p>
+
+  <h3>9.6 Complete Example: Course Management</h3>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">CourseManager</span>() {
+  <span class="k">const</span> [courses, setCourses] = <span class="f">useState</span>([
+    <span class="s">"HTML"</span>,
+    <span class="s">"CSS"</span>,
+    <span class="s">"JavaScript"</span>
+  ]);
+
+  <span class="k">function</span> <span class="t">addCourse</span>() {
+    <span class="f">setCourses</span>(currentCourses =&gt; [
+      ...currentCourses,
+      <span class="s">"React"</span>
+    ]);
+  }
+
+  <span class="k">function</span> <span class="t">removeCSS</span>() {
+    <span class="f">setCourses</span>(currentCourses =&gt;
+      currentCourses.<span class="f">filter</span>(course =&gt; course !== <span class="s">"CSS"</span>)
+    );
+  }
+
+  <span class="k">function</span> <span class="t">renameJavaScript</span>() {
+    <span class="f">setCourses</span>(currentCourses =&gt;
+      currentCourses.<span class="f">map</span>(course =&gt;
+        course === <span class="s">"JavaScript"</span> ? <span class="s">"JavaScript Advanced"</span> : course
+      )
+    );
+  }
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;h2&gt;Courses&lt;/h2&gt;
+
+      &lt;ul&gt;
+        {courses.<span class="f">map</span>(course =&gt; (
+          &lt;li key={course}&gt;{course}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+
+      &lt;button onClick={<span class="t">addCourse</span>}&gt;Add React&lt;/button&gt;
+      &lt;button onClick={<span class="t">removeCSS</span>}&gt;Remove CSS&lt;/button&gt;
+      &lt;button onClick={<span class="t">renameJavaScript</span>}&gt;Rename JavaScript&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="k">export default</span> CourseManager;</code></pre>
+  </div>
+
+  <p>This component demonstrates three different array operations:</p>
+  <ul class="plain">
+    <li><strong>Add</strong> with spread syntax.</li>
+    <li><strong>Remove</strong> with <code class="inline">filter()</code>.</li>
+    <li><strong>Update</strong> with <code class="inline">map()</code>.</li>
+  </ul>
+
+  <div class="warn">
+    <span class="label">Note</span>
+    <p>The example is intended for learning. In a real application, courses would have unique IDs, because titles can be duplicated or changed. For a dynamic list, those IDs should be used as the keys instead of course names.</p>
+  </div>
+
+  <h3>9.7 Quick Reference</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th>Operation</th><th>Recommended approach</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Add an item</td><td>Spread syntax: <code>[...items, newItem]</code></td></tr>
+      <tr><td>Remove an item</td><td><code>filter()</code></td></tr>
+      <tr><td>Update an item</td><td><code>map()</code></td></tr>
+      <tr><td>Replace the entire array</td><td>Pass a new array to the setter</td></tr>
+      <tr><td>Modify the existing array directly</td><td>Avoid mutating methods such as <code>push()</code> on state</td></tr>
+    </tbody>
+  </table>
+
+  <div class="remember">
+    <span class="label">Remember</span>
+    <p>Treat arrays stored in state as read-only. Use methods that <strong>return new arrays</strong>, then call the state setter.</p>
+  </div>
+
+  <div class="tip">Three verbs, three tools. <strong>Add</strong> → spread. <strong>Remove</strong> → filter. <strong>Update</strong> → map. If you remember only this, you can handle almost any state array you'll ever meet.</div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- TOPIC 10 -->
+<section class="chapter" id="t10">
+  <div class="chapter-head">
+    <div class="chapter-num part">TOPIC<br>10</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">Coordination</div>
+      <h2>Lifting State Up</h2>
+    </div>
+  </div>
+
+  <h3>10.1 What Is Lifting State Up?</h3>
+  <div class="definition">
+    <span class="label">Simple Definition</span>
+    <p>Lifting state up means <strong>moving state from a child component into the closest common parent component</strong> when multiple components need to share or coordinate that information.</p>
+  </div>
+
+  <p>Once the parent owns the state, it can pass the current value down through props and pass handler functions down so child components can request updates.</p>
+
+  <h3>10.2 Why Do We Need It?</h3>
+  <p>Imagine a course dashboard with two components:</p>
+  <ul class="plain">
+    <li>A search input</li>
+    <li>A course list</li>
+  </ul>
+
+  <p>The search input needs to tell the application what the user is searching for. The course list needs that search value so it can display the correct courses.</p>
+  <p>If the search value is stored only inside the input component, the course list does not automatically have access to it.</p>
+  <p>Moving the search state to a common parent lets both components work with the same information.</p>
+
+  <h3>10.3 Analogy: A Manager Coordinating a Team</h3>
+  <div class="analogy">
+    <span class="label">Analogy</span>
+    <p>Imagine a manager responsible for a team.</p>
+    <p>The manager keeps the current task status and communicates relevant information to different team members.</p>
+    <p>Similarly, a parent component can own a piece of state and pass the value and update functions to child components.</p>
+    <p>The children do not need separate copies of the same shared state.</p>
+  </div>
+
+  <h3>10.4 Example: Two Components Showing the Same Name</h3>
+  <p>First, we create a child component for an input.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">NameInput</span>({ name, onNameChange }) {
+  <span class="k">return</span> (
+    &lt;input
+      value={name}
+      onChange={event =&gt; <span class="f">onNameChange</span>(event.target.value)}
+    /&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Another component displays the name.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">NameDisplay</span>({ name }) {
+  <span class="k">return</span> &lt;h2&gt;Hello, {name}&lt;/h2&gt;;
+}</code></pre>
+  </div>
+
+  <p>The parent keeps the shared state:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">App</span>() {
+  <span class="k">const</span> [name, setName] = <span class="f">useState</span>(<span class="s">"Rahul"</span>);
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;<span class="t">NameInput</span> name={name} onNameChange={setName} /&gt;
+      &lt;<span class="t">NameDisplay</span> name={name} /&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="k">export default</span> App;</code></pre>
+  </div>
+
+  <h4>What Happens Here?</h4>
+  <ol class="plain">
+    <li><code class="inline">App</code> owns the <code class="inline">name</code> state.</li>
+    <li><code class="inline">App</code> passes <code class="inline">name</code> to <code class="inline">NameInput</code>.</li>
+    <li>It also passes <code class="inline">setName</code> as <code class="inline">onNameChange</code>.</li>
+    <li>When the input changes, the child calls the handler with the updated string.</li>
+    <li>The parent updates the state.</li>
+    <li>React renders the parent and its children with the new name.</li>
+    <li>The input and heading display the same value.</li>
+  </ol>
+
+  <p>The data flows down through props, while the child invokes a callback to request an update.</p>
+
+  <h3>10.5 What If Each Child Keeps Its Own State?</h3>
+  <p>If the input stores its own name and the display separately stores its own name, they can get out of sync.</p>
+  <p>Lifting the state to the parent creates a <strong>single source of truth</strong> for the shared name.</p>
+  <p>This does not mean all state in a React application belongs at the top. State should normally live in the <strong>closest component that needs to own or coordinate it</strong>.</p>
+
+  <div class="remember">
+    <span class="label">Remember</span>
+    <p>Lift state up when components need to share or coordinate the same information. Keep the shared state in their closest common parent, then pass the value and necessary handlers through props.</p>
+  </div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- TOPIC 11 -->
+<section class="chapter" id="t11">
+  <div class="chapter-head">
+    <div class="chapter-num part">TOPIC<br>11</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">Forms</div>
+      <h2>Controlled Inputs</h2>
+    </div>
+  </div>
+
+  <h3>11.1 What Is a Controlled Input?</h3>
+  <div class="definition">
+    <span class="label">Simple Definition</span>
+    <p>A controlled input is an input element whose displayed value is <strong>controlled by React state</strong>.</p>
+  </div>
+
+  <p>For a text input, the common pattern is:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;input
+  value={name}
+  onChange={event =&gt; <span class="f">setName</span>(event.target.value)}
+/&gt;</code></pre>
+  </div>
+
+  <p>The <code class="inline">value</code> prop defines what the input displays. The <code class="inline">onChange</code> handler updates the state as the user types.</p>
+
+  <h3>11.2 Analogy: A Form Connected to a Dashboard</h3>
+  <div class="analogy">
+    <span class="label">Analogy</span>
+    <p>Imagine a control panel where every change you make is immediately reflected in its displayed values.</p>
+    <p>A controlled input works similarly:</p>
+    <p>• React state stores the current input value.<br>• The input displays that value.<br>• A user edit triggers <code class="inline">onChange</code>.<br>• The handler requests a state update.<br>• React renders the latest value into the input.</p>
+  </div>
+
+  <h3>11.3 Create a Controlled Name Input</h3>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">NameForm</span>() {
+  <span class="k">const</span> [name, setName] = <span class="f">useState</span>(<span class="s">""</span>);
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;label htmlFor=<span class="s">"student-name"</span>&gt;Student Name&lt;/label&gt;
+
+      &lt;input
+        id=<span class="s">"student-name"</span>
+        type=<span class="s">"text"</span>
+        value={name}
+        onChange={event =&gt; <span class="f">setName</span>(event.target.value)}
+        placeholder=<span class="s">"Enter your name"</span>
+      /&gt;
+
+      &lt;p&gt;Entered name: {name}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="k">export default</span> NameForm;</code></pre>
+  </div>
+
+  <h4>Explanation</h4>
+  <p><strong>Initial state</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [name, setName] = <span class="f">useState</span>(<span class="s">""</span>);</code></pre>
+  </div>
+  <p>The input begins with an empty string.</p>
+
+  <p><strong>Controlled value</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>value={name}</code></pre>
+  </div>
+  <p>The input displays the current value of the state variable.</p>
+
+  <p><strong>Update the value</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>onChange={event =&gt; <span class="f">setName</span>(event.target.value)}</code></pre>
+  </div>
+  <p>When the user edits the input, the event handler requests a state update with the new input value.</p>
+
+  <p><strong>Display the state</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;p&gt;Entered name: {name}&lt;/p&gt;</code></pre>
+  </div>
+  <p>The paragraph shows the same state that controls the input.</p>
+
+  <h3>11.4 Controlled Textareas</h3>
+  <p>The same pattern works with a <code class="inline">textarea</code>.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">FeedbackForm</span>() {
+  <span class="k">const</span> [feedback, setFeedback] = <span class="f">useState</span>(<span class="s">""</span>);
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;label htmlFor=<span class="s">"feedback"</span>&gt;Your Feedback&lt;/label&gt;
+
+      &lt;textarea
+        id=<span class="s">"feedback"</span>
+        value={feedback}
+        onChange={event =&gt; <span class="f">setFeedback</span>(event.target.value)}
+      /&gt;
+
+      &lt;p&gt;Characters entered: {feedback.length}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+  <p>Here, the paragraph displays a calculated value based on the current state.</p>
+
+  <h3>11.5 Controlled Select Inputs</h3>
+  <p>A select input can also be controlled with state.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">CourseSelect</span>() {
+  <span class="k">const</span> [course, setCourse] = <span class="f">useState</span>(<span class="s">"React"</span>);
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;label htmlFor=<span class="s">"course"</span>&gt;Choose a course&lt;/label&gt;
+
+      &lt;select
+        id=<span class="s">"course"</span>
+        value={course}
+        onChange={event =&gt; <span class="f">setCourse</span>(event.target.value)}
+      &gt;
+        &lt;option value=<span class="s">"React"</span>&gt;React&lt;/option&gt;
+        &lt;option value=<span class="s">"JavaScript"</span>&gt;JavaScript&lt;/option&gt;
+        &lt;option value=<span class="s">"Node.js"</span>&gt;Node.js&lt;/option&gt;
+      &lt;/select&gt;
+
+      &lt;p&gt;Selected course: {course}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+  <p>The selected option is reflected in the <code class="inline">course</code> state.</p>
+
+  <h3>11.6 Handling a Form Submission</h3>
+  <p>A controlled input often appears inside a form.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">StudentForm</span>() {
+  <span class="k">const</span> [name, setName] = <span class="f">useState</span>(<span class="s">""</span>);
+
+  <span class="k">function</span> <span class="t">handleSubmit</span>(event) {
+    event.<span class="f">preventDefault</span>();
+
+    <span class="f">alert</span>(`Welcome, ${name}!`);
+  }
+
+  <span class="k">return</span> (
+    &lt;form onSubmit={<span class="t">handleSubmit</span>}&gt;
+      &lt;label htmlFor=<span class="s">"name"</span>&gt;Name&lt;/label&gt;
+
+      &lt;input
+        id=<span class="s">"name"</span>
+        value={name}
+        onChange={event =&gt; <span class="f">setName</span>(event.target.value)}
+      /&gt;
+
+      &lt;button type=<span class="s">"submit"</span>&gt;Submit&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}
+
+<span class="k">export default</span> StudentForm;</code></pre>
+  </div>
+
+  <p>The form's input is connected to state. When it is submitted, the handler reads the current value of <code class="inline">name</code>.</p>
+  <p>For this simple example, the form displays an alert. A real application might validate the value and send it to a backend service.</p>
+
+  <h3>11.7 Common Mistake: Forgetting <code class="inline">onChange</code></h3>
+  <p>Consider this:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;input value={name} /&gt;</code></pre>
+  </div>
+  <p>When an input is controlled by a fixed value without an appropriate update handler, the user cannot normally change the displayed value through typing.</p>
+
+  <p>A regular controlled text input should usually provide both:</p>
+  <ul class="plain">
+    <li><code class="inline">value</code></li>
+    <li><code class="inline">onChange</code></li>
+  </ul>
+
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;input
+  value={name}
+  onChange={event =&gt; <span class="f">setName</span>(event.target.value)}
+/&gt;</code></pre>
+  </div>
+
+  <div class="remember">
+    <span class="label">Remember</span>
+    <p>A controlled input displays a value from React state and updates that state through an event handler. This gives the application control over the input's current value.</p>
+  </div>
+
+  <div class="tip">If your input feels "frozen" and typing does nothing, the first thing to check is: <em>do I have both <code class="inline">value</code> and <code class="inline">onChange</code>?</em> Nine times out of ten, that's the bug.</div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- TOPIC 12 -->
+<section class="chapter" id="t12">
+  <div class="chapter-head">
+    <div class="chapter-num part">TOPIC<br>12</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">Coordination</div>
+      <h2>Sharing Data Between Components</h2>
+    </div>
+  </div>
+
+  <p>Lifting state up and sharing data between components are closely related, but sharing data can involve more than just a single input and display.</p>
+
+  <p>A parent component might share:</p>
+  <ul class="plain">
+    <li>A selected student</li>
+    <li>A list of tasks</li>
+    <li>A search term</li>
+    <li>A selected course</li>
+    <li>Functions for updating or deleting records</li>
+  </ul>
+
+  <h3>12.1 Data Usually Flows Down; Update Requests Can Flow Up</h3>
+  <p>Consider this component structure:</p>
+  <div class="tree"><span class="accent">App</span>
+├── SearchInput
+├── CourseList
+└── CourseSummary</div>
+
+  <p>If <code class="inline">App</code> owns the search term, it can pass the value to <code class="inline">SearchInput</code>, <code class="inline">CourseList</code>, and <code class="inline">CourseSummary</code>.</p>
+  <p>It can also pass functions to the child components.</p>
+
+  <div class="tree">              <span class="accent">App</span>
+       (owns search state)
+          /      |      \
+         v       v       v
+   SearchInput CourseList Summary
+         |
+         | calls a supplied handler
+         v
+   Parent updates its state</div>
+
+  <p>This is the normal parent-and-child pattern in React.</p>
+
+  <h3>12.2 Example: A Search Input and Course List</h3>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+
+<span class="k">function</span> <span class="t">SearchInput</span>({ searchTerm, onSearchChange }) {
+  <span class="k">return</span> (
+    &lt;input
+      value={searchTerm}
+      onChange={event =&gt; <span class="f">onSearchChange</span>(event.target.value)}
+      placeholder=<span class="s">"Search courses"</span>
+    /&gt;
+  );
+}
+
+<span class="k">function</span> <span class="t">CourseList</span>({ courses, searchTerm }) {
+  <span class="k">const</span> filteredCourses = courses.<span class="f">filter</span>(course =&gt;
+    course.<span class="f">toLowerCase</span>().<span class="f">includes</span>(searchTerm.<span class="f">toLowerCase</span>())
+  );
+
+  <span class="k">return</span> (
+    &lt;ul&gt;
+      {filteredCourses.<span class="f">map</span>(course =&gt; (
+        &lt;li key={course}&gt;{course}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+
+<span class="k">function</span> <span class="t">App</span>() {
+  <span class="k">const</span> [searchTerm, setSearchTerm] = <span class="f">useState</span>(<span class="s">""</span>);
+
+  <span class="k">const</span> courses = [
+    <span class="s">"React"</span>,
+    <span class="s">"JavaScript"</span>,
+    <span class="s">"Node.js"</span>,
+    <span class="s">"MongoDB"</span>
+  ];
+
+  <span class="k">return</span> (
+    &lt;main&gt;
+      &lt;h1&gt;Course Directory&lt;/h1&gt;
+
+      &lt;<span class="t">SearchInput</span>
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+      /&gt;
+
+      &lt;<span class="t">CourseList</span>
+        courses={courses}
+        searchTerm={searchTerm}
+      /&gt;
+    &lt;/main&gt;
+  );
+}
+
+<span class="k">export default</span> App;</code></pre>
+  </div>
+
+  <h4>Explanation</h4>
+  <p><strong>The parent owns the search state.</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [searchTerm, setSearchTerm] = <span class="f">useState</span>(<span class="s">""</span>);</code></pre>
+  </div>
+  <p>This gives the application one source of truth for the current search term.</p>
+
+  <p><strong>The input receives its value and handler.</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;<span class="t">SearchInput</span>
+  searchTerm={searchTerm}
+  onSearchChange={setSearchTerm}
+/&gt;</code></pre>
+  </div>
+  <p>When the user types, <code class="inline">SearchInput</code> calls the supplied function, allowing the parent to update the state.</p>
+
+  <p><strong>The list receives the same term.</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;<span class="t">CourseList</span>
+  courses={courses}
+  searchTerm={searchTerm}
+/&gt;</code></pre>
+  </div>
+  <p>The list filters its data based on that shared value. As the term changes, the component renders the results that match the new term.</p>
+  <p>This example includes derived data, which will be explained more fully in Topic 13.</p>
+
+  <h3>12.3 Sharing a Handler Through Props</h3>
+  <p>A handler can be passed through several components when the UI structure requires it.</p>
+  <p>For example, a parent may provide:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;<span class="t">DeleteButton</span> onDelete={<span class="t">handleDelete</span>} /&gt;</code></pre>
+  </div>
+
+  <p>The child can invoke that callback when the user interacts with its button:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">DeleteButton</span>({ onDelete }) {
+  <span class="k">return</span> (
+    &lt;button onClick={onDelete}&gt;
+      Delete
+    &lt;/button&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The child does not need direct access to the parent's state. It invokes the function supplied by the parent.</p>
+  <p>This approach lets the parent decide how deletion should be handled.</p>
+
+  <h3>12.4 Why Is One Source of Truth Important?</h3>
+  <p>Imagine storing the same selected course independently in three different components.</p>
+  <p>Each component might change its own value without updating the other copies.</p>
+  <p>This can make the interface inconsistent.</p>
+  <p>A shared source of truth avoids that problem. The appropriate parent stores the value and distributes it to the components that need it.</p>
+
+  <div class="remember">
+    <span class="label">Remember</span>
+    <p>Share <strong>values</strong> through props and share <strong>update behavior</strong> through callbacks. The component that owns the state controls how those values change.</p>
+  </div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- TOPIC 13 -->
+<section class="chapter" id="t13">
+  <div class="chapter-head">
+    <div class="chapter-num part">TOPIC<br>13</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">State Design</div>
+      <h2>Derived State and Avoiding Redundant State</h2>
+    </div>
+  </div>
+
+  <h3>13.1 What Is Derived State?</h3>
+  <div class="definition">
+    <span class="label">Simple Definition</span>
+    <p>Derived state is information that can be <strong>calculated from existing props or state</strong>.</p>
+  </div>
+
+  <p>For example:</p>
+  <ul class="plain">
+    <li>The number of completed tasks</li>
+    <li>The number of active students</li>
+    <li>A filtered list of courses</li>
+    <li>The total price of items in a cart</li>
+    <li>The full name formed from a first name and last name</li>
+  </ul>
+
+  <p>When such information can be calculated directly from values that already exist, it often does not need its own state variable.</p>
+
+  <h3>13.2 Analogy: Calculating a Shopping Bill</h3>
+  <div class="analogy">
+    <span class="label">Analogy</span>
+    <p>Imagine a shopping cart containing:</p>
+    <p>• Notebook — ₹50<br>• Pen — ₹20<br>• Bag — ₹500</p>
+    <p>The total is ₹570.</p>
+    <p>You do not need to separately maintain an unrelated total value if you can calculate it from the current items.</p>
+    <p>The same principle applies to a React component.</p>
+  </div>
+
+  <h3>13.3 Example: Full Name</h3>
+  <p>A student has a first name and a last name.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">function</span> <span class="t">Student</span>() {
+  <span class="k">const</span> firstName = <span class="s">"Rahul"</span>;
+  <span class="k">const</span> lastName = <span class="s">"Sharma"</span>;
+
+  <span class="k">const</span> fullName = `${firstName} ${lastName}`;
+
+  <span class="k">return</span> &lt;h1&gt;{fullName}&lt;/h1&gt;;
+}</code></pre>
+  </div>
+  <p><code class="inline">fullName</code> is calculated from two existing variables. It does not require a separate <code class="inline">useState</code> call.</p>
+
+  <h3>13.4 Avoid Duplicating State</h3>
+  <p>Consider a task list:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [tasks, setTasks] = <span class="f">useState</span>([
+  { id: <span class="n">1</span>, title: <span class="s">"Learn JSX"</span>, completed: <span class="k">true</span> },
+  { id: <span class="n">2</span>, title: <span class="s">"Learn useState"</span>, completed: <span class="k">false</span> },
+  { id: <span class="n">3</span>, title: <span class="s">"Practise events"</span>, completed: <span class="k">false</span> }
+]);</code></pre>
+  </div>
+
+  <p>Suppose you also want to track the number of completed tasks.</p>
+  <p>A redundant approach would be to store both the task list and a separate <code class="inline">completedCount</code> state variable, then update both every time a task is completed or removed.</p>
+  <p>This is unnecessary for a simple calculation.</p>
+
+  <p>Instead, calculate the count:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> completedCount = tasks.<span class="f">filter</span>(task =&gt; task.completed).length;</code></pre>
+  </div>
+
+  <p>Explanation:</p>
+  <ol class="plain">
+    <li><code class="inline">filter()</code> selects the tasks whose <code class="inline">completed</code> property is true.</li>
+    <li><code class="inline">.length</code> counts the selected tasks.</li>
+    <li><code class="inline">completedCount</code> stores the result of this calculation for the current render.</li>
+  </ol>
+
+  <p>Display it:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;p&gt;Completed tasks: {completedCount}&lt;/p&gt;</code></pre>
+  </div>
+  <p>When <code class="inline">tasks</code> changes and the component renders again, <code class="inline">completedCount</code> is recalculated.</p>
+
+  <h3>13.5 Derived Lists</h3>
+  <p>A filtered list is another example of derived data.</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [filter, setFilter] = <span class="f">useState</span>(<span class="s">"all"</span>);
+
+<span class="k">const</span> visibleTasks = tasks.<span class="f">filter</span>(task =&gt; {
+  <span class="k">if</span> (filter === <span class="s">"active"</span>) {
+    <span class="k">return</span> !task.completed;
+  }
+
+  <span class="k">if</span> (filter === <span class="s">"completed"</span>) {
+    <span class="k">return</span> task.completed;
+  }
+
+  <span class="k">return</span> <span class="k">true</span>;
+});</code></pre>
+  </div>
+
+  <p>Here:</p>
+  <ul class="plain">
+    <li><code class="inline">tasks</code> is the source data.</li>
+    <li><code class="inline">filter</code> records the selected filter option.</li>
+    <li><code class="inline">visibleTasks</code> is calculated from those values.</li>
+  </ul>
+  <p>The <code class="inline">visibleTasks</code> variable does not need its own state because it can be recalculated whenever the component renders.</p>
+
+  <h3>13.6 What Is the Problem with Redundant State?</h3>
+  <p>Imagine storing all three values separately:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [tasks, setTasks] = <span class="f">useState</span>([]);
+<span class="k">const</span> [completedCount, setCompletedCount] = <span class="f">useState</span>(<span class="n">0</span>);
+<span class="k">const</span> [activeCount, setActiveCount] = <span class="f">useState</span>(<span class="n">0</span>);</code></pre>
+  </div>
+
+  <p>Now imagine removing a completed task.</p>
+  <p>You would need to remember to update the task list, completed count, and active count correctly.</p>
+  <p>If one update is forgotten or the calculations differ, the values can become inconsistent.</p>
+
+  <p>A simpler approach is to store the essential data:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [tasks, setTasks] = <span class="f">useState</span>([]);</code></pre>
+  </div>
+
+  <p>Then calculate both counts from the list:</p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> completedCount = tasks.<span class="f">filter</span>(task =&gt; task.completed).length;
+<span class="k">const</span> activeCount = tasks.<span class="f">filter</span>(task =&gt; !task.completed).length;</code></pre>
+  </div>
+
+  <p>The counts now always describe the current task list whenever the component renders.</p>
+
+  <h3>13.7 When Should Something Be State?</h3>
+  <p>Ask yourself three questions:</p>
+  <ol class="plain">
+    <li>Can I calculate this value from current props or state?</li>
+    <li>Does the value need to be remembered independently?</li>
+    <li>Can storing it separately lead to inconsistent data?</li>
+  </ol>
+
+  <p>If the value can be calculated directly and does not need independent storage, prefer a normal variable for that render.</p>
+
+  <p>Derived calculations can be repeated during rendering. If a calculation later becomes expensive, React provides optimization techniques that you can learn in a future phase. Do not introduce those techniques before you need them.</p>
+
+  <div class="remember">
+    <span class="label">Remember</span>
+    <p>Store the essential changing information in state. Calculate values that depend on it, such as counts and filtered lists, during rendering instead of maintaining duplicate state unnecessarily.</p>
+  </div>
+
+  <div class="tip">Every time you're about to add a second <code class="inline">useState</code> that "tracks" something already in your first state, pause. Ask: <em>could this be calculated instead?</em> If yes, calculating is almost always the better choice.</div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- PRACTICAL PROJECT -->
+<section class="chapter" id="project">
+  <div class="chapter-head">
+    <div class="chapter-num part">PRACT<br>PROJ</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">Hands-On</div>
+      <h2>Practical Project: Build a Student Task Tracker</h2>
+    </div>
+  </div>
+
+  <p>Now combine the Phase 2 concepts into one working React application.</p>
+  <p>You will create a task tracker where the user can:</p>
+  <ul class="plain">
+    <li>Add a new task through a controlled form.</li>
+    <li>Display tasks in a list.</li>
+    <li>Mark tasks as completed or active.</li>
+    <li>Delete tasks.</li>
+    <li>Filter tasks by status.</li>
+    <li>See task totals and completed counts.</li>
+    <li>Share state between components through props and callback functions.</li>
+  </ul>
+
+  <p>This project uses only the topics in this phase. It does not require routing, API calls, <code class="inline">useEffect</code>, or any other hooks beyond <code class="inline">useState</code>.</p>
+
+  <h3>Step 1: Organize the Project</h3>
+  <p>Inside your Vite React project, create the following files:</p>
+  <div class="tree"><span class="accent">src/</span>
+├── <span class="child">components/</span>
+│   ├── TaskForm.jsx
+│   └── TaskList.jsx
+├── App.jsx
+├── App.css
+├── index.css
+└── main.jsx</div>
+
+  <h3>Step 2: Create <code class="inline">TaskForm.jsx</code></h3>
+  <p>This component displays the input and submission button.</p>
+  <div class="code">
+    <span class="code-label">JSX · components/TaskForm.jsx</span>
+    <pre><code><span class="k">function</span> <span class="t">TaskForm</span>({ value, onValueChange, onAdd }) {
+  <span class="k">return</span> (
+    &lt;form onSubmit={onAdd}&gt;
+      &lt;label htmlFor=<span class="s">"task-title"</span>&gt;New Task&lt;/label&gt;
+
+      &lt;input
+        id=<span class="s">"task-title"</span>
+        type=<span class="s">"text"</span>
+        value={value}
+        onChange={event =&gt; <span class="f">onValueChange</span>(event.target.value)}
+        placeholder=<span class="s">"Enter a task"</span>
+      /&gt;
+
+      &lt;button type=<span class="s">"submit"</span>&gt;
+        Add Task
+      &lt;/button&gt;
+    &lt;/form&gt;
+  );
+}
+
+<span class="k">export default</span> TaskForm;</code></pre>
+  </div>
+
+  <h4>Code Explanation</h4>
+  <ul class="plain">
+    <li><code class="inline">value</code> is the current input value supplied by the parent.</li>
+    <li><code class="inline">onValueChange</code> is a callback that requests an input value update.</li>
+    <li><code class="inline">onAdd</code> is the form submission handler supplied by the parent.</li>
+    <li><code class="inline">value={value}</code> makes the input controlled.</li>
+    <li><code class="inline">onChange</code> sends the latest string to the parent.</li>
+    <li>The form's <code class="inline">onSubmit</code> calls the supplied handler.</li>
+  </ul>
+  <p>The child does not store a separate copy of the input value. The parent owns it.</p>
+
+  <h3>Step 3: Create <code class="inline">TaskList.jsx</code></h3>
+  <p>This component renders the visible tasks.</p>
+  <div class="code">
+    <span class="code-label">JSX · components/TaskList.jsx</span>
+    <pre><code><span class="k">function</span> <span class="t">TaskList</span>({ tasks, onToggle, onDelete }) {
+  <span class="k">if</span> (tasks.length === <span class="n">0</span>) {
+    <span class="k">return</span> &lt;p&gt;No tasks found for this filter.&lt;/p&gt;;
+  }
+
+  <span class="k">return</span> (
+    &lt;ul className=<span class="s">"task-list"</span>&gt;
+      {tasks.<span class="f">map</span>(task =&gt; (
+        &lt;li key={task.id} className=<span class="s">"task-item"</span>&gt;
+          &lt;span className={task.completed ? <span class="s">"completed"</span> : <span class="s">""</span>}&gt;
+            {task.title}
+          &lt;/span&gt;
+
+          &lt;button onClick={() =&gt; <span class="f">onToggle</span>(task.id)}&gt;
+            {task.completed ? <span class="s">"Mark Active"</span> : <span class="s">"Complete"</span>}
+          &lt;/button&gt;
+
+          &lt;button onClick={() =&gt; <span class="f">onDelete</span>(task.id)}&gt;
+            Delete
+          &lt;/button&gt;
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+
+<span class="k">export default</span> TaskList;</code></pre>
+  </div>
+
+  <h4>Code Explanation</h4>
+  <p><strong>Conditional rendering</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">if</span> (tasks.length === <span class="n">0</span>) {
+  <span class="k">return</span> &lt;p&gt;No tasks found for this filter.&lt;/p&gt;;
+}</code></pre>
+  </div>
+  <p>If the current list is empty, the component returns an explanatory message.</p>
+
+  <p><strong>Rendering a list</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>tasks.<span class="f">map</span>(task =&gt; (
+  &lt;li key={task.id}&gt;
+    {task.title}
+  &lt;/li&gt;
+))</code></pre>
+  </div>
+  <p>The component renders one list item for each task, using its stored ID as the key.</p>
+
+  <p><strong>Updating task status</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;button onClick={() =&gt; <span class="f">onToggle</span>(task.id)}&gt;
+  {task.completed ? <span class="s">"Mark Active"</span> : <span class="s">"Complete"</span>}
+&lt;/button&gt;</code></pre>
+  </div>
+  <p>The child calls the function provided by the parent and supplies the task ID. The parent decides how to update the state.</p>
+
+  <p><strong>Deleting a task</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code>&lt;button onClick={() =&gt; <span class="f">onDelete</span>(task.id)}&gt;
+  Delete
+&lt;/button&gt;</code></pre>
+  </div>
+  <p>The delete handler is supplied through props, so the child does not directly modify the task array.</p>
+
+  <h3>Step 4: Create <code class="inline">App.jsx</code></h3>
+  <p>The parent component owns the task list, form input, and filter.</p>
+  <div class="code">
+    <span class="code-label">JSX · App.jsx</span>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">"react"</span>;
+<span class="k">import</span> TaskForm <span class="k">from</span> <span class="s">"./components/TaskForm.jsx"</span>;
+<span class="k">import</span> TaskList <span class="k">from</span> <span class="s">"./components/TaskList.jsx"</span>;
+<span class="k">import</span> <span class="s">"./App.css"</span>;
+
+<span class="k">function</span> <span class="t">App</span>() {
+  <span class="k">const</span> [tasks, setTasks] = <span class="f">useState</span>([
+    {
+      id: <span class="n">1</span>,
+      title: <span class="s">"Practise JSX"</span>,
+      completed: <span class="k">true</span>
+    },
+    {
+      id: <span class="n">2</span>,
+      title: <span class="s">"Learn useState"</span>,
+      completed: <span class="k">false</span>
+    },
+    {
+      id: <span class="n">3</span>,
+      title: <span class="s">"Practise events"</span>,
+      completed: <span class="k">false</span>
+    }
+  ]);
+
+  <span class="k">const</span> [newTask, setNewTask] = <span class="f">useState</span>(<span class="s">""</span>);
+  <span class="k">const</span> [filter, setFilter] = <span class="f">useState</span>(<span class="s">"all"</span>);
+
+  <span class="k">function</span> <span class="t">handleAddTask</span>(event) {
+    event.<span class="f">preventDefault</span>();
+
+    <span class="k">const</span> title = newTask.<span class="f">trim</span>();
+
+    <span class="k">if</span> (title === <span class="s">""</span>) {
+      <span class="k">return</span>;
+    }
+
+    <span class="k">const</span> task = {
+      id: crypto.<span class="f">randomUUID</span>(),
+      title,
+      completed: <span class="k">false</span>
+    };
+
+    <span class="f">setTasks</span>(currentTasks =&gt; [
+      ...currentTasks,
+      task
+    ]);
+
+    <span class="f">setNewTask</span>(<span class="s">""</span>);
+  }
+
+  <span class="k">function</span> <span class="t">handleToggleTask</span>(taskId) {
+    <span class="f">setTasks</span>(currentTasks =&gt;
+      currentTasks.<span class="f">map</span>(task =&gt;
+        task.id === taskId
+          ? { ...task, completed: !task.completed }
+          : task
+      )
+    );
+  }
+
+  <span class="k">function</span> <span class="t">handleDeleteTask</span>(taskId) {
+    <span class="f">setTasks</span>(currentTasks =&gt;
+      currentTasks.<span class="f">filter</span>(task =&gt; task.id !== taskId)
+    );
+  }
+
+  <span class="k">const</span> visibleTasks = tasks.<span class="f">filter</span>(task =&gt; {
+    <span class="k">if</span> (filter === <span class="s">"active"</span>) {
+      <span class="k">return</span> !task.completed;
+    }
+
+    <span class="k">if</span> (filter === <span class="s">"completed"</span>) {
+      <span class="k">return</span> task.completed;
+    }
+
+    <span class="k">return</span> <span class="k">true</span>;
+  });
+
+  <span class="k">const</span> completedCount = tasks.<span class="f">filter</span>(
+    task =&gt; task.completed
+  ).length;
+
+  <span class="k">const</span> activeCount = tasks.length - completedCount;
+
+  <span class="k">return</span> (
+    &lt;main className=<span class="s">"app"</span>&gt;
+      &lt;h1&gt;Student Task Tracker&lt;/h1&gt;
+
+      &lt;p&gt;Total Tasks: {tasks.length}&lt;/p&gt;
+      &lt;p&gt;Completed: {completedCount}&lt;/p&gt;
+      &lt;p&gt;Active: {activeCount}&lt;/p&gt;
+
+      &lt;<span class="t">TaskForm</span>
+        value={newTask}
+        onValueChange={setNewTask}
+        onAdd={handleAddTask}
+      /&gt;
+
+      &lt;div className=<span class="s">"filter"</span>&gt;
+        &lt;label htmlFor=<span class="s">"task-filter"</span>&gt;Filter Tasks&lt;/label&gt;
+
+        &lt;select
+          id=<span class="s">"task-filter"</span>
+          value={filter}
+          onChange={event =&gt; <span class="f">setFilter</span>(event.target.value)}
+        &gt;
+          &lt;option value=<span class="s">"all"</span>&gt;All Tasks&lt;/option&gt;
+          &lt;option value=<span class="s">"active"</span>&gt;Active Tasks&lt;/option&gt;
+          &lt;option value=<span class="s">"completed"</span>&gt;Completed Tasks&lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/div&gt;
+
+      &lt;<span class="t">TaskList</span>
+        tasks={visibleTasks}
+        onToggle={handleToggleTask}
+        onDelete={handleDeleteTask}
+      /&gt;
+    &lt;/main&gt;
+  );
+}
+
+<span class="k">export default</span> App;</code></pre>
+  </div>
+
+  <h4>Important Code Explanations</h4>
+
+  <p><strong>1. State for the Task List</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> [tasks, setTasks] = <span class="f">useState</span>([...]);</code></pre>
+  </div>
+  <p>This array contains the original task objects. Each task stores its ID, title, and completion status.</p>
+
+  <p><strong>2. Adding a Task</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> title = newTask.<span class="f">trim</span>();
+
+<span class="k">if</span> (title === <span class="s">""</span>) {
+  <span class="k">return</span>;
+}</code></pre>
+  </div>
+  <p><code class="inline">trim()</code> removes whitespace at the beginning and end of the input. If nothing remains, the handler exits without adding a task.</p>
+
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> task = {
+  id: crypto.<span class="f">randomUUID</span>(),
+  title,
+  completed: <span class="k">false</span>
+};</code></pre>
+  </div>
+  <p>The new task receives an ID when it is created, not when the UI is rendered.</p>
+  <p>In modern browsers, <code class="inline">crypto.randomUUID()</code> can generate a unique identifier in supported secure contexts, including localhost during development.</p>
+
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="f">setTasks</span>(currentTasks =&gt; [
+  ...currentTasks,
+  task
+]);</code></pre>
+  </div>
+  <p>The updater produces a new array containing all existing tasks and the new task.</p>
+
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="f">setNewTask</span>(<span class="s">""</span>);</code></pre>
+  </div>
+  <p>After a successful addition, the controlled input is cleared.</p>
+
+  <p><strong>3. Toggling Task Status</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="f">setTasks</span>(currentTasks =&gt;
+  currentTasks.<span class="f">map</span>(task =&gt;
+    task.id === taskId
+      ? { ...task, completed: !task.completed }
+      : task
+  )
+);</code></pre>
+  </div>
+  <p>This code creates a new array. For the matching task, it creates a new task object with the opposite completion value. Every other task is returned unchanged.</p>
+  <p>Both the array and the modified task object are updated immutably.</p>
+
+  <p><strong>4. Deleting a Task</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="f">setTasks</span>(currentTasks =&gt;
+  currentTasks.<span class="f">filter</span>(task =&gt; task.id !== taskId)
+);</code></pre>
+  </div>
+  <p>This creates a new array that excludes the selected task.</p>
+
+  <p><strong>5. Calculating Visible Tasks</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> visibleTasks = tasks.<span class="f">filter</span>(task =&gt; {
+  <span class="k">if</span> (filter === <span class="s">"active"</span>) {
+    <span class="k">return</span> !task.completed;
+  }
+
+  <span class="k">if</span> (filter === <span class="s">"completed"</span>) {
+    <span class="k">return</span> task.completed;
+  }
+
+  <span class="k">return</span> <span class="k">true</span>;
+});</code></pre>
+  </div>
+  <p>The displayed list is calculated from the full task collection and the chosen filter. It is not stored as a separate state variable.</p>
+
+  <p><strong>6. Calculating the Counters</strong></p>
+  <div class="code">
+    <span class="code-label">JSX</span>
+    <pre><code><span class="k">const</span> completedCount = tasks.<span class="f">filter</span>(
+  task =&gt; task.completed
+).length;
+
+<span class="k">const</span> activeCount = tasks.length - completedCount;</code></pre>
+  </div>
+  <p>Both numbers are calculated directly from the current task list. This avoids maintaining duplicate state for the counts.</p>
+
+  <h3>Step 5: Add Styling in <code class="inline">App.css</code></h3>
+  <div class="code">
+    <span class="code-label">CSS · App.css</span>
+    <pre><code>.app {
+  width: min(90%, 700px);
+  margin: 40px auto;
+  padding: 24px;
+  font-family: Arial, sans-serif;
+  color: #0f172a;
+  background: #f8fafc;
+  border-radius: 16px;
+}
+
+.app h1 {
+  color: #0d47a1;
+}
+
+.app form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.app input,
+.app select {
+  padding: 10px;
+  border: 1px solid #90caf9;
+  border-radius: 6px;
+}
+
+.app input {
+  flex: 1;
+  min-width: 180px;
+}
+
+.app button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #1976d2;
+  color: white;
+  cursor: pointer;
+}
+
+.app button:hover {
+  background: #0d47a1;
+}
+
+.filter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.task-list {
+  padding: 0;
+  list-style: none;
+}
+
+.task-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #dbeafe;
+}
+
+.task-item span {
+  flex: 1;
+  min-width: 150px;
+}
+
+.task-item .completed {
+  text-decoration: line-through;
+  color: #64748b;
+}</code></pre>
+  </div>
+  <p>This CSS provides simple spacing and styling for the tracker. The React logic remains unchanged.</p>
+
+  <h3>Step 6: Run the Project</h3>
+  <div class="code">
+    <span class="code-label">BASH</span>
+    <pre><code>npm run dev</code></pre>
+  </div>
+  <p>Open the URL shown in the terminal.</p>
+
+  <h4>Test These Features</h4>
+  <ol class="plain">
+    <li>Add a task using the form.</li>
+    <li>Try submitting an empty input.</li>
+    <li>Mark a task as completed.</li>
+    <li>Mark a completed task as active again.</li>
+    <li>Delete a task.</li>
+    <li>Change the filter to show only active tasks.</li>
+    <li>Change the filter to show completed tasks.</li>
+    <li>Verify that total, active, and completed counts remain correct.</li>
+  </ol>
+
+  <h4>Which React Concepts Did You Use?</h4>
+  <table class="tbl">
+    <thead>
+      <tr><th>Concept</th><th>Implementation</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>useState</code></td><td><code>tasks</code>, <code>newTask</code>, and <code>filter</code></td></tr>
+      <tr><td>Event handling</td><td>Form submission, input changes, buttons, filter changes</td></tr>
+      <tr><td>Event object</td><td><code>event.preventDefault()</code> and <code>event.target.value</code></td></tr>
+      <tr><td>Controlled input</td><td>The input's <code>value</code> and <code>onChange</code></td></tr>
+      <tr><td>Conditional rendering</td><td>Empty-state message and conditional button text</td></tr>
+      <tr><td><code>map()</code></td><td>Displaying task items</td></tr>
+      <tr><td>Keys</td><td>Each task uses <code>task.id</code></td></tr>
+      <tr><td>Object immutability</td><td>Updating a task through object spread</td></tr>
+      <tr><td>Array immutability</td><td>Adding, updating, and deleting tasks</td></tr>
+      <tr><td>Lifting state up</td><td><code>App</code> owns the state used by its children</td></tr>
+      <tr><td>Sharing data</td><td>Values and handlers passed as props</td></tr>
+      <tr><td>Derived state</td><td>Visible tasks and task counts</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip">This project is your Phase 2 milestone. If you can build it from scratch, without looking at the code, you've truly absorbed the phase. Build it twice: once following along, once from memory.</div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- MISTAKES -->
+<section class="chapter" id="mistakes">
+  <div class="chapter-head">
+    <div class="chapter-num part">COMMON<br>BUGS</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">Debugging</div>
+      <h2>Common Beginner Mistakes</h2>
+    </div>
+  </div>
+
+  <div class="mistake">
+    <h4>Mistake 1: Calling an Event Handler Immediately</h4>
+    <span class="bad">Incorrect</span>
+    <div class="code">
+      <span class="code-label">JSX</span>
+      <pre><code>&lt;button onClick={<span class="t">handleClick</span>()}&gt;
+  Click Me
+&lt;/button&gt;</code></pre>
+    </div>
+    <p>This calls <code class="inline">handleClick()</code> during rendering rather than passing the function for React to call when the button is clicked.</p>
+    <span class="good">Correct</span>
+    <div class="code">
+      <span class="code-label">JSX</span>
+      <pre><code>&lt;button onClick={<span class="t">handleClick</span>}&gt;
+  Click Me
+&lt;/button&gt;</code></pre>
+    </div>
+    <p>When you need to pass an argument, use a function:</p>
+    <div class="code">
+      <span class="code-label">JSX</span>
+      <pre><code>&lt;button onClick={() =&gt; <span class="f">handleDelete</span>(task.id)}&gt;
+  Delete
+&lt;/button&gt;</code></pre>
+    </div>
+  </div>
+
+  <div class="mistake">
+    <h4>Mistake 2: Updating State by Direct Assignment</h4>
+    <span class="bad">Incorrect</span>
+    <div class="code">
+      <span class="code-label">JSX</span>
+      <pre><code>count = count + <span class="n">1</span>;</code></pre>
+    </div>
+    <span class="good">Correct</span>
+    <div class="code">
+      <span class="code-label">JSX</span>
+      <pre><code><span class="f">setCount</span>(current =&gt; current + <span class="n">1</span>);</code></pre>
+    </div>
+    <p>Use the state setter to request an update.</p>
+  </div>
+
+  <div class="mistake">
+    <h4>Mistake 3: Assuming State Changes Immediately</h4>
+    <div class="code">
+      <span class="code-label">JSX</span>
+      <pre><code><span class="f">setCount</span>(count + <span class="n">1</span>);
+<span class="f">console</span>.log(count);</code></pre>
+    </div>
+    <p>The console statement reads <code class="inline">count</code> from the current render. It does not necessarily show the new value.</p>
+    <p>React state is a <strong>snapshot</strong> for each render. The updated value becomes available to the component on a subsequent render.</p>
+  </div>
+
+  <div class="mistake">
+    <h4>Mistake 4: Mutating an Object</h4>
+    <span class="bad">Incorrect</span>
+    <div class="code">
+      <span class="code-label">JSX</span>
+      <pre><code>student.city = <span class="s">"Ahmedabad"</span>;
+<span class="f">setStudent</span>(student);</code></pre>
+    </div>
+    <span class="good">Correct</span>
+    <div class="code">
+      <span class="code-label">JSX</span>
+      <pre><code><span class="f">setStudent</span>(current =&gt; ({
+  ...current,
+  city: <span class="s">"Ahmedabad"</span>
+}));</code></pre>
+    </div>
+  </div>
+
+  <div class="mistake">
+    <h4>Mistake 5: Mutating an Array</h4>
+    <span class="bad">Incorrect</span>
+    <div class="code">
+      <span class="code-label">JSX</span>
+      <pre><code>tasks.<span class="f">push</span>(newTask);
+<span class="f">setTasks</span>(tasks);</code></pre>
+    </div>
+    <span class="good">Correct</span>
+    <div class="code">
+      <span class="code-label">JSX</span>
+      <pre><code><span class="f">setTasks</span>(currentTasks =&gt; [
+  ...currentTasks,
+  newTask
+]);</code></pre>
+    </div>
+  </div>
+
+  <div class="mistake">
+    <h4>Mistake 6: Forgetting Keys in a List</h4>
+    <span class="bad">Incorrect</span>
+    <div class="code">
+      <span class="code-label">JSX</span>
+      <pre><code>items.<span class="f">map</span>(item =&gt; &lt;li&gt;{item.name}&lt;/li&gt;);</code></pre>
+    </div>
+    <span class="good">Correct</span>
+    <div class="code">
+      <span class="code-label">JSX</span>
+      <pre><code>items.<span class="f">map</span>(item =&gt; (
+  &lt;li key={item.id}&gt;{item.name}&lt;/li&gt;
+));</code></pre>
+    </div>
+    <p>Use a stable ID when available.</p>
+  </div>
+
+  <div class="mistake">
+    <h4>Mistake 7: Storing Every Calculated Value in State</h4>
+    <p>You normally do not need separate state for a count that can be derived from a task array.</p>
+    <p>Instead of maintaining several values independently, keep the essential state and calculate the result.</p>
+  </div>
+
+  <div class="mistake">
+    <h4>Mistake 8: Forgetting to Prevent Form Submission</h4>
+    <p>When handling a form in JavaScript, remember:</p>
+    <div class="code">
+      <span class="code-label">JSX</span>
+      <pre><code><span class="k">function</span> <span class="t">handleSubmit</span>(event) {
+  event.<span class="f">preventDefault</span>();
+}</code></pre>
+    </div>
+    <p>This prevents the browser's default submission behavior when that behavior is not desired.</p>
+  </div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- REVISION -->
+<section class="chapter" id="revision">
+  <div class="chapter-head">
+    <div class="chapter-num part">REVI<br>NOTES</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">Recap</div>
+      <h2>Revision Notes</h2>
+    </div>
+  </div>
+
+  <div class="term"><strong>Event handling:</strong> <span>Connecting an event, such as a click, to a function.</span></div>
+  <div class="term"><strong>Event object:</strong> <span>An object that provides details about the event and methods such as <code class="inline">preventDefault()</code>.</span></div>
+  <div class="term"><strong>State:</strong> <span>Information managed by React and retained between renders.</span></div>
+  <div class="term"><strong><code class="inline">useState</code>:</strong> <span>A Hook that declares state and provides a setter to request updates.</span></div>
+  <div class="term"><strong>State setter:</strong> <span>The function used to request a new state value.</span></div>
+  <div class="term"><strong>State versus variables:</strong> <span>Local variables do not automatically trigger React renders; state setters request updates.</span></div>
+  <div class="term"><strong>Immutability:</strong> <span>Treat objects and arrays in state as read-only. Create updated copies instead of mutating existing state values.</span></div>
+  <div class="term"><strong>Conditional rendering:</strong> <span>Displaying different UI content based on conditions.</span></div>
+  <div class="term"><strong><code class="inline">map()</code>:</strong> <span>Creating a new array, often used to convert data items into JSX elements.</span></div>
+  <div class="term"><strong>Keys:</strong> <span>Stable identifiers used by React to match sibling elements in lists.</span></div>
+  <div class="term"><strong>Updating objects:</strong> <span>Use object spread syntax to create an updated object.</span></div>
+  <div class="term"><strong>Updating arrays:</strong> <span>Use patterns such as spread syntax, <code class="inline">map()</code>, and <code class="inline">filter()</code> to create new arrays.</span></div>
+  <div class="term"><strong>Lifting state up:</strong> <span>Moving shared state into the closest common parent of components that need it.</span></div>
+  <div class="term"><strong>Controlled input:</strong> <span>An input whose displayed value is driven by React state.</span></div>
+  <div class="term"><strong>Sharing data:</strong> <span>Passing values and handler functions to child components through props.</span></div>
+  <div class="term"><strong>Derived state:</strong> <span>A value that can be calculated from current props or state without maintaining duplicate state.</span></div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- EXERCISES -->
+<section class="chapter" id="exercises">
+  <div class="chapter-head">
+    <div class="chapter-num part">PRAC<br>TICE</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">Hands-On</div>
+      <h2>Practice Exercises</h2>
+    </div>
+  </div>
+
+  <p>Complete the exercises in order. First attempt each question yourself, then test your solution in your Vite project.</p>
+
+  <div class="level">
+    <h4>Beginner Level</h4>
+    <ol>
+      <li>Create a button that displays an alert when clicked.</li>
+      <li>Create a counter that begins at <code class="inline">0</code> and increases by one each time the button is clicked.</li>
+      <li>Create a counter with both Increase and Decrease buttons.</li>
+      <li>Explain why changing an ordinary local variable does not automatically update a React component.</li>
+      <li>Create a button that displays or hides a paragraph.</li>
+      <li>Display a list of five course names using <code class="inline">map()</code>.</li>
+      <li>Render three students from an array of objects containing <code class="inline">id</code>, <code class="inline">name</code>, and <code class="inline">course</code>.</li>
+      <li>Create an input that displays the typed name below it.</li>
+      <li>Create a dropdown containing React, JavaScript, and Node.js. Display the selected course.</li>
+      <li>Create a form that displays the entered name after the user submits it.</li>
+    </ol>
+  </div>
+
+  <div class="level">
+    <h4>Intermediate Level</h4>
+    <ol start="11">
+      <li>Create a student profile object with <code class="inline">name</code>, <code class="inline">age</code>, and <code class="inline">city</code>. Add a button that changes only the city.</li>
+      <li>Create an array of courses. Add buttons to add a course, remove a course, and rename a course. Do not mutate the existing array.</li>
+      <li>Create a task list in which each task has a title and a <code class="inline">completed</code> boolean. Render the list with stable keys and let the user mark each task as completed.</li>
+      <li>Create two components: <code class="inline">NameInput</code> and <code class="inline">NameDisplay</code>. Lift the shared name state to their common parent so both components always display the same name.</li>
+      <li>Create a controlled form with name, email, and course fields. Display a summary of the form values below the form. Prevent the default form submission behavior.</li>
+    </ol>
+  </div>
+
+  <div class="level">
+    <h4>Challenge Level</h4>
+    <ol start="16">
+      <li>Build a search input that filters a list of students by name. Keep the search term in state and calculate the filtered list during rendering.</li>
+      <li>Build a task manager that allows the user to add, complete, reactivate, and delete tasks. Use immutable object and array updates.</li>
+      <li>Create a product list where each product has an ID, name, price, and <code class="inline">inStock</code> value. Use conditional rendering to display an availability message.</li>
+      <li>Build a course selection interface with a list of courses, a selected course, and a summary component. Share the relevant state through a parent component and props.</li>
+      <li>Extend the Student Task Tracker from this study material with an additional filter and a message for when no tasks match the selected filter. Calculate all summary counts from the current task state instead of maintaining separate count states.</li>
+    </ol>
+  </div>
+</section>
+
+<div class="divider"><span>❖</span></div>
+
+<!-- SELF-ASSESSMENT -->
+<section class="chapter" id="assessment">
+  <div class="chapter-head">
+    <div class="chapter-num part">SELF<br>CHECK</div>
+    <div class="chapter-title-wrap">
+      <div class="chapter-part">Readiness</div>
+      <h2>Final Self-Assessment</h2>
+    </div>
+  </div>
+
+  <p>Before moving to Phase 3, you should be able to complete the following <strong>without copying a tutorial</strong>:</p>
+
+  <ul class="checklist">
+    <li>Handle click events and input changes.</li>
+    <li>Explain what the event object contains.</li>
+    <li>Use <code class="inline">useState</code> to retain information between renders.</li>
+    <li>Explain how state updates differ from ordinary assignments.</li>
+    <li>Write a functional state updater when the next value depends on the previous value.</li>
+    <li>Update objects and arrays without mutation.</li>
+    <li>Display and hide elements conditionally.</li>
+    <li>Render an array with <code class="inline">map()</code> and stable keys.</li>
+    <li>Build controlled inputs and handle form submission.</li>
+    <li>Lift shared state to a parent component.</li>
+    <li>Pass values and callback functions through props.</li>
+    <li>Calculate counts, filtered lists, and summaries from existing state.</li>
+  </ul>
+
+  <h3>Official Documentation for Further Reading</h3>
+  <ol class="plain">
+    <li><a href="https://react.dev/learn/responding-to-events" style="color:var(--blue);text-decoration:none;border-bottom:1px dotted var(--blue);">React — Responding to Events</a></li>
+    <li><a href="https://react.dev/reference/react/useState" style="color:var(--blue);text-decoration:none;border-bottom:1px dotted var(--blue);">React — <code>useState</code></a></li>
+    <li><a href="https://react.dev/learn/state-as-a-snapshot" style="color:var(--blue);text-decoration:none;border-bottom:1px dotted var(--blue);">React — State as a Snapshot</a></li>
+    <li><a href="https://react.dev/learn/updating-objects-in-state" style="color:var(--blue);text-decoration:none;border-bottom:1px dotted var(--blue);">React — Updating Objects in State</a></li>
+    <li><a href="https://react.dev/learn/updating-arrays-in-state" style="color:var(--blue);text-decoration:none;border-bottom:1px dotted var(--blue);">React — Updating Arrays in State</a></li>
+    <li><a href="https://react.dev/learn/conditional-rendering" style="color:var(--blue);text-decoration:none;border-bottom:1px dotted var(--blue);">React — Conditional Rendering</a></li>
+    <li><a href="https://react.dev/learn/rendering-lists" style="color:var(--blue);text-decoration:none;border-bottom:1px dotted var(--blue);">React — Rendering Lists</a></li>
+    <li><a href="https://react.dev/learn/sharing-state-between-components" style="color:var(--blue);text-decoration:none;border-bottom:1px dotted var(--blue);">React — Sharing State Between Components</a></li>
+  </ol>
+
+  <div class="ready">
+    <div class="big">PHASE 2 COMPLETE</div>
+    <p class="msg">Your UI now responds to users, remembers information, and coordinates state across components.</p>
+    <div class="next">Next Phase → Side Effects, Data Fetching &amp; useEffect</div>
+  </div>
+
+  <div class="remember" style="margin-top:34px;">
+    <span class="label">Your Phase 2 Goal</span>
+    <p>Become comfortable building interfaces that respond to user actions and display changing data. Once you can build the Student Task Tracker independently, you will have practised all 13 topics in this phase and will be ready to continue your React learning roadmap.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span class="hand">— end of Phase 2 —</span>
+  React JS · State, Events &amp; Hooks · Study Book
+</div>
+
+</div>
+</div>
+
+</body>
+</html>

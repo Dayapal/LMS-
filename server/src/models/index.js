@@ -11,6 +11,8 @@ export { Submission } from './Submission.js';
 export { LessonProgress } from './LessonProgress.js';
 export { Activity } from './Activity.js';
 export { Notification } from './Notification.js';
+export { StudyBook, STUDY_CATEGORIES } from './StudyBook.js';
+export { StudyModule } from './StudyModule.js';
 export {
   ACTIVITY_TYPES,
   CODE_LANGUAGES,

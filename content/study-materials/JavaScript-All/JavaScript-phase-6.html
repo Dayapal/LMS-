@@ -1,0 +1,3296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Mastery — Phase 5: Modern JavaScript (ES6+)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   JAVASCRIPT MASTERY — PHASE 5
+   Modern JavaScript (ES6+)
+   A handcrafted, premium handbook.
+   ============================================================ */
+
+:root{
+  --paper:        #fdfaf3;
+  --paper-warm:   #f7f1e4;
+  --paper-edge:   #e6dcc7;
+  --ink:          #1b2432;
+  --ink-soft:     #3b4657;
+  --muted:        #6d7686;
+  --rule:         #ddd2ba;
+
+  --navy:         #16243d;
+  --navy-2:       #223354;
+  --gold:         #c9a227;
+  --gold-soft:    #e6d49a;
+  --gold-deep:    #9c7c14;
+
+  --js:           #f7df1e;
+  --teal:         #0f766e;
+  --plum:         #7c3aed;
+  --rose:         #b03a52;
+  --blue:         #2563eb;
+
+  --code-bg:      #131b2c;
+  --code-bg-2:    #0d1422;
+
+  --shadow-book:  0 40px 90px -30px rgba(20,30,50,.45), 0 12px 30px -12px rgba(20,30,50,.35);
+  --shadow-card:  0 10px 30px -12px rgba(20,30,50,.35);
+}
+
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+
+body{
+  margin:0;
+  padding:48px 20px 90px;
+  background:
+    radial-gradient(1200px 700px at 50% -10%, #2b3a56 0%, #16203a 45%, #0d1424 100%);
+  background-attachment: fixed;
+  font-family:'Lora', Georgia, 'Times New Roman', serif;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+
+.book{
+  max-width: 920px;
+  margin: 0 auto;
+  counter-reset: pageCount;
+}
+
+.page{
+  position: relative;
+  background: var(--paper);
+  background-image:
+    radial-gradient(circle at 18% 12%, rgba(201,162,39,.055) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 72% 38%, rgba(27,36,50,.045) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 42% 82%, rgba(201,162,39,.05) 0 1px, transparent 1.6px),
+    linear-gradient(180deg, #fffdf8 0%, #fdfaf3 40%, #f8f3e8 100%);
+  background-size: 27px 27px, 31px 31px, 37px 37px, 100% 100%;
+  padding: 62px 74px 78px;
+  margin: 0 0 34px;
+  border-radius: 4px 12px 12px 4px;
+  box-shadow: var(--shadow-book);
+  border: 1px solid #efe7d4;
+  border-left: none;
+  overflow: hidden;
+}
+
+.page::before{
+  content:"";
+  position:absolute; top:0; left:0; bottom:0; width:26px;
+  background: linear-gradient(90deg,
+      rgba(20,30,50,.16) 0%,
+      rgba(20,30,50,.06) 32%,
+      rgba(255,255,255,.35) 60%,
+      rgba(20,30,50,.05) 100%);
+  border-right: 1px solid rgba(20,30,50,.08);
+  pointer-events:none;
+}
+
+.page::after{
+  content:"";
+  position:absolute; inset:0;
+  border-radius: inherit;
+  pointer-events:none;
+  box-shadow: inset 0 0 60px rgba(160,140,90,.07), inset 0 0 0 1px rgba(255,255,255,.6);
+}
+
+.page > *{ position:relative; z-index:1; }
+.page + .page{ margin-top: 0; }
+
+/* ---------- Cover ---------- */
+.cover{
+  counter-increment: none;
+  min-height: 1080px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding: 90px 70px;
+  background:
+    radial-gradient(circle at 50% 0%, #24334f 0%, #16243d 42%, #0e1728 100%);
+  color:#f6f1e4;
+  border:1px solid rgba(201,162,39,.35);
+  border-radius:4px 14px 14px 4px;
+}
+.cover::before{
+  background: linear-gradient(90deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 40%, rgba(255,255,255,.08) 70%, rgba(0,0,0,.2) 100%);
+  border-right:1px solid rgba(201,162,39,.25);
+}
+.cover::after{
+  box-shadow: inset 0 0 120px rgba(0,0,0,.5), inset 0 0 0 1px rgba(201,162,39,.18);
+}
+
+.cover-frame{
+  border: 1.5px solid rgba(201,162,39,.5);
+  outline: 1px solid rgba(201,162,39,.18);
+  outline-offset: 8px;
+  padding: 58px 46px 52px;
+  width: 100%;
+  max-width: 620px;
+  border-radius: 3px;
+  position: relative;
+}
+
+.cover-eyebrow{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .42em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  margin-bottom: 26px;
+}
+
+.cover-logo{
+  width: 86px; height: 86px;
+  margin: 0 auto 26px;
+  background: var(--js);
+  border-radius: 14px;
+  display:flex; align-items:flex-end; justify-content:flex-end;
+  padding: 12px 14px;
+  font-family:'JetBrains Mono', monospace;
+  font-weight:700;
+  font-size: 28px;
+  color:#111;
+  box-shadow: 0 14px 34px -10px rgba(247,223,30,.55), inset 0 -4px 0 rgba(0,0,0,.12);
+  letter-spacing:-.06em;
+}
+
+.cover h1{
+  font-family:'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 46px;
+  line-height: 1.08;
+  margin: 0 0 8px;
+  letter-spacing: -.01em;
+  background: linear-gradient(180deg,#fffdf5 0%, #e8d9a0 60%, #c9a227 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.cover .cover-sub{
+  font-family:'Playfair Display', serif;
+  font-style: italic;
+  font-size: 18px;
+  color:#cbd5e6;
+  margin: 14px 0 30px;
+  line-height:1.5;
+}
+
+.cover-rule{
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  margin: 26px 0 28px;
+  color: var(--gold);
+}
+.cover-rule span{ height:1px; width:76px; background:linear-gradient(90deg,transparent,var(--gold)); }
+.cover-rule span:last-child{ background:linear-gradient(270deg,transparent,var(--gold)); }
+
+.cover-meta{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color:#93a1b8;
+  line-height: 2.1;
+}
+
+.cover-badges{
+  display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+  margin-top: 34px;
+}
+.badge{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  padding: 7px 15px;
+  border-radius: 100px;
+  border: 1px solid rgba(201,162,39,.45);
+  color: var(--gold-soft);
+  background: rgba(201,162,39,.07);
+}
+
+.cover-foot{
+  margin-top: 44px;
+  font-size: 12.5px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  font-family:'JetBrains Mono', monospace;
+  color:#7f8da5;
+}
+
+/* ---------- Page Footer ---------- */
+.page-foot{
+  counter-increment: pageCount;
+  position:absolute;
+  left: 74px; right: 74px; bottom: 26px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing:.16em;
+  text-transform: uppercase;
+  color: #a99f88;
+  border-top: 1px solid var(--rule);
+  padding-top: 12px;
+  z-index: 2;
+}
+.page-foot .pn::after{ content: counter(pageCount); }
+.page-foot .pn::before{ content: "— "; }
+
+/* ---------- Headings ---------- */
+.chap-head{ margin: 0 0 40px; text-align:center; }
+
+.chap-num{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .42em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 12px;
+}
+
+.chap-title{
+  font-family:'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 34px;
+  line-height: 1.14;
+  margin: 0 0 20px;
+  color: var(--navy);
+  letter-spacing: -.015em;
+}
+
+.chap-rule{
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  color: var(--gold);
+  font-size: 13px;
+}
+.chap-rule span{ height:1px; width:88px; background:linear-gradient(90deg,transparent,var(--gold-soft),var(--gold)); }
+.chap-rule span:last-child{ background:linear-gradient(270deg,transparent,var(--gold-soft),var(--gold)); }
+.chap-rule i{ font-style:normal; opacity:.9; }
+
+h3{
+  font-family:'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 44px 0 14px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+  letter-spacing: -.01em;
+}
+h3::after{
+  content:"";
+  position:absolute; left:0; bottom:-1px; width:56px; height:3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-soft));
+  border-radius: 3px;
+}
+
+h4{
+  font-family:'Playfair Display', serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--navy-2);
+  margin: 32px 0 10px;
+}
+
+h5{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing:.2em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin: 26px 0 8px;
+}
+
+p{
+  font-size: 16.4px;
+  line-height: 1.82;
+  margin: 0 0 16px;
+  color: var(--ink-soft);
+}
+
+strong{ color: var(--ink); font-weight: 600; }
+em{ font-style: italic; }
+a{ color: var(--teal); }
+
+ul, ol{
+  font-size: 16.2px;
+  line-height: 1.8;
+  color: var(--ink-soft);
+  margin: 0 0 18px;
+  padding-left: 24px;
+}
+li{ margin-bottom: 7px; }
+ul li::marker{ color: var(--gold); }
+ol li::marker{ color: var(--gold-deep); font-family:'JetBrains Mono',monospace; font-size: 13px; }
+
+/* ---------- Tables ---------- */
+.table-wrap{
+  margin: 24px 0 30px;
+  border-radius: 10px;
+  overflow:hidden;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--paper-edge);
+}
+table{
+  width:100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  background:#fffdf8;
+}
+thead th{
+  background: linear-gradient(180deg, var(--navy-2), var(--navy));
+  color: #f4efe2;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing:.16em;
+  text-transform: uppercase;
+  font-weight: 500;
+  text-align:left;
+  padding: 13px 18px;
+}
+tbody td{
+  padding: 12px 18px;
+  border-bottom: 1px solid #f0e9d8;
+  color: var(--ink-soft);
+  vertical-align: top;
+  line-height: 1.6;
+}
+tbody tr:nth-child(even){ background: #fbf7ee; }
+tbody tr:last-child td{ border-bottom:none; }
+tbody td:first-child{ color: var(--navy); font-weight:600; }
+table code{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  background: rgba(201,162,39,.13);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--gold-deep);
+}
+
+p code, li code, td code, .callout code{
+  font-family:'JetBrains Mono', monospace;
+  font-size: .86em;
+  background: rgba(20,30,50,.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--rose);
+  border: 1px solid rgba(20,30,50,.06);
+}
+
+/* ---------- Figures ---------- */
+figure{ margin: 28px 0 34px; }
+
+.fig{
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px -18px rgba(15,25,45,.55), 0 3px 10px -4px rgba(15,25,45,.35);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.fig-code{
+  background: linear-gradient(180deg, var(--code-bg) 0%, var(--code-bg-2) 100%);
+}
+.fig-bar{
+  display:flex; align-items:center; gap:8px;
+  padding: 11px 16px;
+  background: linear-gradient(180deg, #1d2740, #182136);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.dot{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+.dot.r{ background:#ff5f57; }
+.dot.a{ background:#febc2e; }
+.dot.g{ background:#28c840; }
+.fig-title{
+  margin-left: 12px;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing:.14em;
+  color:#8b9ab8;
+  text-transform: lowercase;
+}
+.fig pre{
+  margin:0;
+  padding: 20px 22px;
+  overflow-x:auto;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 13.5px;
+  line-height: 1.78;
+  color:#c7d3e8;
+  tab-size: 2;
+}
+.fig code{ font-family: inherit; }
+
+.tok-com{ color:#5d6b8a; font-style: italic; }
+.tok-str{ color:#a5e075; }
+.tok-num{ color:#f7a56b; }
+.tok-kw { color:#c792ea; font-weight:500; }
+.tok-fn { color:#82aaff; }
+.tok-op { color:#89ddff; }
+
+.fig-out{
+  background: linear-gradient(180deg,#f2ecdd,#eae2cf);
+  border: 1px solid var(--paper-edge);
+}
+.fig-out .fig-bar{
+  background: linear-gradient(180deg,#e3d9c1,#dbd0b5);
+  border-bottom: 1px solid #d0c3a4;
+}
+.fig-out .fig-bar .fig-title{ color:#7a6a45; }
+.fig-out pre{
+  margin:0;
+  padding: 16px 22px;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 13.5px;
+  line-height: 1.75;
+  color:#2f3b4f;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.fig-out .fig-bar .dot{ opacity:.35; }
+
+figcaption{
+  margin-top: 11px;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  letter-spacing:.06em;
+  color: var(--muted);
+  text-align:center;
+  line-height:1.7;
+}
+figcaption b{ color: var(--gold-deep); font-weight:700; }
+
+.fig-illo{
+  background: linear-gradient(180deg,#fffdf8,#f5efe1);
+  border: 1px solid var(--paper-edge);
+  padding: 20px 18px 8px;
+  box-shadow: 0 16px 36px -20px rgba(15,25,45,.5);
+}
+.fig-illo svg{ display:block; width:100%; height:auto; }
+
+.illo text{ font-family:'JetBrains Mono', monospace; }
+.illo .t-label{ font-size: 12px; letter-spacing:.22em; fill:#8a7d5f; }
+.illo .t-strong{ font-size: 14px; font-weight:700; fill:#1b2432; font-family:'Lora',serif; }
+.illo .t-mono{ font-size: 12.5px; fill:#3b4657; }
+.illo .t-gold{ font-size: 12px; fill:#9c7c14; letter-spacing:.14em; }
+.illo .t-code{ font-size: 12px; fill:#c7d3e8; }
+
+/* ---------- Callouts ---------- */
+.callout{
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin: 26px 0;
+  font-size: 15.8px;
+  line-height: 1.75;
+  position: relative;
+  border-left: 4px solid var(--gold);
+  background: linear-gradient(90deg, #fdf6e0, #fbf8ee);
+  color: var(--ink-soft);
+  box-shadow: 0 8px 22px -14px rgba(20,30,50,.4);
+}
+.callout .callout-title{
+  display:block;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing:.28em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 8px;
+}
+.callout.warn{ border-left-color: var(--rose); background: linear-gradient(90deg,#fdeef0,#fbf6f4); }
+.callout.warn .callout-title{ color: var(--rose); }
+.callout.tip{ border-left-color: var(--teal); background: linear-gradient(90deg,#e9f6f4,#f5fbfa); }
+.callout.tip .callout-title{ color: var(--teal); }
+.callout.note{ border-left-color: var(--navy-2); background: linear-gradient(90deg,#eef2f9,#f8fafd); }
+.callout.note .callout-title{ color: var(--navy-2); }
+.callout p:last-child{ margin-bottom:0; }
+
+.keyidea{
+  margin: 30px 0;
+  padding: 26px 30px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 60%, #2c3f66 100%);
+  color: #f3eee1;
+  text-align:center;
+  box-shadow: 0 18px 40px -22px rgba(10,18,35,.9);
+  position: relative;
+  overflow: hidden;
+}
+.keyidea::before{
+  content:"";
+  position:absolute; inset:0;
+  background: radial-gradient(circle at 20% 0%, rgba(201,162,39,.22), transparent 60%);
+  pointer-events:none;
+}
+.keyidea .k-label{
+  display:block;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing:.36em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  margin-bottom: 10px;
+}
+.keyidea p{
+  margin:0;
+  color:#f3eee1;
+  font-size: 18px;
+  font-style: italic;
+  line-height:1.65;
+  position:relative;
+}
+
+/* ---------- Question blocks ---------- */
+.qgroup{ margin: 30px 0; }
+.qgroup-title{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing:.28em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin: 34px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--rule);
+}
+.q{
+  margin: 0 0 20px;
+  padding: 16px 20px 16px 22px;
+  background: #fffdf8;
+  border: 1px solid var(--paper-edge);
+  border-left: 3px solid var(--gold-soft);
+  border-radius: 8px;
+  font-size: 15.8px;
+  line-height: 1.72;
+  color: var(--ink-soft);
+  box-shadow: 0 5px 16px -12px rgba(20,30,50,.5);
+}
+.q .qnum{
+  font-family:'JetBrains Mono', monospace;
+  font-weight:700;
+  font-size: 12.5px;
+  color: var(--gold-deep);
+  margin-right: 8px;
+}
+.q .qcode{ margin-top: 14px; }
+
+/* ---------- Checklist ---------- */
+.checklist{ list-style:none; padding:0; margin: 24px 0; }
+.checklist li{
+  position: relative;
+  padding: 12px 0 12px 42px;
+  border-bottom: 1px solid #efe8d7;
+  font-size: 16px;
+  color: var(--ink-soft);
+  line-height:1.65;
+}
+.checklist li::before{
+  content:"";
+  position:absolute;
+  left: 4px; top: 15px;
+  width: 18px; height: 18px;
+  border: 2px solid var(--gold);
+  border-radius: 4px;
+  background: #fffdf6;
+  box-shadow: inset 0 0 0 2px #fffdf6, inset 0 0 0 3px rgba(201,162,39,.25);
+}
+.checklist li:last-child{ border-bottom:none; }
+
+/* ---------- TOC ---------- */
+.toc{ list-style:none; padding:0; margin: 8px 0 0; counter-reset: toc; }
+.toc li{
+  counter-increment: toc;
+  display:flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 13px 4px;
+  border-bottom: 1px dotted #e2d8c0;
+  font-size: 16.2px;
+  color: var(--ink-soft);
+}
+.toc li a{
+  text-decoration:none;
+  color: var(--navy);
+  font-weight: 500;
+  transition: color .18s ease;
+  display:flex;
+  align-items:baseline;
+  gap: 14px;
+  width:100%;
+}
+.toc li a:hover{ color: var(--gold-deep); }
+.toc li a::before{
+  content: counter(toc, decimal-leading-zero);
+  font-family:'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing:.08em;
+  flex: 0 0 30px;
+}
+.toc li a::after{
+  content:"";
+  flex: 1 1 auto;
+  border-bottom: 1px dotted #ddd0b2;
+  margin: 0 6px 4px;
+}
+
+/* ---------- Misc ---------- */
+.lead{
+  font-size: 18.5px;
+  line-height: 1.78;
+  color: var(--ink);
+  font-style: italic;
+  margin-bottom: 26px;
+}
+.divider{
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  margin: 46px 0;
+  color: var(--gold-soft);
+  font-size: 14px;
+}
+.divider span{ height:1px; width:70px; background:linear-gradient(90deg,transparent,var(--gold-soft)); }
+.divider span:last-child{ background:linear-gradient(270deg,transparent,var(--gold-soft)); }
+
+.step-list{ list-style:none; padding:0; counter-reset: step; }
+.step-list li{
+  counter-increment: step;
+  position: relative;
+  padding: 8px 0 8px 46px;
+  margin-bottom: 6px;
+  font-size: 16.2px;
+  line-height:1.75;
+  color: var(--ink-soft);
+}
+.step-list li::before{
+  content: counter(step);
+  position:absolute; left:0; top:8px;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+  color:#fff;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  font-weight: 700;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 4px 12px -5px rgba(156,124,20,.9);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 820px){
+  body{ padding: 22px 10px 60px; }
+  .page{ padding: 42px 30px 66px; border-radius: 3px 8px 8px 3px; }
+  .page::before{ width: 16px; }
+  .page-foot{ left:30px; right:30px; }
+  .chap-title{ font-size: 26px; }
+  .cover{ min-height:auto; padding: 60px 26px; }
+  .cover-frame{ padding: 40px 22px; }
+  .cover h1{ font-size: 30px; }
+  .cover .cover-sub{ font-size: 15px; }
+  h3{ font-size: 20px; }
+  p, ul, ol, .q, .checklist li{ font-size: 15.4px; }
+  .fig pre{ font-size: 12px; padding: 15px 14px; }
+}
+
+@media print{
+  body{ background:#fff; padding:0; }
+  .book{ max-width:none; }
+  .page{
+    box-shadow:none; border:none; margin:0; border-radius:0;
+    page-break-after: always;
+    padding: 48px 54px 66px;
+  }
+  .page::before, .page::after{ display:none; }
+  .cover{ min-height: 96vh; }
+}
+</style>
+</head>
+<body>
+
+<div class="book">
+
+<!-- ══════════════════════════════════════════════════════════
+     COVER
+     ══════════════════════════════════════════════════════════ -->
+<section class="page cover">
+  <div class="cover-frame">
+    <div class="cover-eyebrow">The Complete Handbook Series</div>
+    <div class="cover-logo">JS</div>
+    <h1>JavaScript<br>Mastery</h1>
+    <div class="cover-sub">Phase 5 — Modern JavaScript<br>(ES6+)</div>
+    <div class="cover-rule"><span></span><i>❖</i><span></span></div>
+    <div class="cover-meta">
+      Level &nbsp;·&nbsp; Intermediate → Advanced<br>
+      Volume &nbsp;·&nbsp; Five of Six<br>
+      Edition &nbsp;·&nbsp; Handcrafted Study Edition
+    </div>
+    <div class="cover-badges">
+      <span class="badge">Template Literals</span>
+      <span class="badge">Destructuring</span>
+      <span class="badge">Spread / Rest</span>
+      <span class="badge">Arrow Functions</span>
+      <span class="badge">?.</span>
+      <span class="badge">??</span>
+      <span class="badge">Modules</span>
+    </div>
+  </div>
+  <div class="cover-foot">Upgrade the toolbox · Write less · Say more</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     FRONT MATTER
+     ══════════════════════════════════════════════════════════ -->
+<section class="page">
+  <header class="chap-head">
+    <div class="chap-num">Before We Begin</div>
+    <h2 class="chap-title">About This Phase</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p class="lead">Phase 5 is where JavaScript stops feeling like an old language and starts feeling like the one you actually use every day. ES6+ didn't just add features — it changed how code is written, read, and shared.</p>
+
+  <div class="table-wrap">
+    <table>
+      <tbody>
+        <tr><td>Level</td><td>Intermediate → Advanced</td></tr>
+        <tr><td>Goal</td><td>Master modern JavaScript features — template literals, destructuring, spread and rest, arrow functions, default parameters, optional chaining, nullish coalescing, enhanced object literals and modules.</td></tr>
+        <tr><td>Prerequisites</td><td>Phase 1 · Phase 2 · Phase 3 · Phase 4</td></tr>
+        <tr><td>What comes next</td><td>Phase 6 — Asynchronous JavaScript: callbacks, promises, <code>async</code>/<code>await</code>, and fetching data from APIs.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>How to Read This Phase</h3>
+  <ol class="step-list">
+    <li><strong>Type every example.</strong> Modern JavaScript is muscle memory. Short syntax rewards repetition.</li>
+    <li><strong>Compare old vs new.</strong> Whenever an old-style example appears, write it both ways.</li>
+    <li><strong>Trace the diagrams.</strong> Destructuring, spread, rest, and the <code>??</code> rule are best understood visually.</li>
+    <li><strong>Notice the subtleties.</strong> Shallow vs deep copy, <code>||</code> vs <code>??</code>, arrow <code>this</code> — these are what separates intermediates from professionals.</li>
+    <li><strong>Build the Student Profile Generator independently.</strong> It ties every feature of this phase together.</li>
+  </ol>
+
+  <div class="callout tip">
+    <span class="callout-title">The one mental model to carry forward</span>
+    <p>Modern JavaScript is not a different language — it is the <strong>same language with better tools</strong>. Every ES6+ feature replaces a longer, more error-prone older pattern with a shorter, clearer one.</p>
+  </div>
+
+  <div class="page-foot"><span>JavaScript Mastery · Phase 5</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     TABLE OF CONTENTS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page">
+  <header class="chap-head">
+    <div class="chap-num">Contents</div>
+    <h2 class="chap-title">Table of Contents</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <ol class="toc">
+    <li><a href="#ch1">What Is Modern JavaScript?</a></li>
+    <li><a href="#ch2">Template Literals</a></li>
+    <li><a href="#ch3">Destructuring</a></li>
+    <li><a href="#ch4">Spread Operator</a></li>
+    <li><a href="#ch5">Rest Parameters</a></li>
+    <li><a href="#ch6">Arrow Functions</a></li>
+    <li><a href="#ch7">Default Parameters</a></li>
+    <li><a href="#ch8">Optional Chaining</a></li>
+    <li><a href="#ch9">Nullish Coalescing</a></li>
+    <li><a href="#ch10">Enhanced Object Literals</a></li>
+    <li><a href="#ch11">JavaScript Modules</a></li>
+    <li><a href="#ch12">Mini Project — Student Profile Generator</a></li>
+    <li><a href="#ch13">Common Mistakes to Avoid</a></li>
+    <li><a href="#ch14">Practice Questions</a></li>
+    <li><a href="#ch15">Selected Solutions</a></li>
+    <li><a href="#ch16">Quick Revision Sheet</a></li>
+  </ol>
+
+  <div class="keyidea">
+    <span class="k-label">The Modern Mindset</span>
+    <p>Write less. Say more. Copy safely. Access nullishly. Export cleanly.</p>
+  </div>
+
+  <div class="page-foot"><span>JavaScript Mastery · Phase 5</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 1 — WHAT IS MODERN JAVASCRIPT?
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch1">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 01</div>
+    <h2 class="chap-title">What Is Modern JavaScript?</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p>ES6 stands for <strong>ECMAScript 2015</strong>. It introduced important JavaScript features that made writing and maintaining code easier. JavaScript has continued to evolve since ES6, so modern JavaScript includes features introduced in later versions too.</p>
+
+  <h3>Real-Life Analogy: Upgrading Your Toolbox</h3>
+  <p>Imagine a carpenter who initially has only a hammer and screwdriver. Over time, they get a power drill, measuring tools, and specialized equipment.</p>
+  <p>They can still build furniture with the old tools, but the new tools help them work faster and more efficiently.</p>
+  <p>Similarly, modern JavaScript provides better tools for common programming tasks.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 320" role="img" aria-label="A carpenter's toolbox upgraded from basic to modern tools, just like ES6+ features">
+      <defs>
+        <linearGradient id="c1oldbox" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#c4a880"/><stop offset="100%" stop-color="#9a7a4a"/>
+        </linearGradient>
+        <linearGradient id="c1newbox" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#243350"/><stop offset="100%" stop-color="#121c2f"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="700" height="320" rx="16" fill="#f7f2e7"/>
+
+      <!-- LEFT: old toolbox -->
+      <text x="175" y="34" text-anchor="middle" class="t-label" font-size="10" fill="#8a7d5f">BEFORE ES6 — BASIC TOOLS</text>
+
+      <rect x="60" y="140" width="230" height="130" rx="10" fill="url(#c1oldbox)" stroke="#1b2432" stroke-width="2.5"/>
+      <rect x="60" y="140" width="230" height="36" rx="10" fill="#7a5e3a" stroke="#1b2432" stroke-width="2.5"/>
+      <path d="M120 140 Q 175 100 230 140" fill="none" stroke="#1b2432" stroke-width="3"/>
+
+      <!-- hammer -->
+      <rect x="90" y="80" width="8" height="46" rx="3" fill="#7a5e3a" stroke="#1b2432" stroke-width="2"/>
+      <rect x="80" y="76" width="28" height="14" rx="3" fill="#5a5a5a" stroke="#1b2432" stroke-width="2"/>
+
+      <!-- screwdriver -->
+      <rect x="230" y="86" width="6" height="40" rx="2" fill="#9a7a4a" stroke="#1b2432" stroke-width="1.5"/>
+      <rect x="224" y="126" width="18" height="10" rx="2" fill="#5a5a5a" stroke="#1b2432" stroke-width="1.5"/>
+
+      <text x="175" y="296" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#8a7d5f">slower · repetitive · error-prone</text>
+
+      <!-- upgrade arrow -->
+      <path d="M310 200 Q 350 200 380 200" fill="none" stroke="#c9a227" stroke-width="3" stroke-dasharray="7 6"/>
+      <polygon points="380,190 402,200 380,210" fill="#c9a227"/>
+      <text x="350" y="184" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">UPGRADE</text>
+
+      <!-- RIGHT: modern toolbox -->
+      <text x="530" y="34" text-anchor="middle" class="t-label" font-size="10" fill="#e6d49a">AFTER ES6 — POWER TOOLS</text>
+
+      <rect x="420" y="140" width="230" height="130" rx="10" fill="url(#c1newbox)" stroke="#c9a227" stroke-width="2.5"/>
+      <rect x="420" y="140" width="230" height="36" rx="10" fill="#c9a227" stroke="#c9a227" stroke-width="2.5"/>
+      <path d="M480 140 Q 535 100 590 140" fill="none" stroke="#c9a227" stroke-width="3"/>
+
+      <!-- power drill -->
+      <rect x="440" y="88" width="46" height="34" rx="4" fill="#22314e" stroke="#82aaff" stroke-width="2"/>
+      <circle cx="500" cy="106" r="16" fill="none" stroke="#82aaff" stroke-width="3"/>
+      <rect x="514" y="102" width="24" height="6" rx="3" fill="#82aaff"/>
+
+      <!-- wrench -->
+      <rect x="580" y="88" width="8" height="40" rx="2" fill="#5c7ab8" stroke="#22314e" stroke-width="1.5"/>
+      <circle cx="584" cy="84" r="10" fill="none" stroke="#22314e" stroke-width="4"/>
+      <circle cx="584" cy="132" r="10" fill="none" stroke="#22314e" stroke-width="4"/>
+
+      <text x="535" y="296" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#e6d49a">faster · concise · expressive</text>
+    </svg>
+    <figcaption><b>Figure 1.1</b> — Same carpenter, better tools. ES6+ upgraded the toolbox, not the craft.</figcaption>
+  </figure>
+
+  <h3>Example: Creating a Message</h3>
+
+  <h5>Old approach</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">old-style.js</span></div>
+    <pre><code>const name = "Rahul";
+const age = 22;
+
+const message =
+  "My name is " + name + " and I am " + age + " years old.";
+
+console.log(message);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>My name is Rahul and I am 22 years old.</pre>
+  </figure>
+
+  <h5>Modern approach</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">modern.js</span></div>
+    <pre><code>const name = "Rahul";
+const age = 22;
+
+const message = `My name is ${name} and I am ${age} years old.`;
+
+console.log(message);</code></pre>
+  </figure>
+
+  <p>Both approaches work. The modern version is <strong>easier to read and maintain</strong>.</p>
+
+  <div class="page-foot"><span>Chapter 01 · What Is Modern JavaScript?</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 2 — TEMPLATE LITERALS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch2">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 02</div>
+    <h2 class="chap-title">Template Literals</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p><strong>Template literals</strong> use backticks (<code>`</code>) instead of ordinary quotes. They allow us to insert variables and expressions directly into strings.</p>
+
+  <h3>2.1 &nbsp;Basic Syntax</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">basic.js</span></div>
+    <pre><code>const name = "Priya";
+console.log(`Hello, ${name}!`);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Hello, Priya!</pre>
+  </figure>
+
+  <h3>Real-Life Analogy: Filling Out a Certificate</h3>
+  <p>Imagine a certificate template:</p>
+  <blockquote style="font-style:italic; border-left:3px solid var(--gold); padding-left:16px; color:var(--gold-deep); margin:0 0 16px;">
+    "Congratulations, [STUDENT NAME]! You scored [MARKS] marks."
+  </blockquote>
+  <p>You replace the placeholders with the student's actual details. Template literals work similarly, except JavaScript uses <code>${}</code> to insert values.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 320" role="img" aria-label="A certificate template with placeholders filled in using template literal expressions">
+      <defs>
+        <linearGradient id="c2cert" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fffdf8"/><stop offset="100%" stop-color="#f3ebd8"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="700" height="320" rx="16" fill="#f7f2e7"/>
+
+      <!-- Certificate -->
+      <rect x="90" y="40" width="520" height="240" rx="12" fill="url(#c2cert)" stroke="#c9a227" stroke-width="3"/>
+      <rect x="102" y="52" width="496" height="216" rx="8" fill="none" stroke="#c9a227" stroke-width="1" stroke-dasharray="4 4"/>
+
+      <!-- ornament -->
+      <circle cx="350" cy="86" r="18" fill="#c9a227"/>
+      <text x="350" y="94" text-anchor="middle" font-size="18" font-family="Lora, serif" font-weight="900" fill="#1b2432">★</text>
+
+      <text x="350" y="126" text-anchor="middle" font-size="14" font-family="Playfair Display, serif" font-weight="700" fill="#1b2432">CERTIFICATE OF ACHIEVEMENT</text>
+      <line x1="240" y1="136" x2="460" y2="136" stroke="#c9a227" stroke-width="1.5"/>
+
+      <!-- template text with placeholders -->
+      <text x="350" y="176" text-anchor="middle" font-size="13" font-family="Lora, serif" fill="#3b4657">
+        Congratulations,
+        <tspan fill="#b03a52" font-weight="700" font-family="JetBrains Mono, monospace">[STUDENT NAME]</tspan>
+      </text>
+      <text x="350" y="200" text-anchor="middle" font-size="13" font-family="Lora, serif" fill="#3b4657">
+        You scored
+        <tspan fill="#b03a52" font-weight="700" font-family="JetBrains Mono, monospace">[MARKS]</tspan>
+        marks.
+      </text>
+
+      <!-- transformation arrows -->
+      <path d="M140 224 Q 200 250 280 244" fill="none" stroke="#0f766e" stroke-width="2" stroke-dasharray="5 5"/>
+      <text x="180" y="258" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">fill placeholder</text>
+
+      <path d="M560 224 Q 500 250 420 244" fill="none" stroke="#0f766e" stroke-width="2" stroke-dasharray="5 5"/>
+      <text x="520" y="258" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">fill placeholder</text>
+
+      <!-- arrows down to values -->
+      <line x1="180" y1="266" x2="180" y2="292" stroke="#0f766e" stroke-width="2"/>
+      <polygon points="172,292 180,308 188,292" fill="#0f766e"/>
+      <text x="180" y="316" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">Riya</text>
+
+      <line x1="520" y1="266" x2="520" y2="292" stroke="#0f766e" stroke-width="2"/>
+      <polygon points="512,292 520,308 528,292" fill="#0f766e"/>
+      <text x="520" y="316" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">92</text>
+    </svg>
+    <figcaption><b>Figure 2.1</b> — A template literal is a certificate. The <code>${}</code> markers are the blank fields.</figcaption>
+  </figure>
+
+  <h3>2.2 &nbsp;Insert Expressions</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">expressions.js</span></div>
+    <pre><code>const price = 500;
+const quantity = 3;
+
+console.log(`Total price: ₹${price * quantity}`);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Total price: ₹1500</pre>
+  </figure>
+
+  <h4>Dry Run</h4>
+  <ol>
+    <li><code>price</code> contains <code>500</code>.</li>
+    <li><code>quantity</code> contains <code>3</code>.</li>
+    <li>JavaScript calculates <code>500 * 3</code>, giving <code>1500</code>.</li>
+    <li>The result is inserted into the string.</li>
+  </ol>
+
+  <h3>2.3 &nbsp;Multiline Strings</h3>
+
+  <h5>Without template literals</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">concatenated.js</span></div>
+    <pre><code>const message = "Hello Rahul.\n" +
+  "Welcome to JavaScript.\n" +
+  "Start practicing today.";</code></pre>
+  </figure>
+
+  <h5>With template literals</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">multiline.js</span></div>
+    <pre><code>const message = `Hello Rahul.
+Welcome to JavaScript.
+Start practicing today.`;
+
+console.log(message);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Hello Rahul.
+Welcome to JavaScript.
+Start practicing today.</pre>
+  </figure>
+
+  <h3>2.4 &nbsp;Practical Example: Student Result</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">result.js</span></div>
+    <pre><code>const student = "Aman";
+const marks = 85;
+const totalMarks = 100;
+
+console.log(`
+Student: ${student}
+Marks: ${marks}/${totalMarks}
+Percentage: ${(marks / totalMarks) * 100}%
+`);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Student: Aman
+Marks: 85/100
+Percentage: 85%</pre>
+  </figure>
+
+  <div class="keyidea">
+    <span class="k-label">Remember</span>
+    <p>Template literals are especially useful for dynamic messages, HTML templates, logs and displaying information in applications.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 02 · Template Literals</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 3 — DESTRUCTURING
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch3">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 03</div>
+    <h2 class="chap-title">Destructuring</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p><strong>Destructuring</strong> allows us to extract values from arrays and objects into variables.</p>
+
+  <h3>Real-Life Analogy: Taking Items Out of a Bag</h3>
+  <p>Suppose your bag contains a notebook, pen, and calculator. Instead of carrying the whole bag everywhere, you take out the items you need.</p>
+  <p>Destructuring works similarly: it extracts particular values from a larger structure.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 320" role="img" aria-label="Taking items out of a bag represents destructuring">
+      <rect x="0" y="0" width="700" height="320" rx="16" fill="#f7f2e7"/>
+
+      <!-- bag -->
+      <path d="M170 130 L130 290 L410 290 L370 130 Z" fill="#7a5e3a" stroke="#1b2432" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M210 130 Q 270 70 330 130" fill="none" stroke="#1b2432" stroke-width="3"/>
+      <text x="270" y="220" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" fill="#f4e6bd">BAG</text>
+
+      <!-- extracting arrows -->
+      <g stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5" fill="none">
+        <path d="M400 160 Q 480 120 540 100"/>
+        <path d="M410 200 Q 500 190 540 190"/>
+        <path d="M410 250 Q 500 270 540 270"/>
+      </g>
+
+      <!-- extracted items -->
+      <g>
+        <!-- notebook -->
+        <rect x="550" y="68" width="120" height="64" rx="6" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <line x1="560" y1="82" x2="660" y2="82" stroke="#0f766e" stroke-width="1.5"/>
+        <line x1="560" y1="96" x2="660" y2="96" stroke="#0f766e" stroke-width="1.5"/>
+        <line x1="560" y1="110" x2="640" y2="110" stroke="#0f766e" stroke-width="1.5"/>
+        <text x="610" y="150" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#0f766e">notebook</text>
+
+        <!-- pen -->
+        <rect x="550" y="172" width="120" height="34" rx="6" fill="#fdf6e0" stroke="#c9a227" stroke-width="2"/>
+        <circle cx="570" cy="189" r="6" fill="#9c7c14"/>
+        <rect x="582" y="185" width="80" height="8" rx="4" fill="#c9a227"/>
+        <text x="610" y="226" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">pen</text>
+
+        <!-- calculator -->
+        <rect x="550" y="244" width="120" height="50" rx="6" fill="#16243d" stroke="#c9a227" stroke-width="2"/>
+        <rect x="562" y="254" width="96" height="14" rx="3" fill="#0d1422"/>
+        <text x="610" y="286" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#c7d3e8">calculator</text>
+      </g>
+
+      <text x="350" y="308" text-anchor="middle" class="t-gold" font-size="10.5">PULL OUT ONLY WHAT YOU NEED</text>
+    </svg>
+    <figcaption><b>Figure 3.1</b> — Destructuring is taking items out of a bag by name or position.</figcaption>
+  </figure>
+
+  <h3>3.1 &nbsp;Array Destructuring</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">array-destructure.js</span></div>
+    <pre><code>const colors = ["Red", "Green", "Blue"];
+
+const [first, second, third] = colors;
+
+console.log(first);
+console.log(second);
+console.log(third);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Red
+Green
+Blue</pre>
+  </figure>
+
+  <p>The variables are assigned values according to their <strong>positions</strong>.</p>
+
+  <h4>Skip values</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">skip.js</span></div>
+    <pre><code>const numbers = [10, 20, 30];
+
+const [first, , third] = numbers;
+
+console.log(first);
+console.log(third);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>10
+30</pre>
+  </figure>
+
+  <p>The second position is <strong>skipped</strong>.</p>
+
+  <h4>Default values</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">defaults.js</span></div>
+    <pre><code>const colors = ["Red"];
+
+const [first, second = "Black"] = colors;
+
+console.log(first);
+console.log(second);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Red
+Black</pre>
+  </figure>
+
+  <p>The second array element is missing, so the default value <code>"Black"</code> is used.</p>
+
+  <div class="page-foot"><span>Chapter 03 · Destructuring</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>3.2 &nbsp;Object Destructuring</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">object-destructure.js</span></div>
+    <pre><code>const student = {
+  name: "Riya",
+  age: 21,
+  course: "MERN Stack"
+};
+
+const { name, age } = student;
+
+console.log(name);
+console.log(age);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Riya
+21</pre>
+  </figure>
+
+  <div class="callout note">
+    <span class="callout-title">Important difference</span>
+    <p><strong>Array destructuring uses position.</strong><br>
+       <strong>Object destructuring uses property names.</strong></p>
+  </div>
+
+  <p>For example, <code>{ name }</code> extracts the <code>name</code> property, regardless of the order in which the object's properties were declared.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 280" role="img" aria-label="Array destructuring uses position; object destructuring uses names">
+      <rect x="0" y="0" width="700" height="280" rx="16" fill="#f7f2e7"/>
+
+      <!-- array: positional -->
+      <rect x="26" y="34" width="316" height="216" rx="14" fill="#fffdf8" stroke="#9c7c14" stroke-width="2.5"/>
+      <text x="184" y="62" text-anchor="middle" class="t-label" font-size="10" fill="#9c7c14">ARRAY — BY POSITION</text>
+
+      <g font-family="JetBrains Mono, monospace" font-size="12">
+        <rect x="56" y="86" width="86" height="44" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.8"/>
+        <text x="99" y="112" text-anchor="middle" font-weight="700" fill="#9c7c14">Red</text>
+        <text x="99" y="146" text-anchor="middle" font-size="9.5" fill="#8a7d5f">index 0</text>
+
+        <rect x="150" y="86" width="86" height="44" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.8"/>
+        <text x="193" y="112" text-anchor="middle" font-weight="700" fill="#9c7c14">Green</text>
+        <text x="193" y="146" text-anchor="middle" font-size="9.5" fill="#8a7d5f">index 1</text>
+
+        <rect x="244" y="86" width="86" height="44" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.8"/>
+        <text x="287" y="112" text-anchor="middle" font-weight="700" fill="#9c7c14">Blue</text>
+        <text x="287" y="146" text-anchor="middle" font-size="9.5" fill="#8a7d5f">index 2</text>
+      </g>
+
+      <text x="184" y="192" text-anchor="middle" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">const [first, second, third] = colors</text>
+      <text x="184" y="220" text-anchor="middle" font-size="10.5" font-family="Lora, serif" font-style="italic" fill="#3b4657">order matters</text>
+
+      <!-- object: by name -->
+      <rect x="358" y="34" width="316" height="216" rx="14" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="516" y="62" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">OBJECT — BY NAME</text>
+
+      <g font-family="JetBrains Mono, monospace" font-size="11.5">
+        <text x="386" y="100" fill="#c792ea">name</text>
+        <text x="430" y="100" fill="#c7d3e8">:</text>
+        <text x="446" y="100" fill="#a5e075">"Riya"</text>
+
+        <text x="386" y="130" fill="#c792ea">age</text>
+        <text x="430" y="130" fill="#c7d3e8">:</text>
+        <text x="446" y="130" fill="#f7a56b">21</text>
+
+        <text x="386" y="160" fill="#c792ea">course</text>
+        <text x="430" y="160" fill="#c7d3e8">:</text>
+        <text x="446" y="160" fill="#a5e075">"MERN"</text>
+      </g>
+
+      <text x="516" y="192" text-anchor="middle" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#0f766e">const { name, age } = student</text>
+      <text x="516" y="220" text-anchor="middle" font-size="10.5" font-family="Lora, serif" font-style="italic" fill="#3b4657">order doesn't matter</text>
+    </svg>
+    <figcaption><b>Figure 3.2</b> — Arrays are positional; objects are named.</figcaption>
+  </figure>
+
+  <h4>Rename variables</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">rename.js</span></div>
+    <pre><code>const student = {
+  name: "Aman",
+  age: 22
+};
+
+const { name: studentName, age: studentAge } = student;
+
+console.log(studentName);
+console.log(studentAge);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Aman
+22</pre>
+  </figure>
+
+  <p>Here, <code>name: studentName</code> means "take the <code>name</code> property and store its value in a variable named <code>studentName</code>." It does <strong>not</strong> rename the original object property.</p>
+
+  <h4>Nested destructuring</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">nested.js</span></div>
+    <pre><code>const user = {
+  name: "Neha",
+  address: {
+    city: "Rajkot",
+    state: "Gujarat"
+  }
+};
+
+const {
+  address: { city, state }
+} = user;
+
+console.log(city);
+console.log(state);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Rajkot
+Gujarat</pre>
+  </figure>
+
+  <h4>Destructuring in function parameters</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">fn-params.js</span></div>
+    <pre><code>function displayStudent({ name, course }) {
+  console.log(`${name} is learning ${course}.`);
+}
+
+const student = {
+  name: "Rahul",
+  course: "React"
+};
+
+displayStudent(student);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Rahul is learning React.</pre>
+  </figure>
+
+  <p>This pattern is common in React components and functions that accept configuration objects.</p>
+
+  <div class="page-foot"><span>Chapter 03 · Destructuring</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 4 — SPREAD OPERATOR
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch4">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 04</div>
+    <h2 class="chap-title">Spread Operator <code>...</code></h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p>The <strong>spread operator</strong> expands the elements of an iterable, such as an array, or the enumerable properties of an object into another structure.</p>
+
+  <h3>Real-Life Analogy: Combining Shopping Baskets</h3>
+  <p>Basket A contains apples and bananas. Basket B contains mangoes and oranges. You can spread the contents of both baskets into a new basket.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 320" role="img" aria-label="Combining two shopping baskets into a new basket represents spread">
+      <rect x="0" y="0" width="700" height="320" rx="16" fill="#f7f2e7"/>
+
+      <!-- basket A -->
+      <text x="140" y="34" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">BASKET A</text>
+      <path d="M60 100 L90 240 L190 240 L220 100 Z" fill="#e9f6f4" stroke="#0f766e" stroke-width="2.5"/>
+      <path d="M60 100 L90 120 L190 120 L220 100" fill="none" stroke="#0f766e" stroke-width="2"/>
+      <circle cx="115" cy="170" r="14" fill="#b03a52"/>
+      <text x="115" y="175" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#fff">A</text>
+      <circle cx="165" cy="196" r="14" fill="#c9a227"/>
+      <text x="165" y="201" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#fff">B</text>
+
+      <!-- basket B -->
+      <text x="140" y="34" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e" opacity="0">.</text>
+      <text x="400" y="34" text-anchor="middle" class="t-label" font-size="10" fill="#9c7c14">BASKET B</text>
+      <path d="M320 100 L350 240 L450 240 L480 100 Z" fill="#fdf6e0" stroke="#c9a227" stroke-width="2.5"/>
+      <path d="M320 100 L350 120 L450 120 L480 100" fill="none" stroke="#c9a227" stroke-width="2"/>
+      <circle cx="375" cy="170" r="14" fill="#f7a56b"/>
+      <text x="375" y="175" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#fff">M</text>
+      <circle cx="425" cy="196" r="14" fill="#f7a56b"/>
+      <text x="425" y="201" text-anchor="middle" font-size="9" font-family="JetBrains Mono, monospace" fill="#fff">O</text>
+
+      <!-- arrows -->
+      <path d="M235 170 Q 290 170 315 170" fill="none" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5"/>
+      <path d="M485 170 Q 540 170 565 170" fill="none" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5"/>
+
+      <!-- new basket -->
+      <text x="600" y="34" text-anchor="middle" class="t-label" font-size="10" fill="#16243d">NEW BASKET</text>
+      <path d="M535 100 L560 240 L640 240 L665 100 Z" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <path d="M535 100 L560 120 L640 120 L665 100" fill="none" stroke="#c9a227" stroke-width="2"/>
+      <circle cx="570" cy="156" r="11" fill="#b03a52"/>
+      <circle cx="598" cy="156" r="11" fill="#c9a227"/>
+      <circle cx="626" cy="156" r="11" fill="#f7a56b"/>
+      <circle cx="584" cy="196" r="11" fill="#f7a56b"/>
+      <circle cx="612" cy="196" r="11" fill="#b03a52"/>
+
+      <text x="350" y="288" text-anchor="middle" class="t-gold" font-size="10.5">SPREAD EACH BASKET INTO THE NEW ONE</text>
+    </svg>
+    <figcaption><b>Figure 4.1</b> — Spread empties baskets into a new basket without touching the originals.</figcaption>
+  </figure>
+
+  <h3>4.1 &nbsp;Copy an Array</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">copy-array.js</span></div>
+    <pre><code>const original = [10, 20, 30];
+const copy = [...original];
+
+copy.push(40);
+
+console.log(original);
+console.log(copy);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[10, 20, 30]
+[10, 20, 30, 40]</pre>
+  </figure>
+
+  <p>The new array has its own outer structure, so adding an element to it does <strong>not</strong> change the original array.</p>
+
+  <h3>4.2 &nbsp;Combine Arrays</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">combine.js</span></div>
+    <pre><code>const frontend = ["HTML", "CSS", "JavaScript"];
+const backend = ["Node.js", "Express"];
+
+const fullStack = [...frontend, ...backend];
+
+console.log(fullStack);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>["HTML", "CSS", "JavaScript", "Node.js", "Express"]</pre>
+  </figure>
+
+  <h3>4.3 &nbsp;Pass Array Elements to a Function</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">math-max.js</span></div>
+    <pre><code>const numbers = [12, 45, 8, 32];
+
+console.log(Math.max(...numbers));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>45</pre>
+  </figure>
+
+  <p>The spread operator supplies the numbers as <strong>separate arguments</strong> to <code>Math.max()</code>.</p>
+
+  <h3>4.4 &nbsp;Copy and Update an Object</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">copy-object.js</span></div>
+    <pre><code>const student = {
+  name: "Aman",
+  age: 21,
+  course: "JavaScript"
+};
+
+const updatedStudent = {
+  ...student,
+  age: 22
+};
+
+console.log(updatedStudent);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>{
+  name: "Aman",
+  age: 22,
+  course: "JavaScript"
+}</pre>
+  </figure>
+
+  <p>The later <code>age: 22</code> property <strong>overwrites</strong> the copied <code>age: 21</code> property.</p>
+
+  <div class="page-foot"><span>Chapter 04 · Spread Operator</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>Important: Spread Creates a Shallow Copy</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">shallow.js</span></div>
+    <pre><code>const original = {
+  name: "Riya",
+  address: {
+    city: "Rajkot"
+  }
+};
+
+const copy = { ...original };
+
+copy.name = "Priya";
+copy.address.city = "Ahmedabad";
+
+console.log(original.name);
+console.log(original.address.city);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Riya
+Ahmedabad</pre>
+  </figure>
+
+  <h4>Why?</h4>
+  <ul>
+    <li><code>name</code> is a <strong>top-level property</strong>, so updating it in the copy does not change the original.</li>
+    <li><code>address</code> is a <strong>nested object</strong>. The shallow copy retains a reference to the same nested object.</li>
+  </ul>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 300" role="img" aria-label="Shallow copy — top-level independent, nested objects shared">
+      <rect x="0" y="0" width="700" height="300" rx="16" fill="#f7f2e7"/>
+
+      <!-- original -->
+      <rect x="34" y="40" width="240" height="216" rx="14" fill="#fffdf8" stroke="#9c7c14" stroke-width="2.5"/>
+      <text x="154" y="66" text-anchor="middle" class="t-label" font-size="10" fill="#9c7c14">ORIGINAL</text>
+
+      <rect x="56" y="84" width="196" height="42" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.8"/>
+      <text x="70" y="110" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">name: "Riya"</text>
+
+      <rect x="56" y="140" width="196" height="90" rx="8" fill="#fdeef0" stroke="#b03a52" stroke-width="2"/>
+      <text x="70" y="162" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#b03a52">address: {</text>
+      <text x="86" y="184" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#b03a52">city: "Ahmedabad"</text>
+      <text x="70" y="206" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#b03a52">}</text>
+      <text x="154" y="246" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#b03a52">SHARED</text>
+
+      <!-- copy -->
+      <rect x="426" y="40" width="240" height="216" rx="14" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="546" y="66" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">COPY</text>
+
+      <rect x="448" y="84" width="196" height="42" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.8"/>
+      <text x="462" y="110" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#0f766e">name: "Priya"</text>
+
+      <rect x="448" y="140" width="196" height="90" rx="8" fill="#fdeef0" stroke="#b03a52" stroke-width="2" stroke-dasharray="6 5"/>
+      <text x="462" y="162" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#b03a52">address: {</text>
+      <text x="478" y="184" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#b03a52">city: "Ahmedabad"</text>
+      <text x="462" y="206" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#b03a52">}</text>
+      <text x="546" y="246" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#b03a52">SAME REFERENCE</text>
+
+      <line x1="276" y1="184" x2="424" y2="184" stroke="#b03a52" stroke-width="2.5" stroke-dasharray="7 6"/>
+      <text x="350" y="172" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#b03a52">NESTED OBJECT IS SHARED</text>
+    </svg>
+    <figcaption><b>Figure 4.2</b> — Spread is a shallow copier. The outer shell is new; the inner contents are shared.</figcaption>
+  </figure>
+
+  <div class="keyidea">
+    <span class="k-label">Rule</span>
+    <p>Spread is useful for immutable updates, but it does <strong>not</strong> automatically deep-copy nested objects.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 04 · Spread Operator</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 5 — REST PARAMETERS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch5">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 05</div>
+    <h2 class="chap-title">Rest Parameters <code>...</code></h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p><strong>Rest parameters</strong> collect multiple arguments into a single array.</p>
+  <p>Although rest and spread use the same three-dot syntax, their purposes are different.</p>
+
+  <h3>Real-Life Analogy: Collecting Money</h3>
+  <p>A teacher asks several students to contribute any amount toward a class activity. All contributions are collected into one box.</p>
+  <p>Rest parameters collect the individual arguments into one array.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 300" role="img" aria-label="Collecting money from many students into one box represents rest parameters">
+      <rect x="0" y="0" width="700" height="300" rx="16" fill="#f7f2e7"/>
+
+      <!-- students -->
+      <g>
+        <circle cx="90" cy="90" r="22" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="90" y="96" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" fill="#0f766e">₹10</text>
+        <text x="90" y="126" text-anchor="middle" font-size="10" fill="#3b4657">student</text>
+
+        <circle cx="160" cy="90" r="22" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="160" y="96" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" fill="#0f766e">₹20</text>
+
+        <circle cx="230" cy="90" r="22" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="230" y="96" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" fill="#0f766e">₹15</text>
+
+        <circle cx="300" cy="90" r="22" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="300" y="96" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" fill="#0f766e">₹5</text>
+      </g>
+
+      <!-- arrows to box -->
+      <g stroke="#c9a227" stroke-width="2.5" fill="none">
+        <path d="M90 122 Q 90 160 200 190"/>
+        <path d="M160 122 Q 160 160 220 190"/>
+        <path d="M230 122 Q 230 160 260 190"/>
+        <path d="M300 122 Q 300 160 290 190"/>
+      </g>
+
+      <!-- collection box -->
+      <rect x="380" y="160" width="240" height="100" rx="12" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="500" y="190" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#e6d49a">REST BOX</text>
+      <text x="500" y="222" text-anchor="middle" font-size="18" font-family="JetBrains Mono, monospace" font-weight="700" fill="#a5e075">[10, 20, 15, 5]</text>
+      <text x="500" y="246" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#93a1b8">one array · many arguments</text>
+
+      <text x="350" y="288" text-anchor="middle" class="t-gold" font-size="10.5">MANY CONTRIBUTIONS · ONE COLLECTION</text>
+    </svg>
+    <figcaption><b>Figure 5.1</b> — Rest parameters are the collection box. Many arguments go in; one array comes out.</figcaption>
+  </figure>
+
+  <h3>5.1 &nbsp;Basic Example</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">basic.js</span></div>
+    <pre><code>function addAll(...numbers) {
+  console.log(numbers);
+}
+
+addAll(10, 20, 30, 40);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[10, 20, 30, 40]</pre>
+  </figure>
+
+  <h3>5.2 &nbsp;Calculate a Total</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">total.js</span></div>
+    <pre><code>function addAll(...numbers) {
+  let total = 0;
+
+  for (const number of numbers) {
+    total += number;
+  }
+
+  return total;
+}
+
+console.log(addAll(10, 20, 30));
+console.log(addAll(5, 15, 25, 35));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>60
+80</pre>
+  </figure>
+
+  <p>The function accepts <strong>any number of arguments</strong>.</p>
+
+  <h3>5.3 &nbsp;Rest Parameters with Regular Parameters</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">mixed.js</span></div>
+    <pre><code>function introduce(name, ...skills) {
+  console.log(`Name: ${name}`);
+  console.log(`Skills: ${skills.join(", ")}`);
+}
+
+introduce("Aman", "HTML", "CSS", "JavaScript");</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Name: Aman
+Skills: HTML, CSS, JavaScript</pre>
+  </figure>
+
+  <p>The first argument goes into <code>name</code>. The remaining arguments go into <code>skills</code>.</p>
+
+  <div class="callout warn">
+    <span class="callout-title">Important rule</span>
+    <p>A rest parameter must be the <strong>last parameter</strong> in a function's parameter list.</p>
+  </div>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">rule.js</span></div>
+    <pre><code>function example(first, ...remaining) {
+  console.log(first, remaining);
+}
+
+example(1, 2, 3, 4);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>1 [2, 3, 4]</pre>
+  </figure>
+
+  <h3>5.4 &nbsp;Spread vs. Rest</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Spread</th><th>Rest</th></tr></thead>
+      <tbody>
+        <tr><td>Expands values</td><td>Collects values</td></tr>
+        <tr><td>Used in calls, arrays and objects</td><td>Used in function parameters and destructuring</td></tr>
+        <tr><td><code>Math.max(...numbers)</code></td><td><code>function sum(...numbers)</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="keyidea">
+    <span class="k-label">Memory Trick</span>
+    <p>Spread <strong>spreads things out</strong>. Rest <strong>gathers the remaining things together</strong>.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 05 · Rest Parameters</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 6 — ARROW FUNCTIONS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch6">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 06</div>
+    <h2 class="chap-title">Arrow Functions</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p><strong>Arrow functions</strong> provide a concise syntax for writing functions.</p>
+
+  <h3>Real-Life Analogy: Giving Short Instructions</h3>
+  <p>Instead of saying, "Please take this number, multiply it by two, and return the result," you might simply say, "Double this number."</p>
+  <p>Arrow functions make many simple functions more concise.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 280" role="img" aria-label="Long instruction replaced by a short one, representing arrow function syntax">
+      <rect x="0" y="0" width="700" height="280" rx="16" fill="#f7f2e7"/>
+
+      <!-- long instruction -->
+      <rect x="34" y="46" width="316" height="188" rx="14" fill="#fffdf8" stroke="#9c7c14" stroke-width="2.5"/>
+      <text x="192" y="74" text-anchor="middle" class="t-label" font-size="10" fill="#9c7c14">LONG INSTRUCTION</text>
+
+      <rect x="60" y="102" width="264" height="104" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.8"/>
+      <text x="80" y="128" font-size="11" font-family="Lora, serif" font-style="italic" fill="#3b4657">"Take this number,"</text>
+      <text x="80" y="150" font-size="11" font-family="Lora, serif" font-style="italic" fill="#3b4657">"multiply it by two,"</text>
+      <text x="80" y="172" font-size="11" font-family="Lora, serif" font-style="italic" fill="#3b4657">"and return the result."</text>
+      <text x="80" y="196" font-size="10" font-family="JetBrains Mono, monospace" fill="#8a7d5f">5 lines · verbose</text>
+
+      <text x="192" y="228" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">function(n) { return n * 2 }</text>
+
+      <!-- arrow -->
+      <path d="M362 140 Q 400 140 434 140" fill="none" stroke="#c9a227" stroke-width="3" stroke-dasharray="7 6"/>
+      <polygon points="434,132 456,140 434,148" fill="#c9a227"/>
+      <text x="400" y="124" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">SHORTEN</text>
+
+      <!-- short instruction -->
+      <rect x="470" y="46" width="196" height="188" rx="14" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="568" y="74" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">SHORT</text>
+
+      <rect x="492" y="102" width="152" height="104" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.8"/>
+      <text x="568" y="140" text-anchor="middle" font-size="16" font-family="Lora, serif" font-style="italic" fill="#0f766e">"Double it."</text>
+      <text x="568" y="178" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#8a7d5f">one line · clear</text>
+
+      <text x="568" y="228" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#0f766e">n =&gt; n * 2</text>
+    </svg>
+    <figcaption><b>Figure 6.1</b> — Arrow functions say the same thing in fewer words.</figcaption>
+  </figure>
+
+  <h3>6.1 &nbsp;Traditional vs. Arrow Function</h3>
+
+  <h5>Traditional function</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">traditional.js</span></div>
+    <pre><code>function add(a, b) {
+  return a + b;
+}</code></pre>
+  </figure>
+
+  <h5>Arrow function</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">arrow.js</span></div>
+    <pre><code>const add = (a, b) =&gt; {
+  return a + b;
+};
+
+console.log(add(10, 20));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>30</pre>
+  </figure>
+
+  <h3>6.2 &nbsp;Implicit Return</h3>
+  <p>When the function body contains only one expression, you can omit the braces and <code>return</code>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">implicit.js</span></div>
+    <pre><code>const square = number =&gt; number * number;
+
+console.log(square(5));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>25</pre>
+  </figure>
+
+  <p>These are equivalent:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">equivalent.js</span></div>
+    <pre><code>const double = number =&gt; {
+  return number * 2;
+};
+
+const doubleShort = number =&gt; number * 2;</code></pre>
+  </figure>
+
+  <h3>6.3 &nbsp;Different Parameter Patterns</h3>
+
+  <h5>No parameters</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">no-params.js</span></div>
+    <pre><code>const greet = () =&gt; "Hello!";
+
+console.log(greet());</code></pre>
+  </figure>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Hello!</pre>
+  </figure>
+
+  <h5>One parameter</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">one-param.js</span></div>
+    <pre><code>const cube = number =&gt; number * number * number;
+
+console.log(cube(3));</code></pre>
+  </figure>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>27</pre>
+  </figure>
+
+  <h5>Multiple parameters</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">multi-params.js</span></div>
+    <pre><code>const multiply = (a, b) =&gt; a * b;
+
+console.log(multiply(4, 5));</code></pre>
+  </figure>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>20</pre>
+  </figure>
+
+  <div class="callout note">
+    <span class="callout-title">Style note</span>
+    <p>Parentheses around a single parameter are <strong>optional</strong>, but using them consistently can improve readability.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 06 · Arrow Functions</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>6.4 &nbsp;Returning an Object</h3>
+  <p>If you want an arrow function to return an object literal implicitly, wrap the object in <strong>parentheses</strong>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">object-return.js</span></div>
+    <pre><code>const createStudent = (name, age) =&gt; ({
+  name: name,
+  age: age
+});
+
+console.log(createStudent("Riya", 20));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>{ name: "Riya", age: 20 }</pre>
+  </figure>
+
+  <p>Without the parentheses, JavaScript interprets the braces as a <strong>function body</strong>.</p>
+
+  <h3>6.5 &nbsp;Arrow Functions with Array Methods</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">array-methods.js</span></div>
+    <pre><code>const numbers = [1, 2, 3, 4, 5];
+
+const doubled = numbers.map(number =&gt; number * 2);
+const evenNumbers = numbers.filter(number =&gt; number % 2 === 0);
+
+console.log(doubled);
+console.log(evenNumbers);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[2, 4, 6, 8, 10]
+[2, 4]</pre>
+  </figure>
+
+  <p>These concise callback functions are widely used in React and modern JavaScript.</p>
+
+  <h3>6.6 &nbsp;The <code>this</code> Difference</h3>
+  <p>Arrow functions <strong>do not create their own <code>this</code></strong>. They use the <code>this</code> value from their surrounding lexical scope.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">method-this.js</span></div>
+    <pre><code>const student = {
+  name: "Aman",
+
+  showName() {
+    console.log(this.name);
+  }
+};
+
+student.showName();</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Aman</pre>
+  </figure>
+
+  <p>Here, <code>this</code> refers to <code>student</code>.</p>
+
+  <p>Now consider:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">arrow-this.js</span></div>
+    <pre><code>const student = {
+  name: "Aman",
+
+  showName: () =&gt; {
+    console.log(this.name);
+  }
+};
+
+student.showName();</code></pre>
+  </figure>
+
+  <p>This does <strong>not</strong> reliably print <code>"Aman"</code>. The arrow function does not get <code>this</code> from the <code>student</code> object; it inherits <code>this</code> from the surrounding scope.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 280" role="img" aria-label="Regular methods get this from caller; arrow functions inherit this from birthplace">
+      <rect x="0" y="0" width="700" height="280" rx="16" fill="#f7f2e7"/>
+
+      <!-- regular method -->
+      <rect x="34" y="34" width="316" height="216" rx="14" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="192" y="62" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">REGULAR METHOD</text>
+
+      <rect x="60" y="86" width="264" height="52" rx="8" fill="#16243d" stroke="#0f766e" stroke-width="1.5"/>
+      <text x="80" y="110" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#82aaff">showName()</text>
+      <text x="80" y="128" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#c792ea">  this → caller</text>
+
+      <text x="192" y="168" text-anchor="middle" font-size="11.5" font-family="Lora, serif" font-style="italic" fill="#3b4657">"this is set when called"</text>
+
+      <rect x="86" y="186" width="212" height="28" rx="14" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.8"/>
+      <text x="192" y="205" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#0f766e">student.showName() → this = student</text>
+
+      <text x="192" y="238" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" font-weight="700" fill="#0f766e">✓ prints "Aman"</text>
+
+      <!-- arrow method -->
+      <rect x="366" y="34" width="300" height="216" rx="14" fill="#fffdf8" stroke="#b03a52" stroke-width="2.5"/>
+      <text x="516" y="62" text-anchor="middle" class="t-label" font-size="10" fill="#b03a52">ARROW METHOD</text>
+
+      <rect x="388" y="86" width="256" height="52" rx="8" fill="#16243d" stroke="#b03a52" stroke-width="1.5"/>
+      <text x="408" y="110" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#82aaff">showName = () =&gt; {}</text>
+      <text x="408" y="128" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#c792ea">  this → birthplace</text>
+
+      <text x="516" y="168" text-anchor="middle" font-size="11.5" font-family="Lora, serif" font-style="italic" fill="#3b4657">"this is inherited, not set"</text>
+
+      <rect x="414" y="186" width="204" height="28" rx="14" fill="#fdeef0" stroke="#b03a52" stroke-width="1.8"/>
+      <text x="516" y="205" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#b03a52">this ≠ student</text>
+
+      <text x="516" y="238" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" font-weight="700" fill="#b03a52">✗ prints something else</text>
+    </svg>
+    <figcaption><b>Figure 6.2</b> — Regular methods know who called them. Arrow functions remember where they were born.</figcaption>
+  </figure>
+
+  <div class="callout tip">
+    <span class="callout-title">Rule of thumb</span>
+    <p>Use <strong>regular methods</strong> when you need a method's <code>this</code> to refer to the calling object.<br>
+       Use <strong>arrow functions</strong> for callbacks and short functions when lexical <code>this</code> is appropriate.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 06 · Arrow Functions</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 7 — DEFAULT PARAMETERS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch7">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 07</div>
+    <h2 class="chap-title">Default Parameters</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p><strong>Default parameters</strong> provide fallback values when an argument is omitted or passed as <code>undefined</code>.</p>
+
+  <h3>Real-Life Analogy: A Default Delivery Option</h3>
+  <p>Suppose an online store uses standard delivery unless the customer selects another option. The default is used when the customer doesn't specify one.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 280" role="img" aria-label="Standard delivery used by default unless the customer picks another option">
+      <rect x="0" y="0" width="700" height="280" rx="16" fill="#f7f2e7"/>
+
+      <!-- customer -->
+      <circle cx="90" cy="120" r="30" fill="#fffdf8" stroke="#1b2432" stroke-width="2.5"/>
+      <circle cx="90" cy="112" r="9" fill="#1b2432"/>
+      <path d="M74 140 q16 -12 32 0" fill="#1b2432"/>
+      <text x="90" y="180" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#3b4657">customer</text>
+
+      <!-- arrow -->
+      <path d="M126 120 Q 180 120 220 120" fill="none" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5"/>
+      <polygon points="220,112 240,120 220,128" fill="#c9a227"/>
+
+      <!-- order card -->
+      <rect x="246" y="76" width="200" height="90" rx="10" fill="#16243d" stroke="#c9a227" stroke-width="2"/>
+      <text x="346" y="102" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#e6d49a">ORDER</text>
+      <text x="346" y="126" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" fill="#c7d3e8">deliver( "Rajkot" )</text>
+      <text x="346" y="148" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#8b9ab8">no delivery option specified</text>
+
+      <!-- arrow -->
+      <path d="M448 120 Q 500 120 540 120" fill="none" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5"/>
+      <polygon points="540,112 560,120 540,128" fill="#c9a227"/>
+
+      <!-- default applied -->
+      <rect x="572" y="76" width="100" height="90" rx="10" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+      <text x="622" y="104" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">DEFAULT</text>
+      <text x="622" y="130" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700" fill="#0f766e">Standard</text>
+      <text x="622" y="152" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">delivery</text>
+
+      <!-- delivery label -->
+      <text x="350" y="222" text-anchor="middle" font-size="11" font-family="Lora, serif" font-style="italic" fill="#3b4657">when the customer skips the choice, the standard option is used</text>
+      <text x="350" y="248" text-anchor="middle" class="t-gold" font-size="10.5">FALLBACK ONLY WHEN NOTHING IS PROVIDED</text>
+    </svg>
+    <figcaption><b>Figure 7.1</b> — A default parameter is a store's default choice. It fills the gap only when you say nothing.</figcaption>
+  </figure>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">greet.js</span></div>
+    <pre><code>function greet(name = "Guest") {
+  return `Welcome, ${name}!`;
+}
+
+console.log(greet("Rahul"));
+console.log(greet());
+console.log(greet(undefined));
+console.log(greet(null));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Welcome, Rahul!
+Welcome, Guest!
+Welcome, Guest!
+Welcome, null!</pre>
+  </figure>
+
+  <h4>Why does <code>null</code> appear?</h4>
+  <p>A default parameter is used when the argument is <strong>missing or <code>undefined</code></strong>, not when it is explicitly <code>null</code>.</p>
+
+  <h3>Practical Example</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">tax.js</span></div>
+    <pre><code>function calculatePrice(price, taxRate = 0.18) {
+  return price + price * taxRate;
+}
+
+console.log(calculatePrice(1000));
+console.log(calculatePrice(1000, 0.05));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>1180
+1050</pre>
+  </figure>
+
+  <p>The first call uses an <strong>18% tax rate</strong>. The second supplies <strong>5%</strong>.</p>
+
+  <div class="page-foot"><span>Chapter 07 · Default Parameters</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 8 — OPTIONAL CHAINING
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch8">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 08</div>
+    <h2 class="chap-title">Optional Chaining <code>?.</code></h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p><strong>Optional chaining</strong> safely accesses a property or calls a method when the value before <code>?.</code> might be <code>null</code> or <code>undefined</code>.</p>
+
+  <h3>Real-Life Analogy: Checking a Delivery Address</h3>
+  <p>Imagine a delivery record might not contain an apartment number. Instead of crashing when the apartment information is missing, you check whether it exists first.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 280" role="img" aria-label="Checking a delivery address before trying to access the apartment number">
+      <rect x="0" y="0" width="700" height="280" rx="16" fill="#f7f2e7"/>
+
+      <!-- delivery card with address -->
+      <rect x="34" y="46" width="280" height="188" rx="14" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="174" y="74" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">DELIVERY RECORD</text>
+
+      <text x="60" y="110" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#3b4657">name: "Riya"</text>
+      <text x="60" y="136" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#3b4657">address:</text>
+      <text x="76" y="158" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#3b4657">street: "MG Road"</text>
+      <text x="76" y="180" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#3b4657">city: "Rajkot"</text>
+      <text x="76" y="202" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#b03a52">apartment: undefined</text>
+
+      <text x="174" y="226" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">no apartment number</text>
+
+      <!-- arrow -->
+      <path d="M320 140 Q 380 140 420 140" fill="none" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5"/>
+      <polygon points="420,132 440,140 420,148" fill="#c9a227"/>
+
+      <!-- result -->
+      <rect x="456" y="46" width="212" height="188" rx="14" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="562" y="74" text-anchor="middle" class="t-label" font-size="10" fill="#e6d49a">SAFE ACCESS</text>
+
+      <rect x="480" y="98" width="164" height="42" rx="8" fill="#0d1422" stroke="#2c3c5c" stroke-width="1.5"/>
+      <text x="562" y="124" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" fill="#82aaff">address?.</text>
+
+      <text x="562" y="170" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#c7d3e8">address exists</text>
+      <text x="562" y="190" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#c7d3e8">→ continue</text>
+      <text x="562" y="216" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#93a1b8">returns undefined instead of crashing</text>
+
+      <text x="350" y="262" text-anchor="middle" class="t-gold" font-size="10.5">CHECK BEFORE YOU REACH</text>
+    </svg>
+    <figcaption><b>Figure 8.1</b> — Optional chaining is a safety check before you reach for a value.</figcaption>
+  </figure>
+
+  <h3>8.1 &nbsp;The Problem</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">crash.js</span></div>
+    <pre><code>const user = {
+  name: "Riya"
+};
+
+console.log(user.address.city);</code></pre>
+  </figure>
+
+  <p>This throws a <code>TypeError</code> because <code>user.address</code> is <code>undefined</code>.</p>
+
+  <h3>8.2 &nbsp;The Solution</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">safe.js</span></div>
+    <pre><code>const user = {
+  name: "Riya"
+};
+
+console.log(user.address?.city);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>undefined</pre>
+  </figure>
+
+  <p>Optional chaining stops the property access if <code>address</code> is <code>null</code> or <code>undefined</code>.</p>
+
+  <h3>8.3 &nbsp;Nested Properties</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">nested.js</span></div>
+    <pre><code>const user = {
+  name: "Aman",
+  address: {
+    city: "Rajkot"
+  }
+};
+
+console.log(user.address?.city);
+console.log(user.contact?.phone);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Rajkot
+undefined</pre>
+  </figure>
+
+  <h3>8.4 &nbsp;Optional Method Calls</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">optional-call.js</span></div>
+    <pre><code>const user = {
+  name: "Riya"
+};
+
+user.sayHello?.();</code></pre>
+  </figure>
+
+  <p>If <code>sayHello</code> is absent or <code>null</code>, the optional call returns <code>undefined</code> instead of throwing an error. If a non-nullish property exists but is not callable, an error can still occur.</p>
+
+  <h3>8.5 &nbsp;Optional Array Access</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">array-access.js</span></div>
+    <pre><code>const students = ["Aman", "Riya"];
+
+console.log(students?.[0]);
+console.log(students?.[5]);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Aman
+undefined</pre>
+  </figure>
+
+  <div class="keyidea">
+    <span class="k-label">When to reach for <code>?.</code></span>
+    <p>Especially useful when working with API responses, user profiles, and deeply nested data — anywhere a property might be missing.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 08 · Optional Chaining</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 9 — NULLISH COALESCING
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch9">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 09</div>
+    <h2 class="chap-title">Nullish Coalescing <code>??</code></h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p>The <strong>nullish coalescing operator</strong> returns a fallback value <strong>only when the left-hand side is <code>null</code> or <code>undefined</code></strong>.</p>
+
+  <h3>Real-Life Analogy: Using a Backup Contact Number</h3>
+  <p>If the primary contact number is missing, use a backup number. But if the primary number is valid — even if it's an unusual value — don't replace it unnecessarily.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 280" role="img" aria-label="Backup contact number is used only when the primary is truly missing">
+      <rect x="0" y="0" width="700" height="280" rx="16" fill="#f7f2e7"/>
+
+      <!-- primary number card -->
+      <rect x="34" y="46" width="280" height="188" rx="14" fill="#fffdf8" stroke="#9c7c14" stroke-width="2.5"/>
+      <text x="174" y="74" text-anchor="middle" class="t-label" font-size="10" fill="#9c7c14">PRIMARY CONTACT</text>
+
+      <text x="60" y="118" font-size="13" font-family="JetBrains Mono, monospace" fill="#3b4657">value</text>
+      <text x="60" y="152" font-size="22" font-family="JetBrains Mono, monospace" font-weight="700" fill="#1b2432">null</text>
+
+      <text x="174" y="200" text-anchor="middle" font-size="11" font-family="Lora, serif" font-style="italic" fill="#b03a52">truly missing</text>
+      <text x="174" y="222" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#b03a52">→ use fallback</text>
+
+      <!-- arrow -->
+      <path d="M320 140 Q 380 140 420 140" fill="none" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5"/>
+      <polygon points="420,132 440,140 420,148" fill="#c9a227"/>
+
+      <!-- result -->
+      <rect x="456" y="46" width="212" height="188" rx="14" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="562" y="74" text-anchor="middle" class="t-label" font-size="10" fill="#e6d49a">RESULT</text>
+
+      <text x="562" y="118" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" fill="#82aaff">primary ?? backup</text>
+
+      <text x="562" y="160" text-anchor="middle" font-size="18" font-family="JetBrains Mono, monospace" font-weight="700" fill="#a5e075">"555-0100"</text>
+      <text x="562" y="196" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#93a1b8">backup phone used</text>
+
+      <!-- Note -->
+      <rect x="80" y="248" width="540" height="22" rx="11" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.5"/>
+      <text x="350" y="263" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">VALID VALUES LIKE 0 · "" · false ARE PRESERVED — NOT OVERWRITTEN</text>
+    </svg>
+    <figcaption><b>Figure 9.1</b> — The backup only kicks in when the primary is truly absent.</figcaption>
+  </figure>
+
+  <h3>9.1 &nbsp;Basic Example</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">basic.js</span></div>
+    <pre><code>const username = null;
+
+console.log(username ?? "Guest");</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Guest</pre>
+  </figure>
+
+  <h3>9.2 &nbsp;Difference Between <code>||</code> and <code>??</code></h3>
+  <p>This is an important distinction.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">or-vs-nullish.js</span></div>
+    <pre><code>console.log(0 || 100);
+console.log(0 ?? 100);
+
+console.log("" || "Default");
+console.log("" ?? "Default");
+
+console.log(false || true);
+console.log(false ?? true);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>100
+0
+Default
+
+false
+false</pre>
+  </figure>
+
+  <p>The <code>||</code> operator uses the fallback for <strong>any falsy value</strong>, including <code>0</code>, <code>""</code>, and <code>false</code>.</p>
+  <p>The <code>??</code> operator uses the fallback <strong>only for <code>null</code> and <code>undefined</code></strong>.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Value</th><th><code>value || "Default"</code></th><th><code>value ?? "Default"</code></th></tr></thead>
+      <tbody>
+        <tr><td><code>null</code></td><td><code>"Default"</code></td><td><code>"Default"</code></td></tr>
+        <tr><td><code>undefined</code></td><td><code>"Default"</code></td><td><code>"Default"</code></td></tr>
+        <tr><td><code>0</code></td><td><code>"Default"</code></td><td><code>0</code></td></tr>
+        <tr><td><code>""</code></td><td><code>"Default"</code></td><td><code>""</code></td></tr>
+        <tr><td><code>false</code></td><td><code>"Default"</code></td><td><code>false</code></td></tr>
+        <tr><td><code>"Aman"</code></td><td><code>"Aman"</code></td><td><code>"Aman"</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="keyidea">
+    <span class="k-label">Key rule</span>
+    <p>Use <code>??</code> when <strong>zero, false, or an empty string may be valid values</strong>.</p>
+  </div>
+
+  <h3>9.3 &nbsp;Optional Chaining + Nullish Coalescing</h3>
+  <p>These two features work well together.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">combined.js</span></div>
+    <pre><code>const user = {
+  name: "Aman",
+  settings: {
+    notifications: false
+  }
+};
+
+const city = user.address?.city ?? "City not provided";
+const notifications = user.settings?.notifications ?? true;
+
+console.log(city);
+console.log(notifications);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>City not provided
+false</pre>
+  </figure>
+
+  <p>The first expression falls back because <code>city</code> is missing. The second preserves <code>false</code> because <code>false</code> is <strong>not nullish</strong>.</p>
+
+  <div class="page-foot"><span>Chapter 09 · Nullish Coalescing</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 10 — ENHANCED OBJECT LITERALS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch10">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 10</div>
+    <h2 class="chap-title">Enhanced Object Literals</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p>Modern JavaScript provides convenient syntax for creating objects.</p>
+
+  <h3>10.1 &nbsp;Property Shorthand</h3>
+  <p>If a variable and an object property have the same name, you can write the property only once.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">shorthand.js</span></div>
+    <pre><code>const name = "Priya";
+const age = 22;
+
+const student = {
+  name,
+  age
+};
+
+console.log(student);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>{ name: "Priya", age: 22 }</pre>
+  </figure>
+
+  <p>This is equivalent to:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">long-form.js</span></div>
+    <pre><code>const student = {
+  name: name,
+  age: age
+};</code></pre>
+  </figure>
+
+  <h3>10.2 &nbsp;Method Shorthand</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">method-shorthand.js</span></div>
+    <pre><code>const calculator = {
+  add(a, b) {
+    return a + b;
+  },
+
+  subtract(a, b) {
+    return a - b;
+  }
+};
+
+console.log(calculator.add(10, 5));
+console.log(calculator.subtract(10, 5));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>15
+5</pre>
+  </figure>
+
+  <h3>10.3 &nbsp;Computed Property Names</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">computed.js</span></div>
+    <pre><code>const key = "course";
+
+const student = {
+  name: "Aman",
+  [key]: "React"
+};
+
+console.log(student);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>{ name: "Aman", course: "React" }</pre>
+  </figure>
+
+  <p>The expression inside <code>[]</code> determines the property name.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 280" role="img" aria-label="Object literal shorthand features — property shorthand, method shorthand, computed names">
+      <rect x="0" y="0" width="700" height="280" rx="16" fill="#f7f2e7"/>
+
+      <!-- property shorthand -->
+      <rect x="26" y="34" width="206" height="212" rx="12" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="129" y="62" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">PROPERTY SHORTHAND</text>
+
+      <rect x="46" y="86" width="166" height="80" rx="8" fill="#16243d" stroke="#0f766e" stroke-width="1.5"/>
+      <text x="129" y="112" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#c792ea">const</text>
+      <text x="129" y="132" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#c7d3e8">{ name, age }</text>
+      <text x="129" y="154" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#a5e075">← no repetition</text>
+
+      <text x="129" y="196" text-anchor="middle" font-size="10.5" font-family="Lora, serif" font-style="italic" fill="#3b4657">name: name → name</text>
+      <text x="129" y="220" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#0f766e">cleaner · shorter</text>
+
+      <!-- method shorthand -->
+      <rect x="246" y="34" width="206" height="212" rx="12" fill="#fffdf8" stroke="#9c7c14" stroke-width="2.5"/>
+      <text x="349" y="62" text-anchor="middle" class="t-label" font-size="10" fill="#9c7c14">METHOD SHORTHAND</text>
+
+      <rect x="266" y="86" width="166" height="80" rx="8" fill="#16243d" stroke="#9c7c14" stroke-width="1.5"/>
+      <text x="349" y="112" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#c7d3e8">add(a, b) {</text>
+      <text x="349" y="132" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#c792ea">  return</text>
+      <text x="349" y="152" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#c7d3e8">  a + b;</text>
+
+      <text x="349" y="196" text-anchor="middle" font-size="10.5" font-family="Lora, serif" font-style="italic" fill="#3b4657">no <tspan font-family="JetBrains Mono, monospace">: function</tspan></text>
+      <text x="349" y="220" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">still a method</text>
+
+      <!-- computed names -->
+      <rect x="466" y="34" width="208" height="212" rx="12" fill="#fffdf8" stroke="#223354" stroke-width="2.5"/>
+      <text x="570" y="62" text-anchor="middle" class="t-label" font-size="10" fill="#223354">COMPUTED NAMES</text>
+
+      <rect x="486" y="86" width="168" height="80" rx="8" fill="#16243d" stroke="#223354" stroke-width="1.5"/>
+      <text x="570" y="112" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#c792ea">const</text>
+      <text x="570" y="132" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#c7d3e8">[key]: "React"</text>
+      <text x="570" y="154" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#a5e075">← dynamic key</text>
+
+      <text x="570" y="196" text-anchor="middle" font-size="10.5" font-family="Lora, serif" font-style="italic" fill="#3b4657">key = "course" → course</text>
+      <text x="570" y="220" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#223354">from variables or APIs</text>
+    </svg>
+    <figcaption><b>Figure 10.1</b> — Three upgrades for building objects: shorter, cleaner, dynamic.</figcaption>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 10 · Enhanced Object Literals</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 11 — JAVASCRIPT MODULES
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch11">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 11</div>
+    <h2 class="chap-title">JavaScript Modules: <code>export</code> and <code>import</code></h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p><strong>Modules</strong> allow us to divide a large application into smaller, reusable files.</p>
+
+  <h3>Real-Life Analogy: Departments in a Company</h3>
+  <p>A company may have separate departments for finance, sales, and support. Each department handles a specific responsibility, and departments communicate when they need something from one another.</p>
+  <p>Modules help organize code in a similar way.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 340" role="img" aria-label="A company with departments that share information — just like modules">
+      <rect x="0" y="0" width="700" height="340" rx="16" fill="#f7f2e7"/>
+
+      <!-- company HQ -->
+      <rect x="270" y="34" width="160" height="60" rx="10" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="350" y="62" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" font-weight="700" fill="#e6d49a">APP</text>
+      <text x="350" y="82" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#93a1b8">main.js</text>
+
+      <!-- department boxes -->
+      <g>
+        <!-- math -->
+        <rect x="34" y="150" width="180" height="130" rx="12" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+        <text x="124" y="178" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#0f766e">math.js</text>
+        <line x1="60" y1="190" x2="188" y2="190" stroke="#0f766e" stroke-width="1"/>
+        <text x="124" y="212" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#c792ea">export const</text>
+        <text x="124" y="230" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#82aaff">add</text>
+        <text x="124" y="252" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#c792ea">export const</text>
+        <text x="124" y="270" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#82aaff">subtract</text>
+
+        <!-- greeting -->
+        <rect x="260" y="150" width="180" height="130" rx="12" fill="#fffdf8" stroke="#9c7c14" stroke-width="2.5"/>
+        <text x="350" y="178" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#9c7c14">greeting.js</text>
+        <line x1="286" y1="190" x2="414" y2="190" stroke="#9c7c14" stroke-width="1"/>
+        <text x="350" y="216" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#c792ea">export default</text>
+        <text x="350" y="238" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#82aaff">greet</text>
+        <text x="350" y="262" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">one default per module</text>
+
+        <!-- utils -->
+        <rect x="486" y="150" width="180" height="130" rx="12" fill="#fffdf8" stroke="#223354" stroke-width="2.5"/>
+        <text x="576" y="178" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#223354">utils.js</text>
+        <line x1="512" y1="190" x2="640" y2="190" stroke="#223354" stroke-width="1"/>
+        <text x="576" y="216" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#c792ea">export const</text>
+        <text x="576" y="238" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#82aaff">formatDate</text>
+      </g>
+
+      <!-- connector lines from HQ -->
+      <g stroke="#c9a227" stroke-width="2" stroke-dasharray="6 5" fill="none">
+        <path d="M320 94 Q 220 100 124 148"/>
+        <path d="M350 94 Q 350 100 350 148"/>
+        <path d="M380 94 Q 480 100 576 148"/>
+      </g>
+
+      <text x="350" y="308" text-anchor="middle" class="t-gold" font-size="10.5">IMPORT WHAT YOU NEED · EXPORT WHAT YOU OFFER</text>
+      <text x="350" y="328" text-anchor="middle" font-size="10" font-family="Lora, serif" font-style="italic" fill="#3b4657">each file owns one responsibility</text>
+    </svg>
+    <figcaption><b>Figure 11.1</b> — Modules are departments. Each one exports what it offers and imports what it needs.</figcaption>
+  </figure>
+
+  <h3>11.1 &nbsp;Named Exports</h3>
+
+  <h5>File: <code>math.js</code></h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">math.js</span></div>
+    <pre><code>export const add = (a, b) =&gt; a + b;
+
+export const subtract = (a, b) =&gt; a - b;</code></pre>
+  </figure>
+
+  <h5>File: <code>app.js</code></h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">app.js</span></div>
+    <pre><code>import { add, subtract } from "./math.js";
+
+console.log(add(10, 5));
+console.log(subtract(10, 5));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>15
+5</pre>
+  </figure>
+
+  <p>Named exports let a file export <strong>multiple values</strong>. They are imported by their exported names, which can also be renamed using <code>as</code>.</p>
+
+  <h3>11.2 &nbsp;Default Exports</h3>
+
+  <h5>File: <code>greeting.js</code></h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">greeting.js</span></div>
+    <pre><code>export default function greet(name) {
+  return `Hello, ${name}!`;
+}</code></pre>
+  </figure>
+
+  <h5>File: <code>app.js</code></h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">app.js</span></div>
+    <pre><code>import greet from "./greeting.js";
+
+console.log(greet("Riya"));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Hello, Riya!</pre>
+  </figure>
+
+  <p>A module can have <strong>one default export</strong>. The importing file can choose the local name for that default export.</p>
+
+  <h3>11.3 &nbsp;Named vs. Default Exports</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Named export</th><th>Default export</th></tr></thead>
+      <tbody>
+        <tr><td>Uses <code>export const add = ...</code></td><td>Uses <code>export default ...</code></td></tr>
+        <tr><td>Import with <code>{ add }</code></td><td>Import without braces</td></tr>
+        <tr><td>Import name usually matches the exported name</td><td>Local import name can be chosen</td></tr>
+        <tr><td>Multiple named exports are allowed</td><td>At most one default export per module</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout note">
+    <span class="callout-title">Practical note</span>
+    <p>Browser projects can use <code>&lt;script type="module"&gt;</code>. Node.js supports ES modules too; project configuration and file extensions determine how modules are interpreted.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 11 · JavaScript Modules</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 12 — MINI PROJECT
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch12">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 12</div>
+    <h2 class="chap-title">Mini Project: Student Profile Generator</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p>Let's combine <strong>template literals</strong>, <strong>destructuring</strong>, <strong>spread</strong>, <strong>arrow functions</strong>, <strong>default parameters</strong>, <strong>optional chaining</strong>, and <strong>nullish coalescing</strong>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">profile.js</span></div>
+    <pre><code>const student = {
+  name: "Aman",
+  course: "Full Stack Development",
+  marks: 85,
+  address: {
+    city: "Rajkot"
+  },
+  contact: null
+};
+
+const createProfile = ({
+  name = "Guest",
+  course = "Not assigned",
+  marks = 0,
+  address,
+  contact
+}) =&gt; {
+  const city = address?.city ?? "Not provided";
+  const phone = contact?.phone ?? "Not provided";
+
+  return `
+Student Profile
+---------------
+Name: ${name}
+Course: ${course}
+Marks: ${marks}
+City: ${city}
+Phone: ${phone}
+`;
+};
+
+console.log(createProfile(student));
+
+const updatedStudent = {
+  ...student,
+  marks: 92
+};
+
+console.log(`Updated marks: ${updatedStudent.marks}`);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Student Profile
+---------------
+Name: Aman
+Course: Full Stack Development
+Marks: 85
+City: Rajkot
+Phone: Not provided
+
+Updated marks: 92</pre>
+  </figure>
+
+  <h3>What Did We Use?</h3>
+  <ol class="step-list">
+    <li><strong>Object destructuring:</strong> Extracted the student properties in the function parameter.</li>
+    <li><strong>Default parameters in destructuring:</strong> Provided fallbacks for missing properties.</li>
+    <li><strong>Arrow function:</strong> Created a concise function.</li>
+    <li><strong>Optional chaining:</strong> Safely accessed <code>address.city</code> and <code>contact.phone</code>.</li>
+    <li><strong>Nullish coalescing:</strong> Supplied <code>"Not provided"</code> when a value was missing.</li>
+    <li><strong>Template literals:</strong> Generated a readable profile.</li>
+    <li><strong>Spread operator:</strong> Created a new student object with updated marks.</li>
+  </ol>
+
+  <div class="callout note">
+    <span class="callout-title">Observation</span>
+    <p>Notice that <code>student.marks</code> remains <code>85</code>; the new object has <code>92</code>. This is a <strong>shallow copy</strong>, which is sufficient for this top-level update.</p>
+  </div>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 340" role="img" aria-label="The student profile generator combines seven modern features into one small program">
+      <rect x="0" y="0" width="700" height="340" rx="16" fill="#f7f2e7"/>
+
+      <!-- center title -->
+      <rect x="220" y="30" width="260" height="52" rx="26" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="350" y="62" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" font-weight="700" fill="#e6d49a">STUDENT PROFILE GENERATOR</text>
+
+      <!-- feature chips around it -->
+      <g font-family="JetBrains Mono, monospace" font-size="10.5">
+        <!-- template literals -->
+        <rect x="30" y="110" width="180" height="42" rx="21" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.8"/>
+        <text x="120" y="128" text-anchor="middle" fill="#0f766e">template literals</text>
+        <text x="120" y="144" text-anchor="middle" font-size="9.5" fill="#3b4657">`...${x}...`</text>
+
+        <rect x="30" y="162" width="180" height="42" rx="21" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.8"/>
+        <text x="120" y="180" text-anchor="middle" fill="#0f766e">destructuring</text>
+        <text x="120" y="196" text-anchor="middle" font-size="9.5" fill="#3b4657">{ name, course }</text>
+
+        <rect x="30" y="214" width="180" height="42" rx="21" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.8"/>
+        <text x="120" y="232" text-anchor="middle" fill="#0f766e">default params</text>
+        <text x="120" y="248" text-anchor="middle" font-size="9.5" fill="#3b4657">name = "Guest"</text>
+
+        <rect x="30" y="266" width="180" height="42" rx="21" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.8"/>
+        <text x="120" y="284" text-anchor="middle" fill="#0f766e">arrow function</text>
+        <text x="120" y="300" text-anchor="middle" font-size="9.5" fill="#3b4657">() =&gt; { }</text>
+
+        <!-- right side -->
+        <rect x="490" y="110" width="180" height="42" rx="21" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.8"/>
+        <text x="580" y="128" text-anchor="middle" fill="#9c7c14">optional chaining</text>
+        <text x="580" y="144" text-anchor="middle" font-size="9.5" fill="#3b4657">address?.city</text>
+
+        <rect x="490" y="162" width="180" height="42" rx="21" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.8"/>
+        <text x="580" y="180" text-anchor="middle" fill="#9c7c14">nullish coalescing</text>
+        <text x="580" y="196" text-anchor="middle" font-size="9.5" fill="#3b4657">value ?? "Default"</text>
+
+        <rect x="490" y="214" width="180" height="42" rx="21" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.8"/>
+        <text x="580" y="232" text-anchor="middle" fill="#9c7c14">spread operator</text>
+        <text x="580" y="248" text-anchor="middle" font-size="9.5" fill="#3b4657">{ ...student }</text>
+      </g>
+
+      <!-- connector lines -->
+      <g stroke="#c9a227" stroke-width="1.5" stroke-dasharray="5 4" fill="none">
+        <path d="M212 132 Q 240 100 260 82"/>
+        <path d="M212 184 Q 250 130 270 100"/>
+        <path d="M212 236 Q 260 180 280 110"/>
+        <path d="M212 288 Q 260 200 290 100"/>
+
+        <path d="M490 132 Q 460 100 440 82"/>
+        <path d="M490 184 Q 450 130 430 100"/>
+        <path d="M490 236 Q 440 180 420 110"/>
+      </g>
+
+      <text x="350" y="328" text-anchor="middle" class="t-gold" font-size="10.5">SEVEN FEATURES · ONE SMALL PROGRAM</text>
+    </svg>
+    <figcaption><b>Figure 12.1</b> — The Student Profile Generator combines seven features of modern JavaScript.</figcaption>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 12 · Mini Project</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 13 — COMMON MISTAKES
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch13">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 13</div>
+    <h2 class="chap-title">Common Mistakes to Avoid</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>Mistake 1: Using Quotes Instead of Backticks</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">wrong-quotes.js</span></div>
+    <pre><code>const name = "Aman";
+console.log("Hello, ${name}");</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output — literal!</span></div>
+    <pre>Hello, ${name}</pre>
+  </figure>
+
+  <h5>Correct</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">fixed.js</span></div>
+    <pre><code>console.log(`Hello, ${name}`);</code></pre>
+  </figure>
+
+  <h3>Mistake 2: Forgetting Parentheses When Returning an Object</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">correct-object.js</span></div>
+    <pre><code>const createUser = name =&gt; ({ name });</code></pre>
+  </figure>
+
+  <p>This correctly returns an object.</p>
+
+  <h3>Mistake 3: Assuming Spread Performs a Deep Copy</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">deep-bug.js</span></div>
+    <pre><code>const first = { address: { city: "Rajkot" } };
+const second = { ...first };
+
+second.address.city = "Delhi";
+
+console.log(first.address.city);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Delhi</pre>
+  </figure>
+
+  <p>The nested object is shared. Use an appropriate deep-copy strategy when you need independent nested data.</p>
+
+  <h3>Mistake 4: Confusing Rest and Spread</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">both.js</span></div>
+    <pre><code>const values = [1, 2, 3];
+
+function display(...items) {
+  console.log(items);
+}
+
+display(...values);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[1, 2, 3]</pre>
+  </figure>
+
+  <p>Here, <strong>spread</strong> expands the array in the function call; <strong>rest</strong> collects the received arguments.</p>
+
+  <h3>Mistake 5: Using <code>||</code> When Zero Is Valid</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">zero.js</span></div>
+    <pre><code>const quantity = 0;
+
+console.log(quantity || 10); // 10
+console.log(quantity ?? 10); // 0</code></pre>
+  </figure>
+
+  <p>If zero is meaningful, <code>??</code> may be the correct choice.</p>
+
+  <h3>Mistake 6: Assuming Arrow Functions Have Their Own <code>this</code></h3>
+  <p>Arrow functions <strong>inherit <code>this</code> from the surrounding scope</strong>. They are not a drop-in replacement for every object method.</p>
+
+  <h3>Mistake 7: Treating Optional Chaining as Validation</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">not-validation.js</span></div>
+    <pre><code>const age = user?.age;</code></pre>
+  </figure>
+
+  <p>This safely handles a missing <code>user</code>, but it does <strong>not</strong> verify that <code>age</code> is a valid number or that the user is authorized to perform an action.</p>
+
+  <div class="keyidea">
+    <span class="k-label">The Common Thread</span>
+    <p>Every mistake on this page comes from assuming the modern shortcut does <em>more</em> than it actually does. Read the rule, then read it again.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 13 · Common Mistakes</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 14 — PRACTICE QUESTIONS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch14">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 14</div>
+    <h2 class="chap-title">Practice Questions</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p class="lead">Try solving these without checking the solutions first.</p>
+
+  <div class="qgroup">
+    <div class="qgroup-title">Beginner Level</div>
+
+    <div class="q"><span class="qnum">1.</span> Create a template literal that displays your name and age.</div>
+    <div class="q"><span class="qnum">2.</span> Given <code>const colors = ["Red", "Blue", "Green"]</code>, extract the first and third values using destructuring.</div>
+    <div class="q"><span class="qnum">3.</span> Given an object with <code>name</code> and <code>course</code>, extract both properties into variables.</div>
+    <div class="q"><span class="qnum">4.</span> Use an arrow function to calculate the square of a number.</div>
+    <div class="q"><span class="qnum">5.</span> Write a function with a default parameter of <code>"Guest"</code>.</div>
+    <div class="q"><span class="qnum">6.</span> Combine two arrays using spread.</div>
+    <div class="q"><span class="qnum">7.</span> Use object shorthand to create an object from the variables <code>name</code> and <code>age</code>.</div>
+    <div class="q"><span class="qnum">8.</span> Use optional chaining to safely access <code>user.address.city</code>.</div>
+  </div>
+
+  <div class="qgroup">
+    <div class="qgroup-title">Medium Level</div>
+
+    <div class="q"><span class="qnum">9.</span> Write a function called <code>sumAll</code> that uses rest parameters to add any number of arguments.</div>
+    <div class="q"><span class="qnum">10.</span> Given a student object, create a copy with a different <code>marks</code> value without modifying the original object.</div>
+    <div class="q"><span class="qnum">11.</span> Explain the difference between <code>||</code> and <code>??</code> using examples involving <code>0</code> and <code>false</code>.</div>
+    <div class="q"><span class="qnum">12.</span> Create an arrow function that returns an object containing a name and a course.</div>
+    <div class="q"><span class="qnum">13.</span> Write a function that accepts a student object using parameter destructuring and returns a formatted profile using a template literal.</div>
+    <div class="q"><span class="qnum">14.</span> Create a function that accepts a name and any number of skills using rest parameters.</div>
+    <div class="q"><span class="qnum">15.</span> Explain why changing a nested object in a shallow spread copy may also change the original.</div>
+    <div class="q"><span class="qnum">16.</span> Create a separate module that exports an <code>add</code> function and import it into another file.</div>
+  </div>
+
+  <div class="qgroup">
+    <div class="qgroup-title">Challenge Questions</div>
+
+    <div class="q"><span class="qnum">17.</span> Write a function that accepts an object with optional <code>profile</code> and <code>profile.city</code> properties. Return the city or <code>"Unknown"</code> when the city is missing.</div>
+    <div class="q"><span class="qnum">18.</span> Create an array of students, use <code>map()</code> with an arrow function to return only their names, and use destructuring inside the callback.</div>
+    <div class="q"><span class="qnum">19.</span> Build a product summary that uses default parameters, optional chaining, nullish coalescing, and template literals.</div>
+
+    <div class="q">
+      <span class="qnum">20.</span> Explain why this code does not necessarily print <code>"Aman"</code> and rewrite it correctly:
+      <div class="qcode">
+        <figure class="fig fig-code">
+          <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">q20.js</span></div>
+          <pre><code>const user = {
+  name: "Aman",
+  show: () =&gt; console.log(this.name)
+};
+
+user.show();</code></pre>
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-foot"><span>Chapter 14 · Practice Questions</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 15 — SELECTED SOLUTIONS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch15">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 15</div>
+    <h2 class="chap-title">Selected Solutions</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>Solution 4: Square Using an Arrow Function</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">s4.js</span></div>
+    <pre><code>const square = number =&gt; number * number;
+
+console.log(square(6));</code></pre>
+  </figure>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>36</pre>
+  </figure>
+
+  <h3>Solution 9: Sum Using Rest Parameters</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">s9.js</span></div>
+    <pre><code>const sumAll = (...numbers) =&gt;
+  numbers.reduce((total, number) =&gt; total + number, 0);
+
+console.log(sumAll(10, 20, 30));
+console.log(sumAll(5, 10, 15, 20));</code></pre>
+  </figure>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>60
+50</pre>
+  </figure>
+
+  <h3>Solution 10: Copy and Update a Student</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">s10.js</span></div>
+    <pre><code>const student = {
+  name: "Riya",
+  marks: 80
+};
+
+const updatedStudent = {
+  ...student,
+  marks: 95
+};
+
+console.log(student.marks);
+console.log(updatedStudent.marks);</code></pre>
+  </figure>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>80
+95</pre>
+  </figure>
+
+  <h3>Solution 11: <code>||</code> vs. <code>??</code></h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">s11.js</span></div>
+    <pre><code>const score = 0;
+
+console.log(score || 50);
+console.log(score ?? 50);</code></pre>
+  </figure>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>50
+0</pre>
+  </figure>
+  <p><code>||</code> treats zero as falsy; <code>??</code> treats zero as a valid value.</p>
+
+  <h3>Solution 12: Return an Object</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">s12.js</span></div>
+    <pre><code>const createStudent = (name, course) =&gt; ({
+  name,
+  course
+});
+
+console.log(createStudent("Aman", "React"));</code></pre>
+  </figure>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>{ name: "Aman", course: "React" }</pre>
+  </figure>
+
+  <h3>Solution 17: Safe City Lookup</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">s17.js</span></div>
+    <pre><code>const getCity = user =&gt; user?.profile?.city ?? "Unknown";
+
+console.log(getCity({ profile: { city: "Rajkot" } }));
+console.log(getCity({ profile: null }));
+console.log(getCity(null));</code></pre>
+  </figure>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Rajkot
+Unknown
+Unknown</pre>
+  </figure>
+
+  <h3>Solution 18: Extract Names Using <code>map()</code> and Destructuring</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">s18.js</span></div>
+    <pre><code>const students = [
+  { name: "Aman", marks: 80 },
+  { name: "Riya", marks: 90 },
+  { name: "Neha", marks: 85 }
+];
+
+const names = students.map(({ name }) =&gt; name);
+
+console.log(names);</code></pre>
+  </figure>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>["Aman", "Riya", "Neha"]</pre>
+  </figure>
+
+  <h3>Solution 20: Correct the <code>this</code> Usage</h3>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">s20.js</span></div>
+    <pre><code>const user = {
+  name: "Aman",
+  show() {
+    console.log(this.name);
+  }
+};
+
+user.show();</code></pre>
+  </figure>
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Aman</pre>
+  </figure>
+  <p>The regular method gets <code>this</code> from the calling object.</p>
+
+  <div class="page-foot"><span>Chapter 15 · Selected Solutions</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 16 — QUICK REVISION SHEET
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch16">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 16</div>
+    <h2 class="chap-title">Quick Revision Sheet</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Feature</th><th>Purpose</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>Template literals</td><td>Insert values into strings</td><td><code>`Hi ${name}`</code></td></tr>
+        <tr><td>Destructuring</td><td>Extract values</td><td><code>const { name } = user</code></td></tr>
+        <tr><td>Spread</td><td>Expand or copy values</td><td><code>const copy = [...items]</code></td></tr>
+        <tr><td>Rest</td><td>Collect remaining arguments</td><td><code>function sum(...nums)</code></td></tr>
+        <tr><td>Arrow function</td><td>Concise function syntax</td><td><code>const add = (a, b) =&gt; a + b</code></td></tr>
+        <tr><td>Default parameter</td><td>Supply a default for <code>undefined</code></td><td><code>function greet(name = "Guest")</code></td></tr>
+        <tr><td>Optional chaining</td><td>Safely access nullable values</td><td><code>user?.address?.city</code></td></tr>
+        <tr><td>Nullish coalescing</td><td>Fallback for nullish values</td><td><code>city ?? "Unknown"</code></td></tr>
+        <tr><td>Object shorthand</td><td>Shorter object creation</td><td><code>{ name, age }</code></td></tr>
+        <tr><td>Named export</td><td>Export a named value</td><td><code>export const add = ...</code></td></tr>
+        <tr><td>Named import</td><td>Import a named value</td><td><code>import { add } from "./math.js"</code></td></tr>
+        <tr><td>Default export</td><td>Export a module's default value</td><td><code>export default greet</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Final Checklist</h3>
+  <p>Mark each topic when you can explain it and write a working example without copying.</p>
+
+  <ul class="checklist">
+    <li>I can use template literals and embedded expressions.</li>
+    <li>I can destructure arrays and objects.</li>
+    <li>I understand spread versus rest.</li>
+    <li>I can write arrow functions with implicit returns.</li>
+    <li>I understand the <code>this</code> difference in arrow functions.</li>
+    <li>I can use default parameters.</li>
+    <li>I can access nested properties with optional chaining.</li>
+    <li>I understand <code>||</code> versus <code>??</code>.</li>
+    <li>I can use object shorthand and computed properties.</li>
+    <li>I can create and import JavaScript modules.</li>
+    <li>I can combine these features in a practical project.</li>
+  </ul>
+
+  <div class="divider"><span></span>❖<span></span></div>
+
+  <div class="keyidea">
+    <span class="k-label">Phase 5 Completion Goal</span>
+    <p>Write the Student Profile Generator independently and solve at least 15 of the 20 practice questions.</p>
+  </div>
+
+  <div class="divider"><span></span>❖<span></span></div>
+
+  <h3>What Comes Next</h3>
+  <p>After this phase, the next logical step is to work with <strong>asynchronous JavaScript</strong>: callbacks, promises, <code>async</code>/<code>await</code>, and fetching data from APIs.</p>
+
+  <div class="keyidea">
+    <span class="k-label">Next Phase</span>
+    <p>Phase 6 — Asynchronous JavaScript: callbacks, promises, <code>async</code>/<code>await</code>, and fetching data from APIs.</p>
+  </div>
+
+  <div class="divider"><span></span>❖<span></span></div>
+
+  <p style="text-align:center; font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing:.22em; text-transform:uppercase; color:#a99f88; margin-top:40px;">
+    JavaScript Mastery · Phase 5 · Modern JavaScript (ES6+)<br>
+    Handcrafted Study Edition
+  </p>
+
+  <div class="page-foot"><span>Chapter 16 · Quick Revision Sheet</span><span class="pn"></span></div>
+</section>
+
+</div><!-- /book -->
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SYNTAX HIGHLIGHTER
+     ══════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  "use strict";
+
+  var TOKEN_RE = new RegExp(
+    [
+      "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)",              // 1 comments
+      "(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'|`(?:[^`\\\\]|\\\\.)*`)", // 2 strings
+      "\\b(\\d+(?:\\.\\d+)?n?)\\b",                          // 3 numbers
+      "\\b(let|const|var|function|if|else|return|true|false|null|undefined|new|typeof|for|while|do|class|of|in|this|try|catch|throw|switch|case|break|continue|default|delete|export|import|from|as|Array|Object|Math|Promise|Symbol)\\b", // 4 keywords
+      "([A-Za-z_$][\\w$]*)(?=\\s*\\()",                      // 5 function calls
+      "([+\\-*/%=<>!&|?:;,.()\\[\\]{}]+)"                    // 6 operators
+    ].join("|"),
+    "g"
+  );
+
+  var CLASS = ["", "tok-com", "tok-str", "tok-num", "tok-kw", "tok-fn", "tok-op"];
+
+  function escapeHTML(s) {
+    return s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function highlight(text) {
+    var out = "";
+    var last = 0;
+    var m;
+
+    TOKEN_RE.lastIndex = 0;
+
+    while ((m = TOKEN_RE.exec(text)) !== null) {
+      out += escapeHTML(text.slice(last, m.index));
+
+      var cls = "";
+      for (var i = 1; i < m.length; i++) {
+        if (m[i] !== undefined) { cls = CLASS[i]; break; }
+      }
+
+      var piece = escapeHTML(m[0]);
+      out += cls ? '<span class="' + cls + '">' + piece + "</span>" : piece;
+
+      last = m.index + m[0].length;
+
+      if (m[0].length === 0) { TOKEN_RE.lastIndex++; }
+    }
+
+    out += escapeHTML(text.slice(last));
+    return out;
+  }
+
+  var codes = document.querySelectorAll(".fig-code pre code");
+
+  for (var i = 0; i < codes.length; i++) {
+    var el = codes[i];
+    var raw = el.textContent;
+    el.innerHTML = highlight(raw);
+  }
+})();
+</script>
+
+</body>
+</html>

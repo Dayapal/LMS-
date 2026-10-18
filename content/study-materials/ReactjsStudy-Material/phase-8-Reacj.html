@@ -1,0 +1,3923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React JS — Phase 8: Styling and Component Systems</title>
+<style>
+/* ============================================================
+   PREMIUM REACT PHASE 8 BOOK — PRINT / PDF STYLESHEET
+   With realistic "thick book" spine, page edges & chapter tabs
+   ============================================================ */
+
+:root{
+  --ink:#0f172a;
+  --ink-soft:#334155;
+  --muted:#64748b;
+  --brand:#4f46e5;
+  --brand-2:#6366f1;
+  --brand-3:#c7d2fe;
+  --accent:#f59e0b;
+  --accent-2:#fb7185;
+  --emerald:#10b981;
+  --rose:#e11d48;
+  --paper:#ffffff;
+  --paper-soft:#fafaff;
+  --paper-edge:#f0ecf9;
+  --paper-edge-2:#e6e0f3;
+  --line:#e2e0f0;
+  --code-bg:#0b0b1e;
+  --code-head:#1a1038;
+  --spine-w:14px;
+  --page-edge-w:10px;
+}
+
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, #ede9fb 0%, transparent 60%),
+    #e9e3f5;
+  color:var(--ink);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size:11.4pt;
+  line-height:1.78;
+  -webkit-font-smoothing:antialiased;
+  padding: 30px 0 80px;
+}
+
+/* ============================================================
+   BOOK SHELL — thick spine, stacked pages, drop shadow
+   ============================================================ */
+.book-wrap{
+  position: relative;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 22px;
+}
+
+/* Stacked page shadow at bottom, like a closed book */
+.book-wrap::after{
+  content:"";
+  position:absolute;
+  left:40px; right:40px; bottom:-24px;
+  height:44px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(30,15,70,.22), transparent 70%);
+  border-radius: 50%;
+  filter: blur(6px);
+  z-index: -1;
+}
+
+.book{
+  position: relative;
+  background: var(--paper);
+  border-radius: 3px 8px 8px 3px;
+  padding: 0 72px 90px;
+  /* Left spine + right page stack + overall drop shadow */
+  box-shadow:
+    /* right page stack */
+    2px 0 0 var(--paper-edge),
+    4px 0 0 var(--paper-edge-2),
+    6px 0 0 var(--paper-edge),
+    8px 0 0 var(--paper-edge-2),
+    10px 0 0 var(--paper-edge),
+    /* left spine shading */
+    -3px 0 0 rgba(30,20,60,.10),
+    -6px 0 0 rgba(30,20,60,.06),
+    /* drop shadow */
+    0 20px 50px rgba(30,15,70,.16),
+    0 8px 16px rgba(30,15,70,.10);
+}
+
+/* Book spine — inner left shading */
+.book::before{
+  content:"";
+  position:absolute;
+  top: 0; bottom: 0; left: 0;
+  width: var(--spine-w);
+  background: linear-gradient(90deg,
+    rgba(30,20,60,.12) 0%,
+    rgba(30,20,60,.06) 40%,
+    rgba(30,20,60,.02) 75%,
+    transparent 100%);
+  border-radius: 3px 0 0 3px;
+  pointer-events:none;
+}
+
+/* Book page corner curl top-right */
+.book::after{
+  content:"";
+  position:absolute;
+  top: 0; right: 0;
+  width: 30px; height: 30px;
+  background: linear-gradient(225deg,
+    transparent 45%,
+    rgba(30,20,60,.08) 50%,
+    rgba(30,20,60,.14) 100%);
+  border-bottom-left-radius: 8px;
+  pointer-events:none;
+}
+
+/* ============================================================
+   COVER
+   ============================================================ */
+.cover{
+  position:relative;
+  margin: 0 -72px 60px;
+  padding: 84px 76px 74px;
+  background:
+    radial-gradient(1100px 600px at 12% -10%, #a78bfa 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 110%, #1e1b4b 0%, transparent 60%),
+    linear-gradient(150deg,#0c0525 0%, #2d1b69 42%, #4f46e5 100%);
+  color:#fff;
+  overflow:hidden;
+  border-radius: 3px 8px 0 0;
+  box-shadow: 0 20px 40px rgba(20,10,50,.25);
+}
+.cover::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(ellipse at 70% 20%, #000 0%, transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse at 70% 20%, #000 0%, transparent 78%);
+  pointer-events:none;
+}
+.cover::after{
+  content:"";
+  position:absolute;
+  width:560px; height:560px; right:-160px; bottom:-220px;
+  background:radial-gradient(circle, rgba(245,158,11,.34) 0%, transparent 68%);
+  border-radius:50%;
+  pointer-events:none;
+}
+/* Cover spine effect on the left */
+.cover-spine{
+  position:absolute;
+  top:0; bottom:0; left:0;
+  width: 26px;
+  background:
+    linear-gradient(90deg,
+      rgba(0,0,0,.30) 0%,
+      rgba(0,0,0,.16) 30%,
+      rgba(255,255,255,.06) 55%,
+      rgba(0,0,0,.10) 75%,
+      rgba(0,0,0,.22) 100%);
+  pointer-events:none;
+  z-index:3;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+.cover-inner{ position:relative; z-index:2; }
+
+.phase-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  font-size:10pt;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  font-weight:800;
+  color:#ffd479;
+  border:1.5px solid rgba(255,212,121,.55);
+  background:rgba(255,212,121,.10);
+  padding:9px 20px;
+  border-radius:100px;
+  margin-bottom:32px;
+  backdrop-filter:blur(4px);
+}
+.phase-badge .dot-pulse{
+  width:8px; height:8px; border-radius:50%; background:#ffd479;
+  box-shadow:0 0 0 4px rgba(255,212,121,.25);
+}
+
+.cover h1{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size:54pt;
+  line-height:1.02;
+  margin:0 0 6px;
+  letter-spacing:-.025em;
+  font-weight:700;
+}
+.cover h1 .grad{
+  background:linear-gradient(100deg,#67e8f9 0%, #ffd479 55%, #fb7185 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.cover .sub{
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size:19pt;
+  color:#d5c7ff;
+  margin:16px 0 0;
+  font-weight:400;
+  letter-spacing:.005em;
+}
+.cover .rule{
+  width:110px; height:5px; border-radius:6px;
+  background:linear-gradient(90deg,#ffd479,#fb7185);
+  margin:32px 0 30px;
+}
+.cover .lede{
+  max-width:640px;
+  font-size:12.3pt;
+  line-height:1.85;
+  color:#e0d8ff;
+  margin:0 0 40px;
+}
+.cover-chips{ display:flex; flex-wrap:wrap; gap:10px; }
+.chip{
+  font-size:9.6pt;
+  font-weight:600;
+  letter-spacing:.02em;
+  padding:8px 15px;
+  border-radius:9px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.17);
+  color:#ede6ff;
+  backdrop-filter:blur(4px);
+}
+.cover-foot{
+  margin-top:56px;
+  padding-top:24px;
+  border-top:1px solid rgba(255,255,255,.16);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  flex-wrap:wrap;
+  font-size:10pt;
+  color:#b9a6ee;
+}
+.cover-foot strong{ color:#fff; font-weight:700; letter-spacing:.02em; }
+
+/* ============================================================
+   LEARNING OBJECTIVES / TOC PANELS
+   ============================================================ */
+.toc{
+  background: linear-gradient(180deg,#faf8ff 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:44px 46px;
+  margin: 0 0 60px;
+  position: relative;
+  box-shadow: 0 2px 0 rgba(30,20,60,.03);
+}
+.toc h2{
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size:24pt;
+  margin:0 0 6px;
+  color:var(--brand);
+  letter-spacing:-.01em;
+}
+.toc .toc-sub{ color:var(--muted); font-size:10.4pt; margin:0 0 30px; }
+.toc ol{ list-style:none; margin:0; padding:0; counter-reset:toc; }
+.toc li{
+  counter-increment:toc;
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  padding:10px 0;
+  border-bottom:1px dashed #e6e1f5;
+  font-size:11.2pt;
+}
+.toc li:last-child{ border-bottom:none; }
+.toc li .n{
+  flex:0 0 34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(140deg,#4f46e5,#a855f7);
+  color:#fff;
+  font-size:10pt;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transform:translateY(6px);
+}
+.toc li .t{ font-weight:600; color:var(--ink); }
+.toc li .t small{ display:block; font-weight:400; color:var(--muted); font-size:9.6pt; }
+
+/* ============================================================
+   CHAPTER TABS — colored tabs on the right edge
+   ============================================================ */
+.topic{
+  position: relative;
+  margin: 0 0 60px;
+}
+.chapter-tab{
+  position: absolute;
+  right: -72px;
+  top: 34px;
+  width: 52px;
+  height: 64px;
+  border-radius: 0 8px 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: Georgia, serif;
+  font-weight: 700;
+  font-size: 11pt;
+  letter-spacing: .05em;
+  box-shadow: 4px 4px 8px rgba(30,20,60,.14);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding: 6px 0;
+  z-index: 1;
+}
+.chapter-tab::before{
+  content:"";
+  position: absolute;
+  left: -3px; top: 0; bottom: 0;
+  width: 3px;
+  background: rgba(0,0,0,.14);
+  border-radius: 2px 0 0 2px;
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1,h2,h3,h4{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  color:var(--brand);
+  line-height:1.25;
+  letter-spacing:-.005em;
+}
+
+.topic-head{
+  margin:0 0 34px;
+  padding:34px 42px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#0c0525 0%, #2d1b69 58%, #4f46e5 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 8px 20px rgba(20,10,50,.16);
+}
+.topic-head::after{
+  content:"";
+  position:absolute; width:300px; height:300px; right:-90px; top:-140px;
+  background:radial-gradient(circle, rgba(245,158,11,.36), transparent 70%);
+  border-radius:50%;
+}
+.topic-head .kicker{
+  position:relative; z-index:2;
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#ffd479; font-weight:700; margin-bottom:12px;
+}
+.topic-head h2{
+  position:relative; z-index:2;
+  color:#fff; font-size:26pt; margin:0; letter-spacing:-.015em;
+}
+.topic-head p{
+  position:relative; z-index:2;
+  margin:12px 0 0; color:#d5c7ff; font-size:10.6pt; max-width:640px;
+}
+
+h3{
+  font-size:15.5pt;
+  margin:40px 0 12px;
+  padding-left:16px;
+  border-left:5px solid var(--accent);
+  color:#2d1b69;
+}
+h4{
+  font-size:12.6pt;
+  margin:26px 0 8px;
+  color:var(--brand-2);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-weight:700;
+  letter-spacing:0;
+}
+p{ margin:0 0 15px; color:var(--ink-soft); }
+strong{ color:var(--ink); font-weight:700; }
+
+ul,ol{ margin:0 0 16px; padding-left:24px; color:var(--ink-soft); }
+li{ margin-bottom:7px; }
+
+a{ color:var(--brand); text-decoration:none; border-bottom:1px solid var(--brand-3); }
+
+code{
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size:.87em;
+  background:#f0ebff;
+  color:#4c1d95;
+  padding:2px 6px;
+  border-radius:5px;
+  border:1px solid #e0d5ff;
+  white-space:nowrap;
+}
+
+/* ============================================================
+   CODE CARDS
+   ============================================================ */
+.code-card{
+  margin:22px 0 26px;
+  border-radius:13px;
+  overflow:hidden;
+  background:var(--code-bg);
+  box-shadow:0 10px 30px rgba(11,11,30,.26), 0 2px 6px rgba(11,11,30,.16);
+  border:1px solid #241b52;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.code-head{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  background:linear-gradient(180deg,#1a1038 0%, #140b2c 100%);
+  border-bottom:1px solid #2a2068;
+}
+.dot{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+.dot.r{ background:#ff5f57; } .dot.y{ background:#febc2e; } .dot.g{ background:#28c840; }
+.code-title{
+  margin-left:12px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.2pt;
+  color:#9d8dd5;
+  letter-spacing:.03em;
+}
+.code-lang{
+  margin-left:auto;
+  font-size:8pt;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#6a5da3;
+  font-weight:700;
+}
+.code-card pre{
+  margin:0;
+  padding:20px 22px;
+  overflow-x:auto;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px) 0 0 / 46px 100%,
+    var(--code-bg);
+}
+.code-card pre code{
+  display:block;
+  background:none;
+  border:none;
+  padding:0;
+  color:#e0d8ff;
+  font-family:"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size:9.6pt;
+  line-height:1.72;
+  white-space:pre;
+  tab-size:2;
+}
+.tok-com{ color:#6a5da3; font-style:italic; }
+.tok-str{ color:#7ee2a8; }
+.tok-kw { color:#c792ea; font-weight:600; }
+.tok-num{ color:#ffb86c; }
+.tok-tag{ color:#5cc8ff; }
+.tok-tagp{ color:#8a7fb8; }
+.tok-attr{ color:#ffd479; }
+
+/* Terminal blocks */
+.term{
+  margin:18px 0 24px;
+  border-radius:11px;
+  overflow:hidden;
+  border:1px solid #e0d5ff;
+  background:#0b0b1e;
+  break-inside:avoid;
+}
+.term .term-head{
+  background:#1a1038; color:#9d8dd5;
+  font-size:8.6pt; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:700; padding:8px 16px;
+  border-bottom:1px solid #2a2068;
+}
+.term pre{
+  margin:0; padding:16px 20px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.6pt; line-height:1.7; color:#a7f3d0; white-space:pre-wrap;
+}
+.term.out pre{ color:#ffe9a8; }
+
+/* ============================================================
+   CALLOUTS
+   ============================================================ */
+.callout{
+  border-radius:13px;
+  padding:20px 24px 18px;
+  margin:24px 0;
+  border:1px solid;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.callout .ct{
+  font-weight:800;
+  font-size:10pt;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:10px;
+  display:flex; align-items:center; gap:9px;
+}
+.callout p:last-child{ margin-bottom:0; }
+
+.callout.remember{
+  background:linear-gradient(135deg,#f2ecff 0%, #fbf8ff 100%);
+  border-color:#d5c7ff;
+}
+.callout.remember .ct{ color:#4c1d95; }
+
+.callout.analogy{
+  background:linear-gradient(135deg,#fff8ec 0%, #fffdf8 100%);
+  border-color:#ffdfae;
+}
+.callout.analogy .ct{ color:#b45309; }
+
+.callout.warn{
+  background:linear-gradient(135deg,#fff1f2 0%, #fff8f8 100%);
+  border-color:#ffd0d5;
+}
+.callout.warn .ct{ color:#be123c; }
+
+.callout.info{
+  background:linear-gradient(135deg,#eefbf6 0%, #f7fffc 100%);
+  border-color:#b8ecd8;
+}
+.callout.info .ct{ color:#047857; }
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  margin:24px 0;
+  font-size:10.2pt;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+thead th{
+  background:linear-gradient(135deg,#2d1b69,#4f46e5);
+  color:#fff;
+  text-align:left;
+  padding:11px 14px;
+  font-weight:700;
+  font-size:9.6pt;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+tbody td{
+  padding:10px 14px;
+  border-top:1px solid var(--line);
+  color:var(--ink-soft);
+  vertical-align:top;
+}
+tbody tr:nth-child(even){ background:#faf8ff; }
+tbody td:first-child{ font-weight:600; color:var(--ink); }
+
+/* ============================================================
+   FIGURES
+   ============================================================ */
+figure{
+  margin:28px 0;
+  padding:22px 22px 14px;
+  background:linear-gradient(180deg,#f8f6ff 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  border-radius:16px;
+  break-inside:avoid;
+  page-break-inside:avoid;
+  box-shadow: 0 2px 0 rgba(30,20,60,.03);
+}
+figure svg{ width:100%; height:auto; display:block; }
+figcaption{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px dashed #e0dcf0;
+  font-size:9.6pt;
+  color:var(--muted);
+  text-align:center;
+  font-style:italic;
+}
+figcaption b{ color:var(--brand); font-style:normal; }
+
+/* ============================================================
+   FILE TREE
+   ============================================================ */
+.tree{
+  background:#0b0b1e;
+  color:#d8cffb;
+  border-radius:12px;
+  padding:20px 24px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.6pt;
+  line-height:1.75;
+  white-space:pre;
+  margin:22px 0;
+  border:1px solid #241b52;
+  overflow-x:auto;
+  break-inside:avoid;
+}
+.tree .dir{ color:#5cc8ff; font-weight:600; }
+.tree .file{ color:#e0d8ff; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:22px 0; }
+.mini-card{
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:18px 20px;
+  background:#fbfaff;
+  break-inside:avoid;
+}
+.mini-card h5{
+  margin:0 0 8px;
+  font-size:10.4pt;
+  color:var(--brand);
+  font-family: ui-sans-serif, sans-serif;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.mini-card p{ margin:0; font-size:10.2pt; }
+
+.steps{ counter-reset:st; list-style:none; padding:0; margin:24px 0; }
+.steps li{
+  counter-increment:st;
+  position:relative;
+  padding:14px 0 14px 58px;
+  border-bottom:1px dashed #e6e1f5;
+  margin:0;
+}
+.steps li:last-child{ border-bottom:none; }
+.steps li::before{
+  content:counter(st);
+  position:absolute; left:0; top:13px;
+  width:34px; height:34px; border-radius:10px;
+  background:linear-gradient(140deg,#4f46e5,#a855f7);
+  color:#fff; font-weight:800; font-size:10.5pt;
+  display:flex; align-items:center; justify-content:center;
+}
+
+hr.sep{
+  border:none; height:1px;
+  background:linear-gradient(90deg,transparent,#e0dcf0,transparent);
+  margin:46px 0;
+}
+
+/* ============================================================
+   PAGE FOOTER — page number feel
+   ============================================================ */
+.page-footer{
+  margin-top: 40px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: Georgia, serif;
+  font-size: 9.5pt;
+  font-style: italic;
+  color: var(--muted);
+}
+.page-footer .pg{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+}
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+@media print{
+  @page{
+    size:A4;
+    margin:14mm 12mm 16mm;
+  }
+  @page:first{
+    margin:0;
+  }
+  body{
+    background:#fff;
+    font-size:10.4pt;
+    line-height:1.68;
+    padding:0;
+  }
+  .book-wrap{
+    max-width:none;
+    margin:0;
+    padding:0;
+  }
+  .book-wrap::after{ display:none; }
+  .book{
+    max-width:none;
+    margin:0;
+    padding: 0 14mm 10mm;
+    box-shadow: none;
+    border-radius: 0;
+    background: #fff;
+  }
+  .book::before,
+  .book::after{ display:none; }
+  .cover{
+    margin:0;
+    height:297mm;
+    padding:80px 60px 60px;
+    border-radius:0;
+    display:flex;
+    align-items:center;
+    break-after:page;
+    page-break-after:always;
+    box-shadow: none;
+  }
+  .cover-inner{ width:100%; }
+  .cover-spine{ display:none; }
+  .toc{ break-after:page; page-break-after:always; }
+
+  .topic{ break-before:page; page-break-before:always; }
+  .chapter-tab{ display: none; }
+  h1,h2,h3,h4{ break-after:avoid; page-break-after:avoid; }
+  p, li{ orphans:2; widows:2; }
+
+  .code-card, figure, table, .callout, .term{ break-inside:avoid; page-break-inside:avoid; }
+
+  a{ color:var(--brand); border-bottom:none; }
+  a[href^="http"]::after{
+    content:" (" attr(href) ")";
+    font-size:7.4pt;
+    color:#8d87a5;
+    word-break:break-all;
+  }
+  .no-print{ display:none !important; }
+  .page-footer{ display: none; }
+}
+
+@media screen{
+  .topic{ margin-top:0; }
+}
+</style>
+</head>
+<body>
+<div class="book-wrap">
+<div class="book">
+
+<!-- ============================================================
+     COVER
+     ============================================================ -->
+<section class="cover">
+  <div class="cover-spine"></div>
+  <div class="cover-inner">
+    <span class="phase-badge"><span class="dot-pulse"></span>Phase 8 · Styling &amp; Component Systems</span>
+
+    <h1>React&nbsp;JS<br><span class="grad">Styling and<br>Component Systems</span></h1>
+
+    <p class="sub">CSS Modules · Tailwind CSS · Variants · Tokens · Dark Mode</p>
+
+    <div class="rule"></div>
+
+    <p class="lede">
+      A complete, practical guide to styling React applications professionally.
+      Learn traditional CSS, CSS Modules, Tailwind CSS, responsive layouts, component
+      variants, design tokens, <code style="background:rgba(255,255,255,.12);color:#ffd479;border-color:rgba(255,212,121,.3)">shadcn/ui</code>,
+      animations, dark mode, and reusable component architecture — and build a polished
+      dashboard UI that looks consistent on mobile, tablet, and desktop.
+    </p>
+
+    <div class="cover-chips">
+      <span class="chip">CSS &amp; CSS Modules</span>
+      <span class="chip">Tailwind CSS v4</span>
+      <span class="chip">Conditional Classes</span>
+      <span class="chip">Responsive Layouts</span>
+      <span class="chip">Component Variants</span>
+      <span class="chip">Design Tokens</span>
+      <span class="chip">shadcn/ui</span>
+      <span class="chip">Accessible Primitives</span>
+      <span class="chip">Animations</span>
+      <span class="chip">Dark Mode</span>
+      <span class="chip">Reusable UI</span>
+    </div>
+
+    <div class="cover-foot">
+      <div>
+        <strong>Learning Track</strong><br>
+        Frontend Development · React Series
+      </div>
+      <div style="text-align:right">
+        <strong>Module</strong><br>
+        Phase 8 of the React Curriculum
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     WHAT YOU WILL LEARN
+     ============================================================ -->
+<section class="toc" style="break-after:page;">
+  <h2>What you will learn in this phase</h2>
+  <p class="toc-sub">A complete tour of professional React styling.</p>
+
+  <p>In this phase, you will learn how to style React applications professionally and build reusable UI components that look consistent across an entire application.</p>
+  <p>You will learn traditional CSS, CSS Modules, Tailwind CSS, responsive layouts, component variants, design tokens, shadcn/ui, animations, dark mode, and reusable component architecture.</p>
+  <p>By the end, you should be able to build a responsive dashboard UI that looks professional on mobile, tablet, and desktop, supports light and dark themes, and uses consistent buttons, cards, badges, and layouts.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Phase 8 topic map covering styling and component systems">
+      <defs>
+        <linearGradient id="mHead" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#a855f7"/>
+        </linearGradient>
+        <linearGradient id="mChip" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="270" y="18" width="220" height="44" rx="12" fill="url(#mHead)"/>
+      <text x="380" y="46" text-anchor="middle" font-family="Georgia, serif" font-size="15" font-weight="700" fill="#fff">Styling &amp; Components</text>
+
+      <path d="M380 62 V 86" stroke="#d5c7ff" stroke-width="2"/>
+      <path d="M100 86 H 660" stroke="#d5c7ff" stroke-width="2"/>
+
+      <path d="M100 86 V 110" stroke="#d5c7ff" stroke-width="2"/>
+      <path d="M210 86 V 110" stroke="#d5c7ff" stroke-width="2"/>
+      <path d="M320 86 V 110" stroke="#d5c7ff" stroke-width="2"/>
+      <path d="M430 86 V 110" stroke="#d5c7ff" stroke-width="2"/>
+      <path d="M540 86 V 110" stroke="#d5c7ff" stroke-width="2"/>
+      <path d="M650 86 V 110" stroke="#d5c7ff" stroke-width="2"/>
+
+      <rect x="48" y="110" width="104" height="42" rx="9" fill="url(#mChip)"/>
+      <text x="100" y="136" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" fill="#4a2c00">CSS Modules</text>
+
+      <rect x="160" y="110" width="100" height="42" rx="9" fill="#4f46e5"/>
+      <text x="210" y="136" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" fill="#fff">Tailwind</text>
+
+      <rect x="270" y="110" width="100" height="42" rx="9" fill="#0f9d76"/>
+      <text x="320" y="136" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" fill="#fff">Variants</text>
+
+      <rect x="380" y="110" width="100" height="42" rx="9" fill="#e11d48"/>
+      <text x="430" y="136" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" fill="#fff">Tokens</text>
+
+      <rect x="490" y="110" width="100" height="42" rx="9" fill="#0ea5e9"/>
+      <text x="540" y="136" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" fill="#fff">shadcn/ui</text>
+
+      <rect x="600" y="110" width="100" height="42" rx="9" fill="#7c3aed"/>
+      <text x="650" y="136" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" fill="#fff">Dark Mode</text>
+
+      <text x="380" y="186" text-anchor="middle" font-family="Georgia, serif" font-size="11.5" font-style="italic" fill="#64748b">Six pillars that combine into one reusable, accessible dashboard UI.</text>
+    </svg>
+    <figcaption><b>Figure 0.1</b> — The six pillars of Phase 8: CSS Modules, Tailwind, variants, tokens, shadcn/ui, and dark mode.</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================
+     TABLE OF CONTENTS
+     ============================================================ -->
+<section class="toc">
+  <h2>Table of Contents</h2>
+  <p class="toc-sub">Ten topics, one practical project, and a full revision set.</p>
+
+  <ol>
+    <li><span class="n">1</span><span class="t">CSS and CSS Modules<small>Scoped styles for components</small></span></li>
+    <li><span class="n">2</span><span class="t">Tailwind CSS with React<small>Utility-first styling in JSX</small></span></li>
+    <li><span class="n">3</span><span class="t">Conditional Classes and Reusable Styles<small>Adapting styles to state and props</small></span></li>
+    <li><span class="n">4</span><span class="t">Responsive Layouts<small>Mobile-first design and breakpoints</small></span></li>
+    <li><span class="n">5</span><span class="t">Component Variants and Composition<small>Reusable component APIs</small></span></li>
+    <li><span class="n">6</span><span class="t">Design Tokens and Theme Systems<small>Centralizing design decisions</small></span></li>
+    <li><span class="n">7</span><span class="t">shadcn/ui and Accessible Primitives<small>Open source components and a11y</small></span></li>
+    <li><span class="n">8</span><span class="t">Animation and Transitions<small>Motion that helps, not distracts</small></span></li>
+    <li><span class="n">9</span><span class="t">Dark Mode<small>Alternate color schemes done right</small></span></li>
+    <li><span class="n">10</span><span class="t">Building Reusable UI Components<small>The full dashboard mini-project</small></span></li>
+    <li><span class="n">!</span><span class="t">Common Mistakes to Avoid<small>Ten pitfalls and fixes</small></span></li>
+    <li><span class="n">↺</span><span class="t">Revision Notes, Interview Q&amp;A, Assignments<small>Review and self-assessment</small></span></li>
+  </ol>
+</section>
+
+<!-- ============================================================
+     SECTION 1 — CSS AND CSS MODULES
+     ============================================================ -->
+<section class="topic" id="s1">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#4f46e5,#a855f7);">CSS</div>
+  <div class="topic-head">
+    <div class="kicker">Section 01</div>
+    <h2>CSS and CSS Modules</h2>
+    <p>Styling React components with familiar CSS — and scoping it cleanly.</p>
+  </div>
+
+  <h3>1.1 What is CSS?</h3>
+  <p>CSS stands for <strong>Cascading Style Sheets</strong>. It controls how HTML elements look on the screen.</p>
+  <p>HTML defines the structure. CSS controls the appearance.</p>
+  <p>For example, a React component might display a button:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Welcome.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Welcome() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Welcome to my application&lt;/h1&gt;
+      &lt;button&gt;Get Started&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default Welcome;</code></pre>
+  </div>
+
+  <p>Without styling, the browser displays default styles. CSS allows us to control the colors, spacing, layout, borders, and other visual properties.</p>
+  <p>Create a file named <code>App.css</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.css</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">.welcome {
+  padding: 24px;
+  background-color: #f8fafc;
+  color: #0f172a;
+  border-radius: 12px;
+}
+
+.welcome h1 {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.welcome button {
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.welcome button:hover {
+  background-color: #4338ca;
+}</code></pre>
+  </div>
+
+  <p>Import the stylesheet into <code>App.jsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import "./App.css";
+
+function App() {
+  return (
+    &lt;div className="welcome"&gt;
+      &lt;h1&gt;Welcome to React&lt;/h1&gt;
+      &lt;button&gt;Get Started&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <h4>Understand what happened</h4>
+  <ul>
+    <li><code>import "./App.css"</code> loads the stylesheet into the application.</li>
+    <li><code>className="welcome"</code> attaches a CSS class to the element.</li>
+    <li><code>.welcome</code> selects elements with that class.</li>
+    <li><code>padding</code> adds space inside the element.</li>
+    <li><code>border-radius</code> rounds the corners.</li>
+    <li><code>:hover</code> applies styles when the pointer hovers over the button.</li>
+  </ul>
+  <p><strong>Important:</strong> In React JSX, use <code>className</code> instead of HTML's <code>class</code> attribute.</p>
+
+  <h3>1.2 How CSS connects to React</h3>
+  <p>React components describe the UI. CSS styles that UI.</p>
+  <p>Think of building a house:</p>
+  <ul>
+    <li>React components are the rooms and furniture.</li>
+    <li>CSS determines the paint, spacing, shapes, and arrangement.</li>
+    <li>Component props can change which content or styling is displayed.</li>
+  </ul>
+  <p>React does not require a particular styling solution. You can use normal CSS, CSS Modules, Tailwind CSS, or a component system. You can also combine these approaches when there is a good reason.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="How React components and CSS work together like a house">
+      <defs>
+        <linearGradient id="g1a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#a855f7"/>
+        </linearGradient>
+        <linearGradient id="g1b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+        <linearGradient id="g1c" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Structure -->
+      <rect x="24" y="40" width="220" height="180" rx="12" fill="url(#g1a)"/>
+      <text x="134" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">React Components</text>
+
+      <rect x="46" y="90" width="176" height="20" rx="4" fill="rgba(255,255,255,.22)"/>
+      <text x="134" y="105" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">&lt;header /&gt;</text>
+
+      <rect x="46" y="118" width="176" height="20" rx="4" fill="rgba(255,255,255,.22)"/>
+      <text x="134" y="133" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">&lt;main /&gt;</text>
+
+      <rect x="46" y="146" width="176" height="20" rx="4" fill="rgba(255,255,255,.22)"/>
+      <text x="134" y="161" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">&lt;button /&gt;</text>
+
+      <text x="134" y="200" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#d5c7ff">structure · content</text>
+
+      <!-- Arrow -->
+      <path d="M256 130 H 296" stroke="#d5c7ff" stroke-width="2.5"/>
+      <polygon points="296,122 312,130 296,138" fill="#7c3aed"/>
+      <text x="284" y="116" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#4f46e5">+</text>
+
+      <!-- CSS -->
+      <rect x="324" y="40" width="180" height="180" rx="12" fill="url(#g1b)"/>
+      <text x="414" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#4a2c00">CSS</text>
+
+      <rect x="344" y="90" width="140" height="20" rx="4" fill="rgba(255,255,255,.30)"/>
+      <text x="414" y="105" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" fill="#4a2c00">padding</text>
+
+      <rect x="344" y="118" width="140" height="20" rx="4" fill="rgba(255,255,255,.30)"/>
+      <text x="414" y="133" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" fill="#4a2c00">color</text>
+
+      <rect x="344" y="146" width="140" height="20" rx="4" fill="rgba(255,255,255,.30)"/>
+      <text x="414" y="161" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" fill="#4a2c00">border-radius</text>
+
+      <text x="414" y="200" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#8a5a00">paint · spacing · layout</text>
+
+      <!-- Arrow -->
+      <path d="M516 130 H 556" stroke="#f6c667" stroke-width="2.5"/>
+      <polygon points="556,122 572,130 556,138" fill="#f59e0b"/>
+      <text x="544" y="116" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#b45309">=</text>
+
+      <!-- Result -->
+      <rect x="584" y="40" width="152" height="180" rx="12" fill="url(#g1c)"/>
+      <text x="660" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Visible UI</text>
+
+      <rect x="604" y="90" width="112" height="50" rx="8" fill="rgba(255,255,255,.30)"/>
+      <text x="660" y="112" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#04322e">Get Started</text>
+      <text x="660" y="128" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9" fill="#04322e">indigo button</text>
+
+      <text x="660" y="166" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#d6f7eb">What the user sees</text>
+
+      <text x="380" y="248" text-anchor="middle" font-family="Georgia, serif" font-size="11.5" font-style="italic" fill="#64748b">Structure + styles = the interface the user actually sees.</text>
+    </svg>
+    <figcaption><b>Figure 1.1</b> — React components supply structure; CSS supplies appearance.</figcaption>
+  </figure>
+
+  <h3>1.3 The problem with ordinary CSS</h3>
+  <p>Imagine you have a large application with many components.</p>
+  <p>Your <code>ProfileCard.jsx</code> contains:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">ProfileCard.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="card"&gt;Profile information&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>Your <code>ProductCard.jsx</code> also contains:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">ProductCard.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="card"&gt;Product information&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>And your global CSS contains:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">styles.css</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">.card {
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+}</code></pre>
+  </div>
+
+  <p>Both components will receive those styles, whether that was intended or not.</p>
+  <p>This can be perfectly acceptable when the class is deliberately shared. However, generic class names can create unwanted conflicts as an application grows.</p>
+  <p>One solution is <strong>CSS Modules</strong>.</p>
+
+  <h3>1.4 What are CSS Modules?</h3>
+  <p>CSS Modules let you write normal CSS while keeping class names locally scoped to a component's stylesheet.</p>
+  <p>For a typical Vite React project, name a stylesheet with the <code>.module.css</code> suffix:</p>
+  <p><code>ProfileCard.module.css</code></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">ProfileCard.module.css</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">.card {
+  padding: 20px;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.description {
+  color: #64748b;
+  line-height: 1.6;
+}</code></pre>
+  </div>
+
+  <p>Create <code>ProfileCard.jsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">ProfileCard.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import styles from "./ProfileCard.module.css";
+
+function ProfileCard() {
+  return (
+    &lt;article className={styles.card}&gt;
+      &lt;h2 className={styles.title}&gt;Rahul Sharma&lt;/h2&gt;
+
+      &lt;p className={styles.description}&gt;
+        Frontend Developer
+      &lt;/p&gt;
+    &lt;/article&gt;
+  );
+}
+
+export default ProfileCard;</code></pre>
+  </div>
+
+  <h4>How does this work?</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">import</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import styles from "./ProfileCard.module.css";</code></pre>
+  </div>
+
+  <p>The imported <code>styles</code> object gives you access to the locally scoped class names.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">className</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">className={styles.card}</code></pre>
+  </div>
+
+  <p>This applies the generated class associated with <code>.card</code> in that module.</p>
+  <p>The final class name in the browser is transformed by the build tooling, helping avoid accidental collisions with a different module's class name.</p>
+  <p>For a class with a hyphen, use bracket notation:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">.profile-card</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">.profile-card {
+  padding: 20px;
+}</code></pre>
+  </div>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">JSX</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className={styles["profile-card"]}&gt;
+  Profile
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <h3>1.5 Conditional CSS Module classes</h3>
+  <p>Sometimes a component has more than one visual state.</p>
+  <p>For example, an alert can be successful or display an error.</p>
+  <p><code>Alert.module.css</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Alert.module.css</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">.alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+}
+
+.success {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.error {
+  background-color: #fee2e2;
+  color: #991b1b;
+}</code></pre>
+  </div>
+
+  <p><code>Alert.jsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Alert.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import styles from "./Alert.module.css";
+
+function Alert({ type = "success", children }) {
+  const typeClass =
+    type === "error" ? styles.error : styles.success;
+
+  return (
+    &lt;div className={`${styles.alert} ${typeClass}`} role="status"&gt;
+      {children}
+    &lt;/div&gt;
+  );
+}
+
+export default Alert;</code></pre>
+  </div>
+
+  <p>Usage:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">usage</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;Alert type="success"&gt;
+  Your profile has been saved.
+&lt;/Alert&gt;
+
+&lt;Alert type="error"&gt;
+  Something went wrong.
+&lt;/Alert&gt;</code></pre>
+  </div>
+
+  <p>The shared class handles the common layout. The conditional class controls the appearance.</p>
+  <p>For a production alert system, choose the appropriate ARIA role and announcement behavior for the kind of message being shown. For instance, urgent errors may require <code>role="alert"</code> rather than <code>role="status"</code>.</p>
+
+  <h3>1.6 When should you use CSS Modules?</h3>
+  <p>CSS Modules are useful when:</p>
+  <ul>
+    <li>You already know CSS and want to keep using it.</li>
+    <li>Components have custom or complicated styling.</li>
+    <li>You want to avoid accidental global class-name collisions.</li>
+    <li>You need selectors, pseudo-elements, or animations that are easier to maintain in CSS files.</li>
+    <li>A team prefers styling to live near its component.</li>
+  </ul>
+  <p>They are not mandatory for every component. Choose a styling approach based on the application, team, and complexity of the UI.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 8 · Styling &amp; Component Systems</span>
+    <span class="pg">§ 1 · CSS and CSS Modules</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 2 — TAILWIND CSS WITH REACT
+     ============================================================ -->
+<section class="topic" id="s2">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0ea5e9,#06b6d4);">TW</div>
+  <div class="topic-head">
+    <div class="kicker">Section 02</div>
+    <h2>Tailwind CSS with React</h2>
+    <p>Utility-first styling composed directly in your JSX.</p>
+  </div>
+
+  <h3>2.1 What is Tailwind CSS?</h3>
+  <p>Tailwind CSS is a utility-first CSS framework.</p>
+  <p>Instead of writing a separate CSS class for every small styling decision, you combine utility classes directly in your JSX.</p>
+  <p>With ordinary CSS:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">styles.css</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">.primary-button {
+  background-color: #4f46e5;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+}</code></pre>
+  </div>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">JSX</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;button className="primary-button"&gt;
+  Save Changes
+&lt;/button&gt;</code></pre>
+  </div>
+
+  <p>With Tailwind:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">JSX</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;button className="rounded-lg bg-indigo-600 px-5 py-2.5 font-semibold text-white"&gt;
+  Save Changes
+&lt;/button&gt;</code></pre>
+  </div>
+
+  <p>You can read the Tailwind classes as a compact description of the element's style.</p>
+
+  <table>
+    <thead><tr><th>Utility</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><code>bg-indigo-600</code></td><td>Indigo background</td></tr>
+      <tr><td><code>text-white</code></td><td>White text</td></tr>
+      <tr><td><code>px-5</code></td><td>Horizontal padding</td></tr>
+      <tr><td><code>py-2.5</code></td><td>Vertical padding</td></tr>
+      <tr><td><code>rounded-lg</code></td><td>Rounded corners</td></tr>
+      <tr><td><code>font-semibold</code></td><td>Semibold text</td></tr>
+      <tr><td><code>shadow-sm</code></td><td>Small shadow</td></tr>
+      <tr><td><code>hover:bg-indigo-700</code></td><td>Change background on hover</td></tr>
+    </tbody>
+  </table>
+
+  <p>The exact colors and measurements follow Tailwind's theme unless you define custom tokens.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tailwind utility classes making up a button">
+      <defs>
+        <linearGradient id="g2a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#0284c7"/>
+        </linearGradient>
+        <linearGradient id="g2b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+        <linearGradient id="g2c" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="20" y="30" width="440" height="200" rx="14" fill="#f4f9fc" stroke="#b6e0ee" stroke-width="2"/>
+      <text x="240" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#0284c7">Utilities in className</text>
+
+      <g font-family="Consolas, monospace" font-size="10.5">
+        <rect x="40" y="80" width="200" height="24" rx="6" fill="url(#g2a)"/>
+        <text x="240" y="97" text-anchor="middle" fill="#fff">rounded-lg</text>
+
+        <rect x="40" y="112" width="200" height="24" rx="6" fill="#0f9d76"/>
+        <text x="240" y="129" text-anchor="middle" fill="#fff">bg-indigo-600</text>
+
+        <rect x="40" y="144" width="200" height="24" rx="6" fill="url(#g2b)"/>
+        <text x="240" y="161" text-anchor="middle" fill="#4a2c00">px-5 py-2.5</text>
+
+        <rect x="40" y="176" width="200" height="24" rx="6" fill="url(#g2c)"/>
+        <text x="240" y="193" text-anchor="middle" fill="#fff">font-semibold text-white</text>
+      </g>
+
+      <path d="M470 130 H 510" stroke="#7ecbe3" stroke-width="2.5"/>
+      <polygon points="510,122 526,130 510,138" fill="#0ea5e9"/>
+
+      <!-- Resulting button -->
+      <rect x="540" y="90" width="196" height="80" rx="10" fill="#0b1220"/>
+      <text x="638" y="118" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#7ecbe3" letter-spacing="0.14em">RENDERED</text>
+
+      <rect x="566" y="128" width="144" height="34" rx="8" fill="#4f46e5"/>
+      <text x="638" y="150" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#fff">Save Changes</text>
+
+      <text x="638" y="196" text-anchor="middle" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#7ecbe3">an indigo button</text>
+
+      <text x="380" y="252" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#64748b">Small, single-purpose utilities combine into the final style.</text>
+    </svg>
+    <figcaption><b>Figure 2.1</b> — Each Tailwind utility class contributes one styling decision; combined, they describe the button.</figcaption>
+  </figure>
+
+  <h3>2.2 Install Tailwind CSS v4 in a React + Vite project</h3>
+  <p>For a new React project:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm create vite@latest my-react-app -- --template react
+cd my-react-app
+npm install</code></pre>
+  </div>
+
+  <p>Install Tailwind CSS v4 and its Vite plugin:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm install tailwindcss @tailwindcss/vite</code></pre>
+  </div>
+
+  <p>Update <code>vite.config.js</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">vite.config.js</span><span class="code-lang">JavaScript</span></div>
+    <pre><code class="lang-js">import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
+});</code></pre>
+  </div>
+
+  <p>In <code>src/index.css</code>, use:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/index.css</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">@import "tailwindcss";</code></pre>
+  </div>
+
+  <p>Make sure the stylesheet is imported into your React entry file, normally <code>src/main.jsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/main.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import App from "./App.jsx";
+
+createRoot(document.getElementById("root")).render(
+  &lt;StrictMode&gt;
+    &lt;App /&gt;
+  &lt;/StrictMode&gt;
+);</code></pre>
+  </div>
+
+  <p>Start the development server:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm run dev</code></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="ct">◆ Version note</div>
+    <p>This guide uses Tailwind CSS v4 syntax. Do not mix its setup with older Tailwind v3 setup instructions such as <code>@tailwind base</code> and the old configuration initialization workflow. See the <a href="https://tailwindcss.com/docs/installation/using-vite">official Tailwind documentation</a>.</p>
+  </div>
+
+  <h3>2.3 Common Tailwind utility categories</h3>
+
+  <h4>Text</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">text</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;h1 className="text-3xl font-bold"&gt;
+  Dashboard
+&lt;/h1&gt;
+
+&lt;p className="text-sm text-slate-500"&gt;
+  Manage your account.
+&lt;/p&gt;</code></pre>
+  </div>
+
+  <h4>Spacing</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">spacing</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="p-6"&gt;
+  Padding on all sides
+&lt;/div&gt;
+
+&lt;div className="mt-4 mb-8"&gt;
+  Vertical spacing
+&lt;/div&gt;
+
+&lt;div className="flex gap-4"&gt;
+  &lt;button&gt;Cancel&lt;/button&gt;
+  &lt;button&gt;Save&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <h4>Layout</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">layout</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="flex items-center justify-between"&gt;
+  &lt;h2&gt;Projects&lt;/h2&gt;
+  &lt;button&gt;Add Project&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <h4>Grid</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">grid</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"&gt;
+  &lt;div&gt;Project One&lt;/div&gt;
+  &lt;div&gt;Project Two&lt;/div&gt;
+  &lt;div&gt;Project Three&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>This displays one column on small screens, two columns from the <code>md</code> breakpoint, and three columns from the <code>lg</code> breakpoint.</p>
+
+  <h4>Borders and shadows</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">card</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"&gt;
+  A clean content card
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <h3>2.4 Handling repeated Tailwind styles</h3>
+  <p>Suppose 20 buttons in your app use the same set of classes.</p>
+  <p>Copying the same long class string into every location creates duplication. You can create a reusable React component:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">PrimaryButton.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function PrimaryButton({ children, ...props }) {
+  return (
+    &lt;button
+      className="rounded-lg bg-indigo-600 px-5 py-2.5 font-semibold text-white hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      {...props}
+    &gt;
+      {children}
+    &lt;/button&gt;
+  );
+}
+
+export default PrimaryButton;</code></pre>
+  </div>
+
+  <p>Usage:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">JSX</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;PrimaryButton onClick={() =&gt; console.log("Saved")}&gt;
+  Save
+&lt;/PrimaryButton&gt;</code></pre>
+  </div>
+
+  <p>This improves consistency. A later change to the main button design can be made in one place.</p>
+
+  <h3>2.5 Tailwind versus CSS Modules</h3>
+
+  <table>
+    <thead><tr><th>Situation</th><th>A practical choice</th></tr></thead>
+    <tbody>
+      <tr><td>Quickly composing layouts</td><td>Tailwind CSS</td></tr>
+      <tr><td>Styling many small UI elements consistently</td><td>Tailwind CSS</td></tr>
+      <tr><td>Highly custom animations and complex selectors</td><td>CSS or CSS Modules</td></tr>
+      <tr><td>Isolated, component-specific stylesheet</td><td>CSS Modules</td></tr>
+      <tr><td>Existing application already built with ordinary CSS</td><td>Continue with CSS where practical</td></tr>
+      <tr><td>Large application with shared components</td><td>Tailwind plus reusable components, or CSS Modules plus a design system</td></tr>
+    </tbody>
+  </table>
+
+  <p>There is no rule that every project must use only one approach. However, using several styling methods without a clear convention can make the code harder to maintain.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 8 · Styling &amp; Component Systems</span>
+    <span class="pg">§ 2 · Tailwind CSS with React</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 3 — CONDITIONAL CLASSES
+     ============================================================ -->
+<section class="topic" id="s3">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#10b981,#34d399);">CC</div>
+  <div class="topic-head">
+    <div class="kicker">Section 03</div>
+    <h2>Conditional Classes and Reusable Styles</h2>
+    <p>Adapting styles to state and props cleanly.</p>
+  </div>
+
+  <h3>3.1 What are conditional classes?</h3>
+  <p>A conditional class is a CSS class that you apply only when a condition is true.</p>
+  <p>Consider a button that should look different when it is disabled.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">SaveButton.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function SaveButton({ disabled }) {
+  return (
+    &lt;button
+      disabled={disabled}
+      className={
+        disabled
+          ? "cursor-not-allowed bg-slate-300 text-slate-600"
+          : "cursor-pointer bg-indigo-600 text-white hover:bg-indigo-700"
+      }
+    &gt;
+      Save
+    &lt;/button&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>When <code>disabled</code> is <code>true</code>, the button gets the disabled styling. Otherwise, it gets the enabled styling.</p>
+  <p>The real <code>disabled</code> attribute is important here. Changing the color alone would not disable the button's behavior.</p>
+
+  <h3>3.2 Conditional classes using state</h3>
+  <p>React state is useful when a style depends on user interaction.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">FavoriteButton.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useState } from "react";
+
+function FavoriteButton() {
+  const [favorite, setFavorite] = useState(false);
+
+  return (
+    &lt;button
+      onClick={() =&gt; setFavorite((current) =&gt; !current)}
+      aria-pressed={favorite}
+      className={
+        favorite
+          ? "rounded-lg bg-rose-600 px-4 py-2 text-white"
+          : "rounded-lg bg-slate-200 px-4 py-2 text-slate-900"
+      }
+    &gt;
+      {favorite ? "♥ Favorited" : "♡ Add to favorites"}
+    &lt;/button&gt;
+  );
+}
+
+export default FavoriteButton;</code></pre>
+  </div>
+
+  <p>This example combines state, behavior, and styling:</p>
+  <ul>
+    <li><code>useState</code> stores whether the item is a favorite.</li>
+    <li>The click handler toggles that state.</li>
+    <li>The conditional expression selects the classes.</li>
+    <li>The button text reflects the selected state.</li>
+    <li><code>aria-pressed</code> exposes the toggle state to assistive technology.</li>
+  </ul>
+
+  <h3>3.3 Combining common and conditional styles</h3>
+  <p>A component often has classes that never change and classes that depend on a condition.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StatusBadge.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function StatusBadge({ status }) {
+  const statusClasses = {
+    active: "bg-emerald-100 text-emerald-800",
+    pending: "bg-amber-100 text-amber-800",
+    inactive: "bg-slate-100 text-slate-700",
+  };
+
+  const colorClasses =
+    statusClasses[status] ?? statusClasses.inactive;
+
+  return (
+    &lt;span
+      className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${colorClasses}`}
+    &gt;
+      {status}
+    &lt;/span&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Usage:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">usage</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;StatusBadge status="active" /&gt;
+&lt;StatusBadge status="pending" /&gt;
+&lt;StatusBadge status="inactive" /&gt;</code></pre>
+  </div>
+
+  <p>The base classes define the common design; the selected status defines the color.</p>
+
+  <div class="callout warn">
+    <div class="ct">▲ Important rule about Tailwind class names</div>
+    <p>Avoid building utility classes from arbitrary fragments:</p>
+    <div class="code-card" style="margin:14px 0 0;">
+      <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Avoid</span><span class="code-lang">JSX</span></div>
+      <pre><code class="lang-jsx">const className = `bg-${color}-600`;</code></pre>
+    </div>
+    <p>Tailwind may not detect dynamically assembled class names when it scans your source files. The resulting CSS can be missing from your production build.</p>
+    <p>Prefer a map containing complete utility strings:</p>
+    <div class="code-card" style="margin:14px 0 0;">
+      <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ Do</span><span class="code-lang">JSX</span></div>
+      <pre><code class="lang-jsx">const colors = {
+  blue: "bg-blue-600",
+  green: "bg-green-600",
+  red: "bg-red-600",
+};
+
+const className = colors[color] ?? colors.blue;</code></pre>
+    </div>
+  </div>
+
+  <h3>3.4 Making class conditions easier to read</h3>
+  <p>As conditions multiply, a long nested ternary becomes difficult to understand.</p>
+  <p>Avoid:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Hard to read</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className={error ? "red" : loading ? "yellow" : success ? "green" : "gray"}&gt;
+  Status
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>A clearer approach is:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ Readable</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">const statusClass = {
+  error: "bg-red-100 text-red-800",
+  loading: "bg-amber-100 text-amber-800",
+  success: "bg-emerald-100 text-emerald-800",
+  idle: "bg-slate-100 text-slate-700",
+};
+
+const className = statusClass[state] ?? statusClass.idle;</code></pre>
+  </div>
+
+  <p>Then render:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">render</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className={`rounded-lg px-3 py-2 ${className}`}&gt;
+  {state}
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <h3>3.5 Useful class composition utilities</h3>
+  <p>When a project grows, two commonly used tools are:</p>
+  <ul>
+    <li><strong>clsx</strong> combines class names conditionally.</li>
+    <li><strong>tailwind-merge</strong> resolves conflicting Tailwind utility classes.</li>
+  </ul>
+  <p>Install them when needed:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm install clsx tailwind-merge</code></pre>
+  </div>
+
+  <p>Create <code>src/lib/utils.js</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/lib/utils.js</span><span class="code-lang">JavaScript</span></div>
+    <pre><code class="lang-js">import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}</code></pre>
+  </div>
+
+  <p>Usage:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Button.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { cn } from "./lib/utils";
+
+function Button({ compact, className = "", children, ...props }) {
+  return (
+    &lt;button
+      className={cn(
+        "rounded-lg bg-indigo-600 px-4 py-2 text-white",
+        compact &amp;&amp; "px-2 py-1 text-sm",
+        className
+      )}
+      {...props}
+    &gt;
+      {children}
+    &lt;/button&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>This is useful because a caller may want to pass additional styling:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">usage</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;Button className="w-full"&gt;
+  Continue
+&lt;/Button&gt;</code></pre>
+  </div>
+
+  <p>Use class-merging utilities when conflicts are a real concern; they are not mandatory for every simple button.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Conditional classes combining base and state-specific styles">
+      <defs>
+        <linearGradient id="g3a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#a855f7"/>
+        </linearGradient>
+        <linearGradient id="g3b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+        <linearGradient id="g3c" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+        <linearGradient id="g3d" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#64748b"/><stop offset="100%" stop-color="#94a3b8"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="20" y="30" width="220" height="180" rx="12" fill="#f7f4ff" stroke="#d5c7ff" stroke-width="2"/>
+      <text x="130" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#4c1d95">Base class</text>
+
+      <rect x="42" y="80" width="176" height="110" rx="10" fill="url(#g3a)"/>
+      <text x="130" y="108" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">rounded-full</text>
+      <text x="130" y="130" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">px-3 py-1</text>
+      <text x="130" y="152" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">text-sm font-medium</text>
+      <text x="130" y="176" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#d5c7ff">shape · size · weight</text>
+
+      <path d="M244 120 H 280" stroke="#d5c7ff" stroke-width="2.5"/>
+      <polygon points="280,112 296,120 280,128" fill="#7c3aed"/>
+      <text x="262" y="106" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#4f46e5">+</text>
+
+      <rect x="308" y="30" width="300" height="180" rx="12" fill="#f7f4ff" stroke="#d5c7ff" stroke-width="2"/>
+      <text x="458" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#4c1d95">Conditional class (per status)</text>
+
+      <rect x="326" y="74" width="266" height="26" rx="6" fill="url(#g3c)"/>
+      <text x="459" y="92" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="700" fill="#04322e">active → bg-emerald-100 text-emerald-800</text>
+
+      <rect x="326" y="106" width="266" height="26" rx="6" fill="url(#g3b)"/>
+      <text x="459" y="124" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="700" fill="#4a2c00">pending → bg-amber-100 text-amber-800</text>
+
+      <rect x="326" y="138" width="266" height="26" rx="6" fill="url(#g3d)"/>
+      <text x="459" y="156" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="700" fill="#fff">inactive → bg-slate-100 text-slate-700</text>
+
+      <rect x="326" y="170" width="266" height="26" rx="6" fill="#0b1220"/>
+      <text x="459" y="188" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#ffd479">? fallback → inactive</text>
+
+      <path d="M612 120 H 648" stroke="#d5c7ff" stroke-width="2.5"/>
+      <polygon points="648,112 664,120 648,128" fill="#7c3aed"/>
+
+      <rect x="676" y="60" width="60" height="120" rx="10" fill="#0f9d76"/>
+      <text x="706" y="122" text-anchor="middle" font-family="Georgia, serif" font-size="20" font-weight="700" fill="#fff">Σ</text>
+      <text x="706" y="148" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#d6f7eb">final style</text>
+      <text x="706" y="164" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9" fill="#d6f7eb">one badge</text>
+
+      <text x="380" y="234" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#64748b">Base classes provide consistency; status classes provide variation.</text>
+    </svg>
+    <figcaption><b>Figure 3.1</b> — Combining shared base classes with a status-specific class map.</figcaption>
+  </figure>
+
+  <div class="page-footer">
+    <span>React JS — Phase 8 · Styling &amp; Component Systems</span>
+    <span class="pg">§ 3 · Conditional Classes</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 4 — RESPONSIVE LAYOUTS
+     ============================================================ -->
+<section class="topic" id="s4">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#f59e0b,#fb7185);">RS</div>
+  <div class="topic-head">
+    <div class="kicker">Section 04</div>
+    <h2>Responsive Layouts</h2>
+    <p>A UI that adapts to every screen and every input method.</p>
+  </div>
+
+  <h3>4.1 What is responsive design?</h3>
+  <p>Responsive design means a UI adapts to different screen sizes and input methods.</p>
+  <p>The same application should be usable on:</p>
+  <ul>
+    <li>A mobile phone</li>
+    <li>A tablet</li>
+    <li>A laptop</li>
+    <li>A large desktop monitor</li>
+  </ul>
+  <p>For example, a dashboard might show three cards in one row on desktop but stack them on mobile.</p>
+  <p>Responsive design involves more than shrinking the text. It includes adapting layouts, spacing, navigation, image sizes, and how controls are arranged.</p>
+
+  <h3>4.2 Mobile-first design</h3>
+  <p>Tailwind follows a mobile-first model.</p>
+  <p>An unprefixed utility applies by default. A breakpoint-prefixed utility applies at that breakpoint and above.</p>
+  <p>Example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">grid</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"&gt;
+  &lt;div className="rounded-xl bg-white p-5 shadow"&gt;Card 1&lt;/div&gt;
+  &lt;div className="rounded-xl bg-white p-5 shadow"&gt;Card 2&lt;/div&gt;
+  &lt;div className="rounded-xl bg-white p-5 shadow"&gt;Card 3&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>Interpretation:</p>
+  <ul>
+    <li>Small screens: one column.</li>
+    <li>Medium screens and above: two columns.</li>
+    <li>Large screens and above: three columns.</li>
+  </ul>
+  <p>Tailwind's default breakpoint values are configurable. Common defaults are:</p>
+
+  <table>
+    <thead><tr><th>Prefix</th><th style="text-align:right">Default minimum width</th></tr></thead>
+    <tbody>
+      <tr><td>No prefix</td><td style="text-align:right">All screen sizes</td></tr>
+      <tr><td><code>sm:</code></td><td style="text-align:right">640px</td></tr>
+      <tr><td><code>md:</code></td><td style="text-align:right">768px</td></tr>
+      <tr><td><code>lg:</code></td><td style="text-align:right">1024px</td></tr>
+      <tr><td><code>xl:</code></td><td style="text-align:right">1280px</td></tr>
+      <tr><td><code>2xl:</code></td><td style="text-align:right">1536px</td></tr>
+    </tbody>
+  </table>
+
+  <p>These are minimum-width breakpoints, not fixed screen sizes. See <a href="https://tailwindcss.com/docs/responsive-design">Tailwind responsive design</a>.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Responsive card grid across mobile, tablet and desktop">
+      <defs>
+        <linearGradient id="g4a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#d97706"/>
+        </linearGradient>
+        <linearGradient id="g4b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#a855f7"/>
+        </linearGradient>
+        <linearGradient id="g4c" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Mobile -->
+      <rect x="20" y="40" width="140" height="180" rx="14" fill="#f5fbfd" stroke="#b6e0ee" stroke-width="2"/>
+      <text x="90" y="64" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#0284c7">MOBILE</text>
+
+      <rect x="40" y="82" width="100" height="34" rx="6" fill="url(#g4a)"/>
+      <text x="90" y="103" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#4a2c00">Card 1</text>
+
+      <rect x="40" y="124" width="100" height="34" rx="6" fill="#4f46e5"/>
+      <text x="90" y="145" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#fff">Card 2</text>
+
+      <rect x="40" y="166" width="100" height="34" rx="6" fill="#0f9d76"/>
+      <text x="90" y="187" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#fff">Card 3</text>
+
+      <text x="90" y="216" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#0284c7">1 column</text>
+
+      <!-- Tablet -->
+      <rect x="182" y="40" width="260" height="180" rx="14" fill="#f7f4ff" stroke="#d5c7ff" stroke-width="2"/>
+      <text x="312" y="64" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#4c1d95">TABLET · md:</text>
+
+      <rect x="202" y="82" width="106" height="52" rx="6" fill="url(#g4a)"/>
+      <text x="255" y="113" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#4a2c00">Card 1</text>
+
+      <rect x="318" y="82" width="106" height="52" rx="6" fill="#4f46e5"/>
+      <text x="371" y="113" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#fff">Card 2</text>
+
+      <rect x="202" y="146" width="106" height="52" rx="6" fill="#0f9d76"/>
+      <text x="255" y="177" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#fff">Card 3</text>
+
+      <text x="312" y="216" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#4c1d95">2 columns</text>
+
+      <!-- Desktop -->
+      <rect x="464" y="40" width="272" height="180" rx="14" fill="#f0fbf7" stroke="#b8ecd8" stroke-width="2"/>
+      <text x="600" y="64" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#047857">DESKTOP · lg:</text>
+
+      <rect x="484" y="82" width="72" height="60" rx="6" fill="url(#g4a)"/>
+      <text x="520" y="116" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#4a2c00">Card 1</text>
+
+      <rect x="566" y="82" width="72" height="60" rx="6" fill="#4f46e5"/>
+      <text x="602" y="116" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#fff">Card 2</text>
+
+      <rect x="648" y="82" width="72" height="60" rx="6" fill="#0f9d76"/>
+      <text x="684" y="116" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#fff">Card 3</text>
+
+      <text x="600" y="216" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#047857">3 columns</text>
+
+      <text x="380" y="248" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#64748b">Same markup, three layouts — Tailwind breakpoints do the rest.</text>
+    </svg>
+    <figcaption><b>Figure 4.1</b> — One card grid that stacks, pairs, and spreads depending on viewport width.</figcaption>
+  </figure>
+
+  <h3>4.3 Responsive navigation</h3>
+  <p>A simple navigation row can wrap or stack on smaller screens:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Navigation.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Navigation() {
+  return (
+    &lt;nav className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"&gt;
+      &lt;h1 className="text-xl font-bold"&gt;My Dashboard&lt;/h1&gt;
+
+      &lt;div className="flex flex-wrap gap-3"&gt;
+        &lt;a href="#overview"&gt;Overview&lt;/a&gt;
+        &lt;a href="#projects"&gt;Projects&lt;/a&gt;
+        &lt;a href="#settings"&gt;Settings&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/nav&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>On small screens the main elements are stacked. From the <code>sm</code> breakpoint upward, the heading and links can share a row.</p>
+  <p>This pattern is appropriate when a simple responsive row is enough. A full mobile menu that opens and closes needs real interaction, appropriate semantics, and keyboard support.</p>
+
+  <h3>4.4 Responsive sizing</h3>
+  <p>Fixed widths can create horizontal scrolling on mobile.</p>
+  <p>Avoid:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Avoid</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="w-[900px]"&gt;
+  Dashboard content
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>Prefer a flexible width with a maximum:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ Prefer</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8"&gt;
+  Dashboard content
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>Here:</p>
+  <ul>
+    <li><code>w-full</code> allows the element to use the available width.</li>
+    <li><code>max-w-6xl</code> prevents it from growing indefinitely.</li>
+    <li><code>mx-auto</code> centers the container when space is available.</li>
+    <li>The padding utilities add responsive horizontal spacing.</li>
+  </ul>
+
+  <h3>4.5 Responsive tables and overflow</h3>
+  <p>Wide tables may not fit on mobile. A common option is to make the table container horizontally scrollable.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">table</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="overflow-x-auto rounded-xl border"&gt;
+  &lt;table className="min-w-[640px] w-full text-left"&gt;
+    &lt;thead&gt;
+      &lt;tr&gt;
+        &lt;th className="p-3"&gt;Project&lt;/th&gt;
+        &lt;th className="p-3"&gt;Owner&lt;/th&gt;
+        &lt;th className="p-3"&gt;Status&lt;/th&gt;
+      &lt;/tr&gt;
+    &lt;/thead&gt;
+
+    &lt;tbody&gt;
+      &lt;tr&gt;
+        &lt;td className="p-3"&gt;Website refresh&lt;/td&gt;
+        &lt;td className="p-3"&gt;Priya&lt;/td&gt;
+        &lt;td className="p-3"&gt;In progress&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>The table keeps a useful minimum width, but its wrapper can scroll horizontally. For important data tables, consider whether a simpler mobile presentation would be better.</p>
+
+  <h3>4.6 Responsive design checklist</h3>
+  <p>Before accepting a page, test:</p>
+  <ul>
+    <li>Does it work at a narrow mobile width?</li>
+    <li>Is any content unintentionally clipped?</li>
+    <li>Are buttons and links easy to tap?</li>
+    <li>Do images preserve their proportions?</li>
+    <li>Can navigation and dialogs be used with a keyboard?</li>
+    <li>Does text remain readable when zoomed?</li>
+    <li>Does the layout work without horizontal scrolling, except where scrolling is intentional?</li>
+  </ul>
+  <p>Do not design exclusively for a single laptop width.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 8 · Styling &amp; Component Systems</span>
+    <span class="pg">§ 4 · Responsive Layouts</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 5 — COMPONENT VARIANTS AND COMPOSITION
+     ============================================================ -->
+<section class="topic" id="s5">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#e11d48,#f43f5e);">VA</div>
+  <div class="topic-head">
+    <div class="kicker">Section 05</div>
+    <h2>Component Variants and Composition</h2>
+    <p>One component, many appearances — without duplication.</p>
+  </div>
+
+  <h3>5.1 What is a component variant?</h3>
+  <p>A variant is a different appearance or configuration of the same component.</p>
+  <p>A button could have these variants:</p>
+  <ul>
+    <li>Primary: the main action.</li>
+    <li>Secondary: an alternative action.</li>
+    <li>Outline: a bordered action.</li>
+    <li>Destructive: an action such as deleting a record.</li>
+  </ul>
+  <p>It may also have sizes such as small, medium, and large.</p>
+  <p>Without a variant system, you may end up creating separate button components for each appearance:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Without variants</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;BlueButton&gt;Save&lt;/BlueButton&gt;
+&lt;GrayButton&gt;Cancel&lt;/GrayButton&gt;
+&lt;RedButton&gt;Delete&lt;/RedButton&gt;</code></pre>
+  </div>
+
+  <p>A variant-based component keeps the shared behavior and structure in one place:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ With variants</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;Button variant="primary"&gt;Save&lt;/Button&gt;
+&lt;Button variant="secondary"&gt;Cancel&lt;/Button&gt;
+&lt;Button variant="danger"&gt;Delete&lt;/Button&gt;</code></pre>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Button variants: primary, secondary, outline, danger, sizes">
+      <defs>
+        <linearGradient id="g5a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#6366f1"/>
+        </linearGradient>
+        <linearGradient id="g5b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f43f5e"/><stop offset="100%" stop-color="#e11d48"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="20" y="30" width="720" height="200" rx="14" fill="#f7f4ff" stroke="#d5c7ff" stroke-width="2"/>
+      <text x="380" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#4c1d95">One Button component · four variants</text>
+
+      <rect x="46" y="84" width="150" height="40" rx="8" fill="url(#g5a)"/>
+      <text x="121" y="110" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11.5" font-weight="700" fill="#fff">Primary</text>
+      <text x="121" y="140" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#6b6594">bg-indigo-600</text>
+
+      <rect x="212" y="84" width="150" height="40" rx="8" fill="#e0d5ff"/>
+      <text x="287" y="110" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11.5" font-weight="700" fill="#4c1d95">Secondary</text>
+      <text x="287" y="140" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#6b6594">bg-slate-100</text>
+
+      <rect x="378" y="84" width="150" height="40" rx="8" fill="none" stroke="#4c1d95" stroke-width="1.6"/>
+      <text x="453" y="110" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11.5" font-weight="700" fill="#4c1d95">Outline</text>
+      <text x="453" y="140" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#6b6594">border border-slate-300</text>
+
+      <rect x="544" y="84" width="150" height="40" rx="8" fill="url(#g5b)"/>
+      <text x="619" y="110" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11.5" font-weight="700" fill="#fff">Danger</text>
+      <text x="619" y="140" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#8c4152">bg-red-600</text>
+
+      <text x="380" y="176" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#4c1d95">Sizes</text>
+
+      <rect x="200" y="188" width="90" height="26" rx="6" fill="#0f9d76"/>
+      <text x="245" y="205" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#fff">sm</text>
+
+      <rect x="300" y="188" width="130" height="26" rx="6" fill="#0f9d76"/>
+      <text x="365" y="205" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#fff">md (default)</text>
+
+      <rect x="440" y="188" width="150" height="26" rx="6" fill="#0f9d76"/>
+      <text x="515" y="205" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#fff">lg</text>
+
+      <text x="380" y="248" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#64748b">One component handles color variations and size variations consistently.</text>
+    </svg>
+    <figcaption><b>Figure 5.1</b> — A single Button with multiple variants and sizes.</figcaption>
+  </figure>
+
+  <h3>5.2 Creating a reusable button with variants</h3>
+  <p>Create <code>Button.jsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Button.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">const baseStyles =
+  "inline-flex items-center justify-center rounded-lg font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
+
+const variants = {
+  primary:
+    "bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:outline-indigo-600",
+
+  secondary:
+    "bg-slate-100 text-slate-900 hover:bg-slate-200 focus-visible:outline-slate-600",
+
+  outline:
+    "border border-slate-300 bg-transparent text-slate-900 hover:bg-slate-50 focus-visible:outline-slate-600",
+
+  danger:
+    "bg-red-600 text-white hover:bg-red-700 focus-visible:outline-red-600",
+};
+
+const sizes = {
+  sm: "px-3 py-1.5 text-sm",
+  md: "px-4 py-2 text-sm",
+  lg: "px-6 py-3 text-base",
+};
+
+export function Button({
+  variant = "primary",
+  size = "md",
+  className = "",
+  type = "button",
+  children,
+  ...props
+}) {
+  const variantStyles = variants[variant] ?? variants.primary;
+  const sizeStyles = sizes[size] ?? sizes.md;
+
+  return (
+    &lt;button
+      type={type}
+      className={`${baseStyles} ${variantStyles} ${sizeStyles} ${className}`}
+      {...props}
+    &gt;
+      {children}
+    &lt;/button&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Usage:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Actions.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { Button } from "./Button";
+
+function Actions() {
+  return (
+    &lt;div className="flex flex-wrap gap-3"&gt;
+      &lt;Button variant="primary"&gt;Save&lt;/Button&gt;
+
+      &lt;Button variant="secondary"&gt;Cancel&lt;/Button&gt;
+
+      &lt;Button variant="outline" size="lg"&gt;
+        Preview
+      &lt;/Button&gt;
+
+      &lt;Button variant="danger"&gt;Delete&lt;/Button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <h4>Why is this better?</h4>
+  <p>You define a consistent base style once, provide named variants, and allow the caller to choose an appropriate size.</p>
+  <p>You can improve the component further with <code>clsx</code> and <code>tailwind-merge</code> if callers need to override individual utilities. For TypeScript projects, define the accepted variant and size names as types to catch invalid values at build time.</p>
+
+  <h3>5.3 What is component composition?</h3>
+  <p>Composition means building larger UI elements by combining smaller components.</p>
+  <p>For example, a product page might combine:</p>
+  <ul>
+    <li><code>Card</code></li>
+    <li><code>Badge</code></li>
+    <li><code>Button</code></li>
+    <li><code>Price</code></li>
+    <li><code>ProductImage</code></li>
+  </ul>
+  <p>Rather than making one large component with every option built into it, you can let components receive children through the <code>children</code> prop.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Card.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function Card({ children }) {
+  return (
+    &lt;section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"&gt;
+      {children}
+    &lt;/section&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Usage:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">composition</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;Card&gt;
+  &lt;h2 className="text-xl font-bold"&gt;Frontend Course&lt;/h2&gt;
+
+  &lt;p className="mt-2 text-slate-600"&gt;
+    Learn React from the fundamentals.
+  &lt;/p&gt;
+
+  &lt;Button className="mt-4"&gt;View Course&lt;/Button&gt;
+&lt;/Card&gt;</code></pre>
+  </div>
+
+  <p>The <code>Card</code> supplies the shared visual container, while its children supply the content.</p>
+
+  <h3>5.4 Composition versus too many props</h3>
+  <p>Consider this complicated component:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Too many props</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;Card
+  showTitle
+  showImage
+  showFooter
+  compact
+  horizontal
+  centered
+  dangerMode
+  showDivider
+/&gt;</code></pre>
+  </div>
+
+  <p>Some configurable components are useful, but too many unrelated boolean props can create a confusing API.</p>
+  <p>An alternative is composition:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ Composition</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;Card&gt;
+  &lt;CardHeader&gt;
+    &lt;CardTitle&gt;Frontend Course&lt;/CardTitle&gt;
+  &lt;/CardHeader&gt;
+
+  &lt;CardContent&gt;
+    Learn React with practical projects.
+  &lt;/CardContent&gt;
+
+  &lt;CardFooter&gt;
+    &lt;Button&gt;Enroll Now&lt;/Button&gt;
+  &lt;/CardFooter&gt;
+&lt;/Card&gt;</code></pre>
+  </div>
+
+  <p>In this approach, the consumer chooses the structure by combining smaller parts.</p>
+  <p>Use variants for intentional alternatives in a component's design. Use composition when callers need control over which elements appear and how they are arranged.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 8 · Styling &amp; Component Systems</span>
+    <span class="pg">§ 5 · Component Variants &amp; Composition</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 6 — DESIGN TOKENS AND THEME SYSTEMS
+     ============================================================ -->
+<section class="topic" id="s6">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#7c3aed,#a78bfa);">TK</div>
+  <div class="topic-head">
+    <div class="kicker">Section 06</div>
+    <h2>Design Tokens and Theme Systems</h2>
+    <p>Centralizing design decisions so the whole app stays consistent.</p>
+  </div>
+
+  <h3>6.1 What are design tokens?</h3>
+  <p>Design tokens are named values that represent decisions in your design system.</p>
+  <p>For example, instead of choosing a different shade of blue for every button, link, and selected navigation item, you can define a shared primary color.</p>
+  <p>Typical tokens include:</p>
+  <ul>
+    <li>Colors</li>
+    <li>Typography sizes and weights</li>
+    <li>Spacing</li>
+    <li>Border radii</li>
+    <li>Shadows</li>
+    <li>Animation durations</li>
+    <li>Layout widths</li>
+  </ul>
+  <p>Think of tokens as the design rules of your application.</p>
+  <p>Without tokens, each component may have slightly different shades, spacing, and corner shapes. With tokens, your application can feel consistent.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Design tokens feeding multiple components">
+      <defs>
+        <linearGradient id="g6a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#a78bfa"/>
+        </linearGradient>
+        <linearGradient id="g6b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+        <linearGradient id="g6c" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fb7185"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Token layer -->
+      <rect x="20" y="30" width="200" height="200" rx="14" fill="url(#g6a)"/>
+      <text x="120" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Design Tokens</text>
+
+      <rect x="42" y="80" width="156" height="24" rx="6" fill="rgba(255,255,255,.22)"/>
+      <text x="120" y="97" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">--app-primary</text>
+
+      <rect x="42" y="110" width="156" height="24" rx="6" fill="rgba(255,255,255,.22)"/>
+      <text x="120" y="127" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">--app-surface</text>
+
+      <rect x="42" y="140" width="156" height="24" rx="6" fill="rgba(255,255,255,.22)"/>
+      <text x="120" y="157" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">--app-text</text>
+
+      <rect x="42" y="170" width="156" height="24" rx="6" fill="rgba(255,255,255,.22)"/>
+      <text x="120" y="187" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">--app-border</text>
+
+      <!-- Arrows -->
+      <path d="M224 130 H 280" stroke="#d5c7ff" stroke-width="2.5"/>
+      <path d="M230 90 Q 260 90 280 90" stroke="#d5c7ff" stroke-width="2.5" fill="none"/>
+      <path d="M230 170 Q 260 170 280 170" stroke="#d5c7ff" stroke-width="2.5" fill="none"/>
+      <polygon points="280,122 296,130 280,138" fill="#7c3aed"/>
+      <polygon points="280,82 296,90 280,98" fill="#7c3aed"/>
+      <polygon points="280,162 296,170 280,178" fill="#7c3aed"/>
+
+      <!-- Components -->
+      <rect x="316" y="60" width="160" height="60" rx="10" fill="url(#g6c)"/>
+      <text x="396" y="86" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#4a2c00">Button</text>
+      <text x="396" y="104" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#4a2c00">bg-[var(--app-primary)]</text>
+
+      <rect x="316" y="132" width="160" height="60" rx="10" fill="#0f9d76"/>
+      <text x="396" y="158" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#fff">Card</text>
+      <text x="396" y="176" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#d1fae5">bg-[var(--app-surface)]</text>
+
+      <rect x="316" y="204" width="160" height="56" rx="10" fill="#0c0525" opacity=".9"/>
+      <text x="396" y="228" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" font-weight="700" fill="#fff">Badge</text>
+      <text x="396" y="246" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#a78bfa">color: var(--app-text)</text>
+
+      <!-- Theme switch -->
+      <rect x="510" y="60" width="220" height="200" rx="14" fill="#f0fbf7" stroke="#b8ecd8" stroke-width="2"/>
+      <text x="620" y="86" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#047857">Same tokens · new theme</text>
+
+      <rect x="530" y="104" width="180" height="50" rx="8" fill="#fff" stroke="#8fdcbf"/>
+      <text x="620" y="122" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#0f172a">Light</text>
+      <text x="620" y="140" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#64748b">--app-surface: #fff</text>
+
+      <rect x="530" y="162" width="180" height="50" rx="8" fill="#0b1220" stroke="#7c3aed"/>
+      <text x="620" y="180" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#fff">Dark</text>
+      <text x="620" y="198" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#a78bfa">--app-surface: #111827</text>
+
+      <text x="620" y="232" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#047857">Switch tokens → entire UI updates</text>
+
+      <text x="380" y="248" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#64748b">Tokens are the design rules; components follow the rules.</text>
+    </svg>
+    <figcaption><b>Figure 6.1</b> — One token set feeds many components; changing the token changes the look.</figcaption>
+  </figure>
+
+  <h3>6.2 Define reusable CSS variables</h3>
+  <p>In <code>src/index.css</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/index.css</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">@import "tailwindcss";
+
+:root {
+  --app-background: #f8fafc;
+  --app-surface: #ffffff;
+  --app-text: #0f172a;
+  --app-muted: #64748b;
+  --app-border: #e2e8f0;
+  --app-primary: #4f46e5;
+}</code></pre>
+  </div>
+
+  <p>Use those variables in custom CSS:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">CSS variables</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">.page {
+  background-color: var(--app-background);
+  color: var(--app-text);
+}
+
+.panel {
+  background-color: var(--app-surface);
+  border: 1px solid var(--app-border);
+}</code></pre>
+  </div>
+
+  <p>Your React component can use the corresponding classes:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">JSX</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="page min-h-screen p-6"&gt;
+  &lt;section className="panel rounded-xl p-5"&gt;
+    &lt;h1&gt;Dashboard&lt;/h1&gt;
+  &lt;/section&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>Changing a token can update multiple components that use it.</p>
+
+  <h3>6.3 Tailwind CSS v4 theme tokens</h3>
+  <p>Tailwind v4 also supports theme values through <code>@theme</code>.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">@theme</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">@import "tailwindcss";
+
+@theme {
+  --color-brand-500: #6366f1;
+  --radius-panel: 1rem;
+  --font-display: "Inter", sans-serif;
+}</code></pre>
+  </div>
+
+  <p>These theme variables can make utilities available, such as:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">theme utilities</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="rounded-panel bg-brand-500 p-6 font-display text-white"&gt;
+  Custom theme styles
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>Theme tokens and ordinary CSS custom properties solve related but different problems.</p>
+  <ul>
+    <li>Use Tailwind theme values to generate consistent utility classes.</li>
+    <li>Use semantic CSS variables when an application's meaning-based colors need to change with a theme.</li>
+  </ul>
+  <p>For example, a <code>surface</code> token communicates a role in the UI, whereas a fixed gray color simply communicates a particular shade.</p>
+
+  <h3>6.4 Semantic tokens</h3>
+  <p>Consider the following tokens:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">semantic tokens</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">:root {
+  --surface: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+}
+
+.dark {
+  --surface: #111827;
+  --text: #f8fafc;
+  --muted: #9ca3af;
+}</code></pre>
+  </div>
+
+  <p>The same CSS variable has a different value depending on the active theme.</p>
+  <p>A card can use the variables without needing to know which theme is active:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">.themed-card</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">.themed-card {
+  background: var(--surface);
+  color: var(--text);
+}</code></pre>
+  </div>
+
+  <p>This separates the component's job from the specific color values of a theme.</p>
+
+  <h3>6.5 Why design tokens matter in professional projects</h3>
+  <p>Imagine that a client asks you to change the primary color across an entire product.</p>
+  <p>If 50 components have independent hard-coded color values, you have a lot of manual work and more room for inconsistency.</p>
+  <p>If components use a shared token, the change becomes much easier.</p>
+  <p>Tokens are especially useful for:</p>
+  <ul>
+    <li>Large dashboards</li>
+    <li>Admin panels</li>
+    <li>Learning management systems</li>
+    <li>E-commerce applications</li>
+    <li>Multi-brand products</li>
+    <li>Applications with light and dark themes</li>
+  </ul>
+  <p>A design token is only helpful when components actually use it consistently. Naming conventions and documentation matter too.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 8 · Styling &amp; Component Systems</span>
+    <span class="pg">§ 6 · Design Tokens &amp; Theme Systems</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 7 — SHADCN/UI AND ACCESSIBLE PRIMITIVES
+     ============================================================ -->
+<section class="topic" id="s7">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0ea5e9,#0284c7);">UI</div>
+  <div class="topic-head">
+    <div class="kicker">Section 07</div>
+    <h2>shadcn/ui and Accessible Primitives</h2>
+    <p>Open component source and accessible building blocks.</p>
+  </div>
+
+  <h3>7.1 What is shadcn/ui?</h3>
+  <p>shadcn/ui is a collection of UI components and a way to distribute their source code into your own application.</p>
+  <p>It is not the same as a traditional component library where you only import an opaque, prebuilt component package.</p>
+  <p>The source for the selected components is added to your project, so you can inspect and customize it. Its approach emphasizes open component code and composition. See the <a href="https://ui.shadcn.com/docs">official shadcn/ui introduction</a> and its <a href="https://ui.shadcn.com/docs/installation">component setup guide</a>.</p>
+
+  <h3>7.2 Why developers use it</h3>
+  <p>Building every visual component from scratch takes time.</p>
+  <p>Many applications need common building blocks:</p>
+  <ul>
+    <li>Buttons</li>
+    <li>Cards</li>
+    <li>Inputs</li>
+    <li>Labels</li>
+    <li>Dialogs</li>
+    <li>Dropdown menus</li>
+    <li>Tabs</li>
+    <li>Tooltips</li>
+    <li>Select menus</li>
+  </ul>
+  <p>A component system gives you a starting implementation. You can then focus more on the application-specific logic and customize the design to match your product.</p>
+  <p>Remember that installing a component does not complete the whole feature. For example, a form still requires appropriate validation, error messages, and submission logic.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="shadcn/ui approach — source code copied into your project">
+      <defs>
+        <linearGradient id="g7a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#0284c7"/>
+        </linearGradient>
+        <linearGradient id="g7b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#a855f7"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Left: CLI -->
+      <rect x="20" y="30" width="240" height="200" rx="14" fill="#0b1220"/>
+      <text x="140" y="58" text-anchor="middle" font-family="Consolas, monospace" font-size="11" fill="#7ecbe3">$ npx shadcn@latest add</text>
+
+      <rect x="40" y="80" width="200" height="26" rx="6" fill="rgba(255,255,255,.14)"/>
+      <text x="140" y="97" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">button</text>
+
+      <rect x="40" y="114" width="200" height="26" rx="6" fill="rgba(255,255,255,.14)"/>
+      <text x="140" y="131" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">card</text>
+
+      <rect x="40" y="148" width="200" height="26" rx="6" fill="rgba(255,255,255,.14)"/>
+      <text x="140" y="165" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">input</text>
+
+      <rect x="40" y="182" width="200" height="26" rx="6" fill="rgba(255,255,255,.14)"/>
+      <text x="140" y="199" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">label</text>
+
+      <path d="M264 130 H 316" stroke="#7ecbe3" stroke-width="2.5"/>
+      <polygon points="316,122 332,130 316,138" fill="#0ea5e9"/>
+
+      <!-- Right: file tree -->
+      <rect x="340" y="30" width="400" height="200" rx="14" fill="#f7f4ff" stroke="#d5c7ff" stroke-width="2"/>
+      <text x="540" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#4c1d95">src/components/ui/</text>
+
+      <g font-family="Consolas, monospace" font-size="11" fill="#4c1d95">
+        <text x="368" y="90">├── button.jsx</text>
+        <text x="368" y="114">├── card.jsx</text>
+        <text x="368" y="138">├── input.jsx</text>
+        <text x="368" y="162">└── label.jsx</text>
+      </g>
+
+      <rect x="368" y="180" width="344" height="34" rx="7" fill="url(#g7b)"/>
+      <text x="540" y="202" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" fill="#fff">You can edit the source directly</text>
+
+      <text x="540" y="248" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#64748b">You own the code — not just an import.</text>
+    </svg>
+    <figcaption><b>Figure 7.1</b> — shadcn/ui copies real component source into your project so you can inspect and customize it.</figcaption>
+  </figure>
+
+  <h3>7.3 Add shadcn/ui to an existing Vite React project</h3>
+  <p>Start with an existing Vite React application. Follow the current instructions for your project's framework and configuration:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npx shadcn@latest init</code></pre>
+  </div>
+
+  <p>The setup command walks you through the framework and project settings it needs. For a supported Vite project, it configures the integration.</p>
+  <p>You can then add selected components:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npx shadcn@latest add button card input label</code></pre>
+  </div>
+
+  <p>After adding the components, import them into your application. For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">CourseCard.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+function CourseCard() {
+  return (
+    &lt;Card&gt;
+      &lt;CardHeader&gt;
+        &lt;CardTitle&gt;React Fundamentals&lt;/CardTitle&gt;
+      &lt;/CardHeader&gt;
+
+      &lt;CardContent&gt;
+        &lt;p className="mb-4 text-sm text-slate-600"&gt;
+          Learn components, props, state, and hooks.
+        &lt;/p&gt;
+
+        &lt;Button&gt;Start Learning&lt;/Button&gt;
+      &lt;/CardContent&gt;
+    &lt;/Card&gt;
+  );
+}
+
+export default CourseCard;</code></pre>
+  </div>
+
+  <div class="callout warn">
+    <div class="ct">▲ Project setup note</div>
+    <p>The <code>@/</code> import alias depends on your project configuration. Follow the generated instructions if the alias is not already configured. For Tailwind CSS v4, follow the current shadcn instructions rather than assuming a Tailwind v3 configuration file is required.</p>
+  </div>
+
+  <h3>7.4 What are accessible primitives?</h3>
+  <p>An accessible UI component is designed to work for people with different abilities and interaction needs, including people who use keyboards or screen readers.</p>
+  <p>Primitive components generally provide lower-level functionality and behavioral building blocks that can be composed into a more complete UI.</p>
+  <p>Depending on the chosen integration, an accessible primitive may help manage:</p>
+  <ul>
+    <li>Keyboard interactions</li>
+    <li>Focus movement</li>
+    <li>Open and closed states</li>
+    <li>Accessible names and descriptions</li>
+    <li>ARIA attributes</li>
+    <li>Dialog and menu behavior</li>
+  </ul>
+  <p>An accessible primitive does not automatically make an entire application accessible. The markup, labels, content, color contrast, focus handling, and interaction behavior still need to be correct.</p>
+  <p>The <a href="https://www.w3.org/WAI/ARIA/apg/">W3C ARIA Authoring Practices Guide</a> provides practical patterns for building accessible interface components. Its keyboard interface guidance emphasizes keyboard operation and predictable focus movement.</p>
+
+  <h3>7.5 Accessibility basics to remember</h3>
+
+  <h4>Use semantic HTML</h4>
+  <p>Prefer native elements when they already provide the required behavior.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">semantic button</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;button type="button" onClick={handleSave}&gt;
+  Save
+&lt;/button&gt;</code></pre>
+  </div>
+
+  <p>Do not imitate a button with a plain <code>div</code> unless you have a compelling reason and implement the required keyboard and accessibility behavior.</p>
+
+  <h4>Provide labels for inputs</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">label input</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div&gt;
+  &lt;label htmlFor="email" className="mb-1 block font-medium"&gt;
+    Email address
+  &lt;/label&gt;
+
+  &lt;input
+    id="email"
+    type="email"
+    autoComplete="email"
+    className="w-full rounded-lg border border-slate-300 px-3 py-2"
+  /&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>The <code>label</code> is associated with the input through matching <code>htmlFor</code> and <code>id</code> values.</p>
+
+  <h4>Preserve visible focus</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">focus</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;button className="rounded-lg px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"&gt;
+  Continue
+&lt;/button&gt;</code></pre>
+  </div>
+
+  <p>Keyboard users need to see which element currently has focus. Do not remove focus indicators without replacing them with an equally visible alternative.</p>
+
+  <h4>Do not communicate status with color alone</h4>
+  <p>For a payment, do not rely solely on green versus red. Include meaningful text such as “Paid” or “Payment failed.”</p>
+
+  <h4>Test actual behavior</h4>
+  <p>Use the keyboard to navigate the screen. Check menus, dialogs, form errors, and focus after closing an overlay. Test with accessibility tools where possible.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 8 · Styling &amp; Component Systems</span>
+    <span class="pg">§ 7 · shadcn/ui &amp; Accessible Primitives</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 8 — ANIMATION AND TRANSITIONS
+     ============================================================ -->
+<section class="topic" id="s8">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#f43f5e,#fb7185);">AN</div>
+  <div class="topic-head">
+    <div class="kicker">Section 08</div>
+    <h2>Animation and Transitions</h2>
+    <p>Motion that helps people, not motion that distracts them.</p>
+  </div>
+
+  <h3>8.1 What is a CSS transition?</h3>
+  <p>A transition makes a style change happen smoothly over a period of time.</p>
+  <p>Without a transition, a background color might change immediately when a button is hovered.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">transition</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">.button {
+  background-color: #4f46e5;
+  transition: background-color 200ms ease;
+}
+
+.button:hover {
+  background-color: #4338ca;
+}</code></pre>
+  </div>
+
+  <p>With the transition, the color change is gradual.</p>
+  <p>With Tailwind:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">hover transition</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;button className="rounded-lg bg-indigo-600 px-5 py-2.5 text-white transition-colors duration-200 hover:bg-indigo-700"&gt;
+  Hover over me
+&lt;/button&gt;</code></pre>
+  </div>
+
+  <p>Useful utilities include:</p>
+  <ul>
+    <li><code>transition-colors</code></li>
+    <li><code>transition-opacity</code></li>
+    <li><code>transition-transform</code></li>
+    <li><code>duration-200</code></li>
+    <li><code>ease-in-out</code></li>
+  </ul>
+  <p>You can also use the general <code>transition</code> utility when several suitable properties need to transition.</p>
+
+  <h3>8.2 Hover and press feedback</h3>
+  <p>Buttons and cards can respond visually to user interaction.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">lift button</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;button className="rounded-lg bg-indigo-600 px-5 py-3 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-indigo-700 active:translate-y-0"&gt;
+  Explore Courses
+&lt;/button&gt;</code></pre>
+  </div>
+
+  <p>This button changes color and moves up slightly on hover.</p>
+  <p>Use motion to communicate an interaction, not as a distraction. Frequent large movements can make interfaces harder to use.</p>
+
+  <h3>8.3 CSS keyframe animations</h3>
+  <p>A transition usually describes a change between states. A keyframe animation can describe a sequence of changes.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">keyframes</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fade-in 300ms ease-out both;
+}</code></pre>
+  </div>
+
+  <p>Use it in React:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">WelcomeMessage.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">function WelcomeMessage() {
+  return (
+    &lt;div className="fade-in rounded-xl bg-white p-6 shadow"&gt;
+      Welcome back!
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Define keyframes in your stylesheet and apply a named class.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Transition versus keyframe animation comparison">
+      <defs>
+        <linearGradient id="g8a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#a855f7"/>
+        </linearGradient>
+        <linearGradient id="g8b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Transition -->
+      <rect x="20" y="40" width="340" height="180" rx="14" fill="#f7f4ff" stroke="#d5c7ff" stroke-width="2"/>
+      <text x="190" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#4c1d95">Transition (state to state)</text>
+
+      <rect x="52" y="90" width="60" height="60" rx="8" fill="#e0d5ff"/>
+      <text x="82" y="126" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#4c1d95">A</text>
+
+      <path d="M126 120 H 216" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="5 4"/>
+      <polygon points="216,112 232,120 216,128" fill="#7c3aed"/>
+      <text x="171" y="106" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#7c3aed">200ms</text>
+
+      <rect x="248" y="90" width="60" height="60" rx="8" fill="url(#g8a)"/>
+      <text x="278" y="126" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#fff">B</text>
+
+      <text x="190" y="186" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#4c1d95">Two known states; smooth change between them.</text>
+      <text x="190" y="204" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" fill="#7c3aed">transition-colors · duration-200</text>
+
+      <!-- Keyframe -->
+      <rect x="392" y="40" width="348" height="180" rx="14" fill="#f0fbf7" stroke="#b8ecd8" stroke-width="2"/>
+      <text x="566" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#047857">Keyframe animation (sequence)</text>
+
+      <rect x="424" y="104" width="44" height="44" rx="8" fill="#d6f7eb" opacity=".4"/>
+      <text x="446" y="132" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9" font-weight="700" fill="#047857">0%</text>
+
+      <rect x="492" y="104" width="44" height="44" rx="8" fill="#a7f3d0" opacity=".6"/>
+      <text x="514" y="132" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9" font-weight="700" fill="#04322e">33%</text>
+
+      <rect x="560" y="104" width="44" height="44" rx="8" fill="#34d399" opacity=".85"/>
+      <text x="582" y="132" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9" font-weight="700" fill="#04322e">66%</text>
+
+      <rect x="628" y="104" width="44" height="44" rx="8" fill="#0f9d76"/>
+      <text x="650" y="132" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9" font-weight="700" fill="#fff">100%</text>
+
+      <path d="M446 156 Q 500 176 566 176 Q 620 176 650 156" stroke="#10b981" stroke-width="2" fill="none" opacity=".7"/>
+
+      <text x="566" y="186" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#047857">A sequence of visual states over time.</text>
+      <text x="566" y="204" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" fill="#0f9d76">@keyframes · animation</text>
+
+      <text x="380" y="252" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#64748b">Transitions for state changes; keyframes for multi-step sequences.</text>
+    </svg>
+    <figcaption><b>Figure 8.1</b> — Two different animation models: state-to-state transitions vs multi-step keyframes.</figcaption>
+  </figure>
+
+  <h3>8.4 Reduce motion when appropriate</h3>
+  <p>Some people prefer reduced movement because animations can cause discomfort or make interfaces more difficult to use.</p>
+  <p>Tailwind provides a reduced-motion variant:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">reduced motion</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="transition-transform duration-300 hover:scale-105 motion-reduce:transform-none motion-reduce:transition-none"&gt;
+  Course card
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>The <code>motion-reduce</code> utilities respond to the operating system's reduced-motion preference.</p>
+  <p>For global custom animations, you can also write a reduced-motion media query:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">@media</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">@media (prefers-reduced-motion: reduce) {
+  .fade-in {
+    animation: none;
+  }
+}</code></pre>
+  </div>
+
+  <p>Do not disable all motion indiscriminately when some transitions are important for orientation or feedback. Consider what is essential and provide the least distracting alternative.</p>
+
+  <h3>8.5 Using Motion for React</h3>
+  <p>For complex React animations, <a href="https://motion.dev/docs/react-motion-component">Motion for React</a> provides declarative animation controls. It supports animation states and transitions, among other features.</p>
+  <p>Install it:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm install motion</code></pre>
+  </div>
+
+  <p>Example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">AnimatedCard.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { motion } from "motion/react";
+
+function AnimatedCard() {
+  return (
+    &lt;motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="rounded-xl bg-white p-6 shadow"
+    &gt;
+      &lt;h2 className="text-xl font-bold"&gt;Welcome&lt;/h2&gt;
+      &lt;p className="mt-2 text-slate-600"&gt;
+        Your dashboard is ready.
+      &lt;/p&gt;
+    &lt;/motion.div&gt;
+  );
+}
+
+export default AnimatedCard;</code></pre>
+  </div>
+
+  <p>Here:</p>
+  <ul>
+    <li><code>initial</code> describes the starting visual state.</li>
+    <li><code>animate</code> describes the target state.</li>
+    <li><code>transition</code> controls how the change occurs.</li>
+  </ul>
+  <p>Choose CSS for many simple hover effects and transitions. Use a dedicated animation library when you need more involved sequences or React-specific animation behavior.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 8 · Styling &amp; Component Systems</span>
+    <span class="pg">§ 8 · Animation &amp; Transitions</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 9 — DARK MODE
+     ============================================================ -->
+<section class="topic" id="s9">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#1e1b4b,#4c1d95);">DM</div>
+  <div class="topic-head">
+    <div class="kicker">Section 09</div>
+    <h2>Dark Mode</h2>
+    <p>An alternate color scheme done right.</p>
+  </div>
+
+  <h3>9.1 What is dark mode?</h3>
+  <p>Dark mode changes the color scheme of an application to use darker surfaces and appropriately contrasting foreground text.</p>
+  <p>A light theme might use a white card with dark text. A dark theme might use a deep gray card with light text.</p>
+  <p>Dark mode requires more than changing the page background. Inputs, borders, dropdowns, muted text, focus states, and overlays all need suitable colors.</p>
+
+  <h3>9.2 Dark mode with Tailwind</h3>
+  <p>Tailwind provides the <code>dark:</code> variant for applying styles in dark mode. Its default behavior follows the operating system's color scheme, unless you configure a different activation method.</p>
+  <p>Example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">dark variant</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">&lt;div className="rounded-xl bg-white p-6 text-slate-900 dark:bg-slate-900 dark:text-white"&gt;
+  &lt;h2 className="text-xl font-bold"&gt;Dashboard&lt;/h2&gt;
+
+  &lt;p className="mt-2 text-slate-600 dark:text-slate-300"&gt;
+    Review your recent activity.
+  &lt;/p&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>When dark mode is active, the <code>dark:</code> classes change the background and foreground colors. See the <a href="https://tailwindcss.com/docs/dark-mode">Tailwind dark mode documentation</a>.</p>
+
+  <h3>9.3 Manual dark mode in Tailwind CSS v4</h3>
+  <p>For a manual toggle, configure a class-based dark variant in <code>src/index.css</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/index.css</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));</code></pre>
+  </div>
+
+  <p>Now Tailwind's <code>dark:</code> utilities apply when the <code>dark</code> class is present on the root element or one of its ancestors, according to the configured selector.</p>
+  <p>For example, this enables the dark theme:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">add</span><span class="code-lang">JavaScript</span></div>
+    <pre><code class="lang-js">document.documentElement.classList.add("dark");</code></pre>
+  </div>
+
+  <p>And this removes it:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">remove</span><span class="code-lang">JavaScript</span></div>
+    <pre><code class="lang-js">document.documentElement.classList.remove("dark");</code></pre>
+  </div>
+
+  <p>Usually, your React application manages these changes through state and an effect instead of manually running unrelated DOM operations throughout the application.</p>
+
+  <h3>9.4 Build a theme toggle with React</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">ThemeToggle.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useEffect, useState } from "react";
+
+function ThemeToggle() {
+  const [isDark, setIsDark] = useState(() =&gt; {
+    return localStorage.getItem("theme") === "dark";
+  });
+
+  useEffect(() =&gt; {
+    const root = document.documentElement;
+
+    root.classList.toggle("dark", isDark);
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  }, [isDark]);
+
+  return (
+    &lt;button
+      type="button"
+      onClick={() =&gt; setIsDark((current) =&gt; !current)}
+      aria-pressed={isDark}
+      className="rounded-lg border border-slate-300 px-4 py-2 dark:border-slate-700"
+    &gt;
+      {isDark ? "Switch to light mode" : "Switch to dark mode"}
+    &lt;/button&gt;
+  );
+}
+
+export default ThemeToggle;</code></pre>
+  </div>
+
+  <p>This is a client-side example for a Vite React project. It assumes browser storage is available.</p>
+  <p>It works as follows:</p>
+  <ol>
+    <li>React initializes the state from the stored preference.</li>
+    <li>The button switches the state.</li>
+    <li>The effect adds or removes the <code>dark</code> class from the document root.</li>
+    <li>The effect stores the preference so it can be used next time.</li>
+  </ol>
+  <p>Because this example treats an unstored preference as light mode, it does not automatically follow the operating system when no preference has been saved. A more advanced implementation can support three settings: light, dark, and system.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Light mode versus dark mode surfaces and text">
+      <defs>
+        <linearGradient id="g9a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#f1f5f9"/>
+        </linearGradient>
+        <linearGradient id="g9b" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#111827"/><stop offset="100%" stop-color="#1f2937"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Light -->
+      <rect x="20" y="30" width="340" height="200" rx="14" fill="url(#g9a)" stroke="#cbd5e1" stroke-width="2"/>
+      <text x="190" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#0f172a">Light mode</text>
+
+      <rect x="52" y="84" width="276" height="100" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+      <text x="190" y="112" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#0f172a">Dashboard</text>
+      <text x="190" y="132" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#64748b">Review your recent activity.</text>
+      <rect x="130" y="150" width="120" height="22" rx="6" fill="#4f46e5"/>
+      <text x="190" y="165" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#fff">Save</text>
+
+      <text x="190" y="216" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" fill="#0f172a">--surface: #ffffff</text>
+
+      <!-- Dark -->
+      <rect x="392" y="30" width="348" height="200" rx="14" fill="url(#g9b)" stroke="#334155" stroke-width="2"/>
+      <text x="566" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#f8fafc">Dark mode</text>
+
+      <rect x="424" y="84" width="284" height="100" rx="10" fill="#1f2937" stroke="#334155"/>
+      <text x="566" y="112" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#f8fafc">Dashboard</text>
+      <text x="566" y="132" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#9ca3af">Review your recent activity.</text>
+      <rect x="506" y="150" width="120" height="22" rx="6" fill="#6366f1"/>
+      <text x="566" y="165" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#fff">Save</text>
+
+      <text x="566" y="216" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" fill="#a78bfa">--surface: #111827</text>
+
+      <text x="380" y="252" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#64748b">Same components, appropriate colors for each theme.</text>
+    </svg>
+    <figcaption><b>Figure 9.1</b> — Dark mode is a full color strategy, not just a page background change.</figcaption>
+  </figure>
+
+  <h3>9.5 Store preferences safely</h3>
+  <p>Theme choice is an ordinary display preference, making it a reasonable candidate for <code>localStorage</code>.</p>
+  <p>Do not use browser storage for highly sensitive data or assume that data stored there is protected from JavaScript running on the page. Authentication and authorization must be designed separately.</p>
+  <p>For a larger application, centralize theme behavior in a theme provider or a dedicated custom hook rather than duplicating the theme effect in multiple components.</p>
+
+  <h3>9.6 Dark mode testing checklist</h3>
+  <ul>
+    <li>Check foreground/background contrast.</li>
+    <li>Check muted text and placeholder text.</li>
+    <li>Check borders and separators.</li>
+    <li>Check disabled, error, success, and warning states.</li>
+    <li>Check dropdowns, modals, and popovers.</li>
+    <li>Check focus indicators.</li>
+    <li>Test switching modes without a full page reload.</li>
+    <li>Check whether the selected preference persists as intended.</li>
+  </ul>
+
+  <div class="page-footer">
+    <span>React JS — Phase 8 · Styling &amp; Component Systems</span>
+    <span class="pg">§ 9 · Dark Mode</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 10 — BUILDING REUSABLE UI COMPONENTS
+     ============================================================ -->
+<section class="topic" id="s10">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0f9d76,#34d399);">PR</div>
+  <div class="topic-head">
+    <div class="kicker">Section 10</div>
+    <h2>Building Reusable UI Components</h2>
+    <p>Every topic, combined into one polished dashboard.</p>
+  </div>
+
+  <p>Now combine the topics from this phase into a small React dashboard.</p>
+  <p>This mini-project will include:</p>
+  <ul>
+    <li>A reusable button with variants</li>
+    <li>A reusable card</li>
+    <li>Status badges</li>
+    <li>Responsive layout</li>
+    <li>Design tokens</li>
+    <li>Light and dark mode</li>
+    <li>Simple transitions</li>
+    <li>Semantic HTML</li>
+  </ul>
+
+  <h3>10.1 Project structure</h3>
+  <p>Create or organize your files like this:</p>
+
+  <div class="tree"><span class="dir">src/</span>
+├── <span class="dir">components/</span>
+│   ├── <span class="file">Button.jsx</span>
+│   ├── <span class="file">Card.jsx</span>
+│   └── <span class="file">Badge.jsx</span>
+├── <span class="file">App.jsx</span>
+├── <span class="file">index.css</span>
+└── <span class="file">main.jsx</span></div>
+
+  <p>We will use Tailwind CSS v4 and regular JSX components. You do not need shadcn/ui or Motion to complete this project.</p>
+
+  <h3>10.2 Create the design tokens and themes</h3>
+  <p>Replace <code>src/index.css</code> with:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/index.css</span><span class="code-lang">CSS</span></div>
+    <pre><code class="lang-css">@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-brand-500: #6366f1;
+  --radius-panel: 1rem;
+}
+
+:root {
+  color-scheme: light;
+
+  --app-background: #f8fafc;
+  --app-surface: #ffffff;
+  --app-text: #0f172a;
+  --app-muted: #64748b;
+  --app-border: #e2e8f0;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --app-background: #0b1120;
+  --app-surface: #111827;
+  --app-text: #f8fafc;
+  --app-muted: #9ca3af;
+  --app-border: #334155;
+}</code></pre>
+  </div>
+
+  <p>The theme variables express the meaning of a color rather than forcing every component to use the same fixed shade in both themes.</p>
+  <p>For example, <code>--app-surface</code> represents the background of a surface such as a card. It has a different value in the dark theme.</p>
+
+  <h3>10.3 Create a reusable Button component</h3>
+  <p>Create <code>src/components/Button.jsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/components/Button.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">const baseStyles =
+  "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
+
+const variants = {
+  primary:
+    "bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:outline-indigo-600",
+
+  secondary:
+    "bg-slate-100 text-slate-900 hover:bg-slate-200 focus-visible:outline-slate-500 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700",
+
+  outline:
+    "border border-slate-300 text-slate-800 hover:bg-slate-50 focus-visible:outline-slate-500 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-800",
+};
+
+const sizes = {
+  sm: "px-3 py-1.5 text-sm",
+  md: "px-4 py-2 text-sm",
+  lg: "px-5 py-3 text-base",
+};
+
+export function Button({
+  variant = "primary",
+  size = "md",
+  className = "",
+  type = "button",
+  children,
+  ...props
+}) {
+  return (
+    &lt;button
+      type={type}
+      className={[
+        baseStyles,
+        variants[variant] ?? variants.primary,
+        sizes[size] ?? sizes.md,
+        className,
+      ].join(" ")}
+      {...props}
+    &gt;
+      {children}
+    &lt;/button&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The <code>Button</code> centralizes style decisions but still accepts normal button properties such as <code>onClick</code>, <code>disabled</code>, and <code>aria-pressed</code>.</p>
+  <p>The <code>className</code> prop makes the component flexible for callers that need additional styles. If callers routinely add conflicting Tailwind utilities, switch the class joining to a helper that uses <code>clsx</code> and <code>tailwind-merge</code>.</p>
+
+  <h3>10.4 Create a reusable Card component</h3>
+  <p>Create <code>src/components/Card.jsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/components/Card.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">export function Card({ title, children, className = "" }) {
+  return (
+    &lt;section
+      className={[
+        "rounded-panel border p-5 shadow-sm",
+        "border-[var(--app-border)]",
+        "bg-[var(--app-surface)]",
+        className,
+      ].join(" ")}
+    &gt;
+      {title &amp;&amp; (
+        &lt;h2 className="mb-4 text-lg font-semibold"&gt;
+          {title}
+        &lt;/h2&gt;
+      )}
+
+      {children}
+    &lt;/section&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>A <code>Card</code> accepts a title and children. That allows it to display different content without hard-coding the details of every card into the component.</p>
+
+  <h3>10.5 Create a reusable Badge component</h3>
+  <p>Create <code>src/components/Badge.jsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/components/Badge.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">const badgeStyles = {
+  "In progress":
+    "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200",
+
+  Completed:
+    "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200",
+
+  Planned:
+    "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200",
+};
+
+export function Badge({ status }) {
+  const statusClass =
+    badgeStyles[status] ?? badgeStyles.Planned;
+
+  return (
+    &lt;span
+      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusClass}`}
+    &gt;
+      {status}
+    &lt;/span&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The badge supports a known set of statuses and falls back to a safe default for an unknown status.</p>
+
+  <h3>10.6 Build the responsive dashboard</h3>
+  <p>Create <code>src/App.jsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/App.jsx</span><span class="code-lang">JSX</span></div>
+    <pre><code class="lang-jsx">import { useEffect, useState } from "react";
+import { Button } from "./components/Button";
+import { Card } from "./components/Card";
+import { Badge } from "./components/Badge";
+
+const projects = [
+  {
+    id: 1,
+    name: "Website Refresh",
+    status: "In progress",
+    progress: 72,
+  },
+  {
+    id: 2,
+    name: "User Dashboard",
+    status: "Completed",
+    progress: 100,
+  },
+  {
+    id: 3,
+    name: "Mobile Experience",
+    status: "Planned",
+    progress: 0,
+  },
+];
+
+const stats = [
+  { id: 1, label: "Total Projects", value: "12" },
+  { id: 2, label: "Completed", value: "8" },
+  { id: 3, label: "In Progress", value: "3" },
+];
+
+function ProjectCard({ project }) {
+  return (
+    &lt;Card&gt;
+      &lt;div className="flex items-start justify-between gap-3"&gt;
+        &lt;h3 className="font-semibold"&gt;{project.name}&lt;/h3&gt;
+        &lt;Badge status={project.status} /&gt;
+      &lt;/div&gt;
+
+      &lt;div className="mt-5"&gt;
+        &lt;div className="mb-2 flex justify-between text-sm"&gt;
+          &lt;span className="text-[var(--app-muted)]"&gt;
+            Progress
+          &lt;/span&gt;
+
+          &lt;span&gt;{project.progress}%&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;div
+          className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700"
+          role="progressbar"
+          aria-label={`${project.name} completion`}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={project.progress}
+        &gt;
+          &lt;div
+            className="h-full rounded-full bg-brand-500 transition-[width] duration-300 motion-reduce:transition-none"
+            style={{ width: `${project.progress}%` }}
+          /&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;Button variant="outline" className="mt-5 w-full"&gt;
+        View Project
+      &lt;/Button&gt;
+    &lt;/Card&gt;
+  );
+}
+
+function App() {
+  const [isDark, setIsDark] = useState(() =&gt; {
+    return localStorage.getItem("theme") === "dark";
+  });
+
+  useEffect(() =&gt; {
+    document.documentElement.classList.toggle("dark", isDark);
+
+    localStorage.setItem(
+      "theme",
+      isDark ? "dark" : "light"
+    );
+  }, [isDark]);
+
+  return (
+    &lt;main className="min-h-screen bg-[var(--app-background)] text-[var(--app-text)] transition-colors motion-reduce:transition-none"&gt;
+      &lt;div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8"&gt;
+        &lt;header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"&gt;
+          &lt;div&gt;
+            &lt;p className="text-sm font-medium text-brand-500"&gt;
+              WORKSPACE
+            &lt;/p&gt;
+
+            &lt;h1 className="mt-1 text-2xl font-bold sm:text-3xl"&gt;
+              Project Dashboard
+            &lt;/h1&gt;
+
+            &lt;p className="mt-2 text-[var(--app-muted)]"&gt;
+              Manage your projects and track progress.
+            &lt;/p&gt;
+          &lt;/div&gt;
+
+          &lt;Button
+            variant="secondary"
+            onClick={() =&gt; setIsDark((current) =&gt; !current)}
+            aria-pressed={isDark}
+          &gt;
+            {isDark ? "Light mode" : "Dark mode"}
+          &lt;/Button&gt;
+        &lt;/header&gt;
+
+        &lt;section
+          aria-label="Project statistics"
+          className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        &gt;
+          {stats.map((stat) =&gt; (
+            &lt;Card key={stat.id}&gt;
+              &lt;p className="text-sm text-[var(--app-muted)]"&gt;
+                {stat.label}
+              &lt;/p&gt;
+
+              &lt;p className="mt-2 text-3xl font-bold"&gt;
+                {stat.value}
+              &lt;/p&gt;
+            &lt;/Card&gt;
+          ))}
+        &lt;/section&gt;
+
+        &lt;section className="mt-10"&gt;
+          &lt;div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"&gt;
+            &lt;div&gt;
+              &lt;h2 className="text-xl font-bold"&gt;
+                Your Projects
+              &lt;/h2&gt;
+
+              &lt;p className="mt-1 text-sm text-[var(--app-muted)]"&gt;
+                A quick overview of your work.
+              &lt;/p&gt;
+            &lt;/div&gt;
+
+            &lt;Button onClick={() =&gt; window.alert("Add Project clicked")}&gt;
+              + Add Project
+            &lt;/Button&gt;
+          &lt;/div&gt;
+
+          &lt;div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"&gt;
+            {projects.map((project) =&gt; (
+              &lt;ProjectCard
+                key={project.id}
+                project={project}
+              /&gt;
+            ))}
+          &lt;/div&gt;
+        &lt;/section&gt;
+      &lt;/div&gt;
+    &lt;/main&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>The Add Project button currently shows a demonstration alert. In a real application, you would connect this action to a form or dialog and implement the actual project-creation flow.</p>
+
+  <h3>10.7 Run the project</h3>
+  <p>Start Vite:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm run dev</code></pre>
+  </div>
+
+  <p>Open the local address shown in the terminal.</p>
+  <p>Test the application at mobile, tablet, and desktop widths. Switch themes, inspect project statuses, navigate with the keyboard, and check how the buttons behave.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The finished Project Dashboard UI mockup">
+      <defs>
+        <linearGradient id="pHead" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#a855f7"/></linearGradient>
+        <linearGradient id="pBtn" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#a855f7"/></linearGradient>
+        <linearGradient id="pBar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#a855f7"/></linearGradient>
+      </defs>
+
+      <!-- Browser -->
+      <rect x="20" y="20" width="720" height="300" rx="14" fill="#f7f4ff" stroke="#c9bff5" stroke-width="2"/>
+      <rect x="20" y="20" width="720" height="34" rx="14" fill="url(#pHead)"/>
+      <rect x="20" y="40" width="720" height="14" fill="url(#pHead)"/>
+      <circle cx="42" cy="38" r="5" fill="#ff5f57"/>
+      <circle cx="60" cy="38" r="5" fill="#febc2e"/>
+      <circle cx="78" cy="38" r="5" fill="#28c840"/>
+      <rect x="100" y="28" width="380" height="20" rx="5" fill="rgba(255,255,255,.2)"/>
+      <text x="112" y="42" font-family="Segoe UI, sans-serif" font-size="10" fill="#e0d8ff">localhost:5173/</text>
+
+      <!-- Body -->
+      <rect x="34" y="68" width="692" height="238" rx="8" fill="#ffffff"/>
+
+      <!-- Header -->
+      <text x="54" y="96" font-family="Segoe UI, sans-serif" font-size="8" font-weight="700" fill="#6366f1" letter-spacing="0.14em">WORKSPACE</text>
+      <text x="54" y="122" font-family="Georgia, serif" font-size="16" font-weight="700" fill="#0f172a">Project Dashboard</text>
+      <text x="54" y="140" font-family="Segoe UI, sans-serif" font-size="10" fill="#64748b">Manage your projects and track progress.</text>
+
+      <rect x="614" y="102" width="94" height="26" rx="6" fill="#e2e8f0"/>
+      <text x="661" y="120" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#334155">Dark mode</text>
+
+      <!-- Stats -->
+      <rect x="46" y="156" width="212" height="56" rx="8" fill="#fff" stroke="#d5c7ff"/>
+      <text x="60" y="176" font-family="Segoe UI, sans-serif" font-size="9" fill="#64748b">Total Projects</text>
+      <text x="60" y="200" font-family="Georgia, serif" font-size="19" font-weight="700" fill="#0f172a">12</text>
+
+      <rect x="270" y="156" width="212" height="56" rx="8" fill="#fff" stroke="#d5c7ff"/>
+      <text x="284" y="176" font-family="Segoe UI, sans-serif" font-size="9" fill="#64748b">Completed</text>
+      <text x="284" y="200" font-family="Georgia, serif" font-size="19" font-weight="700" fill="#0f172a">8</text>
+
+      <rect x="494" y="156" width="212" height="56" rx="8" fill="#fff" stroke="#d5c7ff"/>
+      <text x="508" y="176" font-family="Segoe UI, sans-serif" font-size="9" fill="#64748b">In Progress</text>
+      <text x="508" y="200" font-family="Georgia, serif" font-size="19" font-weight="700" fill="#0f172a">3</text>
+
+      <!-- Section head -->
+      <text x="46" y="238" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#0f172a">Your Projects</text>
+      <rect x="614" y="224" width="94" height="24" rx="6" fill="url(#pBtn)"/>
+      <text x="661" y="241" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9" font-weight="700" fill="#fff">+ Add Project</text>
+
+      <!-- Project cards -->
+      <g>
+        <rect x="46" y="262" width="212" height="42" rx="7" fill="#fff" stroke="#d5c7ff"/>
+        <text x="60" y="280" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#0f172a">Website Refresh</text>
+        <rect x="210" y="268" width="38" height="14" rx="4" fill="#fde68a"/>
+        <text x="229" y="278" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="7" font-weight="700" fill="#78350f">72%</text>
+        <rect x="58" y="288" width="130" height="6" rx="3" fill="#e2e8f0"/>
+        <rect x="58" y="288" width="94" height="6" rx="3" fill="url(#pBar)"/>
+      </g>
+      <g>
+        <rect x="270" y="262" width="212" height="42" rx="7" fill="#fff" stroke="#d5c7ff"/>
+        <text x="284" y="280" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#0f172a">User Dashboard</text>
+        <rect x="434" y="268" width="38" height="14" rx="4" fill="#a7f3d0"/>
+        <text x="453" y="278" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="7" font-weight="700" fill="#065f46">100%</text>
+        <rect x="282" y="288" width="130" height="6" rx="3" fill="#10b981"/>
+      </g>
+      <g>
+        <rect x="494" y="262" width="212" height="42" rx="7" fill="#fff" stroke="#d5c7ff"/>
+        <text x="508" y="280" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#0f172a">Mobile Experience</text>
+        <rect x="658" y="268" width="38" height="14" rx="4" fill="#e2e8f0"/>
+        <text x="677" y="278" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="7" font-weight="700" fill="#334155">0%</text>
+        <rect x="506" y="288" width="130" height="6" rx="3" fill="#e2e8f0"/>
+      </g>
+
+      <text x="380" y="328" text-anchor="middle" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#64748b">Variants · Composition · Tokens · Dark mode · Responsive · A11y — all in one dashboard.</text>
+    </svg>
+    <figcaption><b>Figure 10.1</b> — The finished Project Dashboard: stat cards, project cards with progress bars, and a theme toggle.</figcaption>
+  </figure>
+
+  <h3>10.8 What this project demonstrates</h3>
+
+  <table>
+    <thead><tr><th>Concept</th><th>Where you used it</th></tr></thead>
+    <tbody>
+      <tr><td>Tailwind CSS</td><td>Layout and component utility classes</td></tr>
+      <tr><td>Responsive design</td><td>Breakpoint-prefixed grid and flex classes</td></tr>
+      <tr><td>Reusable components</td><td><code>Button</code>, <code>Card</code>, <code>Badge</code>, <code>ProjectCard</code></td></tr>
+      <tr><td>Component variants</td><td><code>Button</code> supports multiple appearances and sizes</td></tr>
+      <tr><td>Composition</td><td>Cards receive content through children</td></tr>
+      <tr><td>Design tokens</td><td><code>@theme</code> and CSS custom properties</td></tr>
+      <tr><td>Dark mode</td><td>A React state toggle and root <code>dark</code> class</td></tr>
+      <tr><td>Conditional classes</td><td>Status-specific badge styles</td></tr>
+      <tr><td>Animation and transitions</td><td>Theme and progress-bar transitions</td></tr>
+      <tr><td>Accessibility</td><td>Semantic sections, button behavior, focus styles, progress values</td></tr>
+    </tbody>
+  </table>
+
+  <p>This is a UI-learning project rather than a complete project-management application. It does not yet include API integration, persistence of project records, routing, authentication, or a real project-creation form.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 8 · Styling &amp; Component Systems</span>
+    <span class="pg">§ 10 · Reusable UI Components</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMMON MISTAKES
+     ============================================================ -->
+<section class="topic" id="mistakes">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#be123c,#f43f5e);">!</div>
+  <div class="topic-head">
+    <div class="kicker">Reference</div>
+    <h2>Common Mistakes to Avoid</h2>
+    <p>Ten pitfalls every styling developer runs into — and how to fix them.</p>
+  </div>
+
+  <ol>
+    <li><strong>Using global class names for every component.</strong> Use CSS Modules or a shared naming convention when global CSS becomes difficult to manage.</li>
+    <li><strong>Repeating the same long Tailwind class string everywhere.</strong> Extract a reusable component when the structure and design are repeated.</li>
+    <li><strong>Constructing utility classes dynamically.</strong> Use a map of complete Tailwind class strings so the required utilities can be detected during the build.</li>
+    <li><strong>Using color as the only indication of status.</strong> Include readable status text and maintain appropriate contrast.</li>
+    <li><strong>Designing for desktop only.</strong> Test small screens and fix overflow rather than assuming the layout will scale automatically.</li>
+    <li><strong>Using too many unrelated boolean props.</strong> Prefer a clear variant API or component composition.</li>
+    <li><strong>Removing keyboard focus indicators.</strong> Preserve visible focus and test keyboard navigation.</li>
+    <li><strong>Adding animations to everything.</strong> Animate meaningful changes, keep effects subtle, and respect reduced-motion preferences.</li>
+    <li><strong>Changing only the page background for dark mode.</strong> Also review text, borders, controls, alerts, menus, and cards.</li>
+    <li><strong>Building components that are too generic.</strong> Reuse components when the behavior or design is genuinely shared. Avoid creating complicated abstractions for one-off elements without a clear benefit.</li>
+  </ol>
+
+  <div class="page-footer">
+    <span>React JS — Phase 8 · Styling &amp; Component Systems</span>
+    <span class="pg">! · Common Mistakes</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     REVISION NOTES
+     ============================================================ -->
+<section class="topic" id="revision">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0f9d76,#34d399);">↺</div>
+  <div class="topic-head">
+    <div class="kicker">Revision</div>
+    <h2>Revision Notes</h2>
+    <p>Key concepts, plus beginner, intermediate, and advanced interview questions.</p>
+  </div>
+
+  <h3>Key concepts in one sentence</h3>
+
+  <div class="grid-2">
+    <div class="mini-card">
+      <h5>CSS</h5>
+      <p>Styles the appearance and layout of the UI.</p>
+    </div>
+    <div class="mini-card">
+      <h5>CSS Modules</h5>
+      <p>Keep component-specific CSS class names scoped.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Tailwind CSS</h5>
+      <p>Applies styles using utility classes directly in JSX.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Conditional classes</h5>
+      <p>Select styles according to component state or props.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Responsive design</h5>
+      <p>Adapts a UI to different viewport sizes.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Component variants</h5>
+      <p>Provide defined visual alternatives for one component.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Composition</h5>
+      <p>Builds larger UIs from smaller pieces.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Design tokens</h5>
+      <p>Centralize shared design decisions such as colors and spacing.</p>
+    </div>
+    <div class="mini-card">
+      <h5>shadcn/ui</h5>
+      <p>Provides customizable component source code for your project.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Accessible primitives</h5>
+      <p>Help implement UI interactions that support keyboard and assistive technology users.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Transitions</h5>
+      <p>Smoothly animate changes between visual states.</p>
+    </div>
+    <div class="mini-card">
+      <h5>Dark mode</h5>
+      <p>Applies an alternate color scheme.</p>
+    </div>
+    <div class="mini-card" style="grid-column: span 2;">
+      <h5>Reusable UI components</h5>
+      <p>Reduce duplication and promote consistent behavior.</p>
+    </div>
+  </div>
+
+  <h3>Interview questions</h3>
+
+  <h4>Beginner level</h4>
+  <ol>
+    <li>What is the difference between HTML, CSS, and React?</li>
+    <li>Why does React use <code>className</code> instead of <code>class</code>?</li>
+    <li>What are CSS Modules?</li>
+    <li>What is Tailwind CSS?</li>
+    <li>What does mobile-first design mean?</li>
+    <li>What is a conditional class?</li>
+    <li>What are component variants?</li>
+    <li>What is a design token?</li>
+    <li>What is dark mode?</li>
+    <li>Why should a UI component be reusable?</li>
+  </ol>
+
+  <h4>Intermediate level</h4>
+  <ol>
+    <li>When would you choose CSS Modules over Tailwind CSS?</li>
+    <li>How do you prevent Tailwind class names from being missing in a production build?</li>
+    <li>How would you design a button API with variants, sizes, and disabled states?</li>
+    <li>How does component composition differ from adding more props to one large component?</li>
+    <li>How can CSS custom properties help implement a theme?</li>
+    <li>How would you support a user's saved dark-mode preference?</li>
+    <li>How do you make an animated UI respect reduced-motion preferences?</li>
+    <li>What should you check when evaluating the accessibility of a dialog or dropdown?</li>
+    <li>Why might a utility such as <code>tailwind-merge</code> be useful?</li>
+    <li>How would you keep styling consistent across a large React application?</li>
+  </ol>
+
+  <h4>Advanced discussion</h4>
+  <ol>
+    <li>How would you organize tokens for a product with multiple brands and themes?</li>
+    <li>How would you handle conflicting style conventions in an existing codebase?</li>
+    <li>How would you evaluate whether to build a component or adapt an existing component system?</li>
+    <li>How would you test a reusable component across its variants, states, breakpoints, and themes?</li>
+    <li>How would you ensure that a custom dropdown supports correct focus management and keyboard interactions?</li>
+  </ol>
+
+  <div class="page-footer">
+    <span>React JS — Phase 8 · Styling &amp; Component Systems</span>
+    <span class="pg">↺ · Revision Notes</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     PRACTICAL ASSIGNMENTS
+     ============================================================ -->
+<section class="topic" id="assignments">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#f59e0b,#d97706);">AS</div>
+  <div class="topic-head">
+    <div class="kicker">Practice</div>
+    <h2>Practical Assignments</h2>
+    <p>Five exercises to test your styling and component-building skills.</p>
+  </div>
+
+  <h3>Assignment 1: Profile card</h3>
+  <p>Build a profile card with an avatar, name, role, description, and action button.</p>
+  <p>Requirements:</p>
+  <ul>
+    <li>Use a React component.</li>
+    <li>Style it using Tailwind CSS.</li>
+    <li>Keep the layout responsive.</li>
+    <li>Add a hover state.</li>
+    <li>Use clear focus styles on interactive elements.</li>
+  </ul>
+
+  <h3>Assignment 2: Status system</h3>
+  <p>Build a status badge that supports <code>Success</code>, <code>Pending</code>, <code>Error</code>, and <code>Inactive</code>.</p>
+  <p>Requirements:</p>
+  <ul>
+    <li>Use a reusable component.</li>
+    <li>Use an explicit mapping of status values to class names.</li>
+    <li>Display status text.</li>
+    <li>Make text readable in both light and dark themes.</li>
+  </ul>
+
+  <h3>Assignment 3: Button system</h3>
+  <p>Build a button component with primary, secondary, outline, and danger variants.</p>
+  <p>Requirements:</p>
+  <ul>
+    <li>Include small, medium, and large sizes.</li>
+    <li>Support <code>disabled</code>, <code>onClick</code>, and normal button attributes.</li>
+    <li>Ensure the variants have consistent padding, typography, border radius, and focus behavior.</li>
+    <li>Use <code>type="button"</code> as the default.</li>
+  </ul>
+
+  <h3>Assignment 4: Theme toggle</h3>
+  <p>Add a light, dark, and system theme mode to your dashboard.</p>
+  <p>Requirements:</p>
+  <ul>
+    <li>Save explicit user preferences.</li>
+    <li>Use system preference when the user selects System.</li>
+    <li>Update the root theme class or attribute.</li>
+    <li>Test that every reusable component works in both themes.</li>
+    <li>Handle an unset or invalid saved preference.</li>
+  </ul>
+
+  <h3>Assignment 5: UI component library</h3>
+  <p>Create a <code>components/ui</code> directory and build five shared components:</p>
+  <ul>
+    <li>Button</li>
+    <li>Card</li>
+    <li>Badge</li>
+    <li>Input</li>
+    <li>Modal or Dialog</li>
+  </ul>
+  <p>Document each component's variants and expected props. Check semantics, keyboard interactions, and disabled/error states.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 8 · Styling &amp; Component Systems</span>
+    <span class="pg">AS · Practical Assignments</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMPLETION CHECKLIST
+     ============================================================ -->
+<section class="topic" id="checklist">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0ea5e9,#0284c7);">✓</div>
+  <div class="topic-head">
+    <div class="kicker">Wrap-Up</div>
+    <h2>Phase 8 Completion Checklist</h2>
+    <p>You are ready to move on when you can demonstrate the following without simply copying the examples.</p>
+  </div>
+
+  <ul style="list-style:none; padding-left:0;">
+    <li>☐ I can style React components with CSS and CSS Modules.</li>
+    <li>☐ I can set up Tailwind CSS v4 in a Vite React project.</li>
+    <li>☐ I can apply conditional classes based on props and state.</li>
+    <li>☐ I can build layouts for mobile, tablet, and desktop.</li>
+    <li>☐ I can create reusable variants and compose components.</li>
+    <li>☐ I can use design tokens and CSS variables for consistent styling.</li>
+    <li>☐ I understand how shadcn/ui works and can add its components to a project.</li>
+    <li>☐ I can create simple transitions and respect reduced-motion preferences.</li>
+    <li>☐ I can implement and test a dark-mode toggle.</li>
+    <li>☐ I can build reusable, responsive, keyboard-accessible UI components.</li>
+  </ul>
+
+  <h3>Official learning resources</h3>
+  <ol>
+    <li><a href="https://tailwindcss.com/docs/installation/using-vite">Tailwind CSS — Installation with Vite</a></li>
+    <li><a href="https://tailwindcss.com/docs/responsive-design">Tailwind CSS — Responsive Design</a></li>
+    <li><a href="https://tailwindcss.com/docs/dark-mode">Tailwind CSS — Dark Mode</a></li>
+    <li><a href="https://ui.shadcn.com/docs">shadcn/ui — Introduction</a></li>
+    <li><a href="https://ui.shadcn.com/docs/installation">shadcn/ui — Installation</a></li>
+    <li><a href="https://www.w3.org/WAI/ARIA/apg/">W3C — ARIA Authoring Practices Guide</a></li>
+    <li><a href="https://motion.dev/docs/react-motion-component">Motion for React — Motion Component</a></li>
+    <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS">MDN — CSS Modules overview</a></li>
+  </ol>
+
+  <div class="callout remember" style="margin-top:34px;">
+    <div class="ct">◆ Final goal for Phase 8</div>
+    <p>Build a polished, responsive dashboard with reusable components, consistent design tokens, conditional styles, working dark mode, subtle motion, and accessible interactions. You should understand not only how to make the UI look good, but also how to keep its styling consistent and maintainable as the application grows.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 8 · Styling &amp; Component Systems</span>
+    <span class="pg">✓ · Completion Checklist</span>
+  </div>
+</section>
+
+</div><!-- /book -->
+</div><!-- /book-wrap -->
+
+<script>
+/* ============================================================
+   Lightweight, dependency-free syntax highlighter.
+   Runs in the browser before you print to PDF.
+   ============================================================ */
+(function () {
+  function esc(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'|`(?:[^`\\\\]|\\\\.)*`)" +
+    "|(<\\/?)([A-Za-z][A-Za-z0-9.]*)" +
+    "|(\\/?>)" +
+    "|\\b(const|let|var|function|return|import|from|export|default|if|else|for|while|class|new|this|true|false|null|undefined|typeof|async|await|of|in|try|catch|finally|throw|switch|case|break)\\b" +
+    "|\\b(\\d+(?:\\.\\d+)?)\\b",
+    "g"
+  );
+
+  function highlight(src) {
+    var out = "", last = 0, m;
+    RE.lastIndex = 0;
+    while ((m = RE.exec(src)) !== null) {
+      out += esc(src.slice(last, m.index));
+      if (m[1] !== undefined)      out += '<span class="tok-com">' + esc(m[1]) + "</span>";
+      else if (m[2] !== undefined) out += '<span class="tok-str">' + esc(m[2]) + "</span>";
+      else if (m[4] !== undefined) out += '<span class="tok-tagp">' + esc(m[3]) + '</span><span class="tok-tag">' + esc(m[4]) + "</span>";
+      else if (m[5] !== undefined) out += '<span class="tok-tagp">' + esc(m[5]) + "</span>";
+      else if (m[6] !== undefined) out += '<span class="tok-kw">' + esc(m[6]) + "</span>";
+      else if (m[7] !== undefined) out += '<span class="tok-num">' + esc(m[7]) + "</span>";
+      last = RE.lastIndex;
+    }
+    out += esc(src.slice(last));
+    return out;
+  }
+
+  function run() {
+    var blocks = document.querySelectorAll("pre > code");
+    for (var i = 0; i < blocks.length; i++) {
+      var el = blocks[i];
+      if (el.dataset.highlighted === "1") continue;
+      if (el.parentElement && el.parentElement.parentElement &&
+          el.parentElement.parentElement.classList.contains("term")) {
+        el.dataset.highlighted = "1";
+        continue;
+      }
+      el.innerHTML = highlight(el.textContent);
+      el.dataset.highlighted = "1";
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run);
+  } else {
+    run();
+  }
+  window.addEventListener("beforeprint", run);
+})();
+</script>
+</body>
+</html>

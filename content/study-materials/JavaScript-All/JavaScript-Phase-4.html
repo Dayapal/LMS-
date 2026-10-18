@@ -1,0 +1,3559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Mastery — Phase 4: Arrays, Objects &amp; Modern Data Handling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   JAVASCRIPT MASTERY — PHASE 4
+   Arrays · Objects · Modern Data Handling
+   A handcrafted, premium handbook.
+   ============================================================ */
+
+:root{
+  --paper:        #fdfaf3;
+  --paper-warm:   #f7f1e4;
+  --paper-edge:   #e6dcc7;
+  --ink:          #1b2432;
+  --ink-soft:     #3b4657;
+  --muted:        #6d7686;
+  --rule:         #ddd2ba;
+
+  --navy:         #16243d;
+  --navy-2:       #223354;
+  --gold:         #c9a227;
+  --gold-soft:    #e6d49a;
+  --gold-deep:    #9c7c14;
+
+  --js:           #f7df1e;
+  --teal:         #0f766e;
+  --plum:         #7c3aed;
+  --rose:         #b03a52;
+  --blue:         #2563eb;
+
+  --code-bg:      #131b2c;
+  --code-bg-2:    #0d1422;
+
+  --shadow-book:  0 40px 90px -30px rgba(20,30,50,.45), 0 12px 30px -12px rgba(20,30,50,.35);
+  --shadow-card:  0 10px 30px -12px rgba(20,30,50,.35);
+}
+
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+
+body{
+  margin:0;
+  padding:48px 20px 90px;
+  background:
+    radial-gradient(1200px 700px at 50% -10%, #2b3a56 0%, #16203a 45%, #0d1424 100%);
+  background-attachment: fixed;
+  font-family:'Lora', Georgia, 'Times New Roman', serif;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+
+.book{
+  max-width: 920px;
+  margin: 0 auto;
+  counter-reset: pageCount;
+}
+
+.page{
+  position: relative;
+  background: var(--paper);
+  background-image:
+    radial-gradient(circle at 18% 12%, rgba(201,162,39,.055) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 72% 38%, rgba(27,36,50,.045) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 42% 82%, rgba(201,162,39,.05) 0 1px, transparent 1.6px),
+    linear-gradient(180deg, #fffdf8 0%, #fdfaf3 40%, #f8f3e8 100%);
+  background-size: 27px 27px, 31px 31px, 37px 37px, 100% 100%;
+  padding: 62px 74px 78px;
+  margin: 0 0 34px;
+  border-radius: 4px 12px 12px 4px;
+  box-shadow: var(--shadow-book);
+  border: 1px solid #efe7d4;
+  border-left: none;
+  overflow: hidden;
+}
+
+.page::before{
+  content:"";
+  position:absolute; top:0; left:0; bottom:0; width:26px;
+  background: linear-gradient(90deg,
+      rgba(20,30,50,.16) 0%,
+      rgba(20,30,50,.06) 32%,
+      rgba(255,255,255,.35) 60%,
+      rgba(20,30,50,.05) 100%);
+  border-right: 1px solid rgba(20,30,50,.08);
+  pointer-events:none;
+}
+
+.page::after{
+  content:"";
+  position:absolute; inset:0;
+  border-radius: inherit;
+  pointer-events:none;
+  box-shadow: inset 0 0 60px rgba(160,140,90,.07), inset 0 0 0 1px rgba(255,255,255,.6);
+}
+
+.page > *{ position:relative; z-index:1; }
+.page + .page{ margin-top: 0; }
+
+/* ---------- Cover ---------- */
+.cover{
+  counter-increment: none;
+  min-height: 1080px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding: 90px 70px;
+  background:
+    radial-gradient(circle at 50% 0%, #24334f 0%, #16243d 42%, #0e1728 100%);
+  color:#f6f1e4;
+  border:1px solid rgba(201,162,39,.35);
+  border-radius:4px 14px 14px 4px;
+}
+.cover::before{
+  background: linear-gradient(90deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 40%, rgba(255,255,255,.08) 70%, rgba(0,0,0,.2) 100%);
+  border-right:1px solid rgba(201,162,39,.25);
+}
+.cover::after{
+  box-shadow: inset 0 0 120px rgba(0,0,0,.5), inset 0 0 0 1px rgba(201,162,39,.18);
+}
+
+.cover-frame{
+  border: 1.5px solid rgba(201,162,39,.5);
+  outline: 1px solid rgba(201,162,39,.18);
+  outline-offset: 8px;
+  padding: 58px 46px 52px;
+  width: 100%;
+  max-width: 620px;
+  border-radius: 3px;
+  position: relative;
+}
+
+.cover-eyebrow{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .42em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  margin-bottom: 26px;
+}
+
+.cover-logo{
+  width: 86px; height: 86px;
+  margin: 0 auto 26px;
+  background: var(--js);
+  border-radius: 14px;
+  display:flex; align-items:flex-end; justify-content:flex-end;
+  padding: 12px 14px;
+  font-family:'JetBrains Mono', monospace;
+  font-weight:700;
+  font-size: 28px;
+  color:#111;
+  box-shadow: 0 14px 34px -10px rgba(247,223,30,.55), inset 0 -4px 0 rgba(0,0,0,.12);
+  letter-spacing:-.06em;
+}
+
+.cover h1{
+  font-family:'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 46px;
+  line-height: 1.08;
+  margin: 0 0 8px;
+  letter-spacing: -.01em;
+  background: linear-gradient(180deg,#fffdf5 0%, #e8d9a0 60%, #c9a227 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.cover .cover-sub{
+  font-family:'Playfair Display', serif;
+  font-style: italic;
+  font-size: 18px;
+  color:#cbd5e6;
+  margin: 14px 0 30px;
+  line-height:1.5;
+}
+
+.cover-rule{
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  margin: 26px 0 28px;
+  color: var(--gold);
+}
+.cover-rule span{ height:1px; width:76px; background:linear-gradient(90deg,transparent,var(--gold)); }
+.cover-rule span:last-child{ background:linear-gradient(270deg,transparent,var(--gold)); }
+
+.cover-meta{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color:#93a1b8;
+  line-height: 2.1;
+}
+
+.cover-badges{
+  display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+  margin-top: 34px;
+}
+.badge{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  padding: 7px 15px;
+  border-radius: 100px;
+  border: 1px solid rgba(201,162,39,.45);
+  color: var(--gold-soft);
+  background: rgba(201,162,39,.07);
+}
+
+.cover-foot{
+  margin-top: 44px;
+  font-size: 12.5px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  font-family:'JetBrains Mono', monospace;
+  color:#7f8da5;
+}
+
+/* ---------- Page Footer ---------- */
+.page-foot{
+  counter-increment: pageCount;
+  position:absolute;
+  left: 74px; right: 74px; bottom: 26px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing:.16em;
+  text-transform: uppercase;
+  color: #a99f88;
+  border-top: 1px solid var(--rule);
+  padding-top: 12px;
+  z-index: 2;
+}
+.page-foot .pn::after{ content: counter(pageCount); }
+.page-foot .pn::before{ content: "— "; }
+
+/* ---------- Headings ---------- */
+.chap-head{ margin: 0 0 40px; text-align:center; }
+
+.chap-num{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .42em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 12px;
+}
+
+.chap-title{
+  font-family:'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 34px;
+  line-height: 1.14;
+  margin: 0 0 20px;
+  color: var(--navy);
+  letter-spacing: -.015em;
+}
+
+.chap-rule{
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  color: var(--gold);
+  font-size: 13px;
+}
+.chap-rule span{ height:1px; width:88px; background:linear-gradient(90deg,transparent,var(--gold-soft),var(--gold)); }
+.chap-rule span:last-child{ background:linear-gradient(270deg,transparent,var(--gold-soft),var(--gold)); }
+.chap-rule i{ font-style:normal; opacity:.9; }
+
+h3{
+  font-family:'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 44px 0 14px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+  letter-spacing: -.01em;
+}
+h3::after{
+  content:"";
+  position:absolute; left:0; bottom:-1px; width:56px; height:3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-soft));
+  border-radius: 3px;
+}
+
+h4{
+  font-family:'Playfair Display', serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--navy-2);
+  margin: 32px 0 10px;
+}
+
+h5{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing:.2em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin: 26px 0 8px;
+}
+
+p{
+  font-size: 16.4px;
+  line-height: 1.82;
+  margin: 0 0 16px;
+  color: var(--ink-soft);
+}
+
+strong{ color: var(--ink); font-weight: 600; }
+em{ font-style: italic; }
+a{ color: var(--teal); }
+
+ul, ol{
+  font-size: 16.2px;
+  line-height: 1.8;
+  color: var(--ink-soft);
+  margin: 0 0 18px;
+  padding-left: 24px;
+}
+li{ margin-bottom: 7px; }
+ul li::marker{ color: var(--gold); }
+ol li::marker{ color: var(--gold-deep); font-family:'JetBrains Mono',monospace; font-size: 13px; }
+
+/* ---------- Tables ---------- */
+.table-wrap{
+  margin: 24px 0 30px;
+  border-radius: 10px;
+  overflow:hidden;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--paper-edge);
+}
+table{
+  width:100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  background:#fffdf8;
+}
+thead th{
+  background: linear-gradient(180deg, var(--navy-2), var(--navy));
+  color: #f4efe2;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing:.16em;
+  text-transform: uppercase;
+  font-weight: 500;
+  text-align:left;
+  padding: 13px 18px;
+}
+tbody td{
+  padding: 12px 18px;
+  border-bottom: 1px solid #f0e9d8;
+  color: var(--ink-soft);
+  vertical-align: top;
+  line-height: 1.6;
+}
+tbody tr:nth-child(even){ background: #fbf7ee; }
+tbody tr:last-child td{ border-bottom:none; }
+tbody td:first-child{ color: var(--navy); font-weight:600; }
+table code{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  background: rgba(201,162,39,.13);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--gold-deep);
+}
+
+p code, li code, td code, .callout code{
+  font-family:'JetBrains Mono', monospace;
+  font-size: .86em;
+  background: rgba(20,30,50,.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--rose);
+  border: 1px solid rgba(20,30,50,.06);
+}
+
+/* ---------- Figures ---------- */
+figure{ margin: 28px 0 34px; }
+
+.fig{
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px -18px rgba(15,25,45,.55), 0 3px 10px -4px rgba(15,25,45,.35);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.fig-code{
+  background: linear-gradient(180deg, var(--code-bg) 0%, var(--code-bg-2) 100%);
+}
+.fig-bar{
+  display:flex; align-items:center; gap:8px;
+  padding: 11px 16px;
+  background: linear-gradient(180deg, #1d2740, #182136);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.dot{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+.dot.r{ background:#ff5f57; }
+.dot.a{ background:#febc2e; }
+.dot.g{ background:#28c840; }
+.fig-title{
+  margin-left: 12px;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing:.14em;
+  color:#8b9ab8;
+  text-transform: lowercase;
+}
+.fig pre{
+  margin:0;
+  padding: 20px 22px;
+  overflow-x:auto;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 13.5px;
+  line-height: 1.78;
+  color:#c7d3e8;
+  tab-size: 2;
+}
+.fig code{ font-family: inherit; }
+
+.tok-com{ color:#5d6b8a; font-style: italic; }
+.tok-str{ color:#a5e075; }
+.tok-num{ color:#f7a56b; }
+.tok-kw { color:#c792ea; font-weight:500; }
+.tok-fn { color:#82aaff; }
+.tok-op { color:#89ddff; }
+
+.fig-out{
+  background: linear-gradient(180deg,#f2ecdd,#eae2cf);
+  border: 1px solid var(--paper-edge);
+}
+.fig-out .fig-bar{
+  background: linear-gradient(180deg,#e3d9c1,#dbd0b5);
+  border-bottom: 1px solid #d0c3a4;
+}
+.fig-out .fig-bar .fig-title{ color:#7a6a45; }
+.fig-out pre{
+  margin:0;
+  padding: 16px 22px;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 13.5px;
+  line-height: 1.75;
+  color:#2f3b4f;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.fig-out .fig-bar .dot{ opacity:.35; }
+
+figcaption{
+  margin-top: 11px;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  letter-spacing:.06em;
+  color: var(--muted);
+  text-align:center;
+  line-height:1.7;
+}
+figcaption b{ color: var(--gold-deep); font-weight:700; }
+
+.fig-illo{
+  background: linear-gradient(180deg,#fffdf8,#f5efe1);
+  border: 1px solid var(--paper-edge);
+  padding: 20px 18px 8px;
+  box-shadow: 0 16px 36px -20px rgba(15,25,45,.5);
+}
+.fig-illo svg{ display:block; width:100%; height:auto; }
+
+.illo text{ font-family:'JetBrains Mono', monospace; }
+.illo .t-label{ font-size: 12px; letter-spacing:.22em; fill:#8a7d5f; }
+.illo .t-strong{ font-size: 14px; font-weight:700; fill:#1b2432; font-family:'Lora',serif; }
+.illo .t-mono{ font-size: 12.5px; fill:#3b4657; }
+.illo .t-gold{ font-size: 12px; fill:#9c7c14; letter-spacing:.14em; }
+.illo .t-code{ font-size: 12px; fill:#c7d3e8; }
+
+/* ---------- Callouts ---------- */
+.callout{
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin: 26px 0;
+  font-size: 15.8px;
+  line-height: 1.75;
+  position: relative;
+  border-left: 4px solid var(--gold);
+  background: linear-gradient(90deg, #fdf6e0, #fbf8ee);
+  color: var(--ink-soft);
+  box-shadow: 0 8px 22px -14px rgba(20,30,50,.4);
+}
+.callout .callout-title{
+  display:block;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing:.28em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 8px;
+}
+.callout.warn{ border-left-color: var(--rose); background: linear-gradient(90deg,#fdeef0,#fbf6f4); }
+.callout.warn .callout-title{ color: var(--rose); }
+.callout.tip{ border-left-color: var(--teal); background: linear-gradient(90deg,#e9f6f4,#f5fbfa); }
+.callout.tip .callout-title{ color: var(--teal); }
+.callout.note{ border-left-color: var(--navy-2); background: linear-gradient(90deg,#eef2f9,#f8fafd); }
+.callout.note .callout-title{ color: var(--navy-2); }
+.callout p:last-child{ margin-bottom:0; }
+
+.keyidea{
+  margin: 30px 0;
+  padding: 26px 30px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 60%, #2c3f66 100%);
+  color: #f3eee1;
+  text-align:center;
+  box-shadow: 0 18px 40px -22px rgba(10,18,35,.9);
+  position: relative;
+  overflow: hidden;
+}
+.keyidea::before{
+  content:"";
+  position:absolute; inset:0;
+  background: radial-gradient(circle at 20% 0%, rgba(201,162,39,.22), transparent 60%);
+  pointer-events:none;
+}
+.keyidea .k-label{
+  display:block;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing:.36em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  margin-bottom: 10px;
+}
+.keyidea p{
+  margin:0;
+  color:#f3eee1;
+  font-size: 18px;
+  font-style: italic;
+  line-height:1.65;
+  position:relative;
+}
+
+/* ---------- Question blocks ---------- */
+.qgroup{ margin: 30px 0; }
+.qgroup-title{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing:.28em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin: 34px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--rule);
+}
+.q{
+  margin: 0 0 20px;
+  padding: 16px 20px 16px 22px;
+  background: #fffdf8;
+  border: 1px solid var(--paper-edge);
+  border-left: 3px solid var(--gold-soft);
+  border-radius: 8px;
+  font-size: 15.8px;
+  line-height: 1.72;
+  color: var(--ink-soft);
+  box-shadow: 0 5px 16px -12px rgba(20,30,50,.5);
+}
+.q .qnum{
+  font-family:'JetBrains Mono', monospace;
+  font-weight:700;
+  font-size: 12.5px;
+  color: var(--gold-deep);
+  margin-right: 8px;
+}
+.q .qcode{ margin-top: 14px; }
+
+/* ---------- Checklist ---------- */
+.checklist{ list-style:none; padding:0; margin: 24px 0; }
+.checklist li{
+  position: relative;
+  padding: 12px 0 12px 42px;
+  border-bottom: 1px solid #efe8d7;
+  font-size: 16px;
+  color: var(--ink-soft);
+  line-height:1.65;
+}
+.checklist li::before{
+  content:"";
+  position:absolute;
+  left: 4px; top: 15px;
+  width: 18px; height: 18px;
+  border: 2px solid var(--gold);
+  border-radius: 4px;
+  background: #fffdf6;
+  box-shadow: inset 0 0 0 2px #fffdf6, inset 0 0 0 3px rgba(201,162,39,.25);
+}
+.checklist li:last-child{ border-bottom:none; }
+
+/* ---------- TOC ---------- */
+.toc{ list-style:none; padding:0; margin: 8px 0 0; counter-reset: toc; }
+.toc li{
+  counter-increment: toc;
+  display:flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 13px 4px;
+  border-bottom: 1px dotted #e2d8c0;
+  font-size: 16.2px;
+  color: var(--ink-soft);
+}
+.toc li a{
+  text-decoration:none;
+  color: var(--navy);
+  font-weight: 500;
+  transition: color .18s ease;
+  display:flex;
+  align-items:baseline;
+  gap: 14px;
+  width:100%;
+}
+.toc li a:hover{ color: var(--gold-deep); }
+.toc li a::before{
+  content: counter(toc, decimal-leading-zero);
+  font-family:'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing:.08em;
+  flex: 0 0 30px;
+}
+.toc li a::after{
+  content:"";
+  flex: 1 1 auto;
+  border-bottom: 1px dotted #ddd0b2;
+  margin: 0 6px 4px;
+}
+
+/* ---------- Misc ---------- */
+.lead{
+  font-size: 18.5px;
+  line-height: 1.78;
+  color: var(--ink);
+  font-style: italic;
+  margin-bottom: 26px;
+}
+.divider{
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  margin: 46px 0;
+  color: var(--gold-soft);
+  font-size: 14px;
+}
+.divider span{ height:1px; width:70px; background:linear-gradient(90deg,transparent,var(--gold-soft)); }
+.divider span:last-child{ background:linear-gradient(270deg,transparent,var(--gold-soft)); }
+
+.step-list{ list-style:none; padding:0; counter-reset: step; }
+.step-list li{
+  counter-increment: step;
+  position: relative;
+  padding: 8px 0 8px 46px;
+  margin-bottom: 6px;
+  font-size: 16.2px;
+  line-height:1.75;
+  color: var(--ink-soft);
+}
+.step-list li::before{
+  content: counter(step);
+  position:absolute; left:0; top:8px;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+  color:#fff;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  font-weight: 700;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 4px 12px -5px rgba(156,124,20,.9);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 820px){
+  body{ padding: 22px 10px 60px; }
+  .page{ padding: 42px 30px 66px; border-radius: 3px 8px 8px 3px; }
+  .page::before{ width: 16px; }
+  .page-foot{ left:30px; right:30px; }
+  .chap-title{ font-size: 26px; }
+  .cover{ min-height:auto; padding: 60px 26px; }
+  .cover-frame{ padding: 40px 22px; }
+  .cover h1{ font-size: 30px; }
+  .cover .cover-sub{ font-size: 15px; }
+  h3{ font-size: 20px; }
+  p, ul, ol, .q, .checklist li{ font-size: 15.4px; }
+  .fig pre{ font-size: 12px; padding: 15px 14px; }
+}
+
+@media print{
+  body{ background:#fff; padding:0; }
+  .book{ max-width:none; }
+  .page{
+    box-shadow:none; border:none; margin:0; border-radius:0;
+    page-break-after: always;
+    padding: 48px 54px 66px;
+  }
+  .page::before, .page::after{ display:none; }
+  .cover{ min-height: 96vh; }
+}
+</style>
+</head>
+<body>
+
+<div class="book">
+
+<!-- ══════════════════════════════════════════════════════════
+     COVER
+     ══════════════════════════════════════════════════════════ -->
+<section class="page cover">
+  <div class="cover-frame">
+    <div class="cover-eyebrow">The Complete Handbook Series</div>
+    <div class="cover-logo">JS</div>
+    <h1>JavaScript<br>Mastery</h1>
+    <div class="cover-sub">Phase 4 — Arrays, Objects<br>&amp; Modern Data Handling</div>
+    <div class="cover-rule"><span></span><i>❖</i><span></span></div>
+    <div class="cover-meta">
+      Level &nbsp;·&nbsp; Intermediate<br>
+      Volume &nbsp;·&nbsp; Four of Six<br>
+      Edition &nbsp;·&nbsp; Handcrafted Study Edition
+    </div>
+    <div class="cover-badges">
+      <span class="badge">Arrays</span>
+      <span class="badge">map / filter / reduce</span>
+      <span class="badge">Objects</span>
+      <span class="badge">Destructuring</span>
+      <span class="badge">Spread / Rest</span>
+      <span class="badge">Object Utilities</span>
+    </div>
+  </div>
+  <div class="cover-foot">Store many · Name each · Transform all</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     FRONT MATTER
+     ══════════════════════════════════════════════════════════ -->
+<section class="page">
+  <header class="chap-head">
+    <div class="chap-num">Before We Begin</div>
+    <h2 class="chap-title">About This Phase</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p class="lead">Phase 3 gave you functions. Phase 4 gives you the data those functions operate on — ordered lists of things, and named bundles of information. Together, arrays and objects are the backbone of every real JavaScript application.</p>
+
+  <div class="table-wrap">
+    <table>
+      <tbody>
+        <tr><td>Level</td><td>Intermediate</td></tr>
+        <tr><td>Goal</td><td>Master arrays and their methods, objects, destructuring, spread and rest syntax, shallow copying and the essential object utilities.</td></tr>
+        <tr><td>Prerequisites</td><td>Phase 1 · Phase 2 · Phase 3</td></tr>
+        <tr><td>What comes next</td><td>Phase 5 — Modern JavaScript / ES6+: classes, modules, promises, <code>async</code>/<code>await</code>, iterators, generators and symbols.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>How to Read This Phase</h3>
+  <ol class="step-list">
+    <li><strong>Use the browser console.</strong> Arrays and objects are best learned by poking at them live.</li>
+    <li><strong>Trace each method's return value.</strong> Does it return a new array, a single value, or mutate the original?</li>
+    <li><strong>Study the mutation table.</strong> Confusing which methods mutate and which don't is the #1 source of bugs.</li>
+    <li><strong>Build the mini-project.</strong> The Student Dashboard ties every concept together.</li>
+    <li><strong>Practice spread vs rest.</strong> Same three dots — different jobs depending on context.</li>
+  </ol>
+
+  <div class="callout tip">
+    <span class="callout-title">The one mental model to carry forward</span>
+    <p>Arrays are <strong>ordered</strong>. Objects are <strong>named</strong>. Arrays are accessed by number. Objects are accessed by name. Every data structure in JavaScript is a variation on one of these two.</p>
+  </div>
+
+  <div class="page-foot"><span>JavaScript Mastery · Phase 4</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     TABLE OF CONTENTS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page">
+  <header class="chap-head">
+    <div class="chap-num">Contents</div>
+    <h2 class="chap-title">Table of Contents</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <ol class="toc">
+    <li><a href="#ch1">Understanding Arrays</a></li>
+    <li><a href="#ch2">Essential Array Methods</a></li>
+    <li><a href="#ch3">Working with Objects</a></li>
+    <li><a href="#ch4">Object Destructuring</a></li>
+    <li><a href="#ch5">Spread Syntax and Rest Syntax</a></li>
+    <li><a href="#ch6">Essential Object Utility Methods</a></li>
+    <li><a href="#ch7">Practical Mini-Project — Student Management Dashboard</a></li>
+    <li><a href="#ch8">Practice Questions</a></li>
+    <li><a href="#ch9">Final Revision Sheet</a></li>
+  </ol>
+
+  <div class="keyidea">
+    <span class="k-label">The Universal Question</span>
+    <p>Does this method change the original data, or does it give me back something new?</p>
+  </div>
+
+  <div class="page-foot"><span>JavaScript Mastery · Phase 4</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 1 — UNDERSTANDING ARRAYS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch1">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 01</div>
+    <h2 class="chap-title">Understanding Arrays</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>1.1 &nbsp;What Is an Array?</h3>
+  <p>An <strong>array</strong> is an ordered collection of values stored under a single variable name.</p>
+  <p>Instead of creating a separate variable for every student's name, you can store all the names in one array.</p>
+
+  <h5>Without an array</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">without-array.js</span></div>
+    <pre><code>const student1 = "Aarav";
+const student2 = "Riya";
+const student3 = "Kabir";</code></pre>
+  </figure>
+
+  <h5>With an array</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">with-array.js</span></div>
+    <pre><code>const students = ["Aarav", "Riya", "Kabir"];
+
+console.log(students);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 'Aarav', 'Riya', 'Kabir' ]</pre>
+  </figure>
+
+  <p>The array keeps the values <strong>together</strong> in a <strong>defined order</strong>.</p>
+
+  <h3>1.2 &nbsp;Real-Life Analogy: A Row of Numbered Lockers</h3>
+  <p>Imagine a school corridor containing numbered lockers.</p>
+  <ul>
+    <li>Locker 0 contains Aarav's record.</li>
+    <li>Locker 1 contains Riya's record.</li>
+    <li>Locker 2 contains Kabir's record.</li>
+  </ul>
+  <p>In JavaScript, array positions are called <strong>indexes</strong>, and indexing starts at <code>0</code>, not <code>1</code>.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 300" role="img" aria-label="A row of numbered lockers representing an array">
+      <defs>
+        <linearGradient id="c1locker" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f4e6bd"/><stop offset="100%" stop-color="#e0c982"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="700" height="300" rx="16" fill="#f7f2e7"/>
+
+      <text x="350" y="34" text-anchor="middle" class="t-label" font-size="10">ARRAY = ["Aarav", "Riya", "Kabir", "Meera"]</text>
+
+      <!-- 4 lockers -->
+      <g>
+        <!-- locker 0 -->
+        <rect x="50" y="70" width="138" height="176" rx="8" fill="url(#c1locker)" stroke="#1b2432" stroke-width="3"/>
+        <rect x="50" y="70" width="138" height="34" rx="8" fill="#c9a227" stroke="#1b2432" stroke-width="3"/>
+        <text x="119" y="94" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700" fill="#1b2432">index 0</text>
+        <circle cx="119" cy="140" r="18" fill="#fff" stroke="#1b2432" stroke-width="2"/>
+        <circle cx="119" cy="135" r="6" fill="#1b2432"/>
+        <path d="M107 152 q12 -10 24 0" fill="#1b2432"/>
+        <text x="119" y="200" text-anchor="middle" font-size="16" font-family="Lora, serif" font-weight="700" fill="#1b2432">"Aarav"</text>
+        <text x="119" y="226" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#8a7d5f">first element</text>
+
+        <!-- locker 1 -->
+        <rect x="202" y="70" width="138" height="176" rx="8" fill="url(#c1locker)" stroke="#1b2432" stroke-width="3"/>
+        <rect x="202" y="70" width="138" height="34" rx="8" fill="#c9a227" stroke="#1b2432" stroke-width="3"/>
+        <text x="271" y="94" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700" fill="#1b2432">index 1</text>
+        <circle cx="271" cy="140" r="18" fill="#fff" stroke="#1b2432" stroke-width="2"/>
+        <circle cx="271" cy="135" r="6" fill="#1b2432"/>
+        <path d="M259 152 q12 -10 24 0" fill="#1b2432"/>
+        <text x="271" y="200" text-anchor="middle" font-size="16" font-family="Lora, serif" font-weight="700" fill="#1b2432">"Riya"</text>
+
+        <!-- locker 2 -->
+        <rect x="354" y="70" width="138" height="176" rx="8" fill="url(#c1locker)" stroke="#1b2432" stroke-width="3"/>
+        <rect x="354" y="70" width="138" height="34" rx="8" fill="#c9a227" stroke="#1b2432" stroke-width="3"/>
+        <text x="423" y="94" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700" fill="#1b2432">index 2</text>
+        <circle cx="423" cy="140" r="18" fill="#fff" stroke="#1b2432" stroke-width="2"/>
+        <circle cx="423" cy="135" r="6" fill="#1b2432"/>
+        <path d="M411 152 q12 -10 24 0" fill="#1b2432"/>
+        <text x="423" y="200" text-anchor="middle" font-size="16" font-family="Lora, serif" font-weight="700" fill="#1b2432">"Kabir"</text>
+
+        <!-- locker 3 -->
+        <rect x="506" y="70" width="138" height="176" rx="8" fill="url(#c1locker)" stroke="#1b2432" stroke-width="3"/>
+        <rect x="506" y="70" width="138" height="34" rx="8" fill="#c9a227" stroke="#1b2432" stroke-width="3"/>
+        <text x="575" y="94" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700" fill="#1b2432">index 3</text>
+        <circle cx="575" cy="140" r="18" fill="#fff" stroke="#1b2432" stroke-width="2"/>
+        <circle cx="575" cy="135" r="6" fill="#1b2432"/>
+        <path d="M563 152 q12 -10 24 0" fill="#1b2432"/>
+        <text x="575" y="200" text-anchor="middle" font-size="16" font-family="Lora, serif" font-weight="700" fill="#1b2432">"Meera"</text>
+        <text x="575" y="226" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#8a7d5f">last = length - 1</text>
+      </g>
+
+      <text x="350" y="278" text-anchor="middle" class="t-gold" font-size="10.5">COUNTING STARTS AT ZERO · FIRST ELEMENT SITS AT INDEX 0</text>
+    </svg>
+    <figcaption><b>Figure 1.1</b> — An array is a numbered corridor of lockers. The first locker is numbered <code>0</code>.</figcaption>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 01 · Understanding Arrays</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>1.3 &nbsp;Creating Arrays</h3>
+
+  <h4>Array literal — the most common method</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">literal.js</span></div>
+    <pre><code>const fruits = ["Apple", "Banana", "Mango"];</code></pre>
+  </figure>
+
+  <h4>Empty array</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">empty.js</span></div>
+    <pre><code>const tasks = [];</code></pre>
+  </figure>
+
+  <p>You can add items later:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">add-later.js</span></div>
+    <pre><code>tasks.push("Study JavaScript");
+tasks.push("Practice coding");
+
+console.log(tasks);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 'Study JavaScript', 'Practice coding' ]</pre>
+  </figure>
+
+  <h4>Arrays can hold different types</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">mixed.js</span></div>
+    <pre><code>const data = ["Riya", 21, true, null];
+
+console.log(data);</code></pre>
+  </figure>
+
+  <p>An array can contain values of different types, although arrays with a consistent structure are often easier to work with.</p>
+
+  <h4>Creating an array with <code>Array.of()</code></h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">array-of.js</span></div>
+    <pre><code>const values = Array.of(5);
+
+console.log(values);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 5 ]</pre>
+  </figure>
+
+  <div class="callout warn">
+    <span class="callout-title">Careful</span>
+    <p><code>Array(5)</code> creates an array with <strong>length 5 containing empty slots</strong>, not an array containing the number <code>5</code>.</p>
+  </div>
+
+  <h3>1.4 &nbsp;Accessing Array Elements</h3>
+  <p>Use an <strong>index</strong> to access an element.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">access.js</span></div>
+    <pre><code>const fruits = ["Apple", "Banana", "Mango"];
+
+console.log(fruits[0]);
+console.log(fruits[1]);
+console.log(fruits[2]);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Apple
+Banana
+Mango</pre>
+  </figure>
+
+  <p>Accessing an index outside the available elements usually returns <code>undefined</code>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">out-of-range.js</span></div>
+    <pre><code>console.log(fruits[10]);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>undefined</pre>
+  </figure>
+
+  <h3>1.5 &nbsp;Updating Array Elements</h3>
+  <p>Arrays declared with <code>const</code> can still have their <strong>elements changed</strong>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">update.js</span></div>
+    <pre><code>const fruits = ["Apple", "Banana", "Mango"];
+
+fruits[1] = "Orange";
+
+console.log(fruits);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 'Apple', 'Orange', 'Mango' ]</pre>
+  </figure>
+
+  <div class="callout note">
+    <span class="callout-title">The rule</span>
+    <p>The <code>const</code> binding cannot be reassigned to another array, but the <strong>existing array can be mutated</strong>.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 01 · Understanding Arrays</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>1.6 &nbsp;Finding the Array Length</h3>
+  <p>The <code>length</code> property gives the array's length.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">length.js</span></div>
+    <pre><code>const students = ["Aarav", "Riya", "Kabir"];
+
+console.log(students.length);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>3</pre>
+  </figure>
+
+  <p>For a normal dense array, the last element is at <code>length - 1</code>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">last-element.js</span></div>
+    <pre><code>console.log(students[students.length - 1]);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Kabir</pre>
+  </figure>
+
+  <h3>1.7 &nbsp;Iterating Over an Array</h3>
+  <p><strong>Iteration</strong> means visiting array elements one at a time.</p>
+
+  <h4>Using a <code>for</code> loop</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">for-loop.js</span></div>
+    <pre><code>const students = ["Aarav", "Riya", "Kabir"];
+
+for (let i = 0; i &lt; students.length; i++) {
+  console.log(students[i]);
+}</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Aarav
+Riya
+Kabir</pre>
+  </figure>
+
+  <h4>Using <code>for...of</code></h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">for-of.js</span></div>
+    <pre><code>for (const student of students) {
+  console.log(student);
+}</code></pre>
+  </figure>
+
+  <p>This directly gives you each element's <strong>value</strong>.</p>
+
+  <div class="callout tip">
+    <span class="callout-title">Which loop to choose</span>
+    <p>Use a traditional <code>for</code> loop when you need the <strong>index</strong> or need precise control over iteration. Use <code>for...of</code> when you simply want to visit each value.</p>
+  </div>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 260" role="img" aria-label="for loop gives index and value; for-of gives the value directly">
+      <rect x="0" y="0" width="700" height="260" rx="16" fill="#f7f2e7"/>
+
+      <!-- for -->
+      <rect x="34" y="34" width="300" height="196" rx="14" fill="#fffdf8" stroke="#9c7c14" stroke-width="2.5"/>
+      <text x="184" y="62" text-anchor="middle" class="t-label" font-size="10" fill="#9c7c14">TRADITIONAL FOR</text>
+
+      <rect x="56" y="82" width="256" height="52" rx="8" fill="#16243d" stroke="#9c7c14" stroke-width="1.5"/>
+      <text x="70" y="104" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#c792ea">for (</text>
+      <text x="106" y="104" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#c7d3e8">let i = 0;</text>
+      <text x="70" y="124" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#c7d3e8">  i &lt; arr.length; i++ )</text>
+
+      <text x="184" y="164" text-anchor="middle" font-size="12" font-family="Lora, serif" font-style="italic" fill="#3b4657">you have the index i</text>
+      <text x="184" y="184" text-anchor="middle" font-size="12" font-family="Lora, serif" font-style="italic" fill="#3b4657">→ arr[i] gives the value</text>
+
+      <rect x="78" y="200" width="212" height="22" rx="11" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.5"/>
+      <text x="184" y="216" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">index + value · full control</text>
+
+      <!-- for-of -->
+      <rect x="366" y="34" width="300" height="196" rx="14" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="516" y="62" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">FOR…OF</text>
+
+      <rect x="388" y="82" width="256" height="52" rx="8" fill="#16243d" stroke="#0f766e" stroke-width="1.5"/>
+      <text x="402" y="104" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#c792ea">for (</text>
+      <text x="438" y="104" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#a5e075">const student</text>
+      <text x="402" y="124" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#c792ea">  of</text>
+      <text x="436" y="124" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#c7d3e8"> arr )</text>
+
+      <text x="516" y="164" text-anchor="middle" font-size="12" font-family="Lora, serif" font-style="italic" fill="#3b4657">you get the value directly</text>
+      <text x="516" y="184" text-anchor="middle" font-size="12" font-family="Lora, serif" font-style="italic" fill="#3b4657">no index bookkeeping</text>
+
+      <rect x="410" y="200" width="212" height="22" rx="11" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.5"/>
+      <text x="516" y="216" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#0f766e">value only · clean syntax</text>
+    </svg>
+    <figcaption><b>Figure 1.2</b> — Two loops, two purposes. Index needed? Use <code>for</code>. Value wanted? Use <code>for...of</code>.</figcaption>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 01 · Understanding Arrays</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>1.8 &nbsp;Adding and Removing Elements</h3>
+  <p>Arrays provide methods for changing their contents.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Method</th><th>Action</th><th>Mutates original array?</th></tr></thead>
+      <tbody>
+        <tr><td><code>push()</code></td><td>Adds to the end</td><td>Yes</td></tr>
+        <tr><td><code>pop()</code></td><td>Removes from the end</td><td>Yes</td></tr>
+        <tr><td><code>unshift()</code></td><td>Adds to the beginning</td><td>Yes</td></tr>
+        <tr><td><code>shift()</code></td><td>Removes from the beginning</td><td>Yes</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">push-pop.js</span></div>
+    <pre><code>const tasks = ["Study", "Practice"];
+
+tasks.push("Revise");
+console.log(tasks);
+
+tasks.pop();
+console.log(tasks);
+
+tasks.unshift("Wake up");
+console.log(tasks);
+
+tasks.shift();
+console.log(tasks);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 'Study', 'Practice', 'Revise' ]
+[ 'Study', 'Practice' ]
+[ 'Wake up', 'Study', 'Practice' ]
+[ 'Study', 'Practice' ]</pre>
+  </figure>
+
+  <h4>Real-Life Analogy: A Queue at a Ticket Counter</h4>
+  <p>A <strong>queue</strong> is a line of people waiting for tickets. New people join the end, and people at the front leave first.</p>
+  <p>JavaScript's <code>push()</code> and <code>shift()</code> can implement this kind of queue behavior:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">queue.js</span></div>
+    <pre><code>const queue = ["Aarav", "Riya"];
+
+queue.push("Kabir");
+console.log(queue.shift());
+
+console.log(queue);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Aarav
+[ 'Riya', 'Kabir' ]</pre>
+  </figure>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 280" role="img" aria-label="A queue at a ticket counter modelled with push and shift">
+      <rect x="0" y="0" width="700" height="280" rx="16" fill="#f7f2e7"/>
+
+      <!-- queue of people -->
+      <text x="350" y="34" text-anchor="middle" class="t-label" font-size="10">QUEUE — FIRST IN, FIRST OUT</text>
+
+      <!-- counter -->
+      <rect x="540" y="80" width="130" height="150" rx="12" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="605" y="110" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#e6d49a">TICKET</text>
+      <text x="605" y="128" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#e6d49a">COUNTER</text>
+      <rect x="556" y="146" width="98" height="68" rx="6" fill="#0d1422" stroke="#2c3c5c" stroke-width="1.5"/>
+      <text x="605" y="178" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#a5e075">shift()</text>
+      <text x="605" y="198" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#93a1b8">removes front</text>
+
+      <!-- people circles -->
+      <g>
+        <circle cx="80" cy="156" r="24" fill="#e9f6f4" stroke="#0f766e" stroke-width="2.5"/>
+        <text x="80" y="162" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#0f766e">A</text>
+        <text x="80" y="196" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#0f766e">front</text>
+
+        <circle cx="160" cy="156" r="24" fill="#e9f6f4" stroke="#0f766e" stroke-width="2.5"/>
+        <text x="160" y="162" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#0f766e">R</text>
+
+        <circle cx="240" cy="156" r="24" fill="#e9f6f4" stroke="#0f766e" stroke-width="2.5"/>
+        <text x="240" y="162" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#0f766e">K</text>
+
+        <circle cx="320" cy="156" r="24" fill="#fdf6e0" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="5 4"/>
+        <text x="320" y="162" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#9c7c14">+M</text>
+        <text x="320" y="196" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">push()</text>
+      </g>
+
+      <!-- arrow -->
+      <line x1="352" y1="156" x2="530" y2="156" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="7 6"/>
+      <polygon points="530,148 548,156 530,164" fill="#c9a227"/>
+
+      <text x="350" y="256" text-anchor="middle" class="t-gold" font-size="10.5">NEW PEOPLE JOIN THE END · FRONT LEAVES FIRST</text>
+    </svg>
+    <figcaption><b>Figure 1.3</b> — A queue is the most natural use of <code>push()</code> and <code>shift()</code>.</figcaption>
+  </figure>
+
+  <div class="callout note">
+    <span class="callout-title">Performance note</span>
+    <p>For high-volume queue operations, a dedicated queue implementation can be more efficient than repeatedly removing the first array element.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 01 · Understanding Arrays</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 2 — ESSENTIAL ARRAY METHODS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch2">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 02</div>
+    <h2 class="chap-title">Essential Array Methods</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p>Array methods help you <strong>transform</strong>, <strong>search</strong>, <strong>inspect</strong> and <strong>organize</strong> data without writing every operation manually.</p>
+  <p>A useful distinction:</p>
+  <ul>
+    <li>Some methods <strong>mutate</strong> the original array.</li>
+    <li>Some return a <strong>new array</strong>.</li>
+    <li>Some return a <strong>single value</strong> or a matching element.</li>
+  </ul>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 300" role="img" aria-label="Array methods grouped by behaviour: transform, search, test">
+      <rect x="0" y="0" width="700" height="300" rx="16" fill="#f7f2e7"/>
+
+      <!-- transform group -->
+      <rect x="26" y="30" width="206" height="240" rx="14" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="129" y="58" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">TRANSFORM</text>
+
+      <g font-family="JetBrains Mono, monospace" font-size="11.5">
+        <rect x="46" y="78" width="166" height="34" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.5"/>
+        <text x="129" y="100" text-anchor="middle" fill="#0f766e">map()</text>
+
+        <rect x="46" y="120" width="166" height="34" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.5"/>
+        <text x="129" y="142" text-anchor="middle" fill="#0f766e">filter()</text>
+
+        <rect x="46" y="162" width="166" height="34" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.5"/>
+        <text x="129" y="184" text-anchor="middle" fill="#0f766e">flatMap()</text>
+
+        <rect x="46" y="204" width="166" height="34" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.5"/>
+        <text x="129" y="226" text-anchor="middle" fill="#0f766e">flat()</text>
+      </g>
+      <text x="129" y="258" text-anchor="middle" font-size="10" fill="#0f766e">returns a NEW array</text>
+
+      <!-- search group -->
+      <rect x="246" y="30" width="206" height="240" rx="14" fill="#fffdf8" stroke="#9c7c14" stroke-width="2.5"/>
+      <text x="349" y="58" text-anchor="middle" class="t-label" font-size="10" fill="#9c7c14">SEARCH</text>
+
+      <g font-family="JetBrains Mono, monospace" font-size="11.5">
+        <rect x="266" y="78" width="166" height="34" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.5"/>
+        <text x="349" y="100" text-anchor="middle" fill="#9c7c14">find()</text>
+
+        <rect x="266" y="120" width="166" height="34" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.5"/>
+        <text x="349" y="142" text-anchor="middle" fill="#9c7c14">findIndex()</text>
+
+        <rect x="266" y="162" width="166" height="34" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.5"/>
+        <text x="349" y="184" text-anchor="middle" fill="#9c7c14">includes()</text>
+      </g>
+      <text x="349" y="226" text-anchor="middle" font-size="10" fill="#9c7c14">returns one item or index</text>
+      <text x="349" y="258" text-anchor="middle" font-size="10" fill="#9c7c14">(or -1 / undefined)</text>
+
+      <!-- test group -->
+      <rect x="466" y="30" width="206" height="240" rx="14" fill="#fffdf8" stroke="#223354" stroke-width="2.5"/>
+      <text x="569" y="58" text-anchor="middle" class="t-label" font-size="10" fill="#223354">TEST &amp; REDUCE</text>
+
+      <g font-family="JetBrains Mono, monospace" font-size="11.5">
+        <rect x="486" y="78" width="166" height="34" rx="8" fill="#eef2f9" stroke="#223354" stroke-width="1.5"/>
+        <text x="569" y="100" text-anchor="middle" fill="#223354">some()</text>
+
+        <rect x="486" y="120" width="166" height="34" rx="8" fill="#eef2f9" stroke="#223354" stroke-width="1.5"/>
+        <text x="569" y="142" text-anchor="middle" fill="#223354">every()</text>
+
+        <rect x="486" y="162" width="166" height="34" rx="8" fill="#eef2f9" stroke="#223354" stroke-width="1.5"/>
+        <text x="569" y="184" text-anchor="middle" fill="#223354">reduce()</text>
+      </g>
+      <text x="569" y="226" text-anchor="middle" font-size="10" fill="#223354">returns one boolean</text>
+      <text x="569" y="258" text-anchor="middle" font-size="10" fill="#223354">or one accumulated value</text>
+    </svg>
+    <figcaption><b>Figure 2.0</b> — The array method family, grouped by what each returns.</figcaption>
+  </figure>
+
+  <h3>2.1 &nbsp;<code>forEach()</code> — Perform an Action for Each Item</h3>
+  <p>Imagine a teacher calling every student's name during attendance.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">forEach.js</span></div>
+    <pre><code>const students = ["Aarav", "Riya", "Kabir"];
+
+students.forEach(function (student) {
+  console.log(`Present: ${student}`);
+});</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Present: Aarav
+Present: Riya
+Present: Kabir</pre>
+  </figure>
+
+  <h5>With an arrow function</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">arrow-forEach.js</span></div>
+    <pre><code>students.forEach(student =&gt; console.log(student));</code></pre>
+  </figure>
+
+  <div class="callout note">
+    <span class="callout-title">What it returns</span>
+    <p><code>forEach()</code> is useful for actions such as logging or updating external state. It returns <code>undefined</code>, so it is <strong>not</strong> the method to choose when you want a transformed array.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 02 · Essential Array Methods</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>2.2 &nbsp;<code>map()</code> — Transform Every Item</h3>
+  <p>Imagine a teacher converting every student's score from marks out of 50 to marks out of 100. Every input value is transformed into a corresponding output value.</p>
+  <p><code>map()</code> creates a <strong>new array</strong> from the values returned by its callback.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">map.js</span></div>
+    <pre><code>const marks = [20, 30, 40];
+
+const convertedMarks = marks.map(mark =&gt; mark * 2);
+
+console.log(convertedMarks);
+console.log(marks);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 40, 60, 80 ]
+[ 20, 30, 40 ]</pre>
+  </figure>
+
+  <p>The original array remains <strong>unchanged</strong> because this callback creates new numeric values rather than mutating the original array.</p>
+
+  <h4>Dry Run</h4>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Original value</th><th>Callback calculation</th><th>New value</th></tr></thead>
+      <tbody>
+        <tr><td>20</td><td><code>20 * 2</code></td><td>40</td></tr>
+        <tr><td>30</td><td><code>30 * 2</code></td><td>60</td></tr>
+        <tr><td>40</td><td><code>40 * 2</code></td><td>80</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 300" role="img" aria-label="map transforms each element one-to-one into a new array">
+      <rect x="0" y="0" width="700" height="300" rx="16" fill="#f7f2e7"/>
+
+      <!-- INPUT array -->
+      <text x="130" y="34" text-anchor="middle" class="t-label" font-size="10">ORIGINAL</text>
+      <g font-family="JetBrains Mono, monospace" font-size="14">
+        <rect x="40" y="60" width="60" height="60" rx="8" fill="#fffdf8" stroke="#9c7c14" stroke-width="2"/>
+        <text x="70" y="98" text-anchor="middle" font-weight="700" fill="#1b2432">20</text>
+        <text x="70" y="138" text-anchor="middle" font-size="9.5" fill="#8a7d5f">index 0</text>
+
+        <rect x="110" y="60" width="60" height="60" rx="8" fill="#fffdf8" stroke="#9c7c14" stroke-width="2"/>
+        <text x="140" y="98" text-anchor="middle" font-weight="700" fill="#1b2432">30</text>
+        <text x="140" y="138" text-anchor="middle" font-size="9.5" fill="#8a7d5f">index 1</text>
+
+        <rect x="180" y="60" width="60" height="60" rx="8" fill="#fffdf8" stroke="#9c7c14" stroke-width="2"/>
+        <text x="210" y="98" text-anchor="middle" font-weight="700" fill="#1b2432">40</text>
+        <text x="210" y="138" text-anchor="middle" font-size="9.5" fill="#8a7d5f">index 2</text>
+      </g>
+
+      <!-- mapping arrows -->
+      <g stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5" fill="none">
+        <path d="M70 128 Q 70 180 350 180"/>
+        <path d="M140 128 Q 140 180 350 180"/>
+        <path d="M210 128 Q 210 180 350 180"/>
+      </g>
+
+      <!-- callback box -->
+      <rect x="290" y="146" width="120" height="68" rx="10" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="350" y="174" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" fill="#e6d49a">mark =&gt; mark*2</text>
+      <text x="350" y="196" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#93a1b8">callback</text>
+
+      <path d="M410 180 Q 500 180 540 128" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/>
+      <path d="M410 180 Q 500 180 540 128" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5" fill="none" opacity="0"/>
+
+      <!-- OUTPUT array -->
+      <text x="570" y="34" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">NEW</text>
+      <g font-family="JetBrains Mono, monospace" font-size="14">
+        <rect x="470" y="60" width="60" height="60" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="500" y="98" text-anchor="middle" font-weight="700" fill="#0f766e">40</text>
+
+        <rect x="540" y="60" width="60" height="60" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="570" y="98" text-anchor="middle" font-weight="700" fill="#0f766e">60</text>
+
+        <rect x="610" y="60" width="60" height="60" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="640" y="98" text-anchor="middle" font-weight="700" fill="#0f766e">80</text>
+      </g>
+
+      <!-- arrow from callback to output -->
+      <path d="M410 180 Q 470 180 500 128" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/>
+      <path d="M410 180 Q 520 180 570 128" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/>
+      <path d="M410 180 Q 570 180 640 128" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/>
+
+      <text x="350" y="262" text-anchor="middle" class="t-gold" font-size="10.5">ONE INPUT ELEMENT → EXACTLY ONE OUTPUT ELEMENT</text>
+    </svg>
+    <figcaption><b>Figure 2.1</b> — <code>map()</code> keeps the same length and position — only the values change.</figcaption>
+  </figure>
+
+  <div class="keyidea">
+    <span class="k-label">Remember</span>
+    <p>Use <code>map()</code> when you want <strong>one output element for every input element</strong>.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 02 · Essential Array Methods</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>2.3 &nbsp;<code>filter()</code> — Keep Items That Satisfy a Condition</h3>
+  <p>Imagine a teacher selecting only students who scored at least 50 marks.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">filter.js</span></div>
+    <pre><code>const marks = [35, 80, 45, 90, 60];
+
+const passed = marks.filter(mark =&gt; mark &gt;= 50);
+
+console.log(passed);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 80, 90, 60 ]</pre>
+  </figure>
+
+  <p><code>filter()</code> returns a <strong>new array</strong> containing the elements for which the callback returns a <strong>truthy</strong> value.</p>
+
+  <h4>Dry Run</h4>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Mark</th><th><code>mark &gt;= 50</code></th><th>Keep it?</th></tr></thead>
+      <tbody>
+        <tr><td>35</td><td>false</td><td>No</td></tr>
+        <tr><td>80</td><td>true</td><td>Yes</td></tr>
+        <tr><td>45</td><td>false</td><td>No</td></tr>
+        <tr><td>90</td><td>true</td><td>Yes</td></tr>
+        <tr><td>60</td><td>true</td><td>Yes</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 260" role="img" aria-label="filter keeps only elements that pass a test">
+      <rect x="0" y="0" width="700" height="260" rx="16" fill="#f7f2e7"/>
+
+      <!-- INPUT row -->
+      <text x="180" y="34" text-anchor="middle" class="t-label" font-size="10">ORIGINAL</text>
+      <g font-family="JetBrains Mono, monospace" font-size="14">
+        <rect x="36" y="60" width="52" height="52" rx="8" fill="#fdeef0" stroke="#b03a52" stroke-width="2"/>
+        <text x="62" y="92" text-anchor="middle" font-weight="700" fill="#b03a52">35</text>
+        <rect x="96" y="60" width="52" height="52" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="122" y="92" text-anchor="middle" font-weight="700" fill="#0f766e">80</text>
+        <rect x="156" y="60" width="52" height="52" rx="8" fill="#fdeef0" stroke="#b03a52" stroke-width="2"/>
+        <text x="182" y="92" text-anchor="middle" font-weight="700" fill="#b03a52">45</text>
+        <rect x="216" y="60" width="52" height="52" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="242" y="92" text-anchor="middle" font-weight="700" fill="#0f766e">90</text>
+        <rect x="276" y="60" width="52" height="52" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="302" y="92" text-anchor="middle" font-weight="700" fill="#0f766e">60</text>
+      </g>
+
+      <!-- filter funnel -->
+      <polygon points="360,60 480,60 440,140 400,140" fill="#fdf6e0" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="420" y="98" text-anchor="middle" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">mark &gt;= 50 ?</text>
+      <text x="420" y="118" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#8a7d5f">filter condition</text>
+
+      <polygon points="400,140 440,140 420,190" fill="none" stroke="#c9a227" stroke-width="2.5"/>
+
+      <!-- arrow -->
+      <line x1="440" y1="190" x2="510" y2="190" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5"/>
+      <polygon points="510,182 528,190 510,198" fill="#c9a227"/>
+
+      <!-- output -->
+      <text x="590" y="34" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">NEW</text>
+      <g font-family="JetBrains Mono, monospace" font-size="14">
+        <rect x="530" y="60" width="52" height="52" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="556" y="92" text-anchor="middle" font-weight="700" fill="#0f766e">80</text>
+        <rect x="590" y="60" width="52" height="52" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="616" y="92" text-anchor="middle" font-weight="700" fill="#0f766e">90</text>
+        <rect x="650" y="60" width="52" height="52" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="676" y="92" text-anchor="middle" font-weight="700" fill="#0f766e">60</text>
+      </g>
+
+      <!-- dropped items -->
+      <text x="420" y="228" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#b03a52">35 · 45 dropped</text>
+
+      <text x="350" y="248" text-anchor="middle" class="t-gold" font-size="10.5">KEEP WHAT PASSES · DISCARD THE REST</text>
+    </svg>
+    <figcaption><b>Figure 2.2</b> — <code>filter()</code> is a sieve. Whatever fails the test disappears.</figcaption>
+  </figure>
+
+  <p>Use <code>filter()</code> for search results, eligible students, available products and similar tasks.</p>
+
+  <div class="page-foot"><span>Chapter 02 · Essential Array Methods</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>2.4 &nbsp;<code>reduce()</code> — Combine Values Into One Result</h3>
+  <p>Imagine collecting money from students for a class event. Instead of keeping each contribution separate, you calculate one total.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">reduce.js</span></div>
+    <pre><code>const contributions = [100, 200, 150, 50];
+
+const total = contributions.reduce(
+  (sum, amount) =&gt; sum + amount,
+  0
+);
+
+console.log(total);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>500</pre>
+  </figure>
+
+  <p>The callback receives an <strong>accumulator</strong> and the current element. The initial value <code>0</code> gives the accumulation a starting point.</p>
+
+  <h4>Dry Run</h4>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Current amount</th><th>Previous total</th><th>New total</th></tr></thead>
+      <tbody>
+        <tr><td>100</td><td>0</td><td>100</td></tr>
+        <tr><td>200</td><td>100</td><td>300</td></tr>
+        <tr><td>150</td><td>300</td><td>450</td></tr>
+        <tr><td>50</td><td>450</td><td>500</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 300" role="img" aria-label="reduce walks through an array accumulating a single result">
+      <rect x="0" y="0" width="700" height="300" rx="16" fill="#f7f2e7"/>
+
+      <!-- inputs along the top -->
+      <g font-family="JetBrains Mono, monospace" font-size="13">
+        <rect x="36" y="40" width="70" height="46" rx="8" fill="#fffdf8" stroke="#9c7c14" stroke-width="1.8"/>
+        <text x="71" y="70" text-anchor="middle" font-weight="700" fill="#1b2432">100</text>
+
+        <rect x="120" y="40" width="70" height="46" rx="8" fill="#fffdf8" stroke="#9c7c14" stroke-width="1.8"/>
+        <text x="155" y="70" text-anchor="middle" font-weight="700" fill="#1b2432">200</text>
+
+        <rect x="204" y="40" width="70" height="46" rx="8" fill="#fffdf8" stroke="#9c7c14" stroke-width="1.8"/>
+        <text x="239" y="70" text-anchor="middle" font-weight="700" fill="#1b2432">150</text>
+
+        <rect x="288" y="40" width="70" height="46" rx="8" fill="#fffdf8" stroke="#9c7c14" stroke-width="1.8"/>
+        <text x="323" y="70" text-anchor="middle" font-weight="700" fill="#1b2432">50</text>
+      </g>
+
+      <!-- accumulator column -->
+      <text x="430" y="34" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">ACCUMULATOR</text>
+      <g font-family="JetBrains Mono, monospace" font-size="14">
+        <rect x="396" y="44" width="76" height="42" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.8"/>
+        <text x="434" y="72" text-anchor="middle" font-weight="700" fill="#0f766e">100</text>
+      </g>
+
+      <!-- sequence arrows and intermediate rows -->
+      <g font-family="JetBrains Mono, monospace" font-size="12">
+        <rect x="36" y="110" width="70" height="42" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.5"/>
+        <text x="71" y="137" text-anchor="middle" fill="#9c7c14">0 + 100</text>
+
+        <rect x="120" y="110" width="70" height="42" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.5"/>
+        <text x="155" y="137" text-anchor="middle" fill="#9c7c14">100 + 200</text>
+
+        <rect x="204" y="110" width="70" height="42" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.5"/>
+        <text x="239" y="137" text-anchor="middle" fill="#9c7c14">300 + 150</text>
+
+        <rect x="288" y="110" width="70" height="42" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.5"/>
+        <text x="323" y="137" text-anchor="middle" fill="#9c7c14">450 + 50</text>
+      </g>
+
+      <!-- running totals -->
+      <g font-family="JetBrains Mono, monospace" font-size="14">
+        <rect x="396" y="110" width="76" height="42" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.8"/>
+        <text x="434" y="138" text-anchor="middle" font-weight="700" fill="#0f766e">300</text>
+      </g>
+
+      <!-- final result -->
+      <rect x="396" y="180" width="256" height="80" rx="12" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="524" y="210" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#e6d49a">FINAL RESULT</text>
+      <text x="524" y="242" text-anchor="middle" font-size="26" font-family="JetBrains Mono, monospace" font-weight="700" fill="#a5e075">500</text>
+
+      <line x1="348" y1="130" x2="384" y2="130" stroke="#c9a227" stroke-width="2"/>
+      <polygon points="384,122 402,130 384,138" fill="#c9a227"/>
+
+      <line x1="430" y1="154" x2="430" y2="176" stroke="#c9a227" stroke-width="2"/>
+      <polygon points="422,176 430,194 438,176" fill="#c9a227"/>
+
+      <text x="350" y="286" text-anchor="middle" class="t-gold" font-size="10.5">EVERY ELEMENT FOLDS INTO ONE VALUE</text>
+    </svg>
+    <figcaption><b>Figure 2.3</b> — <code>reduce()</code> folds an entire array into a single accumulated result.</figcaption>
+  </figure>
+
+  <div class="callout note">
+    <span class="callout-title">When to use <code>reduce()</code></span>
+    <p>Use it for totals, grouped results, frequency maps and many other aggregation tasks. It is powerful, but ordinary loops can sometimes be clearer.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 02 · Essential Array Methods</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>2.5 &nbsp;<code>find()</code> — Find the First Matching Element</h3>
+  <p>Imagine looking through a student register for the first student whose name matches a search.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">find.js</span></div>
+    <pre><code>const students = [
+  { id: 1, name: "Aarav" },
+  { id: 2, name: "Riya" },
+  { id: 3, name: "Kabir" }
+];
+
+const student = students.find(item =&gt; item.name === "Riya");
+
+console.log(student);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>{ id: 2, name: 'Riya' }</pre>
+  </figure>
+
+  <p>If nothing matches, <code>find()</code> returns <code>undefined</code>.</p>
+
+  <div class="callout tip">
+    <span class="callout-title">Find vs filter</span>
+    <p>Unlike <code>filter()</code>, which returns <em>all</em> matching items in an array, <code>find()</code> returns only the <strong>first</strong> matching item.</p>
+  </div>
+
+  <h3>2.6 &nbsp;<code>findIndex()</code> — Find the Index of the First Match</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">findIndex.js</span></div>
+    <pre><code>const fruits = ["Apple", "Banana", "Mango"];
+
+console.log(fruits.findIndex(fruit =&gt; fruit === "Mango"));
+console.log(fruits.findIndex(fruit =&gt; fruit === "Orange"));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>2
+-1</pre>
+  </figure>
+
+  <p>The method returns the <strong>index of the first match</strong>, or <code>-1</code> if no match exists.</p>
+
+  <h3>2.7 &nbsp;<code>some()</code> — Does at Least One Item Match?</h3>
+  <p>Imagine checking whether at least one student failed an examination.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">some.js</span></div>
+    <pre><code>const marks = [80, 75, 32, 90];
+
+const hasFailed = marks.some(mark =&gt; mark &lt; 35);
+
+console.log(hasFailed);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>true</pre>
+  </figure>
+
+  <p><code>some()</code> returns <code>true</code> as soon as <strong>one element</strong> satisfies the condition.</p>
+
+  <h3>2.8 &nbsp;<code>every()</code> — Do All Items Match?</h3>
+  <p>Imagine checking whether every student submitted an assignment.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">every.js</span></div>
+    <pre><code>const submissions = [true, true, true, false];
+
+console.log(submissions.every(status =&gt; status === true));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>false</pre>
+  </figure>
+
+  <p><code>every()</code> returns <code>true</code> only when <strong>every element</strong> satisfies the condition. It also returns <code>true</code> for an empty array — a behavior known as <strong>vacuous truth</strong>.</p>
+
+  <div class="page-foot"><span>Chapter 02 · Essential Array Methods</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>2.9 &nbsp;<code>includes()</code> — Check Whether a Value Exists</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">includes.js</span></div>
+    <pre><code>const courses = ["JavaScript", "React", "Node.js"];
+
+console.log(courses.includes("React"));
+console.log(courses.includes("Python"));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>true
+false</pre>
+  </figure>
+
+  <p>For primitive values, <code>includes()</code> is a convenient membership check. For objects, it checks whether the <strong>exact object reference</strong> occurs in the array, not whether an object with matching properties exists.</p>
+
+  <h3>2.10 &nbsp;<code>sort()</code> — Arrange Array Elements</h3>
+  <p>Imagine organizing students alphabetically or sorting marks from lowest to highest.</p>
+  <p>By default, <code>sort()</code> converts elements to strings and sorts them by their string representations.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">sort-strings.js</span></div>
+    <pre><code>const names = ["Riya", "Aarav", "Kabir"];
+
+names.sort();
+
+console.log(names);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 'Aarav', 'Kabir', 'Riya' ]</pre>
+  </figure>
+
+  <h4>Numeric sorting</h4>
+  <p>This can surprise beginners:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">sort-default.js</span></div>
+    <pre><code>const numbers = [100, 25, 3, 40];
+
+console.log(numbers.sort());</code></pre>
+  </figure>
+
+  <p>Default string-based sorting can produce:</p>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 100, 25, 3, 40 ]</pre>
+  </figure>
+
+  <h4>For ascending numeric order</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">sort-numeric.js</span></div>
+    <pre><code>const numbers = [100, 25, 3, 40];
+
+numbers.sort((a, b) =&gt; a - b);
+
+console.log(numbers);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 3, 25, 40, 100 ]</pre>
+  </figure>
+
+  <h4>For descending order</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">sort-descending.js</span></div>
+    <pre><code>numbers.sort((a, b) =&gt; b - a);</code></pre>
+  </figure>
+
+  <div class="callout warn">
+    <span class="callout-title">Important</span>
+    <p><code>sort()</code> <strong>mutates</strong> the original array. If you need to preserve the original, make a shallow copy first:</p>
+  </div>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">safe-sort.js</span></div>
+    <pre><code>const original = [100, 25, 3, 40];
+const sorted = [...original].sort((a, b) =&gt; a - b);
+
+console.log(sorted);
+console.log(original);</code></pre>
+  </figure>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 280" role="img" aria-label="Default string sort versus numeric sort comparison">
+      <rect x="0" y="0" width="700" height="280" rx="16" fill="#f7f2e7"/>
+
+      <!-- default sort -->
+      <rect x="26" y="34" width="316" height="216" rx="14" fill="#fffdf8" stroke="#b03a52" stroke-width="2.5"/>
+      <text x="184" y="62" text-anchor="middle" class="t-label" font-size="10" fill="#b03a52">DEFAULT sort( )</text>
+
+      <text x="184" y="92" text-anchor="middle" font-size="11.5" font-family="Lora, serif" font-style="italic" fill="#3b4657">compares as strings</text>
+
+      <g font-family="JetBrains Mono, monospace" font-size="13">
+        <rect x="56" y="112" width="72" height="40" rx="6" fill="#fdeef0" stroke="#b03a52" stroke-width="1.5"/>
+        <text x="92" y="138" text-anchor="middle" fill="#b03a52">100</text>
+
+        <rect x="140" y="112" width="72" height="40" rx="6" fill="#fdeef0" stroke="#b03a52" stroke-width="1.5"/>
+        <text x="176" y="138" text-anchor="middle" fill="#b03a52">25</text>
+
+        <rect x="224" y="112" width="72" height="40" rx="6" fill="#fdeef0" stroke="#b03a52" stroke-width="1.5"/>
+        <text x="260" y="138" text-anchor="middle" fill="#b03a52">3</text>
+      </g>
+
+      <text x="184" y="190" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#b03a52">"100" &lt; "25" &lt; "3"?</text>
+      <text x="184" y="212" text-anchor="middle" font-size="10.5" font-family="Lora, serif" font-style="italic" fill="#3b4657">"1" comes before "2", so 100 first</text>
+
+      <text x="184" y="240" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" fill="#b03a52">→ [100, 25, 3, 40]</text>
+
+      <!-- numeric sort -->
+      <rect x="358" y="34" width="316" height="216" rx="14" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="516" y="62" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">sort((a,b) =&gt; a - b)</text>
+
+      <text x="516" y="92" text-anchor="middle" font-size="11.5" font-family="Lora, serif" font-style="italic" fill="#3b4657">compares as numbers</text>
+
+      <g font-family="JetBrains Mono, monospace" font-size="13">
+        <rect x="388" y="112" width="72" height="40" rx="6" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.5"/>
+        <text x="424" y="138" text-anchor="middle" fill="#0f766e">3</text>
+
+        <rect x="472" y="112" width="72" height="40" rx="6" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.5"/>
+        <text x="508" y="138" text-anchor="middle" fill="#0f766e">25</text>
+
+        <rect x="556" y="112" width="72" height="40" rx="6" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.5"/>
+        <text x="592" y="138" text-anchor="middle" fill="#0f766e">40</text>
+      </g>
+
+      <text x="516" y="190" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#0f766e">3 &lt; 25 &lt; 40 &lt; 100</text>
+      <text x="516" y="212" text-anchor="middle" font-size="10.5" font-family="Lora, serif" font-style="italic" fill="#3b4657">comparator returns the difference</text>
+
+      <text x="516" y="240" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" fill="#0f766e">→ [3, 25, 40, 100]</text>
+    </svg>
+    <figcaption><b>Figure 2.4</b> — Always pass a comparator when sorting numbers. The default is string-based.</figcaption>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 02 · Essential Array Methods</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>2.11 &nbsp;<code>slice()</code> — Extract a Portion Without Changing the Original</h3>
+  <p>Imagine photocopying a few pages from a notebook while leaving the notebook unchanged.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">slice.js</span></div>
+    <pre><code>const fruits = ["Apple", "Banana", "Mango", "Orange"];
+
+const selected = fruits.slice(1, 3);
+
+console.log(selected);
+console.log(fruits);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 'Banana', 'Mango' ]
+[ 'Apple', 'Banana', 'Mango', 'Orange' ]</pre>
+  </figure>
+
+  <p>The <strong>start index is included</strong>, but the <strong>end index is excluded</strong>.</p>
+
+  <h3>2.12 &nbsp;<code>splice()</code> — Add, Remove or Replace Elements</h3>
+  <p>Imagine editing a list directly rather than making a copy.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">splice.js</span></div>
+    <pre><code>const fruits = ["Apple", "Banana", "Mango", "Orange"];
+
+const removed = fruits.splice(1, 2, "Grapes");
+
+console.log(removed);
+console.log(fruits);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 'Banana', 'Mango' ]
+[ 'Apple', 'Grapes', 'Orange' ]</pre>
+  </figure>
+
+  <p>Here, <code>splice(1, 2, "Grapes")</code> starts at index <code>1</code>, removes <strong>two elements</strong> and inserts <code>"Grapes"</code>.</p>
+
+  <div class="callout warn">
+    <span class="callout-title">Key distinction</span>
+    <p><code>slice()</code> returns a portion <strong>without mutating</strong> the original array; <code>splice()</code> <strong>mutates</strong> the original array.</p>
+  </div>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 260" role="img" aria-label="slice copies a portion; splice cuts into the original">
+      <rect x="0" y="0" width="700" height="260" rx="16" fill="#f7f2e7"/>
+
+      <!-- slice -->
+      <rect x="26" y="34" width="316" height="200" rx="14" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="184" y="60" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">slice(1, 3) — COPY</text>
+
+      <g font-family="JetBrains Mono, monospace" font-size="12">
+        <rect x="46" y="86" width="60" height="42" rx="6" fill="#fffdf8" stroke="#ddd1b6" stroke-width="1.5"/>
+        <text x="76" y="112" text-anchor="middle" fill="#3b4657">Apple</text>
+
+        <rect x="112" y="86" width="60" height="42" rx="6" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="142" y="112" text-anchor="middle" fill="#0f766e">Banana</text>
+
+        <rect x="178" y="86" width="60" height="42" rx="6" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="208" y="112" text-anchor="middle" fill="#0f766e">Mango</text>
+
+        <rect x="244" y="86" width="60" height="42" rx="6" fill="#fffdf8" stroke="#ddd1b6" stroke-width="1.5"/>
+        <text x="274" y="112" text-anchor="middle" fill="#3b4657">Orange</text>
+      </g>
+
+      <text x="184" y="160" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#0f766e">original untouched</text>
+
+      <rect x="112" y="176" width="126" height="34" rx="6" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.8"/>
+      <text x="175" y="198" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#0f766e">[Banana, Mango]</text>
+
+      <!-- splice -->
+      <rect x="358" y="34" width="316" height="200" rx="14" fill="#fffdf8" stroke="#b03a52" stroke-width="2.5"/>
+      <text x="516" y="60" text-anchor="middle" class="t-label" font-size="10" fill="#b03a52">splice(1, 2, "Grapes") — EDIT</text>
+
+      <g font-family="JetBrains Mono, monospace" font-size="12">
+        <rect x="378" y="86" width="60" height="42" rx="6" fill="#fffdf8" stroke="#ddd1b6" stroke-width="1.5"/>
+        <text x="408" y="112" text-anchor="middle" fill="#3b4657">Apple</text>
+
+        <rect x="444" y="86" width="60" height="42" rx="6" fill="#fdeef0" stroke="#b03a52" stroke-width="2"/>
+        <text x="474" y="112" text-anchor="middle" fill="#b03a52">Banana</text>
+
+        <rect x="510" y="86" width="60" height="42" rx="6" fill="#fdeef0" stroke="#b03a52" stroke-width="2"/>
+        <text x="540" y="112" text-anchor="middle" fill="#b03a52">Mango</text>
+
+        <rect x="576" y="86" width="60" height="42" rx="6" fill="#e9f6f4" stroke="#0f766e" stroke-width="2"/>
+        <text x="606" y="112" text-anchor="middle" fill="#0f766e">Grapes</text>
+      </g>
+
+      <text x="516" y="160" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#b03a52">removed: [Banana, Mango]</text>
+
+      <rect x="420" y="176" width="190" height="34" rx="6" fill="#fdeef0" stroke="#b03a52" stroke-width="1.8"/>
+      <text x="515" y="198" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#b03a52">now: [Apple, Grapes, Orange]</text>
+    </svg>
+    <figcaption><b>Figure 2.5</b> — <code>slice()</code> is a photocopier. <code>splice()</code> is scissors and glue.</figcaption>
+  </figure>
+
+  <h3>2.13 &nbsp;<code>concat()</code> — Combine Arrays</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">concat.js</span></div>
+    <pre><code>const frontend = ["HTML", "CSS"];
+const backend = ["Node.js", "Express"];
+
+const fullStack = frontend.concat(backend);
+
+console.log(fullStack);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 'HTML', 'CSS', 'Node.js', 'Express' ]</pre>
+  </figure>
+
+  <p><code>concat()</code> returns a <strong>new array</strong> and does <strong>not</strong> mutate the source arrays.</p>
+
+  <div class="page-foot"><span>Chapter 02 · Essential Array Methods</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>2.14 &nbsp;<code>flat()</code> — Flatten Nested Arrays</h3>
+  <p>Imagine a folder containing other folders. Flattening collects nested items into a simpler list.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">flat.js</span></div>
+    <pre><code>const numbers = [1, 2, [3, 4], [5, 6]];
+
+console.log(numbers.flat());</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 1, 2, 3, 4, 5, 6 ]</pre>
+  </figure>
+
+  <p>By default, <code>flat()</code> flattens <strong>one level</strong>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">flat-depth.js</span></div>
+    <pre><code>const nested = [1, [2, [3, [4]]]];
+
+console.log(nested.flat(2));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 1, 2, 3, [ 4 ] ]</pre>
+  </figure>
+
+  <p>You can use <code>flat(Infinity)</code> to flatten all nesting levels, although you should consider whether losing the original structure is appropriate.</p>
+
+  <h3>2.15 &nbsp;<code>flatMap()</code> — Map and Flatten One Level</h3>
+  <p><code>flatMap()</code> maps each element <strong>and</strong> flattens the resulting array by one level.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">flatMap.js</span></div>
+    <pre><code>const sentences = ["Learn JavaScript", "Build projects"];
+
+const words = sentences.flatMap(sentence =&gt; sentence.split(" "));
+
+console.log(words);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 'Learn', 'JavaScript', 'Build', 'projects' ]</pre>
+  </figure>
+
+  <p>This is useful when each input produces <strong>zero, one or multiple</strong> output items.</p>
+
+  <h3>2.16 &nbsp;Array Method Comparison</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Method</th><th>What it returns</th><th>Mutates original?</th></tr></thead>
+      <tbody>
+        <tr><td><code>forEach()</code></td><td><code>undefined</code></td><td>Depends on callback side effects</td></tr>
+        <tr><td><code>map()</code></td><td>New array</td><td>No, by itself</td></tr>
+        <tr><td><code>filter()</code></td><td>New array</td><td>No</td></tr>
+        <tr><td><code>reduce()</code></td><td>Accumulated result</td><td>Depends on callback</td></tr>
+        <tr><td><code>find()</code></td><td>First matching element or <code>undefined</code></td><td>No</td></tr>
+        <tr><td><code>findIndex()</code></td><td>Index or <code>-1</code></td><td>No</td></tr>
+        <tr><td><code>some()</code></td><td>Boolean</td><td>No</td></tr>
+        <tr><td><code>every()</code></td><td>Boolean</td><td>No</td></tr>
+        <tr><td><code>includes()</code></td><td>Boolean</td><td>No</td></tr>
+        <tr><td><code>sort()</code></td><td>Same array, sorted</td><td>Yes</td></tr>
+        <tr><td><code>slice()</code></td><td>Shallow copy of a portion</td><td>No</td></tr>
+        <tr><td><code>splice()</code></td><td>Array of removed elements</td><td>Yes</td></tr>
+        <tr><td><code>concat()</code></td><td>New array</td><td>No</td></tr>
+        <tr><td><code>flat()</code></td><td>New flattened array</td><td>No</td></tr>
+        <tr><td><code>flatMap()</code></td><td>New mapped and flattened array</td><td>No</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-title">A subtle trap</span>
+    <p>The method itself may not mutate an array, but a <strong>callback</strong> can still mutate referenced objects or other external state. Always consider what the callback actually does.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 02 · Essential Array Methods</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 3 — WORKING WITH OBJECTS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch3">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 03</div>
+    <h2 class="chap-title">Working with Objects</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>3.1 &nbsp;What Is an Object?</h3>
+  <p>An <strong>object</strong> is a collection of properties, typically represented as <strong>key-value pairs</strong>.</p>
+  <p>Imagine a student's admission form. Instead of storing the name, age, course and email in unrelated variables, group them into one object.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">object.js</span></div>
+    <pre><code>const student = {
+  name: "Aarav",
+  age: 21,
+  course: "JavaScript",
+  email: "aarav@example.com"
+};
+
+console.log(student.name);
+console.log(student.course);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Aarav
+JavaScript</pre>
+  </figure>
+
+  <p>The <strong>property names</strong> identify the information, and the corresponding <strong>values</strong> store the data.</p>
+
+  <h3>3.2 &nbsp;Real-Life Analogy: An Identity Card</h3>
+  <p>An identity card contains multiple labeled fields:</p>
+  <ul>
+    <li>Name</li>
+    <li>Date of birth</li>
+    <li>ID number</li>
+    <li>Department</li>
+  </ul>
+  <p>Each field describes the same person.</p>
+  <p>An object works similarly: related information belongs to one entity and can be accessed through property names.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 320" role="img" aria-label="An identity card as an object with labelled properties">
+      <rect x="0" y="0" width="700" height="320" rx="16" fill="#f7f2e7"/>
+
+      <!-- card -->
+      <rect x="150" y="34" width="400" height="252" rx="18" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+
+      <!-- header band -->
+      <rect x="150" y="34" width="400" height="56" rx="18" fill="#c9a227"/>
+      <rect x="150" y="62" width="400" height="28" fill="#c9a227"/>
+      <text x="350" y="68" text-anchor="middle" font-size="14" font-family="JetBrains Mono, monospace" font-weight="700" fill="#1b2432">STUDENT IDENTITY CARD</text>
+
+      <!-- photo placeholder -->
+      <rect x="178" y="114" width="86" height="106" rx="10" fill="#22314e" stroke="#93a1b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <circle cx="221" cy="156" r="14" fill="none" stroke="#93a1b8" stroke-width="1.5"/>
+      <path d="M196 208 q25 -22 50 0" fill="none" stroke="#93a1b8" stroke-width="1.5"/>
+      <text x="221" y="244" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono, monospace" fill="#93a1b8">photo</text>
+
+      <!-- fields -->
+      <g font-family="JetBrains Mono, monospace">
+        <text x="290" y="128" font-size="11" fill="#93a1b8">name</text>
+        <text x="290" y="148" font-size="14" fill="#a5e075" font-weight="700">"Aarav"</text>
+
+        <text x="290" y="178" font-size="11" fill="#93a1b8">age</text>
+        <text x="290" y="198" font-size="14" fill="#f7a56b" font-weight="700">21</text>
+
+        <text x="290" y="228" font-size="11" fill="#93a1b8">course</text>
+        <text x="290" y="248" font-size="14" fill="#a5e075" font-weight="700">"JavaScript"</text>
+
+        <text x="440" y="128" font-size="11" fill="#93a1b8">email</text>
+        <text x="440" y="148" font-size="11" fill="#82aaff">"aarav@"</text>
+        <text x="440" y="164" font-size="11" fill="#82aaff">"example.com"</text>
+      </g>
+
+      <text x="350" y="308" text-anchor="middle" class="t-gold" font-size="10.5">LABELLED FIELDS · ONE ENTITY</text>
+    </svg>
+    <figcaption><b>Figure 3.1</b> — An object is an identity card for data. Named fields hold related values.</figcaption>
+  </figure>
+
+  <h3>3.3 &nbsp;Creating an Object</h3>
+  <p>The most common way to create an ordinary object is with an <strong>object literal</strong>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">literal-object.js</span></div>
+    <pre><code>const product = {
+  name: "Laptop",
+  price: 50000,
+  inStock: true
+};</code></pre>
+  </figure>
+
+  <p>Properties are separated by commas. Property names are often identifiers, but they can also be strings or <strong>computed property names</strong>.</p>
+
+  <div class="page-foot"><span>Chapter 03 · Working with Objects</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>3.4 &nbsp;Accessing Properties</h3>
+
+  <h4>Dot notation</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">dot.js</span></div>
+    <pre><code>console.log(product.name);
+console.log(product.price);</code></pre>
+  </figure>
+
+  <p>Use dot notation when the property name is known and is a valid identifier.</p>
+
+  <h4>Bracket notation</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">bracket.js</span></div>
+    <pre><code>console.log(product["name"]);</code></pre>
+  </figure>
+
+  <p>Bracket notation is useful when the property name is <strong>dynamic</strong> or contains characters that cannot be used in dot notation.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">dynamic.js</span></div>
+    <pre><code>const key = "price";
+
+console.log(product[key]);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>50000</pre>
+  </figure>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 260" role="img" aria-label="Dot notation uses a literal name; bracket notation takes an expression">
+      <rect x="0" y="0" width="700" height="260" rx="16" fill="#f7f2e7"/>
+
+      <!-- dot -->
+      <rect x="34" y="34" width="316" height="196" rx="14" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="192" y="62" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">DOT NOTATION</text>
+
+      <rect x="56" y="86" width="272" height="52" rx="8" fill="#16243d" stroke="#0f766e" stroke-width="1.5"/>
+      <text x="76" y="118" font-size="14" font-family="JetBrains Mono, monospace">
+        <tspan fill="#82aaff">product</tspan>
+        <tspan fill="#89ddff">.</tspan>
+        <tspan fill="#a5e075">name</tspan>
+      </text>
+
+      <text x="192" y="170" text-anchor="middle" font-size="11.5" font-family="Lora, serif" font-style="italic" fill="#3b4657">name is written directly</text>
+      <text x="192" y="192" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#0f766e">readable · concise</text>
+      <text x="192" y="216" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#8a7d5f">name must be a valid identifier</text>
+
+      <!-- bracket -->
+      <rect x="366" y="34" width="300" height="196" rx="14" fill="#fffdf8" stroke="#9c7c14" stroke-width="2.5"/>
+      <text x="516" y="62" text-anchor="middle" class="t-label" font-size="10" fill="#9c7c14">BRACKET NOTATION</text>
+
+      <rect x="388" y="86" width="256" height="52" rx="8" fill="#16243d" stroke="#9c7c14" stroke-width="1.5"/>
+      <text x="408" y="118" font-size="14" font-family="JetBrains Mono, monospace">
+        <tspan fill="#82aaff">product</tspan>
+        <tspan fill="#89ddff">[</tspan>
+        <tspan fill="#a5e075">key</tspan>
+        <tspan fill="#89ddff">]</tspan>
+      </text>
+
+      <text x="516" y="170" text-anchor="middle" font-size="11.5" font-family="Lora, serif" font-style="italic" fill="#3b4657">key is an expression</text>
+      <text x="516" y="192" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">dynamic · evaluated</text>
+      <text x="516" y="216" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#8a7d5f">works for any key string</text>
+    </svg>
+    <figcaption><b>Figure 3.2</b> — Dot for known names. Brackets for computed keys.</figcaption>
+  </figure>
+
+  <h3>3.5 &nbsp;Adding, Updating and Deleting Properties</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">crud.js</span></div>
+    <pre><code>const student = {
+  name: "Riya",
+  age: 20
+};
+
+// Add
+student.course = "React";
+
+// Update
+student.age = 21;
+
+// Delete
+delete student.course;
+
+console.log(student);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>{ name: 'Riya', age: 21 }</pre>
+  </figure>
+
+  <p>The object is <strong>mutable</strong> even though its binding is declared with <code>const</code>.</p>
+
+  <h3>3.6 &nbsp;Methods Inside Objects</h3>
+  <p>A <strong>method</strong> is a function stored as an object property.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">method.js</span></div>
+    <pre><code>const student = {
+  name: "Aarav",
+
+  introduce() {
+    console.log(`My name is ${this.name}`);
+  }
+};
+
+student.introduce();</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>My name is Aarav</pre>
+  </figure>
+
+  <p>In this method call, <code>this</code> refers to <code>student</code>.</p>
+
+  <div class="callout note">
+    <span class="callout-title">The rule about <code>this</code></span>
+    <p>The value of <code>this</code> depends on <strong>how a function is called</strong>. Arrow functions do not acquire their own <code>this</code>, so regular method syntax is often the clearest choice for object methods that need to access the calling object.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 03 · Working with Objects</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>3.7 &nbsp;Nested Objects</h3>
+  <p>Objects can contain other objects.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">nested.js</span></div>
+    <pre><code>const student = {
+  name: "Riya",
+  address: {
+    city: "Jaipur",
+    state: "Rajasthan"
+  }
+};
+
+console.log(student.address.city);
+console.log(student.address.state);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Jaipur
+Rajasthan</pre>
+  </figure>
+
+  <p>Nested objects are useful for modeling related structures such as addresses, profiles, settings and billing information.</p>
+
+  <h3>3.8 &nbsp;Computed Property Names</h3>
+  <p>You can create property names dynamically using square brackets in an object literal.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">computed.js</span></div>
+    <pre><code>const key = "course";
+
+const student = {
+  name: "Aarav",
+  [key]: "JavaScript"
+};
+
+console.log(student);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>{ name: 'Aarav', course: 'JavaScript' }</pre>
+  </figure>
+
+  <p>This is useful when building objects from form inputs, API data or configuration.</p>
+
+  <h3>3.9 &nbsp;Property Shorthand</h3>
+  <p>If a variable name matches the property you want to create, you can use shorthand syntax.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">shorthand.js</span></div>
+    <pre><code>const name = "Riya";
+const age = 22;
+
+const student = {
+  name,
+  age
+};
+
+console.log(student);</code></pre>
+  </figure>
+
+  <p>This is equivalent to:</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">long-form.js</span></div>
+    <pre><code>const student = {
+  name: name,
+  age: age
+};</code></pre>
+  </figure>
+
+  <p>Shorthand keeps object creation <strong>concise</strong>.</p>
+
+  <div class="keyidea">
+    <span class="k-label">One Pattern to Remember</span>
+    <p>If the variable name already says the property name, don't say it twice.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 03 · Working with Objects</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 4 — OBJECT DESTRUCTURING
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch4">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 04</div>
+    <h2 class="chap-title">Object Destructuring</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p><strong>Destructuring</strong> extracts values from arrays or properties from objects into variables.</p>
+
+  <h3>4.1 &nbsp;Object Destructuring</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">destructure.js</span></div>
+    <pre><code>const student = {
+  name: "Aarav",
+  age: 21,
+  course: "JavaScript"
+};
+
+const { name, age } = student;
+
+console.log(name);
+console.log(age);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Aarav
+21</pre>
+  </figure>
+
+  <p>Instead of writing <code>student.name</code> and <code>student.age</code> repeatedly, you can extract the properties you need.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 280" role="img" aria-label="Destructuring extracts named properties into standalone variables">
+      <rect x="0" y="0" width="700" height="280" rx="16" fill="#f7f2e7"/>
+
+      <!-- source object -->
+      <rect x="30" y="46" width="240" height="188" rx="12" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="150" y="76" text-anchor="middle" class="t-label" font-size="10" fill="#e6d49a">OBJECT</text>
+
+      <g font-family="JetBrains Mono, monospace" font-size="12">
+        <text x="52" y="112" fill="#c792ea">name</text>
+        <text x="120" y="112" fill="#c7d3e8">:</text>
+        <text x="140" y="112" fill="#a5e075">"Aarav"</text>
+
+        <text x="52" y="146" fill="#c792ea">age</text>
+        <text x="120" y="146" fill="#c7d3e8">:</text>
+        <text x="140" y="146" fill="#f7a56b">21</text>
+
+        <text x="52" y="180" fill="#c792ea">course</text>
+        <text x="120" y="180" fill="#c7d3e8">:</text>
+        <text x="140" y="180" fill="#a5e075">"JavaScript"</text>
+      </g>
+
+      <text x="150" y="216" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#93a1b8">student</text>
+
+      <!-- arrow -->
+      <line x1="288" y1="146" x2="384" y2="146" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="7 6"/>
+      <polygon points="384,138 404,146 384,154" fill="#c9a227"/>
+
+      <text x="344" y="130" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#9c7c14">DESTRUCTURE</text>
+
+      <!-- extracted variables -->
+      <g font-family="JetBrains Mono, monospace" font-size="12">
+        <rect x="416" y="60" width="240" height="52" rx="10" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.8"/>
+        <text x="436" y="82" fill="#0f766e" font-size="11">const {</text>
+        <text x="496" y="82" fill="#0f766e" font-weight="700" font-size="11">name</text>
+        <text x="536" y="82" fill="#0f766e" font-size="11">,</text>
+        <text x="546" y="82" fill="#0f766e" font-weight="700" font-size="11">age</text>
+        <text x="576" y="82" fill="#0f766e" font-size="11">} = student</text>
+        <text x="436" y="102" fill="#8a7d5f" font-size="10">from the object</text>
+
+        <rect x="416" y="126" width="240" height="42" rx="10" fill="#fffdf8" stroke="#0f766e" stroke-width="1.8"/>
+        <text x="436" y="152" fill="#0f766e">name</text>
+        <text x="492" y="152" fill="#3b4657">→</text>
+        <text x="512" y="152" fill="#1b2432" font-weight="700">"Aarav"</text>
+
+        <rect x="416" y="180" width="240" height="42" rx="10" fill="#fffdf8" stroke="#0f766e" stroke-width="1.8"/>
+        <text x="436" y="206" fill="#0f766e">age</text>
+        <text x="472" y="206" fill="#3b4657">→</text>
+        <text x="492" y="206" fill="#1b2432" font-weight="700">21</text>
+      </g>
+
+      <text x="350" y="266" text-anchor="middle" class="t-gold" font-size="10.5">FROM BUNDLE TO STANDALONE VARIABLES</text>
+    </svg>
+    <figcaption><b>Figure 4.1</b> — Destructuring unpacks the named fields into local variables.</figcaption>
+  </figure>
+
+  <h3>4.2 &nbsp;Renaming Properties</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">rename.js</span></div>
+    <pre><code>const student = {
+  name: "Riya",
+  age: 20
+};
+
+const { name: studentName } = student;
+
+console.log(studentName);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Riya</pre>
+  </figure>
+
+  <p>The property remains named <code>name</code>; the local variable is named <code>studentName</code>.</p>
+
+  <h3>4.3 &nbsp;Default Values</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">defaults.js</span></div>
+    <pre><code>const student = {
+  name: "Aarav"
+};
+
+const { name, course = "Not assigned" } = student;
+
+console.log(name);
+console.log(course);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Aarav
+Not assigned</pre>
+  </figure>
+
+  <p>A destructuring default applies when the property value is <code>undefined</code>, <strong>not</strong> when it is <code>null</code>.</p>
+
+  <div class="page-foot"><span>Chapter 04 · Object Destructuring</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>4.4 &nbsp;Nested Destructuring</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">nested-destructure.js</span></div>
+    <pre><code>const student = {
+  name: "Riya",
+  address: {
+    city: "Jaipur",
+    state: "Rajasthan"
+  }
+};
+
+const {
+  address: { city }
+} = student;
+
+console.log(city);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Jaipur</pre>
+  </figure>
+
+  <p>This is useful when working with nested API responses, but avoid excessively deep destructuring if it makes the code hard to read.</p>
+
+  <h3>4.5 &nbsp;Destructuring in Function Parameters</h3>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">fn-params.js</span></div>
+    <pre><code>function displayStudent({ name, course }) {
+  console.log(`${name} studies ${course}`);
+}
+
+displayStudent({
+  name: "Aarav",
+  course: "React"
+});</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Aarav studies React</pre>
+  </figure>
+
+  <p>This pattern is common in React components, where functions often receive objects containing named properties.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 260" role="img" aria-label="Destructuring in a function parameter unpacks object properties automatically">
+      <rect x="0" y="0" width="700" height="260" rx="16" fill="#f7f2e7"/>
+
+      <!-- call site -->
+      <rect x="34" y="50" width="260" height="170" rx="14" fill="#fffdf8" stroke="#9c7c14" stroke-width="2.5"/>
+      <text x="164" y="78" text-anchor="middle" class="t-label" font-size="10" fill="#9c7c14">CALL SITE</text>
+
+      <rect x="56" y="98" width="216" height="94" rx="8" fill="#16243d" stroke="#9c7c14" stroke-width="1.5"/>
+      <text x="72" y="122" font-size="12" font-family="JetBrains Mono, monospace" fill="#82aaff">displayStudent({</text>
+      <text x="88" y="146" font-size="12" font-family="JetBrains Mono, monospace" fill="#a5e075">  name: "Aarav",</text>
+      <text x="88" y="168" font-size="12" font-family="JetBrains Mono, monospace" fill="#a5e075">  course: "React"</text>
+      <text x="72" y="188" font-size="12" font-family="JetBrains Mono, monospace" fill="#82aaff">})</text>
+
+      <text x="164" y="216" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">an object is passed</text>
+
+      <!-- arrow -->
+      <line x1="304" y1="135" x2="388" y2="135" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="7 6"/>
+      <polygon points="388,127 406,135 388,143" fill="#c9a227"/>
+
+      <!-- function -->
+      <rect x="418" y="50" width="248" height="170" rx="14" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="542" y="78" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">FUNCTION DEFINITION</text>
+
+      <rect x="436" y="98" width="212" height="64" rx="8" fill="#16243d" stroke="#0f766e" stroke-width="1.5"/>
+      <text x="452" y="122" font-size="12" font-family="JetBrains Mono, monospace" fill="#c792ea">function</text>
+      <text x="516" y="122" font-size="12" font-family="JetBrains Mono, monospace" fill="#82aaff">displayStudent</text>
+      <text x="452" y="146" font-size="12" font-family="JetBrains Mono, monospace" fill="#c7d3e8">{ name, course }</text>
+
+      <text x="542" y="186" text-anchor="middle" font-size="11.5" font-family="Lora, serif" font-style="italic" fill="#3b4657">parameters unpack the object</text>
+      <text x="542" y="206" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#0f766e">name → "Aarav", course → "React"</text>
+    </svg>
+    <figcaption><b>Figure 4.2</b> — Destructure right in the parameter list — the function receives exactly the fields it needs.</figcaption>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 04 · Object Destructuring</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 5 — SPREAD AND REST
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch5">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 05</div>
+    <h2 class="chap-title">Spread Syntax and Rest Syntax</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <p>Both use <code>...</code>, but their roles differ according to <strong>context</strong>.</p>
+
+  <h3>5.1 &nbsp;Spread Syntax</h3>
+  <p><strong>Spread</strong> expands an iterable's elements or an object's enumerable own properties into a new array or object.</p>
+
+  <h4>Copying an array</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">copy-array.js</span></div>
+    <pre><code>const original = [10, 20, 30];
+
+const copy = [...original];
+
+copy.push(40);
+
+console.log(original);
+console.log(copy);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 10, 20, 30 ]
+[ 10, 20, 30, 40 ]</pre>
+  </figure>
+
+  <p>The new array has a <strong>separate outer structure</strong>.</p>
+
+  <h4>Combining arrays</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">combine.js</span></div>
+    <pre><code>const frontend = ["HTML", "CSS"];
+const backend = ["Node.js", "Express"];
+
+const fullStack = [...frontend, ...backend];
+
+console.log(fullStack);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 'HTML', 'CSS', 'Node.js', 'Express' ]</pre>
+  </figure>
+
+  <h4>Copying and updating objects</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">copy-object.js</span></div>
+    <pre><code>const student = {
+  name: "Aarav",
+  age: 20
+};
+
+const updatedStudent = {
+  ...student,
+  age: 21
+};
+
+console.log(updatedStudent);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>{ name: 'Aarav', age: 21 }</pre>
+  </figure>
+
+  <p>Later properties <strong>override</strong> earlier properties with the same key.</p>
+
+  <h3>5.2 &nbsp;Shallow Copying</h3>
+  <p>Spread makes a <strong>shallow copy</strong>, not a deep copy.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">shallow.js</span></div>
+    <pre><code>const original = {
+  name: "Riya",
+  address: {
+    city: "Jaipur"
+  }
+};
+
+const copy = { ...original };
+
+copy.name = "Aarav";
+copy.address.city = "Rajkot";
+
+console.log(original.name);
+console.log(original.address.city);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Riya
+Rajkot</pre>
+  </figure>
+
+  <p>The top-level <code>name</code> property is independent, but the nested <code>address</code> object is <strong>shared</strong>.</p>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 320" role="img" aria-label="Shallow copy creates a new outer object but nested objects are still shared">
+      <rect x="0" y="0" width="700" height="320" rx="16" fill="#f7f2e7"/>
+
+      <!-- original -->
+      <rect x="34" y="46" width="240" height="216" rx="14" fill="#fffdf8" stroke="#9c7c14" stroke-width="2.5"/>
+      <text x="154" y="74" text-anchor="middle" class="t-label" font-size="10" fill="#9c7c14">ORIGINAL</text>
+
+      <rect x="56" y="92" width="196" height="44" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.8"/>
+      <text x="70" y="120" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">name: "Riya"</text>
+
+      <rect x="56" y="150" width="196" height="96" rx="8" fill="#fdeef0" stroke="#b03a52" stroke-width="2"/>
+      <text x="70" y="172" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#b03a52">address: {</text>
+      <text x="86" y="194" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#b03a52">city: "Rajkot"</text>
+      <text x="70" y="218" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#b03a52">}</text>
+      <text x="154" y="240" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#b03a52">SHARED with copy</text>
+
+      <!-- copy -->
+      <rect x="426" y="46" width="240" height="216" rx="14" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="546" y="74" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">SHALLOW COPY</text>
+
+      <rect x="448" y="92" width="196" height="44" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.8"/>
+      <text x="462" y="120" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#0f766e">name: "Aarav"</text>
+
+      <rect x="448" y="150" width="196" height="96" rx="8" fill="#fdeef0" stroke="#b03a52" stroke-width="2" stroke-dasharray="6 5"/>
+      <text x="462" y="172" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#b03a52">address: {</text>
+      <text x="478" y="194" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#b03a52">city: "Rajkot"</text>
+      <text x="462" y="218" font-size="11.5" font-family="JetBrains Mono, monospace" fill="#b03a52">}</text>
+      <text x="546" y="240" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#b03a52">SAME object as original</text>
+
+      <!-- connector -->
+      <line x1="276" y1="200" x2="424" y2="200" stroke="#b03a52" stroke-width="2.5" stroke-dasharray="7 6"/>
+      <text x="350" y="188" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#b03a52">SAME REFERENCE</text>
+
+      <!-- note -->
+      <rect x="34" y="278" width="632" height="28" rx="14" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.5"/>
+      <text x="350" y="297" text-anchor="middle" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#9c7c14">TOP-LEVEL PROPERTIES ARE INDEPENDENT · NESTED OBJECTS REMAIN SHARED</text>
+    </svg>
+    <figcaption><b>Figure 5.1</b> — Shallow copy: new outer shell, same inner contents.</figcaption>
+  </figure>
+
+  <div class="keyidea">
+    <span class="k-label">Remember</span>
+    <p>A shallow copy creates a new outer array or object while preserving references to nested objects.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 05 · Spread and Rest</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>5.3 &nbsp;Rest Syntax</h3>
+  <p><strong>Rest</strong> collects remaining values into a single variable.</p>
+
+  <h4>Rest in array destructuring</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">rest-array.js</span></div>
+    <pre><code>const numbers = [10, 20, 30, 40, 50];
+
+const [first, second, ...remaining] = numbers;
+
+console.log(first);
+console.log(second);
+console.log(remaining);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>10
+20
+[ 30, 40, 50 ]</pre>
+  </figure>
+
+  <h4>Rest in object destructuring</h4>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">rest-object.js</span></div>
+    <pre><code>const student = {
+  name: "Aarav",
+  age: 21,
+  course: "JavaScript",
+  city: "Jaipur"
+};
+
+const { name, ...otherDetails } = student;
+
+console.log(name);
+console.log(otherDetails);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Aarav
+{ age: 21, course: 'JavaScript', city: 'Jaipur' }</pre>
+  </figure>
+
+  <h4>Spread versus rest</h4>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Spread</th><th>Rest</th></tr></thead>
+      <tbody>
+        <tr><td>Expands values</td><td>Collects remaining values</td></tr>
+        <tr><td>Used in array and object literals</td><td>Used in function parameters and destructuring</td></tr>
+        <tr><td>Example: <code>[...numbers]</code></td><td>Example: <code>function sum(...numbers)</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 260" role="img" aria-label="Spread expands an array outward; rest collects values inward">
+      <rect x="0" y="0" width="700" height="260" rx="16" fill="#f7f2e7"/>
+
+      <!-- spread -->
+      <rect x="34" y="40" width="310" height="186" rx="14" fill="#fffdf8" stroke="#0f766e" stroke-width="2.5"/>
+      <text x="189" y="68" text-anchor="middle" class="t-label" font-size="10" fill="#0f766e">SPREAD — EXPANDS</text>
+
+      <rect x="86" y="90" width="56" height="46" rx="6" fill="#16243d" stroke="#0f766e" stroke-width="1.5"/>
+      <text x="114" y="119" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" fill="#a5e075">10</text>
+
+      <rect x="150" y="90" width="56" height="46" rx="6" fill="#16243d" stroke="#0f766e" stroke-width="1.5"/>
+      <text x="178" y="119" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" fill="#a5e075">20</text>
+
+      <rect x="214" y="90" width="56" height="46" rx="6" fill="#16243d" stroke="#0f766e" stroke-width="1.5"/>
+      <text x="242" y="119" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" fill="#a5e075">30</text>
+
+      <!-- arrows outward -->
+      <g stroke="#c9a227" stroke-width="2.5" fill="none">
+        <path d="M114 144 L114 172"/>
+        <path d="M178 144 L178 172"/>
+        <path d="M242 144 L242 172"/>
+      </g>
+      <polygon points="106,172 114,188 122,172" fill="#c9a227"/>
+      <polygon points="170,172 178,188 186,172" fill="#c9a227"/>
+      <polygon points="234,172 242,188 250,172" fill="#c9a227"/>
+
+      <text x="189" y="212" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#0f766e">[...arr]  →  elements out</text>
+
+      <!-- rest -->
+      <rect x="356" y="40" width="310" height="186" rx="14" fill="#fffdf8" stroke="#9c7c14" stroke-width="2.5"/>
+      <text x="511" y="68" text-anchor="middle" class="t-label" font-size="10" fill="#9c7c14">REST — COLLECTS</text>
+
+      <!-- arrows inward -->
+      <g stroke="#c9a227" stroke-width="2.5" fill="none">
+        <path d="M436 90 L436 118"/>
+        <path d="M511 90 L511 118"/>
+        <path d="M586 90 L586 118"/>
+      </g>
+      <polygon points="428,118 436,134 444,118" fill="#c9a227"/>
+      <polygon points="503,118 511,134 519,118" fill="#c9a227"/>
+      <polygon points="578,118 586,134 594,118" fill="#c9a227"/>
+
+      <!-- collected box -->
+      <rect x="420" y="140" width="182" height="60" rx="10" fill="#16243d" stroke="#9c7c14" stroke-width="1.8"/>
+      <text x="436" y="164" font-size="13" font-family="JetBrains Mono, monospace" fill="#82aaff">...remaining</text>
+      <text x="436" y="186" font-size="12" font-family="JetBrains Mono, monospace" fill="#a5e075">[10, 20, 30]</text>
+
+      <text x="511" y="218" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" fill="#9c7c14">…args  →  values in</text>
+    </svg>
+    <figcaption><b>Figure 5.2</b> — Same three dots, two directions. Spread pushes out. Rest pulls in.</figcaption>
+  </figure>
+
+  <div class="callout note">
+    <span class="callout-title">One operator, two jobs</span>
+    <p>Context determines whether <code>...</code> <strong>expands</strong> or <strong>collects</strong> values.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 05 · Spread and Rest</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 6 — OBJECT UTILITY METHODS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch6">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 06</div>
+    <h2 class="chap-title">Essential Object Utility Methods</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>6.1 &nbsp;<code>Object.keys()</code></h3>
+  <p>Returns an array of an object's <strong>enumerable own string-keyed property names</strong>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">keys.js</span></div>
+    <pre><code>const student = {
+  name: "Aarav",
+  age: 21,
+  course: "JavaScript"
+};
+
+console.log(Object.keys(student));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 'name', 'age', 'course' ]</pre>
+  </figure>
+
+  <h3>6.2 &nbsp;<code>Object.values()</code></h3>
+  <p>Returns an array of the corresponding property <strong>values</strong>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">values.js</span></div>
+    <pre><code>console.log(Object.values(student));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[ 'Aarav', 21, 'JavaScript' ]</pre>
+  </figure>
+
+  <h3>6.3 &nbsp;<code>Object.entries()</code></h3>
+  <p>Returns an array of <strong>key-value pairs</strong>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">entries.js</span></div>
+    <pre><code>console.log(Object.entries(student));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>[
+  [ 'name', 'Aarav' ],
+  [ 'age', 21 ],
+  [ 'course', 'JavaScript' ]
+]</pre>
+  </figure>
+
+  <p>This is useful when you need to iterate over an object's properties.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">iterate-entries.js</span></div>
+    <pre><code>for (const [key, value] of Object.entries(student)) {
+  console.log(`${key}: ${value}`);
+}</code></pre>
+  </figure>
+
+  <figure class="fig fig-illo illo">
+    <svg viewBox="0 0 700 260" role="img" aria-label="Object.keys, Object.values, Object.entries return different views of the same object">
+      <rect x="0" y="0" width="700" height="260" rx="16" fill="#f7f2e7"/>
+
+      <!-- source object -->
+      <rect x="34" y="56" width="212" height="160" rx="12" fill="#16243d" stroke="#c9a227" stroke-width="2.5"/>
+      <text x="140" y="84" text-anchor="middle" class="t-label" font-size="10" fill="#e6d49a">SOURCE</text>
+
+      <g font-family="JetBrains Mono, monospace" font-size="12">
+        <text x="56" y="118" fill="#c792ea">name</text>
+        <text x="106" y="118" fill="#c7d3e8">:</text>
+        <text x="120" y="118" fill="#a5e075">"Aarav"</text>
+
+        <text x="56" y="146" fill="#c792ea">age</text>
+        <text x="106" y="146" fill="#c7d3e8">:</text>
+        <text x="120" y="146" fill="#f7a56b">21</text>
+
+        <text x="56" y="174" fill="#c792ea">course</text>
+        <text x="106" y="174" fill="#c7d3e8">:</text>
+        <text x="120" y="174" fill="#a5e075">"JS"</text>
+      </g>
+
+      <text x="140" y="200" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#93a1b8">student</text>
+
+      <!-- fan-out arrows -->
+      <g stroke="#c9a227" stroke-width="2" stroke-dasharray="5 5" fill="none">
+        <path d="M246 90 Q 310 60 366 60"/>
+        <path d="M246 136 Q 310 136 366 136"/>
+        <path d="M246 184 Q 310 210 366 210"/>
+      </g>
+
+      <!-- three result cards -->
+      <g font-family="JetBrains Mono, monospace" font-size="11">
+        <rect x="380" y="40" width="288" height="46" rx="8" fill="#e9f6f4" stroke="#0f766e" stroke-width="1.8"/>
+        <text x="398" y="60" fill="#0f766e" font-size="10">Object.keys( )</text>
+        <text x="398" y="78" fill="#0f766e">[ "name", "age", "course" ]</text>
+
+        <rect x="380" y="116" width="288" height="46" rx="8" fill="#fdf6e0" stroke="#c9a227" stroke-width="1.8"/>
+        <text x="398" y="136" fill="#9c7c14" font-size="10">Object.values( )</text>
+        <text x="398" y="154" fill="#9c7c14">[ "Aarav", 21, "JS" ]</text>
+
+        <rect x="380" y="192" width="288" height="46" rx="8" fill="#eef2f9" stroke="#223354" stroke-width="1.8"/>
+        <text x="398" y="212" fill="#223354" font-size="10">Object.entries( )</text>
+        <text x="398" y="230" fill="#223354">[ ["name","Aarav"], … ]</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 6.1</b> — Three lenses on the same object: names, values, or both.</figcaption>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 06 · Object Utility Methods</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <h3>6.4 &nbsp;<code>Object.assign()</code></h3>
+  <p>Copies enumerable own properties from one or more source objects into a target object.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">assign.js</span></div>
+    <pre><code>const defaults = {
+  theme: "light",
+  notifications: true
+};
+
+const preferences = {
+  theme: "dark"
+};
+
+const settings = Object.assign({}, defaults, preferences);
+
+console.log(settings);</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>{ theme: 'dark', notifications: true }</pre>
+  </figure>
+
+  <p>The later source <strong>overwrites</strong> the earlier <code>theme</code> property.</p>
+
+  <div class="callout warn">
+    <span class="callout-title">Shallow copy</span>
+    <p><code>Object.assign()</code> performs a <strong>shallow copy</strong>. Nested objects are not deeply cloned.</p>
+  </div>
+
+  <h3>6.5 &nbsp;<code>Object.hasOwn()</code></h3>
+  <p>Checks whether an object has a specified <strong>own property</strong>.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">hasOwn.js</span></div>
+    <pre><code>const student = {
+  name: "Riya",
+  age: 20
+};
+
+console.log(Object.hasOwn(student, "name"));
+console.log(Object.hasOwn(student, "course"));</code></pre>
+  </figure>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>true
+false</pre>
+  </figure>
+
+  <p>This is useful when checking property presence without accidentally counting inherited properties.</p>
+
+  <div class="keyidea">
+    <span class="k-label">The Object Toolkit</span>
+    <p><code>keys</code> · <code>values</code> · <code>entries</code> · <code>assign</code> · <code>hasOwn</code> — five methods that turn any object into inspectable data.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 06 · Object Utility Methods</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 7 — MINI PROJECT
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch7">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 07</div>
+    <h2 class="chap-title">Practical Mini-Project — Student Management Dashboard</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <h3>Project Goal</h3>
+  <p>Use arrays and objects together to represent students, filter records, calculate averages, find a student and update a record.</p>
+
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">dashboard.js</span></div>
+    <pre><code>const students = [
+  { id: 1, name: "Aarav", course: "React", marks: 85 },
+  { id: 2, name: "Riya", course: "JavaScript", marks: 92 },
+  { id: 3, name: "Kabir", course: "React", marks: 45 },
+  { id: 4, name: "Meera", course: "JavaScript", marks: 76 }
+];
+
+// 1. Display all students
+students.forEach(student =&gt; {
+  console.log(`${student.name}: ${student.marks}`);
+});
+
+// 2. Find students enrolled in React
+const reactStudents = students.filter(
+  student =&gt; student.course === "React"
+);
+
+console.log("React students:", reactStudents);
+
+// 3. Find students who passed
+const passedStudents = students.filter(
+  student =&gt; student.marks &gt;= 50
+);
+
+console.log("Passed:", passedStudents);
+
+// 4. Calculate the average marks
+const totalMarks = students.reduce(
+  (total, student) =&gt; total + student.marks,
+  0
+);
+
+const averageMarks = totalMarks / students.length;
+
+console.log("Average:", averageMarks);
+
+// 5. Find one student
+const selectedStudent = students.find(
+  student =&gt; student.id === 2
+);
+
+console.log("Selected:", selectedStudent);
+
+// 6. Create an updated record without changing the original object
+const updatedStudent = {
+  ...selectedStudent,
+  marks: 95
+};
+
+console.log("Updated:", updatedStudent);
+console.log("Original:", selectedStudent);</code></pre>
+  </figure>
+
+  <h3>Expected Key Results</h3>
+
+  <figure class="fig fig-out">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">console output</span></div>
+    <pre>Aarav: 85
+Riya: 92
+Kabir: 45
+Meera: 76
+
+Average: 74.5</pre>
+  </figure>
+
+  <p>The React filter returns <strong>Aarav</strong> and <strong>Kabir</strong>. The passing filter returns <strong>Aarav</strong>, <strong>Riya</strong> and <strong>Meera</strong>.</p>
+  <p>The updated record contains marks of <code>95</code>, while the original Riya object still contains <code>92</code>.</p>
+
+  <h3>What This Project Teaches</h3>
+  <ul>
+    <li>Arrays store multiple records.</li>
+    <li>Objects describe each student.</li>
+    <li><code>forEach()</code> performs an action for each record.</li>
+    <li><code>filter()</code> selects matching records.</li>
+    <li><code>reduce()</code> calculates an aggregate.</li>
+    <li><code>find()</code> locates a record.</li>
+    <li>Spread syntax creates an updated shallow copy.</li>
+  </ul>
+
+  <div class="callout tip">
+    <span class="callout-title">Real-world link</span>
+    <p>These are exactly the kinds of operations used in real-world dashboards, admin panels and API-driven interfaces.</p>
+  </div>
+
+  <div class="page-foot"><span>Chapter 07 · Mini-Project</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 8 — PRACTICE QUESTIONS
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch8">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 08</div>
+    <h2 class="chap-title">Practice Questions</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <div class="qgroup">
+    <div class="qgroup-title">Beginner Level</div>
+
+    <div class="q"><span class="qnum">1.</span> What is an array, and why does indexing start at zero?</div>
+    <div class="q"><span class="qnum">2.</span> Create an array containing five programming languages.</div>
+    <div class="q"><span class="qnum">3.</span> How do you find the length of an array?</div>
+    <div class="q"><span class="qnum">4.</span> What is the difference between <code>push()</code> and <code>pop()</code>?</div>
+    <div class="q"><span class="qnum">5.</span> Create an object representing a student with <code>name</code>, <code>age</code> and <code>course</code>.</div>
+    <div class="q"><span class="qnum">6.</span> Explain dot notation and bracket notation.</div>
+    <div class="q"><span class="qnum">7.</span> What is object destructuring?</div>
+    <div class="q"><span class="qnum">8.</span> What is the difference between spread and rest syntax?</div>
+  </div>
+
+  <div class="qgroup">
+    <div class="qgroup-title">Intermediate Level</div>
+
+    <div class="q">
+      <span class="qnum">9.</span> Predict the output:
+      <div class="qcode">
+        <figure class="fig fig-code">
+          <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">q9.js</span></div>
+          <pre><code>const values = [10, 20, 30];
+
+values.push(40);
+values.pop();
+
+console.log(values);</code></pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="qnum">10.</span> Predict the output:
+      <div class="qcode">
+        <figure class="fig fig-code">
+          <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">q10.js</span></div>
+          <pre><code>const numbers = [2, 4, 6];
+
+const result = numbers.map(number =&gt; number * 3);
+
+console.log(result);</code></pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="q"><span class="qnum">11.</span> What is the difference between <code>map()</code> and <code>forEach()</code>?</div>
+    <div class="q"><span class="qnum">12.</span> What is the difference between <code>find()</code> and <code>filter()</code>?</div>
+    <div class="q"><span class="qnum">13.</span> Explain why <code>[10, 2, 30].sort()</code> may not produce numeric ascending order.</div>
+    <div class="q"><span class="qnum">14.</span> What is the difference between <code>slice()</code> and <code>splice()</code>?</div>
+
+    <div class="q">
+      <span class="qnum">15.</span> Predict the output:
+      <div class="qcode">
+        <figure class="fig fig-code">
+          <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">q15.js</span></div>
+          <pre><code>const user = {
+  name: "Aarav",
+  address: {
+    city: "Jaipur"
+  }
+};
+
+const copy = { ...user };
+
+copy.address.city = "Rajkot";
+
+console.log(user.address.city);</code></pre>
+        </figure>
+      </div>
+    </div>
+
+    <div class="q"><span class="qnum">16.</span> Explain the difference between <code>||</code> and <code>??</code> when used for default values.</div>
+  </div>
+
+  <div class="page-foot"><span>Chapter 08 · Practice Questions</span><span class="pn"></span></div>
+</section>
+
+
+<section class="page">
+  <div class="qgroup">
+    <div class="qgroup-title">Coding Challenges</div>
+
+    <div class="q"><span class="qnum">17.</span> Find the largest number in an array.</div>
+    <div class="q"><span class="qnum">18.</span> Create a new array containing only even numbers.</div>
+    <div class="q"><span class="qnum">19.</span> Calculate the total and average marks of a class.</div>
+    <div class="q"><span class="qnum">20.</span> Find a student by ID in an array of student objects.</div>
+    <div class="q"><span class="qnum">21.</span> Sort an array of product prices numerically.</div>
+    <div class="q"><span class="qnum">22.</span> Count how many times each fruit occurs in an array.</div>
+    <div class="q"><span class="qnum">23.</span> Create a copy of a student object and update its course.</div>
+    <div class="q"><span class="qnum">24.</span> Convert an array of objects into an array of names using <code>map()</code>.</div>
+    <div class="q"><span class="qnum">25.</span> Build a small student dashboard that combines <code>filter()</code>, <code>find()</code>, <code>reduce()</code> and object destructuring.</div>
+  </div>
+
+  <h3>Selected Solutions</h3>
+
+  <h5>17. Largest number in an array</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">solution17.js</span></div>
+    <pre><code>const numbers = [45, 12, 89, 3, 67];
+
+const largest = numbers.reduce(
+  (max, n) =&gt; (n &gt; max ? n : max),
+  numbers[0]
+);
+
+console.log(largest); // 89</code></pre>
+  </figure>
+
+  <h5>18. Only even numbers</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">solution18.js</span></div>
+    <pre><code>const numbers = [1, 2, 3, 4, 5, 6, 7, 8];
+
+const evens = numbers.filter(n =&gt; n % 2 === 0);
+
+console.log(evens); // [2, 4, 6, 8]</code></pre>
+  </figure>
+
+  <h5>19. Total and average marks</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">solution19.js</span></div>
+    <pre><code>const marks = [85, 92, 45, 76];
+
+const total = marks.reduce((sum, m) =&gt; sum + m, 0);
+const average = total / marks.length;
+
+console.log(total);   // 298
+console.log(average); // 74.5</code></pre>
+  </figure>
+
+  <h5>20. Find a student by ID</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">solution20.js</span></div>
+    <pre><code>const students = [
+  { id: 1, name: "Aarav" },
+  { id: 2, name: "Riya" },
+  { id: 3, name: "Kabir" }
+];
+
+const student = students.find(s =&gt; s.id === 2);
+
+console.log(student); // { id: 2, name: 'Riya' }</code></pre>
+  </figure>
+
+  <h5>21. Sort product prices numerically</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">solution21.js</span></div>
+    <pre><code>const prices = [199, 45, 1200, 89];
+
+const sorted = [...prices].sort((a, b) =&gt; a - b);
+
+console.log(sorted); // [45, 89, 199, 1200]</code></pre>
+  </figure>
+
+  <h5>22. Count fruit occurrences</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">solution22.js</span></div>
+    <pre><code>const fruits = ["apple", "banana", "apple", "orange", "banana", "apple"];
+
+const counts = fruits.reduce((acc, fruit) =&gt; {
+  acc[fruit] = (acc[fruit] || 0) + 1;
+  return acc;
+}, {});
+
+console.log(counts); // { apple: 3, banana: 2, orange: 1 }</code></pre>
+  </figure>
+
+  <h5>23. Copy and update a course</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">solution23.js</span></div>
+    <pre><code>const student = { name: "Riya", course: "JavaScript" };
+
+const updated = { ...student, course: "React" };
+
+console.log(updated);  // { name: 'Riya', course: 'React' }
+console.log(student);  // { name: 'Riya', course: 'JavaScript' }</code></pre>
+  </figure>
+
+  <h5>24. Array of objects → array of names</h5>
+  <figure class="fig fig-code">
+    <div class="fig-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span class="fig-title">solution24.js</span></div>
+    <pre><code>const students = [
+  { name: "Aarav", marks: 85 },
+  { name: "Riya", marks: 92 }
+];
+
+const names = students.map(s =&gt; s.name);
+
+console.log(names); // ["Aarav", "Riya"]</code></pre>
+  </figure>
+
+  <div class="page-foot"><span>Chapter 08 · Practice Questions</span><span class="pn"></span></div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHAPTER 9 — REVISION SHEET
+     ══════════════════════════════════════════════════════════ -->
+<section class="page" id="ch9">
+  <header class="chap-head">
+    <div class="chap-num">Chapter 09</div>
+    <h2 class="chap-title">Final Revision Sheet</h2>
+    <div class="chap-rule"><span></span><i>❖</i><span></span></div>
+  </header>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Concept</th><th>Key takeaway</th></tr></thead>
+      <tbody>
+        <tr><td>Array</td><td>Ordered collection accessed using indexes</td></tr>
+        <tr><td>Object</td><td>Collection of named properties</td></tr>
+        <tr><td><code>push()</code> / <code>pop()</code></td><td>Add or remove at the end</td></tr>
+        <tr><td><code>shift()</code> / <code>unshift()</code></td><td>Remove or add at the beginning</td></tr>
+        <tr><td><code>forEach()</code></td><td>Execute a callback for each element</td></tr>
+        <tr><td><code>map()</code></td><td>Transform each element into a new array</td></tr>
+        <tr><td><code>filter()</code></td><td>Select matching elements</td></tr>
+        <tr><td><code>reduce()</code></td><td>Combine values into an accumulated result</td></tr>
+        <tr><td><code>find()</code></td><td>Find the first matching element</td></tr>
+        <tr><td><code>findIndex()</code></td><td>Find the index of the first match</td></tr>
+        <tr><td><code>some()</code> / <code>every()</code></td><td>Check whether some or all elements match</td></tr>
+        <tr><td><code>includes()</code></td><td>Check whether a value exists</td></tr>
+        <tr><td><code>sort()</code></td><td>Sort an array in place</td></tr>
+        <tr><td><code>slice()</code></td><td>Copy a portion without mutation</td></tr>
+        <tr><td><code>splice()</code></td><td>Add, remove or replace elements in place</td></tr>
+        <tr><td><code>flat()</code> / <code>flatMap()</code></td><td>Flatten nested arrays or mapped results</td></tr>
+        <tr><td>Destructuring</td><td>Extract values into variables</td></tr>
+        <tr><td>Spread</td><td>Expand values into a new array or object</td></tr>
+        <tr><td>Rest</td><td>Collect remaining values</td></tr>
+        <tr><td><code>Object.keys()</code></td><td>Get property names</td></tr>
+        <tr><td><code>Object.values()</code></td><td>Get property values</td></tr>
+        <tr><td><code>Object.entries()</code></td><td>Get key-value pairs</td></tr>
+        <tr><td><code>Object.assign()</code></td><td>Copy properties into a target</td></tr>
+        <tr><td><code>Object.hasOwn()</code></td><td>Check for an own property</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Phase Completion Checklist</h3>
+
+  <ul class="checklist">
+    <li>Create, access, update and iterate over arrays.</li>
+    <li>Use all the listed array methods in practical examples.</li>
+    <li>Understand which methods mutate the original array.</li>
+    <li>Create objects with regular, computed and shorthand properties.</li>
+    <li>Access nested properties and define object methods.</li>
+    <li>Use array and object destructuring.</li>
+    <li>Explain shallow copying and shared nested references.</li>
+    <li>Use spread and rest syntax correctly.</li>
+    <li>Apply the object utility methods.</li>
+    <li>Complete the Student Management Dashboard without copying the solution.</li>
+  </ul>
+
+  <div class="divider"><span></span>❖<span></span></div>
+
+  <div class="keyidea">
+    <span class="k-label">Next Phase</span>
+    <p>Phase 5 — Modern JavaScript / ES6+: classes, modules, promises, <code>async</code>/<code>await</code>, iterators, generators and symbols. Several topics have been introduced here; the next phase will deepen your understanding of the modern JavaScript ecosystem.</p>
+  </div>
+
+  <div class="divider"><span></span>❖<span></span></div>
+
+  <p style="text-align:center; font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing:.22em; text-transform:uppercase; color:#a99f88; margin-top:40px;">
+    JavaScript Mastery · Phase 4 · Arrays, Objects &amp; Modern Data Handling<br>
+    Handcrafted Study Edition
+  </p>
+
+  <div class="page-foot"><span>Chapter 09 · Final Revision Sheet</span><span class="pn"></span></div>
+</section>
+
+</div><!-- /book -->
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SYNTAX HIGHLIGHTER
+     ══════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  "use strict";
+
+  var TOKEN_RE = new RegExp(
+    [
+      "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)",              // 1 comments
+      "(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'|`(?:[^`\\\\]|\\\\.)*`)", // 2 strings
+      "\\b(\\d+(?:\\.\\d+)?n?)\\b",                          // 3 numbers
+      "\\b(let|const|var|function|if|else|return|true|false|null|undefined|new|typeof|for|while|do|class|of|in|this|try|catch|throw|switch|case|break|continue|default|delete|Array|Object|Symbol)\\b", // 4 keywords
+      "([A-Za-z_$][\\w$]*)(?=\\s*\\()",                      // 5 function calls
+      "([+\\-*/%=<>!&|?:;,.()\\[\\]{}]+)"                    // 6 operators
+    ].join("|"),
+    "g"
+  );
+
+  var CLASS = ["", "tok-com", "tok-str", "tok-num", "tok-kw", "tok-fn", "tok-op"];
+
+  function escapeHTML(s) {
+    return s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function highlight(text) {
+    var out = "";
+    var last = 0;
+    var m;
+
+    TOKEN_RE.lastIndex = 0;
+
+    while ((m = TOKEN_RE.exec(text)) !== null) {
+      out += escapeHTML(text.slice(last, m.index));
+
+      var cls = "";
+      for (var i = 1; i < m.length; i++) {
+        if (m[i] !== undefined) { cls = CLASS[i]; break; }
+      }
+
+      var piece = escapeHTML(m[0]);
+      out += cls ? '<span class="' + cls + '">' + piece + "</span>" : piece;
+
+      last = m.index + m[0].length;
+
+      if (m[0].length === 0) { TOKEN_RE.lastIndex++; }
+    }
+
+    out += escapeHTML(text.slice(last));
+    return out;
+  }
+
+  var codes = document.querySelectorAll(".fig-code pre code");
+
+  for (var i = 0; i < codes.length; i++) {
+    var el = codes[i];
+    var raw = el.textContent;
+    el.innerHTML = highlight(raw);
+  }
+})();
+</script>
+
+</body>
+</html>
