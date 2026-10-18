@@ -135,7 +135,7 @@ export function SubmissionReviewPage() {
 
   if (isPending) {
     return (
-      <div className="space-y-6" aria-label="Loading submission">
+      <div className="space-y-6" role="status" aria-label="Loading submission">
         <Skeleton className="h-8 w-1/2" />
         <Skeleton className="h-64" />
       </div>
@@ -205,7 +205,7 @@ export function SubmissionReviewPage() {
           <Card>
             <CardHeader title="Submitted work" />
             <CardBody className="space-y-5">
-              <SubmissionItems items={submission.items} />
+              <SubmissionItems items={submission.items} forReviewer />
               {submission.note && (
                 <div>
                   <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">

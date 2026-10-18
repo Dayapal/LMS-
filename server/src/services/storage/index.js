@@ -1,20 +1,26 @@
 import { config } from '../../config/env.js';
 import { localStorage } from './local.js';
+import { createS3Storage } from './s3.js';
 
 /**
  * StorageProvider interface:
- *   name                     identifier stored on each FileAsset (`provider`)
- *   put(key, buffer)         stores new bytes; never overwrites
- *   size(key)                byte size, or null when missing
- *   createReadStream(key)    readable stream of the bytes
- *   remove(key)              deletes; a missing file is not an error
+ *   name                       identifier stored on each FileAsset (`provider`)
+ *   put(key, buffer, {contentType})  stores new bytes under a fresh random key
+ *   size(key)                  byte size, or null when missing
+ *   open(key)                  { size, stream }, or null when missing
+ *   remove(key)                deletes; a missing object is not an error
+ *   list()                     async iterable of { key, size, lastModified, foreign }
  *
- * Phase 8 adds an S3-compatible driver behind the same interface.
+ * Drivers: `local` (development and tests) and `s3` (Cloudflare R2 or any
+ * S3-compatible private bucket; required in production). A failing provider
+ * throws `StorageError`.
  */
-const DRIVERS = { local: localStorage };
-
 export function getStorage(name = config.storage.driver) {
-  const driver = DRIVERS[name];
-  if (!driver) throw new Error(`Unknown storage driver: ${name}`);
-  return driver;
+  if (name === 'local') return localStorage;
+  if (name === 's3') {
+    // Built per call from the current config: cheap, and tests can repoint it.
+    if (!config.storage.s3) throw new Error('The s3 storage driver is not configured');
+    return createS3Storage(config.storage.s3);
+  }
+  throw new Error(`Unknown storage driver: ${name}`);
 }

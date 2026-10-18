@@ -172,7 +172,7 @@ export function AssignmentPage() {
 
   if (assignment.isPending) {
     return (
-      <div className="mx-auto max-w-4xl space-y-6" aria-label="Loading assignment">
+      <div className="mx-auto max-w-4xl space-y-6" role="status" aria-label="Loading assignment">
         <Skeleton className="h-8 w-2/3" />
         <Skeleton className="h-40" />
       </div>

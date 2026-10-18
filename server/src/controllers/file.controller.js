@@ -25,7 +25,7 @@ export async function download(req, res) {
     'Content-Security-Policy': "default-src 'none'; sandbox",
   });
   try {
-    await pipeline(stream(), res);
+    await pipeline(stream, res);
   } catch (error) {
     // Once bytes are on the wire the response can't become a JSON error.
     if (!res.headersSent) throw error;

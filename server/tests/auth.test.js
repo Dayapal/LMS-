@@ -180,6 +180,38 @@ describe('POST /auth/refresh (rotation)', () => {
     expect(second.status).toBe(200);
   });
 
+  it('allows the second of two simultaneous refreshes before the first has stored its new token', async () => {
+    // The state between the first request claiming the token and inserting its
+    // replacement: under load the second request can land exactly here.
+    const { cookie } = await registerStudent(app);
+    const now = new Date();
+    await Session.updateMany({}, { $set: { revokedAt: now, replacedAt: now } });
+    const second = await refresh(cookie);
+    expect(second.status).toBe(200);
+  });
+
+  it('refuses a token reused within the grace window once the family was ended', async () => {
+    const { cookie: original } = await registerStudent(app);
+    const rotated = refreshCookie(await refresh(original));
+    const loggedOut = await api(app)
+      .post('/api/v1/auth/logout')
+      .set('Origin', ORIGIN)
+      .set('Cookie', rotated);
+    expect(loggedOut.status).toBe(204);
+    expect((await refresh(original)).status).toBe(401);
+  });
+
+  it('refuses a token reused within the grace window after a password change', async () => {
+    const { cookie: original, token, body } = await registerStudent(app);
+    await refresh(original);
+    const changed = await api(app)
+      .patch('/api/v1/users/me/password')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ currentPassword: body.password, newPassword: 'An0ther-passw0rd' });
+    expect(changed.status).toBe(200);
+    expect((await refresh(original)).status).toBe(401);
+  });
+
   describe('outside the grace window', () => {
     let grace;
     beforeEach(() => {

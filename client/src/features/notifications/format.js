@@ -2,6 +2,9 @@
 export const safeLink = (link) =>
   typeof link === 'string' && link.startsWith('/') && !link.startsWith('//') ? link : null;
 
-export const badgeText = (count) => (count > 9 ? '9+' : String(count));
+export const badgeText = (count) => (count > 99 ? '99+' : String(count));
 
-export const bellLabel = (count) => (count ? `Notifications, ${count} unread` : 'Notifications');
+// The name repeats the badge's visible text, so voice control matches what is
+// shown (WCAG 2.5.3, label in name).
+export const bellLabel = (count) =>
+  count ? `Notifications, ${badgeText(count)} unread` : 'Notifications';

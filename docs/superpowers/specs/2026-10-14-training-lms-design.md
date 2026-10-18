@@ -1,6 +1,6 @@
 # Training LMS: Design and Implementation Plan
 
-Status: **Phase 0 approved 2026-10-14**. All decisions in §11 confirmed by the trainer. Phases 1–7 approved (Phase 7 on 2026-10-17).
+Status: **Phase 0 approved 2026-10-14**. All decisions in §11 confirmed by the trainer. Phases 1–7 approved (Phase 7 on 2026-10-17). Phase 8 approved 2026-10-18 for the local implementation; the production release is still pending (its gates are listed in `docs/phase-reports/phase-8.md`).
 Date: 2026-10-14
 
 This document covers the architecture, data model, API, permissions, phases and acceptance criteria for the full-stack training LMS. Items marked **[DECISION Dn]** refer to the confirmed decisions in §11.
@@ -45,7 +45,7 @@ The project succeeds when:
 | Validation          | zod schemas plus a `validate(schema)` middleware                                                       | Applied to body, params and query                                                                       |
 | Security            | helmet, cors (allowlist), express-rate-limit, `express.json({limit:'1mb'})`, Mongoose `sanitizeFilter` | `express-mongo-sanitize` doesn't work with Express 5, so filters are sanitized through Mongoose and zod |
 | Uploads             | multer and `file-type` (magic-byte check)                                                              | Checks extension, MIME type and actual file content                                                     |
-| Storage             | `StorageProvider` interface: `local` driver, plus an S3-compatible driver                              | **[DECISION D3]**                                                                                       |
+| Storage             | `StorageProvider` interface: `local` driver, plus an S3-compatible driver                              | **[DECISION D3]** The S3 driver (Phase 8) signs requests itself (SigV4), without the AWS SDK            |
 | Logging             | pino + pino-http                                                                                       |                                                                                                         |
 | Tests               | Vitest + Supertest (API); Vitest + React Testing Library (UI); Playwright (E2E, Phase 8)               | API tests use a throwaway `lms_test_<run>` database on the local mongod                                 |
 | Language            | JavaScript (ESM)                                                                                       | **[DECISION D1]** TypeScript is the alternative                                                         |
@@ -137,6 +137,13 @@ As built in Phase 3:
 - Only the `material` purpose exists so far; later phases add theirs. (Phase 4 adds `assignment` and `submission`; see below.) Material files must be uploaded for a course, and can only be attached to materials of that course.
 - The client fetches files with the bearer token as a Blob and shows PDFs from a local `blob:` URL, so no file ever has a URL that works without signing in.
 - A file is deleted, with its stored bytes, when the last material using it is deleted or switches to another file, and when its course is deleted.
+
+As built in Phase 8:
+
+- **Providers:** `local` (development and tests) and `s3` (Cloudflare R2 or any S3-compatible private bucket; required in production, where `local` is refused at startup). `provider` on each FileAsset names where its bytes are, so records from before a switch keep working; `npm run files -- migrate` moves them, verifying each against `checksum`, and never deletes the source.
+- **Serving:** unchanged. `GET /files/:id` checks access, then streams from the provider. No public or pre-signed URLs are created (the in-memory access token can't follow a redirect to another origin, and streaming keeps the bucket private). A storage outage answers 503 `STORAGE_UNAVAILABLE` without details.
+- **Failures and orphans:** bytes whose record can't be created are removed at once; deletes remove the records first and the bytes afterwards, so a storage failure leaves only unreferenced bytes, never a record without bytes, and the delete still succeeds. `npm run files -- cleanup` reports (and with `--apply` removes, after 24 hours) never-attached uploads and unreferenced bytes. The material form reuses its upload when a save is retried.
+- **No schema change:** existing records need no migration.
 
 **Enrollment**: `user`, `course`, `status` (`pending` | `active` | `removed`), `enrolledBy`, `lastLesson`, `lastAccessedAt`. Unique `{user, course}`. **[DECISION D5]**
 
@@ -268,6 +275,7 @@ As built, all four are for any signed-in user and only ever touch their own noti
   - Thumbnails and avatars: JPEG/PNG/WebP ≤ 2 MB.
   - Each file must match on extension, on the declared MIME type, **and** on its magic bytes (`file-type`).
   - Stored filenames are random keys. The original name is kept only as metadata.
+  - No virus scanning (Phase 8 decision, no scanning service in the approved stack). Files are type-checked as above, served only after the access check with `nosniff` and a sandboxing CSP, and shown from `blob:` URLs. The trainer's review page says a student PDF is "checked to be a real PDF, but not scanned for viruses"; nothing in the app calls a file scanned or safe.
 - **Code submissions:** ≤ 100 KB of text, with `language` taken from an allowlist. Code is stored and displayed as text and never executed.
 - **Rate limits:**
   - Auth routes: 10 requests / 15 min / IP.
@@ -314,7 +322,7 @@ Each phase ends with passing tests, an updated README, a phase report in `docs/p
 | **7** Notifications & polish | Notification model, triggers, bell + list, deadline-soon job (on-request check or a daily `node-cron` task); permission audit; accessibility pass (labels, focus, contrast, keyboard); responsive review; skeletons, empty states and error states everywhere; index review  | Notifications fire for every event in §5. The permission-audit test suite (every endpoint × role) passes. No obvious accessibility issues on key pages                                                                                                   |
 | **8** Testing & deployment   | Playwright E2E for the critical flows, bug fixes, production build, S3 storage driver verified, env docs, deployment guide                                                                                                                                                   | The E2E suite passes against a production build. The README has full setup and deployment instructions                                                                                                                                                   |
 
-**Progress:** Phases 0–6 are approved, each with its report in `docs/phase-reports/`. Phase 8 is next. Decided when approving Phase 7: notifications stay limited to the six types in §5, axios stays, and the screen reader and axe audit and the Safari, Firefox and real-device checks belong to Phase 8.
+**Progress:** Phases 0–7 are approved, each with its report in `docs/phase-reports/`. Phase 8 is approved for the local implementation (`docs/phase-reports/phase-8.md`). Nothing has been deployed: the production release follows `docs/deployment.md` and its open gates (real Vercel-to-Render header and query forwarding, R2 connectivity, upload sizes through Vercel, the `TRUST_PROXY` measurement, and the manual screen reader and device checks; virus scanning remains a documented limitation). Decided when approving Phase 7: notifications stay limited to the six types in §5, axios stays, and the screen reader and axe audit and the Safari, Firefox and real-device checks belong to Phase 8.
 
 ## 11. Decisions (confirmed 2026-10-14)
 
@@ -337,10 +345,10 @@ Each phase ends with passing tests, an updated README, a phase report in `docs/p
 **The design.** The browser only ever talks to the Vercel origin.
 
 ```
-Browser ──https://<app>.vercel.app/api/v1/*──▶ Vercel rewrite (proxy) ──▶ https://<api>.onrender.com/api/v1/*
+Browser ──https://<app>.vercel.app/api/v1/*──▶ Vercel /api route (proxy, adds x-origin-secret) ──▶ https://<api>.onrender.com/api/v1/*
 ```
 
-- `client/vercel.json` rewrites `/api/:path*` to the Render URL. In development, the Vite dev-server proxy does the same thing, so dev and prod use the same cookie model.
+- `client/vercel.json` proxies `/api/(.*)` to the Render URL (a `rewrites` entry until Phase 8, a `routes` entry with a header transform since the Phase 8 review). In development, the Vite dev-server proxy does the same thing, so dev and prod use the same cookie model.
 - The API client always uses the relative base URL `/api/v1`. No API host is built into the client bundle.
 
 **Refresh cookie.**
@@ -368,15 +376,17 @@ Browser ──https://<app>.vercel.app/api/v1/*──▶ Vercel rewrite (proxy) 
 - The cookie-using endpoints (`/auth/refresh`, `/auth/logout`) also reject any request whose `Origin` header isn't in `CLIENT_ORIGINS`. Together with `SameSite=Lax`, which stops cross-site POSTs from carrying the cookie, this covers CSRF.
 - All other endpoints authenticate with the bearer header only, which browsers never attach on their own.
 
-**Proxies and rate limits.** Requests reach Express through Vercel's edge and then Render's load balancer. `TRUST_PROXY` (the number of proxy hops) is configurable so that `req.ip` (used by the rate limiter) is the real client IP. _To verify in Phase 8:_ the correct hop count against the live deployment.
+**Proxies and rate limits.** Requests reach Express through Vercel's edge and then Render's load balancer. `TRUST_PROXY` (the number of proxy hops) is configurable so that `req.ip` (used by the rate limiter) is the real client IP.
+
+As built in Phase 8: neither Vercel nor Render documents the hop count, so it isn't guessed. Production refuses to start without an explicit `TRUST_PROXY`. After the first deploy, `PROXY_DIAGNOSTICS=true` temporarily exposes `GET /api/v1/health/proxy`, which shows the caller the address each `TRUST_PROXY` value would produce; the trainer picks the one that equals their public IP and switches diagnostics off (`docs/deployment.md`, step 6). **Only the proxy reaches the API (Phase 8 review):** the Vercel `/api` route adds `x-origin-secret` at the edge from the `ORIGIN_SECRET` project variable (a `request.headers` transform with `op: set`, so visitors can't supply it), and the API, which requires `ORIGIN_SECRET` in production, refuses anything without a matching value (constant-time, before CORS, body parsing and routes; `GET /api/v1/health` stays open for Render's health checks; `ORIGIN_SECRET_PREVIOUS` covers rotations). Direct calls to the Render URL therefore can't pick the rate limiter's IP or use the API at all. The secret is never in the client build (checked after every build) or in responses and logs. IP allowlisting wasn't possible: Vercel's static IPs cover Functions only, and Render's inbound IP rules need a Scale or Enterprise plan; a Vercel Function proxy would cap uploads at 4.5 MB. Every API response carries `Cache-Control: no-store`, and `client/vercel.json` turns off CDN caching of `/api` (Vercel honours upstream cache headers on rewrites for projects created after April 2026).
 
 **Cross-site fallback.** If the API is ever called cross-site, set `COOKIE_SAMESITE=none` and add the client origin to `CLIENT_ORIGINS`. No code changes are needed, but Safari users will lose silent refresh, as described above.
 
 ## 12. Risks
 
 1. **Seed content volume.** About 38 modules × 2–4 lessons means roughly 100 lessons of real notes and code. _Mitigation:_ concise notes per lesson, written in Phases 2–3. The trainer can expand them in the UI later.
-2. **Cross-site cookies in production.** Resolved by design: the Vercel `/api` rewrite keeps the refresh cookie first-party (§11a). The remaining check, the proxy hop count for `TRUST_PROXY`, happens in Phase 8.
-3. **Ephemeral disk on PaaS hosts.** Local uploads are lost on redeploy. _Mitigation:_ the S3-compatible driver is required in production, and production fails fast at startup if `STORAGE_DRIVER=local`. Phase 3 ships only the local driver behind the `StorageProvider` interface; the S3 driver and the fail-fast check arrive together in Phase 8.
+2. **Cross-site cookies in production.** Resolved by design: the Vercel `/api` rewrite keeps the refresh cookie first-party (§11a). The proxy hop count for `TRUST_PROXY` is measured on the live deployment with the Phase 8 diagnostic before students are invited.
+3. **Ephemeral disk on PaaS hosts.** Local uploads are lost on redeploy. _Mitigation (built in Phase 8):_ the S3-compatible driver is required in production, and production fails fast at startup if `STORAGE_DRIVER=local`.
 4. **Native `bcrypt` on Windows.** It installs from prebuilt binaries for Node 22. _Mitigation:_ if a build ever fails, fall back to `bcryptjs`, which has the same API.
 5. **Express 5 ecosystem.** Some middleware (for example `express-mongo-sanitize`) isn't compatible. _Mitigation:_ use Mongoose `sanitizeFilter` and strict zod schemas instead.
 6. **Permission regressions** as features are added. _Mitigation:_ the access service is the single source of truth, and Phase 7 adds an endpoint × role audit suite.

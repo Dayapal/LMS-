@@ -60,13 +60,17 @@ export async function rotateRefreshToken(token, meta) {
       session.replacedAt && now - session.replacedAt < config.auth.refreshReuseGraceMs;
     // Within the grace window a reused token is a benign race (e.g. two tabs
     // refreshing at once), but only while the family is still alive: a family
-    // ended by logout or theft detection must stay ended.
+    // ended by logout, theft detection or a password change must stay ended.
+    // Ending a family revokes its sessions without `replacedAt`, which is what
+    // is checked here. (Checking for a live session instead refused the second
+    // of two simultaneous refreshes when it arrived before the first had
+    // stored its replacement.)
     const familyAlive =
       rotatedRecently &&
-      (await Session.exists({
+      !(await Session.exists({
         family: session.family,
-        revokedAt: null,
-        expiresAt: mongoose.trusted({ $gt: now }),
+        revokedAt: mongoose.trusted({ $ne: null }),
+        replacedAt: null,
       }));
     if (!familyAlive) {
       if (!rotatedRecently) await revokeFamily(session.family);

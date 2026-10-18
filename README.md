@@ -6,17 +6,17 @@ The design and the phase plan are in [docs/superpowers/specs/2026-10-14-training
 
 ## Status
 
-| Phase | Scope                                       | Status                                                |
-| ----- | ------------------------------------------- | ----------------------------------------------------- |
-| 0     | Planning                                    | ✅ Approved                                           |
-| 1     | Foundation and authentication               | ✅ Approved ([report](docs/phase-reports/phase-1.md)) |
-| 2     | Courses and roadmaps                        | ✅ Approved ([report](docs/phase-reports/phase-2.md)) |
-| 3     | Study materials                             | ✅ Approved ([report](docs/phase-reports/phase-3.md)) |
-| 4     | Assignments and submissions                 | ✅ Approved ([report](docs/phase-reports/phase-4.md)) |
-| 5     | Student progress and learning tracking      | ✅ Approved ([report](docs/phase-reports/phase-5.md)) |
-| 6     | Review queue, student management, analytics | ✅ Approved ([report](docs/phase-reports/phase-6.md)) |
-| 7     | Notifications, performance, accessibility   | ✅ Approved ([report](docs/phase-reports/phase-7.md)) |
-| 8     | Testing and deployment                      | ⏳ Not started                                        |
+| Phase | Scope                                       | Status                                                                                    |
+| ----- | ------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| 0     | Planning                                    | ✅ Approved                                                                               |
+| 1     | Foundation and authentication               | ✅ Approved ([report](docs/phase-reports/phase-1.md))                                     |
+| 2     | Courses and roadmaps                        | ✅ Approved ([report](docs/phase-reports/phase-2.md))                                     |
+| 3     | Study materials                             | ✅ Approved ([report](docs/phase-reports/phase-3.md))                                     |
+| 4     | Assignments and submissions                 | ✅ Approved ([report](docs/phase-reports/phase-4.md))                                     |
+| 5     | Student progress and learning tracking      | ✅ Approved ([report](docs/phase-reports/phase-5.md))                                     |
+| 6     | Review queue, student management, analytics | ✅ Approved ([report](docs/phase-reports/phase-6.md))                                     |
+| 7     | Notifications, performance, accessibility   | ✅ Approved ([report](docs/phase-reports/phase-7.md))                                     |
+| 8     | Production readiness, deployment, E2E tests | ✅ Approved locally; production release pending ([report](docs/phase-reports/phase-8.md)) |
 
 ## Requirements
 
@@ -42,21 +42,25 @@ The values you must set in `server/.env`:
 | `JWT_ACCESS_SECRET`                       | 32+ random characters. Generate one with `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"` |
 | `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` | The trainer login created by `npm run seed`. The password needs 8+ characters with a letter and a number                  |
 
-Every other variable has a working default; [server/.env.example](server/.env.example) documents each one. Uploaded files go to `server/uploads/` (git-ignored) unless you set `UPLOAD_DIR`. Set `SEED_DEMO_STUDENT_PASSWORD` if you also want three demo students (`aarav.demo`, `neha.demo` and `kabir.demo` `@example.com`) with sample enrollments, lesson progress and submissions (one reviewed, one with a resubmission request).
+Every other variable has a working default; [server/.env.example](server/.env.example) documents each one. In development uploaded files go to `server/uploads/` (git-ignored) unless you set `UPLOAD_DIR`; production stores them in a private Cloudflare R2 bucket (see [Deployment](#deployment)). Set `SEED_DEMO_STUDENT_PASSWORD` if you also want three demo students (`aarav.demo`, `neha.demo` and `kabir.demo` `@example.com`) with sample enrollments, lesson progress and submissions (one reviewed, one with a resubmission request).
 
 Students create their own accounts at `/register`. There is no public sign-up for trainers: the trainer account comes only from the seed.
 
 ## Scripts (run from the repository root)
 
-| Command                                   | What it does                                                                                                                                                                           |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev`                             | Starts the API (with `node --watch`) and the Vite dev server together                                                                                                                  |
-| `npm test`                                | Runs the server tests, then the client tests                                                                                                                                           |
-| `npm run lint`                            | Runs ESLint across both workspaces                                                                                                                                                     |
-| `npm run format` / `npm run format:check` | Runs Prettier (write / check)                                                                                                                                                          |
-| `npm run build`                           | Builds the client for production into `client/dist`                                                                                                                                    |
-| `npm run seed`                            | Creates the trainer account, the 3 starter courses with their study materials and assignments, and (optionally) demo students with sample progress. Existing records are never changed |
-| `npm run seed -- --reset`                 | Development only: deletes all courses, materials, assignments, submissions, uploaded files, enrollments, progress and demo students, then seeds again                                  |
+| Command                                      | What it does                                                                                                                                                                                           |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm run dev`                                | Starts the API (with `node --watch`) and the Vite dev server together                                                                                                                                  |
+| `npm test`                                   | Runs the server tests, then the client tests                                                                                                                                                           |
+| `npm run lint`                               | Runs ESLint across both workspaces                                                                                                                                                                     |
+| `npm run format` / `npm run format:check`    | Runs Prettier (write / check)                                                                                                                                                                          |
+| `npm run build`                              | Builds the client for production into `client/dist`                                                                                                                                                    |
+| `npm run seed`                               | Creates the trainer account, the 3 starter courses with their study materials and assignments, and (optionally) demo students with sample progress. Existing records are never changed                 |
+| `npm run seed -- --reset`                    | Development only: deletes all courses, materials, assignments, submissions, uploaded files, enrollments, progress and demo students, then seeds again                                                  |
+| `npm run test:e2e`                           | Playwright end-to-end tests against a production build in Chromium, Firefox and WebKit, with a throwaway `lms_e2e` database (see [e2e/README.md](e2e/README.md)). First run `npm run test:e2e:install` |
+| `npm run files -- check`                     | Writes, reads and deletes one temporary object in the configured storage                                                                                                                               |
+| `npm run files -- cleanup [--apply]`         | Reports (with `--apply`, removes) uploads that were never attached and stored bytes without a record, older than 24 hours                                                                              |
+| `npm run files -- migrate --to=s3 [--apply]` | Copies files to another storage provider, verifying each one, and points their records at it. Never deletes the source                                                                                 |
 
 To run a single test file: `npm test -w server -- tests/auth.test.js` or `npm test -w client -- src/routes/guards.test.jsx`. Add `-t "name"` to filter by test name.
 
@@ -64,7 +68,7 @@ The server tests need the local MongoDB. Each test file creates and then drops i
 
 ## How sign-in works
 
-- The client always calls the API as `/api/v1/...` on its own origin. In development the Vite proxy forwards these calls; in production a Vercel rewrite does. Because of this, the refresh cookie is never a third-party cookie.
+- The client always calls the API as `/api/v1/...` on its own origin. In development the Vite proxy forwards these calls; in production the Vercel `/api` route does. Because of this, the refresh cookie is never a third-party cookie.
 - **Access token:** a 15-minute JWT, held in memory only.
 - **Refresh token:** a 7-day `httpOnly` cookie, limited to `/api/v1/auth`. It's rotated on every use, and reusing an old token revokes that login.
 - **Logout:** revokes the session on the server. Other open tabs are signed out through a `BroadcastChannel` message.
@@ -123,11 +127,23 @@ The full design is in §11a of the spec.
 - Keyboard: a skip link, focus moves to the new page after navigation, dialogs and the mobile menu keep focus inside and return it, the course builder's tabs use the arrow keys. Each page names the browser tab.
 - Messages (toasts) appear at the top of the screen, pause while the pointer or focus is on them, and never cover the lesson's **Next lesson** link: marking a lesson complete reports the result inside the lesson's completion panel.
 - Animations stop when the system asks for reduced motion. Every page works at 390 px wide without sideways scrolling.
+- An automated axe scan (WCAG 2.2 A and AA) of 27 pages and a form dialog runs in the end-to-end suite in Chromium, Firefox and WebKit, with phone layouts checked in Pixel 7 and iPhone 14 emulation. Screen reader and real-device checks are manual; see the Phase 8 report.
+
+## Deployment
+
+Production runs on Vercel (client), Render (API), MongoDB Atlas and a private Cloudflare R2 bucket. The step-by-step guide, with environment variables, the `TRUST_PROXY` measurement, smoke tests, rollback and data migration, is [docs/deployment.md](docs/deployment.md). In short:
+
+- **Render:** the Blueprint in [render.yaml](render.yaml). `NODE_ENV=production` refuses to start without `TRUST_PROXY` or `ORIGIN_SECRET`, with local disk storage, with an `http` browser origin or with insecure cookies, and names the problem without printing any secret.
+- **Vercel:** root directory `client`; put the Render URL into [client/vercel.json](client/vercel.json) and set the `ORIGIN_SECRET` project variable (a Vercel build fails while either is missing). The same file sets the security headers (CSP and friends) and turns off CDN caching for `/api`.
+- **Only Vercel can reach the API:** Vercel's `/api` route adds a shared secret header at the edge; the API refuses every request without it (except its health check), so calling the Render URL directly gets a 403. The secret never reaches the browser.
+- **Files:** stored in R2 under random keys and only ever streamed by the API after its access check. There are no public or pre-signed URLs.
+- **Not done by this repository:** no deployment, DNS change or hosted-data change happens without you; see the release checklist in the [Phase 8 report](docs/phase-reports/phase-8.md).
 
 ## Project layout
 
 ```
 client/   React 19 + Vite 8 + Tailwind CSS 4 single-page app
 server/   Express 5 + Mongoose 8 REST API (/api/v1)
-docs/     Design spec and per-phase reports
+e2e/      Playwright end-to-end tests (production build, three browser engines)
+docs/     Design spec, deployment guide and per-phase reports
 ```

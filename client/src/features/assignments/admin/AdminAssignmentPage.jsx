@@ -128,7 +128,7 @@ function SubmissionsList({ assignment, courseId }) {
                   </span>
                   <Link
                     to={`/admin/courses/${courseId}/assignments/${assignment.id}/submissions/${submission.id}`}
-                    aria-label={`Open ${submission.student.name}'s submission`}
+                    aria-label={`${submission.status === 'submitted' ? 'Review' : 'Open'} ${submission.student.name}'s submission`}
                     className="rounded-md px-2 py-1 text-sm font-medium text-brand-700 hover:bg-brand-50"
                   >
                     {submission.status === 'submitted' ? 'Review' : 'Open'}
@@ -163,7 +163,7 @@ export function AdminAssignmentPage() {
 
   if (isPending) {
     return (
-      <div className="space-y-6" aria-label="Loading assignment">
+      <div className="space-y-6" role="status" aria-label="Loading assignment">
         <Skeleton className="h-8 w-1/2" />
         <Skeleton className="h-48" />
       </div>

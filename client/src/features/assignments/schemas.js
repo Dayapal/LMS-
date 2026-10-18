@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '../../utils/zod.js';
 import { linesToList } from '../courses/format.js';
 
 // Mirrors server/src/validators/assignment.validators.js and links.js. The

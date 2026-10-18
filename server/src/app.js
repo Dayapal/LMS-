@@ -6,6 +6,7 @@ import { pinoHttp } from 'pino-http';
 import { config } from './config/env.js';
 import { logger } from './utils/logger.js';
 import { createRateLimiters } from './middleware/rateLimits.js';
+import { requireOriginSecret } from './middleware/proxy.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 import { apiRoutes } from './routes/index.js';
 
@@ -17,6 +18,10 @@ export function createApp() {
   app.set('trust proxy', config.trustProxy);
 
   app.use(helmet());
+  if (!config.isTest) app.use(pinoHttp({ logger }));
+  // Before CORS, body parsing and uploads: requests that didn't come through the
+  // Vercel proxy are refused without reading their bodies.
+  app.use(requireOriginSecret);
   app.use(
     cors({
       origin: (origin, callback) =>
@@ -24,7 +29,6 @@ export function createApp() {
       credentials: true,
     }),
   );
-  if (!config.isTest) app.use(pinoHttp({ logger }));
   app.use(express.json({ limit: '1mb' }));
   app.use(express.urlencoded({ extended: false, limit: '100kb' }));
   app.use(cookieParser());

@@ -5,8 +5,10 @@ import { submissionTypeLabel } from '../format.js';
 /**
  * What a student handed in: links open in a new tab without sharing the page,
  * PDFs are fetched with the viewer's token, and code is shown as text, never run.
+ * `forReviewer` adds the honest status of a student's PDF: its type is checked,
+ * but there is no virus scan (spec, Phase 8 known issues).
  */
-export function SubmissionItems({ items }) {
+export function SubmissionItems({ items, forReviewer = false }) {
   return (
     <ul className="space-y-4">
       {items.map((item, index) => (
@@ -15,7 +17,15 @@ export function SubmissionItems({ items }) {
             {submissionTypeLabel(item.type)}
           </p>
           {item.type === 'pdf' ? (
-            <FileMaterial material={{ file: item.file, downloadable: true }} />
+            <>
+              {forReviewer && (
+                <p className="text-xs text-slate-600">
+                  Checked to be a real PDF, but not scanned for viruses. Open it with the same care
+                  as an email attachment.
+                </p>
+              )}
+              <FileMaterial material={{ file: item.file, downloadable: true }} />
+            </>
           ) : item.type === 'code' ? (
             item.code.source !== undefined ? (
               <CodeBlock

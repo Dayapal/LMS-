@@ -109,6 +109,8 @@ function NoteForm({ material, onCancel, onSubmit }) {
         </div>
         <section
           aria-label="Live preview"
+          // Focusable so keyboard users can scroll a long preview (WCAG 2.1.1).
+          tabIndex={0}
           className={`min-h-48 overflow-y-auto rounded-lg border border-slate-200 bg-white p-4 lg:max-h-[29rem] ${
             pane === 'preview' ? '' : 'max-lg:hidden'
           }`}
@@ -212,15 +214,20 @@ function FileForm({ material, courseId, onCancel, onSubmit }) {
   const [file, setFile] = useState(null);
   const [fileError, setFileError] = useState(null);
   const [progress, setProgress] = useState(null);
+  // The upload of the chosen file, so retrying after a failed save doesn't store it twice.
+  const [uploaded, setUploaded] = useState(null);
   const inputId = useId();
   const hintId = useId();
 
   const save = async (values) => {
     let fileId;
-    if (file) {
+    if (file && uploaded?.file === file) {
+      fileId = uploaded.id;
+    } else if (file) {
       setProgress(0);
       try {
         fileId = (await filesApi.upload(courseId, file, { onProgress: setProgress })).id;
+        setUploaded({ file, id: fileId });
       } finally {
         setProgress(null);
       }

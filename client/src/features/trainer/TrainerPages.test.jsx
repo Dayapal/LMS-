@@ -84,7 +84,13 @@ describe('TrainerDashboardPage', () => {
       'href',
       '/admin/students/st2',
     );
-    await userEvent.click(within(requests).getByRole('button', { name: 'Approve' }));
+    // Each button names the request, so screen reader users know whose it is.
+    expect(
+      within(requests).getByRole('button', { name: 'Decline Kabir Singh for DSA' }),
+    ).toBeInTheDocument();
+    await userEvent.click(
+      within(requests).getByRole('button', { name: 'Approve Kabir Singh for DSA' }),
+    );
     await waitFor(() => expect(update).toHaveBeenCalledWith('e2', 'active'));
     expect(await screen.findByText('Kabir Singh enrolled.')).toBeInTheDocument();
   });

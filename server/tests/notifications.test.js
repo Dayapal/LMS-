@@ -214,8 +214,9 @@ describe('submission_reviewed and resubmit_requested', () => {
       link,
       readAt: null,
     });
-    // Nothing about marks or feedback is copied into the notification.
-    expect(JSON.stringify(list[0])).not.toMatch(/70|Good/);
+    // Nothing about marks or feedback is copied into the notification. (Only the
+    // text fields: random ObjectIds in the ids and link can contain "70".)
+    expect(`${list[0].title} ${list[0].body}`).not.toMatch(/70|Good/);
 
     await as(student).patch(`/api/v1/notifications/${list[0]._id}/read`);
     await review(app, admin, submission.id, { marks: 80, feedback: 'Better' });

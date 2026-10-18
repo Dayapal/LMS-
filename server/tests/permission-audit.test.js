@@ -26,6 +26,8 @@ const PUBLIC = { anon: 'pass', student: 'pass', admin: 'pass' };
 
 const MATRIX = {
   'GET /api/v1/health': PUBLIC,
+  // Exists only while PROXY_DIAGNOSTICS=true (a 404 here); see proxy.test.js.
+  'GET /api/v1/health/proxy': PUBLIC,
 
   'POST /api/v1/auth/register': PUBLIC,
   'POST /api/v1/auth/login': PUBLIC,

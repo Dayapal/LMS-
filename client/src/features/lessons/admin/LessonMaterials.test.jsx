@@ -176,6 +176,29 @@ describe('LessonMaterialsPage', () => {
     });
   });
 
+  it('reuses the uploaded file when saving again after the save failed', async () => {
+    const upload = vi.spyOn(filesApi, 'upload').mockResolvedValue({ id: 'file9' });
+    const create = vi
+      .spyOn(lessonsApi, 'createMaterial')
+      .mockRejectedValueOnce(apiError(500, 'Something went wrong. Please try again.'))
+      .mockResolvedValue({});
+    renderEditor({ materials: [] });
+    const user = userEvent.setup();
+
+    await user.click(await screen.findByRole('button', { name: 'Add file' }));
+    const form = dialog('Add file');
+    await user.type(within(form).getByLabelText(/^title/i), 'Cheat sheet');
+    const pdf = new File(['%PDF-1.4'], 'sheet.pdf', { type: 'application/pdf' });
+    await user.upload(within(form).getByLabelText(/^file/i), pdf);
+    await user.click(within(form).getByRole('button', { name: 'Add file' }));
+    expect(await within(form).findByRole('alert')).toHaveTextContent('Something went wrong');
+
+    await user.click(within(form).getByRole('button', { name: 'Add file' }));
+    await waitFor(() => expect(create).toHaveBeenCalledTimes(2));
+    expect(upload).toHaveBeenCalledTimes(1);
+    expect(create.mock.calls[1][1]).toMatchObject({ fileId: 'file9' });
+  });
+
   it('rejects disallowed or oversized files before uploading', async () => {
     const upload = vi.spyOn(filesApi, 'upload');
     renderEditor({ materials: [] });

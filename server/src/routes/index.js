@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import mongoose from 'mongoose';
+import { config } from '../config/env.js';
+import { proxyDiagnostics } from '../middleware/proxy.js';
 import { authRoutes } from './auth.routes.js';
 import { userRoutes } from './user.routes.js';
 import { courseRoutes, lessonRoutes, materialRoutes, moduleRoutes } from './course.routes.js';
@@ -13,6 +15,14 @@ import { notificationRoutes } from './notification.routes.js';
 export function apiRoutes(limiters) {
   const router = Router();
 
+  // Every API response is per user: no browser or CDN (Vercel honours upstream
+  // cache headers on rewrites) may store it. Files set `private, no-store` too.
+  router.use((_req, res, next) => {
+    res.set('Cache-Control', 'no-store');
+    next();
+  });
+
+  // Open without the proxy's x-origin-secret (app.js): Render's health checks call it directly.
   router.get('/health', (_req, res) => {
     const dbUp = mongoose.connection.readyState === 1;
     res.status(dbUp ? 200 : 503).json({
@@ -20,6 +30,8 @@ export function apiRoutes(limiters) {
       data: { status: dbUp ? 'ok' : 'degraded', db: dbUp ? 'up' : 'down' },
     });
   });
+
+  if (config.proxyDiagnostics) router.get('/health/proxy', limiters.general, proxyDiagnostics);
 
   router.use(limiters.general);
   router.use('/auth', authRoutes(limiters));

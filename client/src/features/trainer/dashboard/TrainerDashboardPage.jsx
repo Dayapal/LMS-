@@ -150,6 +150,7 @@ function PendingRequestsCard({ requests }) {
                 size="sm"
                 disabled={update.isPending}
                 onClick={() => decide(request, 'active')}
+                aria-label={`Approve ${request.user.name} for ${request.course.title}`}
               >
                 Approve
               </Button>
@@ -158,6 +159,7 @@ function PendingRequestsCard({ requests }) {
                 variant="secondary"
                 disabled={update.isPending}
                 onClick={() => decide(request, 'removed')}
+                aria-label={`Decline ${request.user.name} for ${request.course.title}`}
               >
                 Decline
               </Button>
@@ -275,7 +277,7 @@ function DeadlinesCard({ title, description, rows, empty, overdue = false }) {
 
 function DashboardSkeleton() {
   return (
-    <div className="space-y-6" aria-label="Loading dashboard">
+    <div className="space-y-6" role="status" aria-label="Loading dashboard">
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
           <Skeleton key={i} className="h-24" />

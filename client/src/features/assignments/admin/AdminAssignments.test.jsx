@@ -302,6 +302,17 @@ describe('SubmissionReviewPage', () => {
     expect(review.mock.calls[0]).toEqual(['s1', { marks: 45.5, feedback: 'Nice work' }]);
   });
 
+  it('says a student PDF was type-checked but not virus-scanned', async () => {
+    const pdf = { id: 'f1', originalName: 'answers.pdf', mimeType: 'application/pdf', size: 2048 };
+    vi.spyOn(assignmentsApi, 'submission').mockResolvedValue(
+      reviewData({ items: [{ type: 'pdf', file: pdf }] }),
+    );
+    render(path);
+    expect(await screen.findByText(/answers\.pdf/)).toBeInTheDocument();
+    expect(screen.getByText(/not scanned for viruses/)).toBeInTheDocument();
+    expect(screen.queryByText(/virus-free|scanned and safe/i)).not.toBeInTheDocument();
+  });
+
   it('requires feedback to request a resubmission, with optional marks', async () => {
     vi.spyOn(assignmentsApi, 'submission').mockResolvedValue(reviewData());
     const request = vi.spyOn(assignmentsApi, 'requestResubmission').mockResolvedValue({});

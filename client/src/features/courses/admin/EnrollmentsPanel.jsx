@@ -121,7 +121,7 @@ export function EnrollmentsPanel({ courseId }) {
         </div>
         <CardBody className="space-y-4">
           {isPending ? (
-            <div className="space-y-3" aria-label="Loading students">
+            <div className="space-y-3" role="status" aria-label="Loading students">
               {[0, 1, 2].map((i) => (
                 <Skeleton key={i} className="h-12" />
               ))}

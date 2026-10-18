@@ -9,7 +9,8 @@
     "start": "node src/server.js",
     "seed": "node --env-file-if-exists=.env src/seeds/seed.js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "files": "node --env-file-if-exists=.env src/scripts/files.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

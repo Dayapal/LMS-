@@ -6,6 +6,7 @@ import { ToastProvider } from '../../context/ToastContext.jsx';
 import { useToast } from '../../hooks/useToast.js';
 import { TabPanel, Tabs } from './Tabs.jsx';
 import { TextField } from './FormField.jsx';
+import { Modal } from './Modal.jsx';
 
 afterEach(() => {
   cleanup();
@@ -127,5 +128,51 @@ describe('TextField', () => {
     expect(input).toHaveAccessibleDescription('Too short Shown to students');
     expect(input).toBeInvalid();
     expect(input).toBeRequired();
+  });
+});
+
+function DialogDemo() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(true)}>
+        Add note
+      </button>
+      <Modal open={open} onClose={() => setOpen(false)} title="Add note">
+        <button type="button">Inside</button>
+      </Modal>
+    </>
+  );
+}
+
+describe('focus return (useFocusTrap)', () => {
+  it('returns focus to the opening control even when clicking did not focus it (Safari)', () => {
+    render(<DialogDemo />);
+    const opener = screen.getByRole('button', { name: 'Add note' });
+    // fireEvent.click doesn't move focus, like a click or tap in Safari.
+    fireEvent.click(opener);
+    expect(document.activeElement).not.toBe(opener);
+    expect(screen.getByRole('dialog', { name: 'Add note' })).toContainElement(
+      document.activeElement,
+    );
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(opener).toHaveFocus();
+  });
+
+  it('prefers the clicked control over an element that kept focus from earlier (Safari)', () => {
+    render(
+      <>
+        <main tabIndex={-1}>Page</main>
+        <DialogDemo />
+      </>,
+    );
+    // After a navigation the layout focuses <main>; a Safari click leaves it there.
+    screen.getByRole('main').focus();
+    const opener = screen.getByRole('button', { name: 'Add note' });
+    fireEvent.click(opener);
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(opener).toHaveFocus();
   });
 });

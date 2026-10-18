@@ -5,7 +5,16 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 
 export default [
-  { ignores: ['**/node_modules/**', '**/dist/**', '**/coverage/**', 'server/uploads/**'] },
+  {
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/coverage/**',
+      'server/uploads/**',
+      'playwright-report/**',
+      'test-results/**',
+    ],
+  },
   js.configs.recommended,
   {
     rules: {
@@ -13,7 +22,7 @@ export default [
     },
   },
   {
-    files: ['server/**/*.js', 'eslint.config.js'],
+    files: ['server/**/*.js', 'eslint.config.js', 'playwright.config.js', 'e2e/**/*.js'],
     languageOptions: { ecmaVersion: 'latest', sourceType: 'module', globals: globals.node },
   },
   {
@@ -35,11 +44,12 @@ export default [
     },
   },
   {
-    files: ['client/vite.config.js'],
+    files: ['client/vite.config.js', 'client/scripts/**/*.js'],
     languageOptions: { globals: globals.node },
   },
   {
-    files: ['**/*.test.{js,jsx}', '**/tests/**/*.{js,jsx}'],
+    // Tests; E2E specs also run callbacks inside the page (page.evaluate).
+    files: ['**/*.test.{js,jsx}', '**/tests/**/*.{js,jsx}', 'e2e/**/*.js'],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
 ];

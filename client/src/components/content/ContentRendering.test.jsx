@@ -99,6 +99,8 @@ describe('CodeBlock', () => {
     await user.click(screen.getByRole('button', { name: 'Copy code: Run the tests' }));
     expect(writeText).toHaveBeenCalledWith('npm test');
     expect(await screen.findByText('Copied')).toBeInTheDocument();
+    // The name follows the visible text (label in name).
+    expect(screen.getByRole('button', { name: 'Copied code: Run the tests' })).toBeInTheDocument();
     expect(screen.getByText('Twice')).toBeInTheDocument();
   });
 });

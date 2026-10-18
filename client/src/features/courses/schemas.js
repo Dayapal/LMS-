@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '../../utils/zod.js';
 import { linesToList } from './format.js';
 
 // Mirrors server/src/validators/content.validators.js.

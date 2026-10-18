@@ -354,7 +354,7 @@ export function StudentDetailPage() {
 
   if (detail.isPending) {
     return (
-      <div className="space-y-6" aria-label="Loading student">
+      <div className="space-y-6" role="status" aria-label="Loading student">
         <Skeleton className="h-8 w-1/2" />
         <Skeleton className="h-24" />
         <Skeleton className="h-64" />

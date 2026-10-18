@@ -17,6 +17,8 @@ export function CodeBlock({ source, language, title, caption, label: labelProp }
   const grammar = prismLanguage(language);
   // `label` names the block for assistive tech when the title is shown elsewhere.
   const label = labelProp ?? title ?? languageLabel(language);
+  // The button's name starts with its visible text (WCAG 2.5.3, label in name).
+  const copyLabel = copied === 'done' ? 'Copied' : copied === 'failed' ? 'Copy failed' : 'Copy';
 
   const copy = async () => {
     try {
@@ -41,9 +43,9 @@ export function CodeBlock({ source, language, title, caption, label: labelProp }
           type="button"
           onClick={copy}
           className="shrink-0 rounded-md px-2 py-1 text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white"
-          aria-label={`Copy code: ${label}`}
+          aria-label={`${copyLabel} code: ${label}`}
         >
-          {copied === 'done' ? 'Copied' : copied === 'failed' ? 'Copy failed' : 'Copy'}
+          {copyLabel}
         </button>
         <span className="sr-only" role="status">
           {copied === 'done' ? 'Code copied to the clipboard' : ''}

@@ -60,7 +60,11 @@ describe('notification helpers', () => {
     expect(bellLabel(undefined)).toBe('Notifications');
     expect(bellLabel(3)).toBe('Notifications, 3 unread');
     expect(badgeText(9)).toBe('9');
-    expect(badgeText(12)).toBe('9+');
+    expect(badgeText(12)).toBe('12');
+    expect(badgeText(100)).toBe('99+');
+    // The name always contains the visible badge text.
+    expect(bellLabel(12)).toBe('Notifications, 12 unread');
+    expect(bellLabel(150)).toBe('Notifications, 99+ unread');
   });
 
   it('follows in-app paths only', () => {
@@ -230,7 +234,7 @@ describe('NotificationsPage', () => {
     open('/app/notifications');
 
     await userEvent.click(
-      await screen.findByRole('button', { name: 'Mark “Feedback on Portfolio page” as read' }),
+      await screen.findByRole('button', { name: 'Mark as read: Feedback on Portfolio page' }),
     );
     expect(markRead.mock.calls[0][0]).toBe('n1');
     expect(await screen.findByText('Marked as read.')).toBeInTheDocument();

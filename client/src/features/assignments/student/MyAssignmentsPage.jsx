@@ -135,7 +135,7 @@ export function MyAssignmentsPage() {
       </div>
 
       {isPending ? (
-        <div className="space-y-3" aria-label="Loading assignments">
+        <div className="space-y-3" role="status" aria-label="Loading assignments">
           {[0, 1, 2].map((i) => (
             <Skeleton key={i} className="h-20" />
           ))}

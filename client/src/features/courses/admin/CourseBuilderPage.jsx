@@ -62,7 +62,7 @@ export function CourseBuilderPage() {
 
   if (isPending) {
     return (
-      <div className="space-y-6" aria-label="Loading course">
+      <div className="space-y-6" role="status" aria-label="Loading course">
         <Skeleton className="h-8 w-1/2" />
         <Skeleton className="h-4 w-1/3" />
         <Skeleton className="h-48" />

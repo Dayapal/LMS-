@@ -174,7 +174,7 @@ function RecentFeedback({ rows }) {
 
 function DashboardSkeleton() {
   return (
-    <div className="space-y-6" aria-label="Loading dashboard">
+    <div className="space-y-6" role="status" aria-label="Loading dashboard">
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
           <Skeleton key={i} className="h-20" />

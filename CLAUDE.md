@@ -23,6 +23,9 @@ npm run format:check   # Prettier
 npm run build          # client production build
 npm run seed           # idempotent: trainer, 3 starter courses, optional demo students
 npm run seed -- --reset  # dev only: wipe course data + demo students, then reseed
+npm run test:e2e       # Playwright vs a production build (needs `npm run test:e2e:install` once)
+npx playwright test e2e/auth.spec.js --project=chromium   # one E2E file / browser
+npm run files -- cleanup   # storage housekeeping (also: check, migrate --to=s3); dry run without --apply
 ```
 
 - The server tests need a MongoDB at `127.0.0.1:27017`, or one set in `TEST_MONGODB_URI`. `server/tests/setup.js` gives each test file its own throwaway database and upload directory (in the OS temp folder), empties both before each test, and loads `config/db.js` so `sanitizeFilter` is on in tests too.
@@ -53,8 +56,9 @@ npm run seed -- --reset  # dev only: wipe course data + demo students, then rese
 - **Materials and files (Phase 3):**
   - A `Material` is one ordered block in a lesson (`note` | `code` | `file` | `link`) with its own status. `material.service.js` rejects payload fields that don't belong to the material's type; the type never changes.
   - Uploads go through `middleware/upload.js` (multer, memory, one `file` part) and then `inspectUpload` in `services/fileRules.js`: extension, declared MIME and magic bytes (`file-type`) must agree. Add new upload purposes to `UPLOAD_RULES` there.
-  - Bytes are stored by `services/storage/` (`getStorage()`; only the `local` driver until Phase 8) under random keys. Nothing is served statically: `GET /files/:id` calls `getFileForViewer` in `access.service.js`. Requests without a token get 404 there.
-  - Delete files with `deleteFilesIfUnused` / `deleteFilesWhere` (`file.service.js`), never by hand; deleting a course, module or lesson cascades through `deleteMaterialsWhere`.
+  - Bytes are stored by `services/storage/` (`getStorage(provider)`: `local`, or `s3` for R2/S3 with its own SigV4 signer, no AWS SDK) under random keys that every driver validates. Drivers expose `put`, `size`, `open` (`{ size, stream }` or null), `remove`, `list`, and throw `StorageError` (mapped to a detail-free 503). Nothing is served statically or through bucket URLs: `GET /files/:id` calls `getFileForViewer` in `access.service.js`, then opens the bytes. Requests without a token get 404 there.
+  - Delete files with `deleteFilesIfUnused` / `deleteFilesWhere` (`file.service.js`), never by hand; deleting a course, module or lesson cascades through `deleteMaterialsWhere`. They delete records first and bytes after (a storage failure only leaves bytes for `files cleanup`).
+  - Server tests for the S3 path use `tests/fake-s3.js` (in-memory, verifies signatures, `failNext()` injects errors): set `config.storage.driver = 's3'` and `config.storage.s3 = fake.settings`, and restore both after.
   - The client fetches files as Blobs (`filesApi.fetch`) because the access token lives in memory; never link to `/api/v1/files/:id` directly.
 - **Assignments and submissions (Phase 4):**
   - `Assignment` belongs to a course and optionally a module/lesson (a lesson implies its module). `Submission` is one document per attempt; `isLate`, `attempt`, `status` and `review` are always set by the server.
@@ -71,14 +75,18 @@ npm run seed -- --reset  # dev only: wipe course data + demo students, then rese
 - **Client routes and accessibility (Phase 7):**
   - Every page in `routes/routes.jsx` is lazy (`page(load, name, title)`), with `handle.title` for the tab title (`useDocumentTitle`) and `RouteErrorPage` boundaries. Keep libraries that only pages use (zod, react-hook-form, Markdown, CodeMirror) out of the shell: layouts, guards, contexts.
   - CodeMirror grammars load per language in `CodeEditor.jsx`.
-  - Shared a11y pieces: `useFocusTrap` (modals, drawer), `Tabs`/`TabPanel` (real tabs only), `FilterPills` (filters: `aria-pressed`, not tabs). Toasts sit at the top; show a result next to its control when a toast could hide what the user does next.
+  - Shared a11y pieces: `useFocusTrap` (modals, drawer; returns focus to the control clicked just before opening, because Safari doesn't focus clicked buttons), `Tabs`/`TabPanel` (real tabs only), `FilterPills` (filters: `aria-pressed`, not tabs). Toasts sit at the top; show a result next to its control when a toast could hide what the user does next.
   - Single-column grids need `grid-cols-1` (not an implicit column), or long `truncate` text widens the page on phones.
 - **Rendering untrusted content (client):** use `components/content/MarkdownView.jsx` (react-markdown + remark-gfm + rehype-sanitize; raw HTML is never rendered) and `CodeBlock.jsx` (prism-react-renderer). Java and Bash grammars are registered through `languages.js`, which must keep importing `prismGlobal.js` first. `MarkdownView`, the lesson pages and CodeMirror are lazy-loaded to keep the main bundle small.
 - **Enrollment (D5):** a student `POST /courses/:id/enroll` creates a `pending` request. The trainer approves it or sets it to `removed` through `/admin/enrollments`, or enrolls a student directly by email.
 - **Seeds:** the course roadmaps are data files in `server/src/seeds/data/{mern,java,dsa}.js`. A course is created only when its slug is absent, so reseeding never overwrites trainer edits.
   - Starter materials are Markdown in `server/src/seeds/content/<course slug>.md`, split by `<!-- lesson: -->`, `<!-- code: -->` and `<!-- link: -->` markers (see `materials.seed.js`). That folder is excluded from Prettier so the code examples stay verbatim. A lesson only receives starter materials while it has none.
   - Cheat-sheet PDFs are generated by `seeds/pdf.js` from `seeds/data/cheatsheets.js` and pass through the same `inspectUpload` checks as real uploads.
-- **Same-origin API:** the client always calls the relative `/api/v1`. The Vite proxy (dev) and `client/vercel.json` rewrites (prod) forward to the API. Don't hard-code an API host in the client, and don't switch the cookie to `SameSite=None`.
+- **Production config (Phase 8):** `loadConfig(env)` in `config/env.js` is pure and testable. Production refuses: no `TRUST_PROXY` or `ORIGIN_SECRET`, `STORAGE_DRIVER=local`, non-https origins or S3 endpoint, insecure cookies. Errors name variables, never values; blank values count as unset. `redactSecrets()` masks secrets in startup logs. Every API response is `Cache-Control: no-store` (Vercel caches rewrites that send cache headers).
+- **Client CSP:** `client/vercel.json` holds the page headers; `vite preview` sends the same ones (E2E runs under them). No `unsafe-eval`, so client code imports zod only from `utils/zod.js` (`jitless`); `src/test/a11yConventions.test.js` enforces it. `frame-ancestors 'self'` (not `'none'`): the PDF viewer frames a `blob:` document that inherits the policy, and WebKit then refuses `'none'`.
+- **E2E (Phase 8):** `e2e/` (see `e2e/README.md`). The API runs with `NODE_ENV=production`, a reset `lms_e2e` database and in-memory S3; the build is served over HTTPS (WebKit drops `Secure` cookies on http://localhost). Fixtures fail a test on page errors and CSP violations. Wait for a page's data (`homeLoaded`) before navigating away, or WebKit reports the cancelled requests as page errors.
+- **Proxy secret:** `requireOriginSecret` (`middleware/proxy.js`) runs app-wide right after helmet: with `config.originSecrets` set, every request except `GET /api/v1/health` needs `x-origin-secret`, which only the Vercel `/api` route adds (a `routes` transform from the `ORIGIN_SECRET` project variable). Tests that need it set `config.originSecrets` and restore `[]`; the local proxy adds it from `PROXY_ORIGIN_SECRET` (never a `VITE_` variable). `client/scripts/check-deploy-config.js` and `check-build-secrets.js` guard the Vercel side.
+- **Same-origin API:** the client always calls the relative `/api/v1`. The Vite proxy (dev) and the `client/vercel.json` `/api` route (prod) forward to the API. Don't hard-code an API host in the client, and don't switch the cookie to `SameSite=None`.
 - **Client auth flow:**
   - `AuthProvider` does a silent refresh on load. Its `status` is `loading`, `authenticated` or `anonymous`.
   - The axios interceptor retries once after a single-flight refresh.
@@ -98,3 +106,5 @@ npm run seed -- --reset  # dev only: wipe course data + demo students, then rese
 - Express 5's query parser keeps `a[$ne]=x` as a literal key, which zod strips, so bracketed query parameters never become operators (tested). Every list's `page` is capped at 10,000 through the shared `pageQuery`.
 - jsdom applies no CSS, so both notification bells (sidebar and mobile header) are in the DOM in tests; pick one with `findAllByRole(...)[0]`.
 - jsdom's `Blob` has no `.text()`; read Blobs with `FileReader` in client code that tests exercise (see `features/lessons/api.js`).
+- Loading skeletons named with `aria-label` must have `role="status"` (a label on a plain `div` is ignored). Custom accessible names must start with the visible text (WCAG 2.5.3), for example `Mark as read: <title>`.
+- Playwright's WebKit on Windows reports every cookie's SameSite as `None`; assert on the `Set-Cookie` header instead. It also doesn't Tab to links (like Safari's default).

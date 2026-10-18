@@ -188,7 +188,7 @@ export function ReviewQueuePage() {
       </div>
 
       {isPending ? (
-        <div className="space-y-3" aria-label="Loading submissions">
+        <div className="space-y-3" role="status" aria-label="Loading submissions">
           {[0, 1, 2].map((i) => (
             <Skeleton key={i} className="h-20" />
           ))}

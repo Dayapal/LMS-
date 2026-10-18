@@ -76,7 +76,7 @@ export function LessonMaterialsPage() {
 
   if (lesson.isPending) {
     return (
-      <div className="space-y-6" aria-label="Loading lesson">
+      <div className="space-y-6" role="status" aria-label="Loading lesson">
         <Skeleton className="h-8 w-1/2" />
         <Skeleton className="h-32" />
       </div>

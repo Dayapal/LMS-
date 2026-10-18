@@ -33,7 +33,7 @@ export async function storeFile({
 }) {
   const storage = getStorage();
   const storageKey = `${purpose}/${crypto.randomUUID()}.${ext}`;
-  await storage.put(storageKey, buffer);
+  await storage.put(storageKey, buffer, { contentType: mimeType });
   try {
     return await FileAsset.create({
       provider: storage.name,
@@ -48,8 +48,23 @@ export async function storeFile({
       uploadedBy: user._id,
     });
   } catch (error) {
-    await storage.remove(storageKey);
+    // The bytes are stored but the record isn't: remove them, and keep the original error.
+    await removeBytes(storage.name, storageKey, 'Could not remove an upload whose record failed');
     throw error;
+  }
+}
+
+/**
+ * Deletes stored bytes without failing the caller. A failure leaves an
+ * unreferenced object, which `npm run files -- cleanup` reports and removes.
+ */
+async function removeBytes(provider, storageKey, message) {
+  try {
+    await getStorage(provider).remove(storageKey);
+    return true;
+  } catch (error) {
+    logger.warn({ provider, err: { name: error.name, message: error.message } }, message);
+    return false;
   }
 }
 
@@ -80,23 +95,26 @@ export async function uploadFile(user, { purpose, courseId }, upload) {
  */
 export async function openFileForViewer(user, fileId, { download }) {
   const { file, downloadable } = await getFileForViewer(user, fileId);
-  const storage = getStorage(file.provider);
-  const size = await storage.size(file.storageKey);
-  if (size === null) {
-    logger.warn({ fileId: file.id, storageKey: file.storageKey }, 'Stored file is missing');
+  // Opened only after the access check: the bytes are never reachable another way.
+  const opened = await getStorage(file.provider).open(file.storageKey);
+  if (!opened) {
+    logger.warn({ fileId: file.id, provider: file.provider }, 'Stored file is missing');
     throw ApiError.notFound('File not found');
   }
-  return {
-    file,
-    size,
-    attachment: Boolean(download) && downloadable,
-    stream: () => storage.createReadStream(file.storageKey),
-  };
+  return { file, ...opened, attachment: Boolean(download) && downloadable };
 }
 
+/**
+ * Deletes the records first, then the bytes. If storage fails, nothing points
+ * at the leftover bytes (invisible, reported by the cleanup script) instead of
+ * records pointing at missing bytes, and the caller's delete still succeeds.
+ */
 async function removeAssets(files) {
-  for (const file of files) await getStorage(file.provider).remove(file.storageKey);
+  if (files.length === 0) return;
   await FileAsset.deleteMany({ _id: trusted({ $in: files.map((f) => f._id) }) });
+  for (const file of files) {
+    await removeBytes(file.provider, file.storageKey, 'Could not delete stored file');
+  }
 }
 
 // Unattached submission uploads older than this are removed when the student uploads again.
@@ -139,7 +157,7 @@ export async function uploadSubmissionFile(student, assignment, upload) {
 }
 
 /** Ids among `ids` that a material, an assignment or a submission still uses. */
-async function filesInUse(ids) {
+export async function filesInUse(ids) {
   const anyOf = () => trusted({ $in: ids });
   const [materials, attachments, submitted] = await Promise.all([
     Material.distinct('file', { file: anyOf() }),

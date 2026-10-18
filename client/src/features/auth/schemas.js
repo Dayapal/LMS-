@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '../../utils/zod.js';
 
 // Mirrors server/src/validators so users see errors before a round trip.
 const email = z

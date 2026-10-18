@@ -119,7 +119,7 @@ export function NotificationsPage() {
                           size="sm"
                           className="shrink-0"
                           onClick={() => read(notification, { fromButton: true })}
-                          aria-label={`Mark “${notification.title}” as read`}
+                          aria-label={`Mark as read: ${notification.title}`}
                         >
                           Mark as read
                         </Button>

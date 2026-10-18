@@ -15,11 +15,20 @@ function normalize(err) {
   }
   if (err.name === 'CastError') return ApiError.badRequest(`Invalid ${err.path}`);
   if (err.code === 11000) return ApiError.conflict('A record with these details already exists');
+  if (err.name === 'StorageError') {
+    return new ApiError(
+      503,
+      'STORAGE_UNAVAILABLE',
+      'File storage is unavailable. Please try again.',
+    );
+  }
   return null;
 }
 
 export function errorHandler(err, req, res, _next) {
   const apiError = normalize(err);
+  // Storage failures are logged (operation and status only) and answered without details.
+  if (err.name === 'StorageError') (req.log ?? logger).error({ err }, 'Storage provider error');
   if (!apiError) {
     (req.log ?? logger).error({ err }, 'Unhandled error');
     return res.status(500).json({

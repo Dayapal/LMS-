@@ -199,7 +199,7 @@ export function CourseReportPage() {
 
   if (isPending) {
     return (
-      <div className="space-y-6" aria-label="Loading report">
+      <div className="space-y-6" role="status" aria-label="Loading report">
         <Skeleton className="h-8 w-1/2" />
         <Skeleton className="h-24" />
         <Skeleton className="h-64" />

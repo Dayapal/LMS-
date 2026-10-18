@@ -106,7 +106,7 @@ export function AssignmentEditorPage() {
         </Link>
       </PageHeader>
       {loading ? (
-        <div className="space-y-4" aria-label="Loading assignment">
+        <div className="space-y-4" role="status" aria-label="Loading assignment">
           <Skeleton className="h-40" />
           <Skeleton className="h-64" />
         </div>
@@ -397,6 +397,8 @@ function AssignmentForm({ courseId, modules, assignment }) {
             </div>
             <section
               aria-label="Live preview"
+              // Focusable so keyboard users can scroll a long preview (WCAG 2.1.1).
+              tabIndex={0}
               className={`min-h-48 overflow-y-auto rounded-lg border border-slate-200 bg-white p-4 lg:max-h-[24rem] ${
                 pane === 'preview' ? '' : 'max-lg:hidden'
               }`}

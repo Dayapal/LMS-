@@ -121,7 +121,7 @@ function CompletionControl({ lesson }) {
 
 function ReaderSkeleton() {
   return (
-    <div className="mx-auto max-w-3xl space-y-6" aria-label="Loading lesson">
+    <div className="mx-auto max-w-3xl space-y-6" role="status" aria-label="Loading lesson">
       <Skeleton className="h-4 w-1/3" />
       <Skeleton className="h-8 w-2/3" />
       <Skeleton className="h-24" />
@@ -260,7 +260,7 @@ export function LessonReaderPage({ mode = 'student' }) {
       )}
 
       {materials.isPending ? (
-        <div className="space-y-4" aria-label="Loading study materials">
+        <div className="space-y-4" role="status" aria-label="Loading study materials">
           <Skeleton className="h-6 w-1/3" />
           <Skeleton className="h-48" />
         </div>
