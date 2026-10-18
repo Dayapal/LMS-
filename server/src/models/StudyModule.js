@@ -36,3 +36,4 @@ studyModuleSchema.index({ book: 1, order: 1 });
 studyModuleSchema.index({ fileHash: 1 });
 
 export const StudyModule = mongoose.model('StudyModule', studyModuleSchema);
+

@@ -92,3 +92,4 @@ export async function resetStudyMaterials() {
   await StudyModule.deleteMany({});
   await StudyBook.deleteMany({});
 }
+

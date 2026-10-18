@@ -61,3 +61,4 @@
 - `.prettierignore` (added `content/study-materials`)
 - `server/src/models/index.js` (exported `StudyBook`, `STUDY_CATEGORIES`, `StudyModule`)
 - `server/src/seeds/seed.js` (integrated `seedStudyMaterials` and `resetStudyMaterials`)
+

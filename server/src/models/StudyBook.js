@@ -25,3 +25,4 @@ studyBookSchema.index({ slug: 1 }, { unique: true });
 studyBookSchema.index({ status: 1, order: 1 });
 
 export const StudyBook = mongoose.model('StudyBook', studyBookSchema);
+
