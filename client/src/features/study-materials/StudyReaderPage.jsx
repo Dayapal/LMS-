@@ -1,16 +1,32 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router';
-import { useAdminStudyPreview, useStudentStudyModuleContent } from './api.js';
+import {
+  useAdminStudyPreview,
+  useStudentStudyModuleContent,
+  useToggleModuleCompletion,
+} from './api.js';
+import { useReadingTelemetry } from './useReadingTelemetry.js';
 import { Spinner } from '../../components/ui/Spinner.jsx';
 import { Badge } from '../../components/ui/Badge.jsx';
 import { Icon } from '../../components/Icon.jsx';
 
+function formatReadingTime(seconds = 0) {
+  if (seconds < 60) return `${seconds}s read`;
+  const mins = Math.floor(seconds / 60);
+  if (mins < 60) return `${mins}m read`;
+  const hours = Math.floor(mins / 60);
+  const remainingMins = mins % 60;
+  return `${hours}h ${remainingMins}m read`;
+}
+
 /**
- * Sandboxed HTML Study Book Reader.
+ * Sandboxed HTML Study Book Reader with Telemetry & Completion Tracking.
  * - Renders original HTML bytes byte-for-byte in an isolated iframe.
  * - Strict sandbox: `sandbox="allow-scripts"` (strictly omitting `allow-same-origin`).
  * - Preserves original styling, embedded code, and inline SVG graphics without modification.
- * - Supports Admin Preview mode and Student Reading mode.
+ * - Tracks active engaged reading time via useReadingTelemetry.
+ * - Interactive completion toggle with optimistic UI.
+ * - Integrated assignment quick-action banner when linked.
  */
 export function StudyReaderPage({ mode = 'student' }) {
   const { moduleId, bookSlug, moduleSlug } = useParams();
@@ -27,6 +43,30 @@ export function StudyReaderPage({ mode = 'student' }) {
 
   const query = mode === 'preview' ? previewQuery : studentQuery;
   const { data, isLoading, error } = query;
+
+  // Telemetry hook
+  const { totalReadingSeconds, isIdle } = useReadingTelemetry({
+    bookSlug,
+    moduleSlug,
+    enabled: mode === 'student' && !isLoading && Boolean(data),
+    initialSeconds: data?.readingProgress?.totalReadingSeconds || 0,
+  });
+
+  // Completion mutation
+  const toggleCompletion = useToggleModuleCompletion(bookSlug, moduleSlug);
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  useEffect(() => {
+    if (data?.readingProgress?.isCompleted !== undefined) {
+      setIsCompleted(data.readingProgress.isCompleted);
+    }
+  }, [data?.readingProgress?.isCompleted]);
+
+  const handleToggleComplete = () => {
+    const nextState = !isCompleted;
+    setIsCompleted(nextState);
+    toggleCompletion.mutate({ isCompleted: nextState });
+  };
 
   // Toggle Fullscreen
   const toggleFullscreen = () => {
@@ -156,6 +196,39 @@ export function StudyReaderPage({ mode = 'student' }) {
 
         {/* Action Controls */}
         <div className="flex items-center gap-2 shrink-0">
+          {/* Active Reading Timer Indicator */}
+          {mode === 'student' && (
+            <div
+              className={`hidden sm:flex items-center gap-1.5 rounded-xl border px-3 py-1 text-xs font-medium transition-colors ${
+                isIdle
+                  ? 'border-slate-800 bg-white/5 text-slate-400'
+                  : 'border-cyan-500/30 bg-cyan-500/10 text-cyan-300'
+              }`}
+              title={isIdle ? 'Reading timer paused (idle)' : 'Reading telemetry active'}
+            >
+              <span className={`size-1.5 rounded-full ${isIdle ? 'bg-slate-500' : 'bg-cyan-400 animate-pulse'}`} />
+              <span>{formatReadingTime(totalReadingSeconds)}</span>
+            </div>
+          )}
+
+          {/* Mark Complete Button (Student Mode only) */}
+          {mode === 'student' && (
+            <button
+              type="button"
+              onClick={handleToggleComplete}
+              disabled={toggleCompletion.isPending}
+              className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold shadow-sm transition-all ${
+                isCompleted
+                  ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30'
+                  : 'border-slate-700/80 bg-white/5 text-slate-300 hover:border-emerald-500/30 hover:bg-emerald-500/10 hover:text-emerald-300'
+              }`}
+              title={isCompleted ? 'Completed! Click to mark incomplete' : 'Mark module as complete'}
+            >
+              <span className="text-sm">{isCompleted ? '✓' : '○'}</span>
+              <span>{isCompleted ? 'Completed' : 'Mark Complete'}</span>
+            </button>
+          )}
+
           {/* Previous module */}
           <button
             type="button"
@@ -225,6 +298,27 @@ export function StudyReaderPage({ mode = 'student' }) {
           className="h-full w-full border-0 bg-white"
         />
       </main>
+
+      {/* Associated Assignment Banner (if linked) */}
+      {module.linkedAssignment && (
+        <footer className="shrink-0 flex items-center justify-between gap-4 border-t border-slate-700/60 bg-slate-900/95 px-4 py-2.5 backdrop-blur-md">
+          <div className="flex items-center gap-2.5 text-xs">
+            <span className="rounded-md bg-amber-500/20 px-2 py-0.5 font-bold text-amber-300">
+              Associated Assignment
+            </span>
+            <span className="truncate max-w-xs font-medium text-white sm:max-w-md">
+              {module.linkedAssignment.title}
+            </span>
+          </div>
+          <Link
+            to="/app/assignments"
+            className="flex items-center gap-1.5 rounded-lg bg-cyan-500/20 px-3 py-1 text-xs font-semibold text-cyan-300 transition-colors hover:bg-cyan-500/30"
+          >
+            <span>Go to Assignment</span>
+            <span>→</span>
+          </Link>
+        </footer>
+      )}
     </div>
   );
 }

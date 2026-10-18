@@ -10,6 +10,7 @@ export const studyKeys = {
   adminAccessOverview: ['study-materials', 'admin', 'access'],
   adminAccessDetail: (id) => ['study-materials', 'admin', 'access', id],
   studentBooks: ['study-materials', 'student', 'books'],
+  studentSummary: ['study-materials', 'student', 'summary'],
   studentBookDetail: (slug) => ['study-materials', 'student', 'book', slug],
   studentModuleContent: (bookSlug, moduleSlug) => [
     'study-materials',
@@ -39,10 +40,22 @@ export const studyMaterialsApi = {
 
   // Student endpoints
   getStudentBooks: () => http.get('/study-materials').then(data),
+  getStudentStudySummary: () => http.get('/study-materials/summary').then(data),
   getStudentBookDetail: (bookSlug) =>
     http.get(`/study-materials/${bookSlug}`).then(data),
   getStudentModuleContent: (bookSlug, moduleSlug) =>
     http.get(`/study-materials/${bookSlug}/modules/${moduleSlug}/content`).then(data),
+  sendHeartbeat: ({ bookSlug, moduleSlug, activeSeconds, scrollPosition }) =>
+    http
+      .post(`/study-materials/${bookSlug}/modules/${moduleSlug}/heartbeat`, {
+        activeSeconds,
+        scrollPosition,
+      })
+      .then(data),
+  markModuleComplete: ({ bookSlug, moduleSlug }) =>
+    http.post(`/study-materials/${bookSlug}/modules/${moduleSlug}/complete`).then(data),
+  unmarkModuleComplete: ({ bookSlug, moduleSlug }) =>
+    http.delete(`/study-materials/${bookSlug}/modules/${moduleSlug}/complete`).then(data),
 };
 
 // React Query Hooks
@@ -120,6 +133,12 @@ export const useStudentStudyBooks = () =>
     queryFn: studyMaterialsApi.getStudentBooks,
   });
 
+export const useStudentStudySummary = () =>
+  useQuery({
+    queryKey: studyKeys.studentSummary,
+    queryFn: studyMaterialsApi.getStudentStudySummary,
+  });
+
 export const useStudentStudyBookDetail = (bookSlug) =>
   useQuery({
     queryKey: studyKeys.studentBookDetail(bookSlug),
@@ -133,3 +152,20 @@ export const useStudentStudyModuleContent = (bookSlug, moduleSlug) =>
     queryFn: () => studyMaterialsApi.getStudentModuleContent(bookSlug, moduleSlug),
     enabled: Boolean(bookSlug) && Boolean(moduleSlug),
   });
+
+export const useToggleModuleCompletion = (bookSlug, moduleSlug) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ isCompleted }) =>
+      isCompleted
+        ? studyMaterialsApi.markModuleComplete({ bookSlug, moduleSlug })
+        : studyMaterialsApi.unmarkModuleComplete({ bookSlug, moduleSlug }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: studyKeys.studentBooks });
+      queryClient.invalidateQueries({ queryKey: studyKeys.studentSummary });
+      queryClient.invalidateQueries({ queryKey: studyKeys.studentBookDetail(bookSlug) });
+      queryClient.invalidateQueries({ queryKey: studyKeys.studentModuleContent(bookSlug, moduleSlug) });
+    },
+  });
+};
+

@@ -120,8 +120,12 @@ const MATRIX = {
   'PUT /api/v1/study-materials/admin/access/:id': ADMIN,
   'POST /api/v1/study-materials/admin/access/bulk': ADMIN,
   'GET /api/v1/study-materials': ANY,
+  'GET /api/v1/study-materials/summary': ANY,
   'GET /api/v1/study-materials/:bookSlug': ANY,
   'GET /api/v1/study-materials/:bookSlug/modules/:moduleSlug/content': ANY,
+  'POST /api/v1/study-materials/:bookSlug/modules/:moduleSlug/heartbeat': ANY,
+  'POST /api/v1/study-materials/:bookSlug/modules/:moduleSlug/complete': ANY,
+  'DELETE /api/v1/study-materials/:bookSlug/modules/:moduleSlug/complete': ANY,
 };
 
 const ROUTES_DIR = fileURLToPath(new URL('../src/routes/', import.meta.url));

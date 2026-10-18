@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createApp } from '../src/app.js';
-import { StudyAccess, StudyBook, StudyModule } from '../src/models/index.js';
+import { StudyAccess, StudyBook, StudyModule, StudyProgress } from '../src/models/index.js';
 import { seedStudyMaterials } from '../src/seeds/studyMaterials.seed.js';
 import { api, ORIGIN } from './helpers.js';
 import { actors, bearer } from './content-helpers.js';
@@ -143,4 +143,134 @@ describe('Study Materials API — Student Access & Security Enforcement', () => 
 
     expect(res.status).toBe(404);
   });
+
+  describe('Telemetry, Reading Progress & Dashboard Summary (Milestone 4 & 5)', () => {
+    it('records reading duration heartbeat and updates scroll position', async () => {
+      const dsaBook = await StudyBook.findOne({ slug: 'dsa-javascript' });
+      const mod1 = await StudyModule.findOne({ book: dsaBook._id, order: 1 });
+
+      // Grant access
+      await StudyAccess.create({
+        student: student._id,
+        book: dsaBook._id,
+        isBookAssigned: true,
+        releasedModules: [mod1._id],
+      });
+
+      // First heartbeat
+      const hb1 = await api(app)
+        .post(`/api/v1/study-materials/dsa-javascript/modules/${mod1.slug}/heartbeat`)
+        .set('Origin', ORIGIN)
+        .set(bearer(student))
+        .send({ activeSeconds: 30, scrollPosition: 45 });
+
+      expect(hb1.status).toBe(200);
+      expect(hb1.body.data.totalReadingSeconds).toBe(30);
+      expect(hb1.body.data.lastScrollPosition).toBe(45);
+      expect(hb1.body.data.isCompleted).toBe(false);
+
+      // Second heartbeat accumulates
+      const hb2 = await api(app)
+        .post(`/api/v1/study-materials/dsa-javascript/modules/${mod1.slug}/heartbeat`)
+        .set('Origin', ORIGIN)
+        .set(bearer(student))
+        .send({ activeSeconds: 25, scrollPosition: 75 });
+
+      expect(hb2.status).toBe(200);
+      expect(hb2.body.data.totalReadingSeconds).toBe(55);
+      expect(hb2.body.data.lastScrollPosition).toBe(75);
+
+      // Verify in DB
+      const dbProgress = await StudyProgress.findOne({ student: student._id, module: mod1._id });
+      expect(dbProgress.totalReadingSeconds).toBe(55);
+      expect(dbProgress.lastScrollPosition).toBe(75);
+    });
+
+    it('marks module complete, logs activity, and unmarks complete', async () => {
+      const dsaBook = await StudyBook.findOne({ slug: 'dsa-javascript' });
+      const mod1 = await StudyModule.findOne({ book: dsaBook._id, order: 1 });
+
+      await StudyAccess.create({
+        student: student._id,
+        book: dsaBook._id,
+        isBookAssigned: true,
+        releasedModules: [mod1._id],
+      });
+
+      // Mark complete
+      const markRes = await api(app)
+        .post(`/api/v1/study-materials/dsa-javascript/modules/${mod1.slug}/complete`)
+        .set('Origin', ORIGIN)
+        .set(bearer(student));
+
+      expect(markRes.status).toBe(200);
+      expect(markRes.body.data.isCompleted).toBe(true);
+      expect(markRes.body.data.completedAt).toBeTruthy();
+
+      // Check book detail reflects completion
+      const bookRes = await api(app)
+        .get('/api/v1/study-materials/dsa-javascript')
+        .set('Origin', ORIGIN)
+        .set(bearer(student));
+
+      expect(bookRes.status).toBe(200);
+      expect(bookRes.body.data.completedCount).toBe(1);
+      expect(bookRes.body.data.overallPercent).toBe(100); // 1 completed of 1 released
+
+      // Unmark complete
+      const unmarkRes = await api(app)
+        .delete(`/api/v1/study-materials/dsa-javascript/modules/${mod1.slug}/complete`)
+        .set('Origin', ORIGIN)
+        .set(bearer(student));
+
+      expect(unmarkRes.status).toBe(200);
+      expect(unmarkRes.body.data.isCompleted).toBe(false);
+      expect(unmarkRes.body.data.completedAt).toBeNull();
+    });
+
+    it('returns study summary for student dashboard', async () => {
+      const dsaBook = await StudyBook.findOne({ slug: 'dsa-javascript' });
+      const mod1 = await StudyModule.findOne({ book: dsaBook._id, order: 1 });
+
+      await StudyAccess.create({
+        student: student._id,
+        book: dsaBook._id,
+        isBookAssigned: true,
+        releasedModules: [mod1._id],
+      });
+
+      const summaryRes = await api(app)
+        .get('/api/v1/study-materials/summary')
+        .set('Origin', ORIGIN)
+        .set(bearer(student));
+
+      expect(summaryRes.status).toBe(200);
+      expect(summaryRes.body.data.totalAssignedBooks).toBe(1);
+      expect(summaryRes.body.data.totalReleasedModules).toBe(1);
+      expect(summaryRes.body.data.totalCompletedModules).toBe(0);
+      expect(summaryRes.body.data.books).toHaveLength(3);
+    });
+
+    it('forbids unreleased modules from receiving heartbeats or completions', async () => {
+      const dsaBook = await StudyBook.findOne({ slug: 'dsa-javascript' });
+      const mod2 = await StudyModule.findOne({ book: dsaBook._id, order: 2 });
+
+      // Student has no access to mod2
+      const hbRes = await api(app)
+        .post(`/api/v1/study-materials/dsa-javascript/modules/${mod2.slug}/heartbeat`)
+        .set('Origin', ORIGIN)
+        .set(bearer(student))
+        .send({ activeSeconds: 15 });
+
+      expect(hbRes.status).toBe(404);
+
+      const compRes = await api(app)
+        .post(`/api/v1/study-materials/dsa-javascript/modules/${mod2.slug}/complete`)
+        .set('Origin', ORIGIN)
+        .set(bearer(student));
+
+      expect(compRes.status).toBe(404);
+    });
+  });
 });
+

@@ -11,6 +11,7 @@ import { EmptyState, ErrorState, Skeleton } from '../../components/ui/Feedback.j
 import { ProgressBar } from '../../components/ui/ProgressBar.jsx';
 import { StatTile } from '../../components/ui/StatTile.jsx';
 import { getErrorMessage } from '../../utils/apiErrors.js';
+import { StudyBookshelfSection } from './StudyBookshelfSection.jsx';
 
 const linkClass = 'font-semibold text-brand-600 hover:text-brand-700 dark:text-cyan-400 dark:hover:text-cyan-300 hover:underline transition-colors';
 const buttonLinkClass =
@@ -241,6 +242,7 @@ export function StudentDashboardPage() {
             <RecentFeedback rows={data.recentFeedback} />
           </div>
         </div>
+        <StudyBookshelfSection />
       </div>
     );
   }

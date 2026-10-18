@@ -32,3 +32,9 @@ export const bulkUpdateStudentAccessSchema = z.object({
   isBookAssigned: z.boolean().optional(),
   releasedModuleIds: z.array(objectId).optional(),
 });
+
+export const heartbeatSchema = z.object({
+  activeSeconds: z.coerce.number().int().min(1, 'activeSeconds must be at least 1').max(300, 'activeSeconds cannot exceed 300'),
+  scrollPosition: z.coerce.number().int().min(0).max(100).optional(),
+});
+

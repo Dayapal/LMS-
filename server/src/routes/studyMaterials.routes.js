@@ -6,6 +6,7 @@ import { ROLES } from '../models/index.js';
 import { idParams } from '../validators/content.validators.js';
 import {
   bulkUpdateStudentAccessSchema,
+  heartbeatSchema,
   updateStudentAccessSchema,
   updateStudyBookSchema,
   updateStudyModuleSchema,
@@ -50,10 +51,18 @@ export function studyMaterialsRoutes() {
     studyMaterials.bulkUpdateStudentAccess,
   );
 
-  // Student & viewer library & reader endpoints
+  // Student & viewer library, reader, telemetry & completion endpoints
   router.get('/', studyMaterials.getStudentBooks);
+  router.get('/summary', studyMaterials.getStudentStudySummary);
   router.get('/:bookSlug', studyMaterials.getStudentBookDetail);
   router.get('/:bookSlug/modules/:moduleSlug/content', studyMaterials.getStudentModuleContent);
+  router.post(
+    '/:bookSlug/modules/:moduleSlug/heartbeat',
+    validate({ body: heartbeatSchema }),
+    studyMaterials.recordHeartbeat,
+  );
+  router.post('/:bookSlug/modules/:moduleSlug/complete', studyMaterials.markComplete);
+  router.delete('/:bookSlug/modules/:moduleSlug/complete', studyMaterials.unmarkComplete);
 
   return router;
 }

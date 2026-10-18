@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { cleanup, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { progressApi } from '../progress/api.js';
+import { studyMaterialsApi } from '../study-materials/api.js';
 import { StudentDashboardPage } from './StudentDashboardPage.jsx';
 import { renderWithProviders, apiError } from '../../test/renderWithProviders.jsx';
 import { STUDENT } from '../courses/test-fixtures.js';
@@ -9,6 +10,10 @@ import { makeDashboard, makeMyAssignment, makeMyCourse } from '../progress/test-
 
 const routes = [{ path: '/app', element: <StudentDashboardPage /> }];
 const open = () => renderWithProviders(routes, { path: '/app', user: STUDENT });
+
+beforeEach(() => {
+  vi.spyOn(studyMaterialsApi, 'getStudentStudySummary').mockResolvedValue(null);
+});
 
 afterEach(() => {
   cleanup();
@@ -55,6 +60,47 @@ describe('StudentDashboardPage', () => {
 
     const feedback = screen.getByRole('region', { name: 'Recent feedback' });
     expect(within(feedback).getByText(/Marks: 86 \/ 100/)).toBeInTheDocument();
+  });
+
+  it('renders study bookshelf section when student has assigned books', async () => {
+    vi.spyOn(progressApi, 'dashboard').mockResolvedValue(makeDashboard());
+    vi.spyOn(studyMaterialsApi, 'getStudentStudySummary').mockResolvedValue({
+      totalAssignedBooks: 1,
+      totalReleasedModules: 5,
+      totalCompletedModules: 2,
+      totalReadingSeconds: 3600,
+      overallPercent: 40,
+      continueModule: {
+        bookSlug: 'dsa-javascript',
+        bookTitle: 'DSA in JavaScript',
+        slug: 'module-2-dsa',
+        title: 'Binary Search',
+        phaseLabel: 'Module 2',
+      },
+      books: [
+        {
+          id: 'b1',
+          slug: 'dsa-javascript',
+          title: 'DSA in JavaScript',
+          category: 'dsa',
+          isAssigned: true,
+          totalModules: 9,
+          releasedModulesCount: 5,
+          completedModulesCount: 2,
+          overallProgressPercent: 40,
+        },
+      ],
+    });
+
+    open();
+    const bookshelf = await screen.findByRole('region', { name: 'Study Books & Bookshelf' });
+    expect(bookshelf).toBeInTheDocument();
+    expect(within(bookshelf).getByText('DSA in JavaScript')).toBeInTheDocument();
+    expect(within(bookshelf).getByText(/Binary Search/)).toBeInTheDocument();
+    expect(within(bookshelf).getByRole('link', { name: /Resume Reading/i })).toHaveAttribute(
+      'href',
+      '/app/study-materials/dsa-javascript/modules/module-2-dsa',
+    );
   });
 
   it('shows the catalogue invitation to a student without courses', async () => {

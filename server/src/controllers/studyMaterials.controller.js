@@ -63,3 +63,40 @@ export async function getStudentModuleContent(req, res) {
   );
   ok(res, data);
 }
+
+export async function recordHeartbeat(req, res) {
+  const data = await studyMaterials.recordReadingHeartbeat({
+    user: req.user,
+    bookSlug: req.params.bookSlug,
+    moduleSlug: req.params.moduleSlug,
+    activeSeconds: req.body.activeSeconds,
+    scrollPosition: req.body.scrollPosition,
+  });
+  ok(res, data);
+}
+
+export async function markComplete(req, res) {
+  const data = await studyMaterials.setModuleCompletion({
+    user: req.user,
+    bookSlug: req.params.bookSlug,
+    moduleSlug: req.params.moduleSlug,
+    isCompleted: true,
+  });
+  ok(res, data);
+}
+
+export async function unmarkComplete(req, res) {
+  const data = await studyMaterials.setModuleCompletion({
+    user: req.user,
+    bookSlug: req.params.bookSlug,
+    moduleSlug: req.params.moduleSlug,
+    isCompleted: false,
+  });
+  ok(res, data);
+}
+
+export async function getStudentStudySummary(req, res) {
+  const data = await studyMaterials.getStudentStudySummary(req.user);
+  ok(res, data);
+}
+

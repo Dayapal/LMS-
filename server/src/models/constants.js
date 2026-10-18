@@ -78,6 +78,7 @@ export const ACTIVITY_TYPES = Object.freeze({
   ENROLLED: 'enrolled',
   ENROLLMENT_REMOVED: 'enrollment_removed',
   LESSON_COMPLETED: 'lesson_completed',
+  STUDY_MODULE_COMPLETED: 'study_module_completed',
   SUBMISSION_CREATED: 'submission_created',
   SUBMISSION_REVIEWED: 'submission_reviewed',
   RESUBMISSION_REQUESTED: 'resubmission_requested',

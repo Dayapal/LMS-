@@ -14,6 +14,7 @@ export { Notification } from './Notification.js';
 export { StudyBook, STUDY_CATEGORIES } from './StudyBook.js';
 export { StudyModule } from './StudyModule.js';
 export { StudyAccess } from './StudyAccess.js';
+export { StudyProgress } from './StudyProgress.js';
 export {
   ACTIVITY_TYPES,
   CODE_LANGUAGES,
