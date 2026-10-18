@@ -39,26 +39,26 @@ function AssignmentRow({ row }) {
   const state = row.mySubmission;
   const latest = state.latest;
   return (
-    <li className="flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:gap-4 sm:px-5">
+    <li className="flex flex-col gap-2 px-5 py-4 transition-colors hover:bg-white/40 dark:hover:bg-white/[0.02] sm:flex-row sm:items-center sm:gap-4 sm:px-6">
       <div className="min-w-0 flex-1 space-y-0.5">
         <Link
           to={`/app/courses/${row.course.id}/assignments/${row.id}`}
-          className="font-medium text-brand-700 hover:text-brand-800 hover:underline"
+          className="text-sm font-semibold text-brand-600 transition-colors hover:text-brand-700 hover:underline dark:text-cyan-400 dark:hover:text-cyan-300"
         >
           {row.title}
         </Link>
-        <p className="truncate text-xs text-slate-500">{placement(row)}</p>
-        <p className="text-sm text-slate-600">
+        <p className="truncate text-xs text-slate-500 dark:text-slate-400">{placement(row)}</p>
+        <p className="text-xs text-slate-600 dark:text-slate-300">
           Due {formatDateTime(row.dueAt)}{' '}
-          <span className="text-slate-500">({relativeTime(row.dueAt)})</span>
+          <span className="text-slate-500 dark:text-slate-400">({relativeTime(row.dueAt)})</span>
         </p>
         {state.status === 'reviewed' && (
-          <p className="text-sm text-slate-700">
+          <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
             Marks: {formatMarks(latest?.finalMarks, row.maxMarks)}
           </p>
         )}
         {state.status === 'overdue' && state.canSubmit && (
-          <p className="text-sm text-amber-800">Late work is still accepted.</p>
+          <p className="text-xs font-semibold text-amber-700 dark:text-amber-400">Late work is still accepted.</p>
         )}
       </div>
       <div className="flex flex-wrap items-center gap-2">
@@ -102,14 +102,22 @@ export function MyAssignmentsPage() {
                   setStatus(filter.value);
                   setPage(1);
                 }}
-                className={`rounded-full px-3 py-1.5 text-sm font-medium ring-1 ring-inset ${
+                className={`inline-flex items-center rounded-full px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition-all duration-200 ${
                   selected
-                    ? 'bg-brand-600 text-white ring-brand-600'
-                    : 'bg-white text-slate-700 ring-slate-300 hover:bg-slate-50'
+                    ? 'bg-linear-to-r from-brand-500 to-[#029ab8] text-white shadow-xs dark:shadow-[0_0_15px_rgba(3,174,210,0.35)]'
+                    : 'bg-white/75 text-slate-600 ring-1 ring-slate-200/80 backdrop-blur-md hover:bg-white hover:text-slate-900 dark:bg-white/10 dark:text-slate-300 dark:ring-white/15 dark:hover:bg-white/[0.18] dark:hover:text-white'
                 }`}
               >
                 {filter.label}
-                {count != null && <span className="ml-1.5 opacity-80">{count}</span>}
+                {count != null && (
+                  <span
+                    className={`ml-1.5 rounded-full px-1.5 py-0.2 text-xs font-semibold tabular-nums ${
+                      selected ? 'bg-white/25 text-white' : 'bg-slate-100 text-slate-600 dark:bg-white/15 dark:text-slate-300'
+                    }`}
+                  >
+                    {count}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -122,7 +130,7 @@ export function MyAssignmentsPage() {
               setPage(1);
             }}
             aria-label="Filter by course"
-            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none lg:w-64"
+            className="rounded-xl border border-slate-300/80 bg-white/80 px-3.5 py-2 text-sm text-slate-900 shadow-2xs backdrop-blur-md focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none dark:border-white/15 dark:bg-slate-900/90 dark:text-white dark:focus:border-cyan-400 dark:focus:ring-cyan-400/25 lg:w-64 [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-slate-900 dark:[&>option]:text-white"
           >
             <option value="">All courses</option>
             {activeCourses.map((item) => (
@@ -148,7 +156,7 @@ export function MyAssignmentsPage() {
         </EmptyState>
       ) : (
         <>
-          <ul className="divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs">
+          <ul className="divide-y divide-slate-100 overflow-hidden rounded-3xl border border-slate-200/80 bg-white/75 shadow-[0_4px_20px_rgba(0,0,0,0.03)] backdrop-blur-xl dark:divide-white/5 dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)]">
             {data.items.map((row) => (
               <AssignmentRow key={row.id} row={row} />
             ))}

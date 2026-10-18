@@ -8,7 +8,7 @@ import { GuestOnly, HomeRedirect, RequireAuth } from './guards.jsx';
 // Shown while a lazy page loads on a fresh page load (deep link or reload).
 // Client-side navigations keep the current page and show the layout's loading bar.
 const pageLoading = (
-  <div className="flex justify-center py-16 text-brand-600">
+  <div className="flex justify-center py-16 text-cyan-500">
     <Spinner className="size-8" label="Loading page" />
   </div>
 );

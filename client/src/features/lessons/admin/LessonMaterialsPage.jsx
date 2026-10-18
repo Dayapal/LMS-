@@ -35,7 +35,7 @@ function IconButton({ label, onClick, disabled, children }) {
       disabled={disabled}
       aria-label={label}
       title={label}
-      className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30"
+      className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 disabled:cursor-not-allowed disabled:opacity-30 transition-colors"
     >
       {children}
     </button>
@@ -92,7 +92,7 @@ export function LessonMaterialsPage() {
         />
         <Link
           to={`/admin/courses/${courseId}`}
-          className="text-sm font-medium text-brand-700 hover:text-brand-800"
+          className="text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-cyan-400 dark:hover:text-cyan-300 transition-colors"
         >
           ← Back to the course
         </Link>
@@ -112,7 +112,7 @@ export function LessonMaterialsPage() {
         actions={
           <Link
             to={`/admin/courses/${courseId}/lessons/${lessonId}/preview`}
-            className="inline-flex h-10 items-center rounded-lg bg-white px-4 text-sm font-medium text-slate-700 ring-1 ring-slate-300 ring-inset hover:bg-slate-50"
+            className="inline-flex h-10 items-center rounded-xl bg-white/80 dark:bg-slate-800/80 px-4 text-sm font-medium text-slate-700 dark:text-slate-200 ring-1 ring-slate-300 dark:ring-white/10 ring-inset hover:bg-slate-50 dark:hover:bg-slate-800 shadow-xs backdrop-blur-md transition-colors"
           >
             Preview as student
           </Link>
@@ -120,13 +120,13 @@ export function LessonMaterialsPage() {
       >
         <Link
           to={`/admin/courses/${courseId}`}
-          className="mb-2 inline-block text-sm font-medium text-brand-700 hover:text-brand-800"
+          className="mb-2 inline-block text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-cyan-400 dark:hover:text-cyan-300 transition-colors"
         >
           ← Course builder
         </Link>
       </PageHeader>
 
-      <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
+      <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
         <span>Lesson status:</span>
         <StatusBadge status={data.status} />
       </div>
@@ -140,10 +140,10 @@ export function LessonMaterialsPage() {
       <section aria-labelledby="materials-heading" className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 id="materials-heading" className="text-lg font-semibold text-slate-900">
+            <h2 id="materials-heading" className="text-lg font-semibold text-slate-900 dark:text-white">
               Study materials
             </h2>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               {plural(items.length, 'material')}, shown to students in this order.
             </p>
           </div>
@@ -170,19 +170,19 @@ export function LessonMaterialsPage() {
             Add notes, code examples, PDF handouts and links. Students see them in order.
           </EmptyState>
         ) : (
-          <ol className="divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs">
+          <ol className="divide-y divide-slate-100 dark:divide-slate-800/60 overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl shadow-xs">
             {items.map((material, index) => (
               <li
                 key={material.id}
-                className="flex flex-wrap items-center gap-3 px-4 py-3 sm:flex-nowrap"
+                className="flex flex-wrap items-center gap-3 px-4 py-3 sm:flex-nowrap hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
               >
-                <span className="w-6 shrink-0 text-xs font-medium text-slate-500">{index + 1}</span>
+                <span className="w-6 shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">{index + 1}</span>
                 <Badge tone={TYPE_TONE[material.type]} className="shrink-0">
                   {MATERIAL_TYPE_LABEL[material.type]}
                 </Badge>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-slate-800">{material.title}</p>
-                  <p className="truncate text-xs text-slate-500">{materialSummary(material)}</p>
+                  <p className="truncate text-sm font-medium text-slate-800 dark:text-slate-200">{material.title}</p>
+                  <p className="truncate text-xs text-slate-500 dark:text-slate-400">{materialSummary(material)}</p>
                 </div>
                 <StatusBadge status={material.status} />
                 <div className="flex items-center gap-1">
@@ -235,7 +235,7 @@ export function LessonMaterialsPage() {
                     size="sm"
                     variant="ghost"
                     aria-label={`Delete ${material.title}`}
-                    className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                    className="text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950/30"
                     onClick={() => setConfirm(material)}
                   >
                     Delete

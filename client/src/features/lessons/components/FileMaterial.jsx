@@ -45,7 +45,7 @@ function PdfViewer({ file }) {
   if (state.error) return <Alert tone="error">{getErrorMessage(state.error)}</Alert>;
   if (!state.url) {
     return (
-      <div className="flex h-40 items-center justify-center gap-2 rounded-lg bg-slate-100 text-sm text-slate-600">
+      <div className="flex h-40 items-center justify-center gap-2.5 rounded-2xl bg-slate-100/80 text-sm font-medium text-slate-600 backdrop-blur-md dark:bg-white/5 dark:text-slate-400">
         <Spinner className="size-5" label="Loading PDF" /> Loading PDF…
       </div>
     );
@@ -55,15 +55,15 @@ function PdfViewer({ file }) {
       <iframe
         src={state.url}
         title={`PDF viewer: ${file.originalName}`}
-        className="h-[70vh] min-h-96 w-full rounded-lg border border-slate-200 bg-slate-100"
+        className="h-[70vh] min-h-96 w-full rounded-2xl border border-slate-200/80 bg-slate-100/50 backdrop-blur-md dark:border-white/10 dark:bg-slate-900/50"
       />
-      <p className="text-xs text-slate-500">
+      <p className="text-xs text-slate-500 dark:text-slate-400">
         PDF not showing on your device?{' '}
         <a
           href={state.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="font-medium text-brand-700 hover:text-brand-800"
+          className="font-semibold text-brand-600 transition-colors hover:text-brand-700 hover:underline dark:text-cyan-400 dark:hover:text-cyan-300"
         >
           Open it in a new tab
         </a>
@@ -96,16 +96,16 @@ export function FileMaterial({ material }) {
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
+      <div className="flex flex-wrap items-center gap-3.5 rounded-2xl border border-slate-200/80 bg-white/75 p-4.5 shadow-xs backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.05]">
         <span
           aria-hidden="true"
-          className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-red-50 text-xs font-bold text-red-700"
+          className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#D12052]/15 text-xs font-bold text-[#D12052] ring-1 ring-[#D12052]/30 dark:text-rose-300"
         >
           {file.originalName.split('.').pop()?.toUpperCase()}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-slate-900">{file.originalName}</p>
-          <p className="text-xs text-slate-500">
+          <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">{file.originalName}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             {fileKind(file.mimeType)} · {formatBytes(file.size)}
             {!downloadable && ' · view only'}
           </p>
@@ -129,7 +129,7 @@ export function FileMaterial({ material }) {
         </div>
       </div>
       {!isPdf(file) && !downloadable && (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Your trainer has made this file view-only, and this type can&apos;t be previewed in the
           browser.
         </p>

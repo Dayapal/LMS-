@@ -10,8 +10,8 @@ export function CourseAssignments({ courseId }) {
     limit: 100,
   });
   return (
-    <section aria-labelledby="course-assignments-heading" className="space-y-3">
-      <h2 id="course-assignments-heading" className="text-lg font-semibold text-slate-900">
+    <section aria-labelledby="course-assignments-heading" className="space-y-3.5">
+      <h2 id="course-assignments-heading" className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
         Assignments
       </h2>
       {isPending ? (
@@ -19,7 +19,7 @@ export function CourseAssignments({ courseId }) {
       ) : isError ? (
         <ErrorState message={getErrorMessage(error)} onRetry={refetch} />
       ) : data.items.length === 0 ? (
-        <p className="text-sm text-slate-500">No assignments have been set for this course yet.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">No assignments have been set for this course yet.</p>
       ) : (
         <AssignmentList
           assignments={data.items}
@@ -38,8 +38,8 @@ export function LessonAssignments({ lessonId, pathFor, showState }) {
   const { data } = useAssignments({ lesson: lessonId });
   if (!data?.items.length) return null;
   return (
-    <section aria-labelledby="lesson-assignments-heading" className="space-y-3">
-      <h2 id="lesson-assignments-heading" className="text-lg font-semibold text-slate-900">
+    <section aria-labelledby="lesson-assignments-heading" className="space-y-3.5">
+      <h2 id="lesson-assignments-heading" className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
         Practice assignments
       </h2>
       <AssignmentList assignments={data.items} pathFor={pathFor} showState={showState} />

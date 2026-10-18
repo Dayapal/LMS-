@@ -2,8 +2,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ToastContext } from './toastContextObject.js';
 
 const TONES = {
-  success: 'border-emerald-200 bg-white text-emerald-800',
-  error: 'border-red-200 bg-white text-red-800',
+  success:
+    'border-emerald-300/60 bg-white/90 text-emerald-900 dark:border-emerald-500/30 dark:bg-[#0f172a]/95 dark:text-emerald-200 shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]',
+  error:
+    'border-rose-300/60 bg-white/90 text-rose-900 dark:border-rose-500/30 dark:bg-[#0f172a]/95 dark:text-rose-200 shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]',
 };
 
 const DURATION = { success: 3500, error: 6000 };
@@ -30,16 +32,16 @@ function Toast({ toast, onDismiss }) {
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
-      className={`pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-lg border px-4 py-3 text-sm shadow-lg ${TONES[toast.tone]}`}
+      className={`pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-2xl border px-4 py-3.5 text-sm backdrop-blur-2xl transition-all ${TONES[toast.tone]}`}
     >
-      <p className="flex-1">{toast.message}</p>
+      <p className="flex-1 font-medium leading-snug">{toast.message}</p>
       <button
         type="button"
         onClick={() => onDismiss(toast.id)}
-        className="-m-1 rounded p-1 text-slate-500 hover:text-slate-800"
+        className="-m-1 rounded-lg p-1 text-slate-400 transition-colors hover:text-slate-800 dark:hover:text-slate-100"
         aria-label="Dismiss message"
       >
-        <span aria-hidden="true">×</span>
+        <span aria-hidden="true" className="text-base font-semibold leading-none">×</span>
       </button>
     </div>
   );
@@ -80,7 +82,7 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={api}>
       {children}
-      <div className="pointer-events-none fixed inset-x-0 top-20 z-60 flex flex-col items-center gap-2 px-4 lg:top-4 lg:pl-68">
+      <div className="pointer-events-none fixed inset-x-0 top-20 z-60 flex flex-col items-center gap-2 px-4 lg:top-5 lg:pl-68">
         <div className="flex w-full flex-col items-center gap-2">{render('error')}</div>
         <div role="status" aria-atomic="false" className="flex w-full flex-col items-center gap-2">
           {render('success')}

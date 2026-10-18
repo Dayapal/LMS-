@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
 const GRADIENTS = [
-  'from-brand-600 to-sky-500',
-  'from-amber-500 to-rose-500',
-  'from-emerald-600 to-teal-400',
-  'from-fuchsia-600 to-purple-500',
-  'from-slate-700 to-slate-500',
+  'from-[#03AED2] via-[#029ab8] to-[#D12052]',
+  'from-[#03AED2] to-[#014d5c]',
+  'from-[#F45B26] to-[#D12052]',
+  'from-[#F8DE22] via-[#F45B26] to-[#D12052]',
+  'from-[#03AED2] via-teal-500 to-emerald-500',
 ];
 
 const pick = (seed = '') =>
@@ -33,9 +33,12 @@ export function CourseCover({ course, className = 'h-36' }) {
   return (
     <div
       aria-hidden="true"
-      className={`flex w-full items-center justify-center bg-linear-to-br ${pick(course.slug)} ${className}`}
+      className={`relative flex w-full items-center justify-center overflow-hidden bg-linear-to-br ${pick(course.slug)} ${className}`}
     >
-      <span className="text-3xl font-bold tracking-wider text-white/90">{initials}</span>
+      <div className="absolute inset-0 bg-black/10 backdrop-blur-[1px]" />
+      <span className="relative text-3xl font-extrabold tracking-wider text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
+        {initials}
+      </span>
     </div>
   );
 }

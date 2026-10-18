@@ -10,7 +10,7 @@ const STATUS_OPTIONS = [
 /** Cancel + submit row at the bottom of a modal form. */
 export function FormActions({ onCancel, submitting, label }) {
   return (
-    <div className="flex flex-col-reverse gap-2 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+    <div className="flex flex-col-reverse gap-2 border-t border-slate-200/80 pt-5 dark:border-white/10 sm:flex-row sm:justify-end">
       <Button variant="secondary" onClick={onCancel} disabled={submitting}>
         Cancel
       </Button>

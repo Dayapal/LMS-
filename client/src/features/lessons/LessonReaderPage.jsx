@@ -37,21 +37,21 @@ function LessonNav({ navigation, courseId, paths }) {
     <Link
       to={paths.lesson(courseId, item.id)}
       rel={direction === 'previous' ? 'prev' : 'next'}
-      className={`group flex flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-xs hover:border-brand-300 hover:bg-brand-50/40 ${
+      className={`group flex flex-col rounded-2xl border border-slate-200/80 bg-white/75 p-5 shadow-xs backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-500/40 hover:shadow-[0_8px_25px_rgba(3,174,210,0.12)] dark:border-white/10 dark:bg-white/[0.05] dark:hover:border-cyan-400/40 dark:hover:bg-white/[0.08] ${
         direction === 'next' ? 'sm:col-start-2 sm:text-right' : ''
       }`}
     >
-      <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+      <span className="text-xs font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400">
         {direction === 'previous' ? '← Previous lesson' : 'Next lesson →'}
       </span>
-      <span className="mt-1 font-medium text-slate-900 group-hover:text-brand-800">
+      <span className="mt-1 font-semibold text-slate-900 transition-colors group-hover:text-brand-600 dark:text-white dark:group-hover:text-cyan-400">
         {item.title}
       </span>
-      <span className="text-xs text-slate-500">{item.moduleTitle}</span>
+      <span className="text-xs font-medium text-slate-500 dark:text-slate-400">{item.moduleTitle}</span>
     </Link>
   );
   return (
-    <nav aria-label="Lesson navigation" className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <nav aria-label="Lesson navigation" className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
       {navigation.previous && card(navigation.previous, 'previous')}
       {navigation.next && card(navigation.next, 'next')}
     </nav>
@@ -78,21 +78,23 @@ function CompletionControl({ lesson }) {
   return (
     <section
       aria-label="Lesson completion"
-      className={`rounded-xl border px-5 py-4 ${
-        completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-white'
+      className={`rounded-2xl border p-5 backdrop-blur-xl transition-all ${
+        completed
+          ? 'border-emerald-300/60 bg-emerald-50/80 dark:border-emerald-500/30 dark:bg-emerald-950/30'
+          : 'border-slate-200/80 bg-white/75 dark:border-white/10 dark:bg-white/[0.05]'
       }`}
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {completed ? (
-          <p className="flex items-center gap-2 text-sm text-emerald-800">
-            <Icon name="check" className="size-5 shrink-0" />
+          <p className="flex items-center gap-2 text-sm text-emerald-900 dark:text-emerald-200">
+            <Icon name="check" className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
             <span>
               <span className="font-semibold">Completed</span>
               {completedAt && <> on {formatDateTime(completedAt)}</>}
             </span>
           </p>
         ) : (
-          <p className="text-sm text-slate-600">
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
             Worked through the materials? Mark the lesson as complete to track your progress.
           </p>
         )}
@@ -110,7 +112,7 @@ function CompletionControl({ lesson }) {
       <p
         role="status"
         className={`text-sm ${feedback ? 'mt-3' : ''} ${
-          feedback?.tone === 'error' ? 'text-red-700' : 'text-slate-700'
+          feedback?.tone === 'error' ? 'font-semibold text-rose-600 dark:text-rose-400' : 'font-medium text-slate-700 dark:text-slate-200'
         }`}
       >
         {feedback?.text}
@@ -159,7 +161,7 @@ export function LessonReaderPage({ mode = 'student' }) {
   const backLink = (
     <Link
       to={paths.course(courseId, lessonId)}
-      className="inline-block text-sm font-medium text-brand-700 hover:text-brand-800"
+      className="inline-block text-sm font-semibold text-brand-600 transition-colors hover:text-brand-700 hover:underline dark:text-cyan-400 dark:hover:text-cyan-300"
     >
       ← {paths.backLabel}
     </Link>
@@ -190,37 +192,37 @@ export function LessonReaderPage({ mode = 'student' }) {
     <article className="mx-auto max-w-3xl space-y-8">
       <div className="space-y-3">
         {backLink}
-        <nav aria-label="Breadcrumb" className="text-sm text-slate-500">
+        <nav aria-label="Breadcrumb" className="text-sm text-slate-500 dark:text-slate-400">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
               <Link
                 to={preview ? `/admin/courses/${data.course.id}` : paths.course(data.course.id)}
-                className="hover:text-slate-800"
+                className="transition-colors hover:text-slate-800 dark:hover:text-slate-200"
               >
                 {data.course.title}
               </Link>
             </li>
-            <li aria-hidden="true">/</li>
-            <li>{data.module.title}</li>
+            <li aria-hidden="true" className="opacity-50">/</li>
+            <li className="font-medium text-slate-700 dark:text-slate-300">{data.module.title}</li>
           </ol>
         </nav>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           <h1
             ref={headingRef}
             tabIndex={-1}
-            className="text-2xl font-semibold tracking-tight text-slate-900 focus:outline-none sm:text-3xl"
+            className="text-2xl font-bold tracking-tight text-slate-900 focus:outline-none dark:text-white sm:text-3xl"
           >
             {data.title}
           </h1>
           {preview && data.status !== 'published' && <StatusBadge status={data.status} />}
           {data.completion?.completed && <Badge tone="success">Completed</Badge>}
         </div>
-        <p className="text-sm text-slate-500">
+        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
           {position?.total ? `Lesson ${position.position} of ${position.total}` : null}
           {position?.total && data.estimatedMinutes ? ' · ' : null}
           {data.estimatedMinutes ? formatMinutes(data.estimatedMinutes) : null}
         </p>
-        {data.summary && <p className="text-slate-700">{data.summary}</p>}
+        {data.summary && <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{data.summary}</p>}
       </div>
 
       {preview && (
@@ -231,13 +233,13 @@ export function LessonReaderPage({ mode = 'student' }) {
       )}
 
       {(data.objectives.length > 0 || data.prerequisites.length > 0) && (
-        <div className="grid gap-4 rounded-xl border border-brand-100 bg-brand-50/50 p-5 sm:grid-cols-2">
+        <div className="grid gap-4 rounded-3xl border border-brand-500/20 bg-brand-500/[0.05] p-6 backdrop-blur-md dark:border-cyan-500/20 dark:bg-cyan-500/[0.05] sm:grid-cols-2">
           {data.objectives.length > 0 && (
             <section aria-labelledby="objectives-heading">
-              <h2 id="objectives-heading" className="text-sm font-semibold text-slate-900">
+              <h2 id="objectives-heading" className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">
                 In this lesson you will
               </h2>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+              <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
                 {data.objectives.map((objective) => (
                   <li key={objective}>{objective}</li>
                 ))}
@@ -246,10 +248,10 @@ export function LessonReaderPage({ mode = 'student' }) {
           )}
           {data.prerequisites.length > 0 && (
             <section aria-labelledby="prerequisites-heading">
-              <h2 id="prerequisites-heading" className="text-sm font-semibold text-slate-900">
+              <h2 id="prerequisites-heading" className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">
                 Before you start
               </h2>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+              <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
                 {data.prerequisites.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
@@ -284,7 +286,7 @@ export function LessonReaderPage({ mode = 'student' }) {
 
       {!preview && data.completion && <CompletionControl lesson={data} />}
 
-      <div className="border-t border-slate-200 pt-6">
+      <div className="border-t border-slate-200/80 pt-6 dark:border-white/10">
         <LessonNav navigation={position} courseId={data.course.id} paths={paths} />
       </div>
     </article>

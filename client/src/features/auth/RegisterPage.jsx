@@ -37,8 +37,8 @@ export function RegisterPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Create your account</h1>
-      <p className="mt-2 text-sm text-slate-600">
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">Create your account</h1>
+      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
         Sign up as a student. Your trainer will enroll you in courses.
       </p>
 
@@ -86,9 +86,9 @@ export function RegisterPage() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-600">
+      <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-400">
         Already have an account?{' '}
-        <Link to="/login" className="font-medium text-brand-700 hover:text-brand-800">
+        <Link to="/login" className="font-semibold text-brand-600 transition-colors hover:text-brand-700 hover:underline dark:text-cyan-400 dark:hover:text-cyan-300">
           Sign in
         </Link>
       </p>

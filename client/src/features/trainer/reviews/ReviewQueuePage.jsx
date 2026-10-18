@@ -39,7 +39,7 @@ const EMPTY = {
 function QueueRow({ row, from }) {
   const waiting = row.status === 'submitted';
   return (
-    <li className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:px-5">
+    <li className="flex flex-col gap-3 px-5 py-4 transition-colors hover:bg-white/40 dark:hover:bg-white/[0.02] sm:flex-row sm:items-center sm:px-6">
       <div className="min-w-0 flex-1 space-y-1">
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
           {row.student.name ? (
@@ -47,19 +47,19 @@ function QueueRow({ row, from }) {
               {row.student.name}
             </Link>
           ) : (
-            <span className="text-slate-500">A deleted student</span>
+            <span className="text-slate-500 dark:text-slate-400">A deleted student</span>
           )}
-          <span className="text-slate-400" aria-hidden="true">
+          <span className="text-slate-400 opacity-60" aria-hidden="true">
             ·
           </span>
-          <span className="font-medium text-slate-900">{row.assignment?.title}</span>
+          <span className="font-semibold text-slate-900 dark:text-white">{row.assignment?.title}</span>
         </p>
-        <p className="truncate text-xs text-slate-500">
+        <p className="truncate text-xs text-slate-500 dark:text-slate-400">
           {row.course?.title} · Attempt {row.attempt}
           {row.assignment?.maxAttempts ? ` of ${row.assignment.maxAttempts}` : ''} · Due{' '}
           {formatDateTime(row.assignment?.dueAt)}
         </p>
-        <p className="text-xs text-slate-600">
+        <p className="text-xs text-slate-600 dark:text-slate-400">
           {waiting ? 'Waiting since' : 'Submitted'}{' '}
           <time dateTime={row.submittedAt} title={formatDateTime(row.submittedAt)}>
             {relativeTime(row.submittedAt)}
@@ -73,7 +73,7 @@ function QueueRow({ row, from }) {
         {row.enrollmentStatus !== 'active' && <EnrollmentBadge status={row.enrollmentStatus} />}
         {row.assignment?.status === 'archived' && <Badge tone="muted">Archived</Badge>}
         <SubmissionStateBadge status={row.status} />
-        <span className="w-20 text-right text-sm text-slate-700 tabular-nums">
+        <span className="w-20 text-right text-sm font-semibold text-slate-700 dark:text-slate-200 tabular-nums">
           {formatMarks(row.review?.finalMarks, row.assignment?.maxMarks)}
         </span>
         <Link
@@ -82,8 +82,8 @@ function QueueRow({ row, from }) {
           aria-label={`${waiting ? 'Review' : 'Open'} ${row.student.name ?? 'the'}'s submission for ${row.assignment?.title}`}
           className={
             waiting
-              ? 'inline-flex h-8 items-center rounded-lg bg-brand-600 px-3 text-sm font-medium text-white hover:bg-brand-700'
-              : 'inline-flex h-8 items-center rounded-lg px-3 text-sm font-medium text-brand-700 ring-1 ring-slate-300 ring-inset hover:bg-slate-50'
+              ? 'inline-flex h-8 items-center justify-center rounded-xl bg-linear-to-r from-brand-500 to-[#029ab8] px-3.5 text-xs font-semibold text-white shadow-xs hover:shadow-[0_0_15px_rgba(3,174,210,0.35)] transition-all'
+              : 'inline-flex h-8 items-center justify-center rounded-xl border border-slate-200/80 bg-white/80 px-3.5 text-xs font-semibold text-brand-600 shadow-2xs hover:bg-white hover:text-brand-700 dark:border-white/15 dark:bg-white/10 dark:text-cyan-400 dark:hover:bg-white/20 dark:hover:text-cyan-300 transition-all'
           }
         >
           {waiting ? 'Review' : 'Open'}
@@ -204,7 +204,7 @@ export function ReviewQueuePage() {
           <ul
             aria-label="Submissions"
             aria-busy={isFetching || undefined}
-            className={`divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs ${isFetching ? 'opacity-70' : ''}`}
+            className={`divide-y divide-slate-100 overflow-hidden rounded-3xl border border-slate-200/80 bg-white/75 shadow-[0_4px_20px_rgba(0,0,0,0.03)] backdrop-blur-xl dark:divide-white/5 dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)] ${isFetching ? 'opacity-70' : ''}`}
           >
             {data.items.map((row) => (
               <QueueRow key={row.id} row={row} from={from} />

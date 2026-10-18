@@ -12,16 +12,16 @@ import { ProgressBar } from '../../components/ui/ProgressBar.jsx';
 import { StatTile } from '../../components/ui/StatTile.jsx';
 import { getErrorMessage } from '../../utils/apiErrors.js';
 
-const linkClass = 'font-medium text-brand-700 hover:text-brand-800 hover:underline';
+const linkClass = 'font-semibold text-brand-600 hover:text-brand-700 dark:text-cyan-400 dark:hover:text-cyan-300 hover:underline transition-colors';
 const buttonLinkClass =
-  'inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700';
+  'inline-flex h-10 items-center justify-center rounded-xl bg-linear-to-r from-brand-500 to-[#029ab8] px-4 text-sm font-semibold text-white shadow-xs hover:shadow-[0_0_20px_rgba(3,174,210,0.35)] active:scale-[0.98] transition-all';
 
 const assignmentPath = (row) => `/app/courses/${row.course.id}/assignments/${row.id}`;
 
 function Stats({ summary }) {
   const { assignments } = summary;
   return (
-    <dl className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <dl className="grid grid-cols-2 gap-3.5 lg:grid-cols-4">
       <StatTile label="Active courses" value={summary.activeCourses} />
       <StatTile label="Lessons completed" value={summary.lessonsCompleted} />
       <StatTile label="Overdue assignments" value={assignments.overdue} tone="danger" />
@@ -35,23 +35,23 @@ function ContinueLearning({ item }) {
   return (
     <section
       aria-labelledby="continue-heading"
-      className="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-xs sm:grid sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]"
+      className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white/75 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl transition-all dark:border-white/10 dark:bg-white/[0.05] dark:backdrop-blur-2xl dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] sm:grid sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]"
     >
-      <CourseCover course={course} className="h-32 sm:h-full" />
-      <div className="space-y-4 p-5 sm:p-6">
+      <CourseCover course={course} className="h-36 sm:h-full" />
+      <div className="space-y-4 p-6 sm:p-7">
         <div>
-          <p
+          <span
             id="continue-heading"
-            className="text-xs font-semibold tracking-wide text-brand-700 uppercase"
+            className="inline-flex items-center rounded-full bg-brand-500/10 px-2.5 py-0.5 text-xs font-bold tracking-wider text-brand-600 uppercase dark:bg-cyan-500/15 dark:text-cyan-300"
           >
             Continue learning
-          </p>
-          <h2 className="mt-1 text-lg font-semibold text-slate-900">{course.title}</h2>
-          <p className="text-sm text-slate-500">{progress.nextLesson.moduleTitle}</p>
+          </span>
+          <h2 className="mt-2 text-xl font-bold tracking-tight text-slate-900 dark:text-white">{course.title}</h2>
+          <p className="mt-0.5 text-sm font-medium text-slate-500 dark:text-slate-400">{progress.nextLesson.moduleTitle}</p>
         </div>
         <div className="space-y-1.5">
           <ProgressBar value={progress.percent} label={`${course.title} progress`} />
-          <p className="text-sm text-slate-600">
+          <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
             {progress.percent}% · {lessonsDoneText(progress)}
           </p>
         </div>
@@ -66,7 +66,7 @@ function ContinueLearning({ item }) {
 function CourseRow({ item }) {
   const { course, enrollment, progress } = item;
   return (
-    <li className="space-y-2 px-5 py-4 sm:px-6">
+    <li className="space-y-2.5 px-5 py-4 sm:px-6 transition-colors hover:bg-white/40 dark:hover:bg-white/[0.02]">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Link to={`/app/courses/${course.id}`} className={linkClass}>
           {course.title}
@@ -78,18 +78,18 @@ function CourseRow({ item }) {
         ) : null}
       </div>
       {progress?.totalLessons === 0 ? (
-        <p className="text-sm text-slate-500">No lessons have been published in this course yet.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">No lessons have been published in this course yet.</p>
       ) : progress ? (
         <>
           <ProgressBar value={progress.percent} label={`${course.title} progress`} size="sm" />
           <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm">
-            <span className="text-slate-600">
+            <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
               {progress.percent}% · {lessonsDoneText(progress)}
             </span>
             {progress.nextLesson && (
               <Link
                 to={lessonPath(course.id, progress.nextLesson.id)}
-                className={`${linkClass} min-w-0 truncate`}
+                className={`${linkClass} min-w-0 truncate text-xs`}
               >
                 {nextLessonLabel(progress.nextLesson)} →
               </Link>
@@ -97,7 +97,7 @@ function CourseRow({ item }) {
           </div>
         </>
       ) : (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Your trainer will review your request. The lessons open once it is approved.
         </p>
       )}
@@ -107,12 +107,12 @@ function CourseRow({ item }) {
 
 function AssignmentRow({ row, children }) {
   return (
-    <li className="flex flex-wrap items-center gap-x-3 gap-y-1 px-5 py-3 sm:px-6">
+    <li className="flex flex-wrap items-center gap-x-3 gap-y-1 px-5 py-3.5 sm:px-6 transition-colors hover:bg-white/40 dark:hover:bg-white/[0.02]">
       <div className="min-w-0 flex-1">
         <Link to={assignmentPath(row)} className={`${linkClass} text-sm`}>
           {row.title}
         </Link>
-        <p className="truncate text-xs text-slate-500">{row.course.title}</p>
+        <p className="truncate text-xs text-slate-500 dark:text-slate-400">{row.course.title}</p>
         {children}
       </div>
       <SubmissionStateBadge status={row.mySubmission.status} />
@@ -127,20 +127,20 @@ function ToDo({ rows }) {
         title="To do"
         description="Assignments you can hand in now"
         actions={
-          <Link to="/app/assignments" className={`${linkClass} text-sm`}>
+          <Link to="/app/assignments" className={`${linkClass} text-xs sm:text-sm`}>
             All assignments
           </Link>
         }
       />
       {rows.length === 0 ? (
         <CardBody>
-          <p className="text-sm text-slate-500">Nothing to hand in right now.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Nothing to hand in right now.</p>
         </CardBody>
       ) : (
-        <ul className="divide-y divide-slate-100">
+        <ul className="divide-y divide-slate-100 dark:divide-white/5">
           {rows.map((row) => (
             <AssignmentRow key={row.id} row={row}>
-              <p className="text-xs text-slate-600">
+              <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-400">
                 Due {formatDateTime(row.dueAt)} ({relativeTime(row.dueAt)})
               </p>
             </AssignmentRow>
@@ -156,10 +156,10 @@ function RecentFeedback({ rows }) {
   return (
     <Card aria-label="Recent feedback">
       <CardHeader title="Recent feedback" />
-      <ul className="divide-y divide-slate-100">
+      <ul className="divide-y divide-slate-100 dark:divide-white/5">
         {rows.map((row) => (
           <AssignmentRow key={row.id} row={row}>
-            <p className="text-xs text-slate-600">
+            <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-400">
               {row.mySubmission.status === 'reviewed'
                 ? `Marks: ${formatMarks(row.mySubmission.latest.finalMarks, row.maxMarks)}`
                 : 'Your trainer asked for a new attempt'}{' '}
@@ -175,22 +175,22 @@ function RecentFeedback({ rows }) {
 function DashboardSkeleton() {
   return (
     <div className="space-y-6" role="status" aria-label="Loading dashboard">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3.5 lg:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-20" />
+          <Skeleton key={i} className="h-24" />
         ))}
       </div>
-      <Skeleton className="h-40" />
+      <Skeleton className="h-44" />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Skeleton className="h-56" />
-        <Skeleton className="h-56" />
+        <Skeleton className="h-60" />
+        <Skeleton className="h-60" />
       </div>
     </div>
   );
 }
 
 const catalogueLink = (
-  <Link to="/app/courses" className="font-medium text-brand-700 hover:text-brand-800">
+  <Link to="/app/courses" className="font-semibold text-brand-600 hover:text-brand-700 dark:text-cyan-400 dark:hover:text-cyan-300 hover:underline">
     course catalogue
   </Link>
 );
@@ -221,7 +221,7 @@ export function StudentDashboardPage() {
         ) : allDone ? (
           <p
             role="status"
-            className="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-800"
+            className="rounded-2xl border border-emerald-300/60 bg-emerald-50/80 px-5 py-4 text-sm font-medium text-emerald-900 backdrop-blur-md dark:border-emerald-500/30 dark:bg-emerald-950/30 dark:text-emerald-200"
           >
             You&apos;ve completed every published lesson in your courses. Browse the {catalogueLink}{' '}
             for what to learn next.
@@ -230,7 +230,7 @@ export function StudentDashboardPage() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <Card aria-label="My courses">
             <CardHeader title="My courses" />
-            <ul className="divide-y divide-slate-100">
+            <ul className="divide-y divide-slate-100 dark:divide-white/5">
               {data.courses.map((item) => (
                 <CourseRow key={item.course.id} item={item} />
               ))}

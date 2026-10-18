@@ -24,22 +24,22 @@ function TrainerFeedback({ submission, maxMarks }) {
   const { review } = submission;
   if (!review) return null;
   return (
-    <div className="space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-4">
-      <p className="text-sm font-semibold text-slate-900">
+    <div className="space-y-2 rounded-2xl border border-slate-200/80 bg-slate-50/80 p-5 backdrop-blur-md dark:border-white/10 dark:bg-white/[0.04]">
+      <p className="text-sm font-bold text-slate-900 dark:text-white">
         Trainer feedback
         {review.finalMarks != null && (
-          <span className="ml-2 font-normal text-slate-700">
+          <span className="ml-2 font-semibold text-slate-700 dark:text-slate-200">
             Marks: {formatMarks(review.finalMarks, maxMarks)}
             {submission.isLate && review.marks !== review.finalMarks && (
-              <span className="text-slate-500"> ({review.marks} before the late penalty)</span>
+              <span className="text-slate-500 dark:text-slate-400 font-normal"> ({review.marks} before the late penalty)</span>
             )}
           </span>
         )}
       </p>
       {review.feedback ? (
-        <MarkdownView className="text-sm">{review.feedback}</MarkdownView>
+        <MarkdownView className="text-sm leading-relaxed">{review.feedback}</MarkdownView>
       ) : (
-        <p className="text-sm text-slate-500">No written feedback.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">No written feedback.</p>
       )}
     </div>
   );
@@ -47,20 +47,20 @@ function TrainerFeedback({ submission, maxMarks }) {
 
 function AttemptCard({ submission, maxMarks }) {
   return (
-    <article className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
+    <article className="space-y-4 rounded-2xl border border-slate-200/80 bg-white/75 p-6 shadow-xs backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.04]">
       <div className="flex flex-wrap items-center gap-2">
-        <h3 className="font-semibold text-slate-900">Attempt {submission.attempt}</h3>
+        <h3 className="font-bold text-slate-900 dark:text-white">Attempt {submission.attempt}</h3>
         <SubmissionStateBadge status={submission.status} />
         <LateBadge show={submission.isLate} />
-        <span className="text-xs text-slate-500">
+        <span className="text-xs text-slate-500 dark:text-slate-400">
           Submitted {formatDateTime(submission.submittedAt)}
           {submission.editedAt && ` · edited ${formatDateTime(submission.editedAt)}`}
         </span>
       </div>
       <SubmissionItems items={submission.items} />
       {submission.note && (
-        <p className="text-sm whitespace-pre-wrap text-slate-600">
-          <span className="font-medium text-slate-700">Your note: </span>
+        <p className="text-sm whitespace-pre-wrap text-slate-600 dark:text-slate-300">
+          <span className="font-semibold text-slate-700 dark:text-slate-200">Your note: </span>
           {submission.note}
         </p>
       )}
@@ -164,7 +164,7 @@ export function AssignmentPage() {
   const backLink = (
     <Link
       to={`/app/courses/${courseId}`}
-      className="inline-block text-sm font-medium text-brand-700 hover:text-brand-800"
+      className="inline-block text-sm font-semibold text-brand-600 transition-colors hover:text-brand-700 hover:underline dark:text-cyan-400 dark:hover:text-cyan-300"
     >
       ← Back to the course
     </Link>
@@ -205,22 +205,22 @@ export function AssignmentPage() {
     <div className="mx-auto max-w-4xl space-y-8">
       <div className="space-y-3">
         {backLink}
-        <nav aria-label="Breadcrumb" className="text-sm text-slate-500">
+        <nav aria-label="Breadcrumb" className="text-sm text-slate-500 dark:text-slate-400">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>{data.course?.title}</li>
             {data.module && (
               <>
-                <li aria-hidden="true">/</li>
+                <li aria-hidden="true" className="opacity-50">/</li>
                 <li>{data.module.title}</li>
               </>
             )}
             {data.lesson && (
               <>
-                <li aria-hidden="true">/</li>
+                <li aria-hidden="true" className="opacity-50">/</li>
                 <li>
                   <Link
                     to={`/app/courses/${courseId}/lessons/${data.lesson.id}`}
-                    className="hover:text-slate-800"
+                    className="transition-colors hover:text-slate-800 dark:hover:text-slate-200"
                   >
                     {data.lesson.title}
                   </Link>
@@ -230,7 +230,7 @@ export function AssignmentPage() {
           </ol>
         </nav>
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
             {data.title}
           </h1>
           <SubmissionStateBadge status={state.status} />
@@ -244,10 +244,10 @@ export function AssignmentPage() {
           <CardBody className="space-y-5">
             {data.objectives.length > 0 && (
               <section aria-labelledby="objectives-heading">
-                <h2 id="objectives-heading" className="text-sm font-semibold text-slate-900">
+                <h2 id="objectives-heading" className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">
                   You will
                 </h2>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+                <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
                   {data.objectives.map((objective) => (
                     <li key={objective}>{objective}</li>
                   ))}
@@ -257,11 +257,11 @@ export function AssignmentPage() {
             {data.instructions ? (
               <MarkdownView>{data.instructions}</MarkdownView>
             ) : (
-              <p className="text-sm text-slate-500">Your trainer hasn&apos;t added instructions.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Your trainer hasn&apos;t added instructions.</p>
             )}
             {data.attachments.length > 0 && (
               <section aria-labelledby="handouts-heading" className="space-y-3">
-                <h2 id="handouts-heading" className="text-sm font-semibold text-slate-900">
+                <h2 id="handouts-heading" className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">
                   Handouts
                 </h2>
                 {data.attachments.map((file) => (
@@ -286,7 +286,7 @@ export function AssignmentPage() {
       ) : (
         attempts.some((s) => s.id !== shownInPanel) && (
           <section aria-labelledby="history-heading" className="space-y-4">
-            <h2 id="history-heading" className="text-lg font-semibold text-slate-900">
+            <h2 id="history-heading" className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
               {attempts.length > 1 ? 'Your attempts' : 'Your submission'}
             </h2>
             {attempts

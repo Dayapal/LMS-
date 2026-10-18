@@ -26,22 +26,25 @@ export function RouteErrorPage({ inLayout = false }) {
       : 'An unexpected error stopped this page. Reloading usually fixes it; your saved work is not affected.';
 
   const content = (
-    <div role="alert" className="mx-auto max-w-md text-center">
-      <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{title}</h1>
-      <p className="mt-2 text-sm text-slate-600">{message}</p>
-      <div className="mt-6 flex flex-col justify-center gap-2 sm:flex-row">
+    <div
+      role="alert"
+      className="mx-auto max-w-md rounded-3xl border border-slate-200/80 bg-white/75 p-8 text-center shadow-[0_20px_50px_rgba(0,0,0,0.06)] backdrop-blur-2xl dark:border-white/10 dark:bg-white/[0.05] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
+    >
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">{title}</h1>
+      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{message}</p>
+      <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row">
         {!notFound && (
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+            className="inline-flex h-10 items-center justify-center rounded-xl bg-linear-to-r from-brand-500 to-[#029ab8] px-4 text-sm font-medium text-white shadow-xs hover:shadow-[0_0_20px_rgba(3,174,210,0.35)] transition-all"
           >
             Reload the page
           </button>
         )}
         <Link
           to="/"
-          className="rounded-lg px-4 py-2 text-sm font-medium text-slate-700 ring-1 ring-slate-300 ring-inset hover:bg-slate-50"
+          className="inline-flex h-10 items-center justify-center rounded-xl border border-slate-200/80 bg-white/80 px-4 text-sm font-medium text-slate-700 shadow-2xs hover:bg-white hover:text-slate-900 dark:border-white/15 dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/20 dark:hover:text-white transition-all"
         >
           Go to dashboard
         </Link>
@@ -50,5 +53,10 @@ export function RouteErrorPage({ inLayout = false }) {
   );
 
   if (inLayout) return <div className="py-12">{content}</div>;
-  return <main className="flex min-h-screen items-center justify-center px-4">{content}</main>;
+  return (
+    <main className="relative flex min-h-screen items-center justify-center px-4">
+      <div className="aurora-bg" aria-hidden="true" />
+      {content}
+    </main>
+  );
 }

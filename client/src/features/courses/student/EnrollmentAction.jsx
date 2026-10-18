@@ -18,15 +18,15 @@ export function EnrollmentAction({ course }) {
 
   if (status === 'active') {
     return (
-      <p className="text-sm font-medium text-emerald-700">
+      <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
         You&apos;re enrolled in this course. Follow the roadmap below.
       </p>
     );
   }
   if (status === 'pending') {
     return (
-      <p className="text-sm text-slate-600">
-        <span className="font-medium text-amber-700">Request sent.</span> Your trainer will review
+      <p className="text-sm text-slate-600 dark:text-slate-300">
+        <span className="font-semibold text-amber-700 dark:text-amber-400">Request sent.</span> Your trainer will review
         it soon.
       </p>
     );
@@ -48,7 +48,7 @@ export function EnrollmentAction({ course }) {
       >
         {status === 'removed' ? 'Request to re-join' : 'Request enrollment'}
       </Button>
-      <p className="text-xs text-slate-500">Your trainer approves each enrollment.</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">Your trainer approves each enrollment.</p>
     </div>
   );
 }

@@ -1,28 +1,107 @@
 @import 'tailwindcss';
 
+/* Use `.dark` class for the dark: variant instead of prefers-color-scheme. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   THEME TOKENS — Brand palette, accent colors & typography
+   ───────────────────────────────────────────────────────────────────────────── */
 @theme {
   --font-sans:
     'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
     sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --color-brand-50: #eef2ff;
-  --color-brand-100: #e0e7ff;
-  --color-brand-200: #c7d2fe;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
-  --color-brand-700: #4338ca;
-  --color-brand-800: #3730a3;
-  --color-brand-900: #312e81;
+  /* Primary brand — Cyan */
+  --color-brand-50: #e6f8fb;
+  --color-brand-100: #b3ecf3;
+  --color-brand-200: #80dfeb;
+  --color-brand-500: #03AED2;
+  --color-brand-600: #029ab8;
+  --color-brand-700: #02879f;
+  --color-brand-800: #016d82;
+  --color-brand-900: #014d5c;
+
+  /* Accent palette */
+  --color-accent-yellow: #F8DE22;
+  --color-accent-orange: #F45B26;
+  --color-accent-magenta: #D12052;
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   LIGHT THEME (default)
+   ───────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --surface-base: 245 247 250;
+  --surface-primary: 255 255 255;
+  --surface-secondary: 240 243 248;
+
+  /* Glass */
+  --surface-glass: rgba(255, 255, 255, 0.72);
+  --surface-glass-hover: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.06);
+  --glass-blur: blur(16px) saturate(140%);
+
+  /* Typography */
+  --text-primary: 15 23 42;
+  --text-secondary: 71 85 105;
+  --text-tertiary: 148 163 184;
+  --text-inverse: 255 255 255;
+
+  /* Borders */
+  --border-default: 226 232 240;
+  --border-strong: 203 213 225;
+
+  /* Glow */
+  --glow-brand: rgba(3, 174, 210, 0.12);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DARK THEME
+   ───────────────────────────────────────────────────────────────────────────── */
+.dark {
+  /* Surfaces */
+  --surface-base: 10 15 30;
+  --surface-primary: 18 24 45;
+  --surface-secondary: 25 32 55;
+
+  /* Glass */
+  --surface-glass: rgba(255, 255, 255, 0.06);
+  --surface-glass-hover: rgba(255, 255, 255, 0.10);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.3);
+  --glass-blur: blur(20px) saturate(160%);
+
+  /* Typography */
+  --text-primary: 241 245 249;
+  --text-secondary: 148 163 184;
+  --text-tertiary: 100 116 139;
+  --text-inverse: 15 23 42;
+
+  /* Borders */
+  --border-default: rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.18);
+
+  /* Glow */
+  --glow-brand: rgba(3, 174, 210, 0.20);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   BASE STYLES
+   ───────────────────────────────────────────────────────────────────────────── */
 @layer base {
   html {
-    @apply bg-slate-50 text-slate-900 antialiased;
+    @apply bg-[rgb(var(--surface-base))] text-[rgb(var(--text-primary))] antialiased;
+  }
+
+  body {
+    @apply transition-colors duration-200;
   }
 
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-brand-600;
+    @apply outline-2 outline-offset-2 outline-brand-500;
   }
 
   /* Spinners, skeleton pulses and transitions stand still for people who ask
@@ -39,38 +118,165 @@
   }
 }
 
-/* Rendered Markdown (notes, course descriptions). Headings are styled by their
-   Markdown level (md-h1..md-h6), whatever HTML level they render as. */
+/* ─────────────────────────────────────────────────────────────────────────────
+   GLASS UTILITY COMPONENTS
+   ───────────────────────────────────────────────────────────────────────────── */
+@layer components {
+  /* ── Standard glass card ────────────────────────────────────────────────── */
+  .glass-card {
+    background: var(--surface-glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 1rem;
+    box-shadow: var(--glass-shadow);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+  }
+  .glass-card:hover {
+    background: var(--surface-glass-hover);
+  }
+
+  /* Fallback for browsers without backdrop-filter */
+  @supports not (backdrop-filter: blur(1px)) {
+    .glass-card {
+      background: rgb(var(--surface-primary) / 0.95);
+    }
+  }
+
+  /* ── Larger glass panel (sidebar, modals) ───────────────────────────────── */
+  .glass-panel {
+    background: var(--surface-glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 1.25rem;
+    box-shadow: var(--glass-shadow);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .glass-panel {
+      background: rgb(var(--surface-primary) / 0.97);
+    }
+  }
+
+  /* ── Subtle glass surface (headers, footers) ────────────────────────────── */
+  .glass-surface {
+    background: var(--surface-glass);
+    border-bottom: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .glass-surface {
+      background: rgb(var(--surface-primary) / 0.95);
+    }
+  }
+
+  /* ── Glass-styled form inputs ───────────────────────────────────────────── */
+  .glass-input {
+    background: var(--surface-glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 0.75rem;
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    color: rgb(var(--text-primary));
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+  .glass-input::placeholder {
+    color: rgb(var(--text-tertiary));
+  }
+  .glass-input:focus {
+    border-color: var(--color-brand-500, #03AED2);
+    box-shadow: 0 0 0 3px var(--glow-brand);
+    outline: none;
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .glass-input {
+      background: rgb(var(--surface-primary) / 0.92);
+    }
+  }
+
+  /* ── Aurora decorative background ───────────────────────────────────────── */
+  .aurora-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .aurora-bg::before,
+  .aurora-bg::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.35;
+  }
+  .aurora-bg::before {
+    width: 600px;
+    height: 600px;
+    top: -10%;
+    right: -5%;
+    background: radial-gradient(circle, #03AED2 0%, transparent 70%);
+  }
+  .aurora-bg::after {
+    width: 500px;
+    height: 500px;
+    bottom: -10%;
+    left: -5%;
+    background: radial-gradient(circle, #D12052 0%, transparent 70%);
+  }
+
+  .dark .aurora-bg::before,
+  .dark .aurora-bg::after {
+    opacity: 0.18;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .aurora-bg::before,
+    .aurora-bg::after {
+      animation: none !important;
+    }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   MARKDOWN COMPONENT STYLES
+   Rendered Markdown (notes, course descriptions). Headings are styled by their
+   Markdown level (md-h1..md-h6), whatever HTML level they render as.
+   ───────────────────────────────────────────────────────────────────────────── */
 @layer components {
   .markdown {
-    @apply text-[15px] leading-7 text-slate-700;
+    @apply text-[15px] leading-7 text-slate-700 dark:text-slate-300;
   }
   .markdown > * + * {
     @apply mt-4;
   }
   /* Kept below the material title (text-xl) so the outline reads top-down. */
   .markdown .md-h1 {
-    @apply mt-8 text-lg font-semibold tracking-tight text-slate-900;
+    @apply mt-8 text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100;
   }
   .markdown .md-h2 {
-    @apply mt-8 text-lg font-semibold text-slate-900;
+    @apply mt-8 text-lg font-semibold text-slate-900 dark:text-slate-100;
   }
   .markdown .md-h3 {
-    @apply mt-6 text-base font-semibold text-slate-900;
+    @apply mt-6 text-base font-semibold text-slate-900 dark:text-slate-100;
   }
   .markdown .md-h4,
   .markdown .md-h5,
   .markdown .md-h6 {
-    @apply mt-6 font-semibold text-slate-900;
+    @apply mt-6 font-semibold text-slate-900 dark:text-slate-100;
   }
   .markdown > :first-child {
     @apply mt-0;
   }
   .markdown a {
-    @apply font-medium text-brand-700 underline decoration-brand-200 underline-offset-2 hover:text-brand-800 hover:decoration-brand-500;
+    @apply font-medium text-brand-700 underline decoration-brand-200 underline-offset-2 hover:text-brand-800 hover:decoration-brand-500 dark:text-brand-200 dark:decoration-brand-700 dark:hover:text-brand-100 dark:hover:decoration-brand-500;
   }
   .markdown strong {
-    @apply font-semibold text-slate-900;
+    @apply font-semibold text-slate-900 dark:text-slate-100;
   }
   .markdown ul {
     @apply list-disc space-y-1 pl-6;
@@ -83,26 +289,26 @@
     @apply mt-1;
   }
   .markdown li::marker {
-    @apply text-slate-400;
+    @apply text-slate-400 dark:text-slate-500;
   }
   .markdown blockquote {
-    @apply border-l-4 border-brand-200 bg-brand-50/50 py-2 pl-4 text-slate-600;
+    @apply border-l-4 border-brand-200 bg-brand-50/50 py-2 pl-4 text-slate-600 dark:border-brand-700 dark:bg-brand-900/30 dark:text-slate-400;
   }
   .markdown hr {
-    @apply border-slate-200;
+    @apply border-slate-200 dark:border-slate-700;
   }
   .markdown :not(pre) > code {
-    @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.85em] text-slate-800;
+    @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.85em] text-slate-800 dark:bg-slate-800 dark:text-slate-200;
   }
   .markdown table {
     @apply block w-full overflow-x-auto border-collapse text-sm;
   }
   .markdown th,
   .markdown td {
-    @apply border border-slate-200 px-3 py-2 text-left align-top;
+    @apply border border-slate-200 px-3 py-2 text-left align-top dark:border-slate-700;
   }
   .markdown th {
-    @apply bg-slate-50 font-semibold text-slate-900;
+    @apply bg-slate-50 font-semibold text-slate-900 dark:bg-slate-800 dark:text-slate-100;
   }
   .markdown img {
     @apply h-auto max-w-full rounded-lg;

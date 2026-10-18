@@ -101,13 +101,13 @@ export function NotificationsPage() {
       ) : (
         <>
           <Card as="div">
-            <ul aria-label="Notifications" className="divide-y divide-slate-100">
+            <ul aria-label="Notifications" className="divide-y divide-slate-100 dark:divide-white/5">
               {list.data.items.map((notification) => (
                 <li
                   key={notification.id}
                   id={`notification-${notification.id}`}
                   tabIndex={-1}
-                  className="px-5 py-4"
+                  className="px-5 py-4 transition-colors hover:bg-white/40 dark:hover:bg-white/[0.02] focus:outline-none focus:ring-1 focus:ring-brand-500 rounded-xl"
                 >
                   <NotificationItem
                     notification={notification}

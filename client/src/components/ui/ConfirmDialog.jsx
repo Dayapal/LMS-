@@ -13,7 +13,7 @@ export function ConfirmDialog({
 }) {
   return (
     <Modal open={open} onClose={loading ? () => {} : onCancel} title={title} size="sm">
-      <p className="text-sm text-slate-600">{message}</p>
+      <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{message}</p>
       <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Button variant="secondary" onClick={onCancel} disabled={loading}>
           Cancel

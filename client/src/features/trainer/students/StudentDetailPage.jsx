@@ -88,9 +88,9 @@ function EnrollInCourse({ student, enrollments }) {
   return (
     <form
       onSubmit={submit}
-      className="flex flex-col gap-2 border-t border-slate-200 px-5 py-4 sm:flex-row sm:items-end sm:px-6"
+      className="flex flex-col gap-2 border-t border-slate-200 dark:border-white/10 px-5 py-4 sm:flex-row sm:items-end sm:px-6"
     >
-      <label className="flex flex-1 flex-col gap-1 text-sm font-medium text-slate-700">
+      <label className="flex flex-1 flex-col gap-1 text-sm font-medium text-slate-700 dark:text-slate-300">
         Enroll in another course
         <select
           className={`${selectClass} sm:w-full`}
@@ -136,10 +136,10 @@ function EnrollmentsCard({ detail }) {
       />
       {enrollments.length === 0 ? (
         <CardBody>
-          <p className="text-sm text-slate-500">Not enrolled in any course yet.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Not enrolled in any course yet.</p>
         </CardBody>
       ) : (
-        <ul className="divide-y divide-slate-100">
+        <ul className="divide-y divide-slate-100 dark:divide-slate-800/60">
           {enrollments.map((enrollment) => (
             <li key={enrollment.id} className="space-y-2 px-5 py-4 sm:px-6">
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -170,7 +170,7 @@ function EnrollmentsCard({ detail }) {
                     label={`${enrollment.course.title} progress`}
                     size="sm"
                   />
-                  <p className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-600">
+                  <p className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-600 dark:text-slate-400">
                     <span>
                       {enrollment.progress.percent}% · {enrollment.progress.completedLessons} of{' '}
                       {enrollment.progress.totalLessons} lessons
@@ -179,7 +179,7 @@ function EnrollmentsCard({ detail }) {
                       <span>{enrollment.awaitingReview} to review</span>
                     )}
                     {enrollment.overdue > 0 && (
-                      <span className="font-medium text-red-700">{enrollment.overdue} overdue</span>
+                      <span className="font-medium text-red-700 dark:text-red-400">{enrollment.overdue} overdue</span>
                     )}
                     {enrollment.lastAccessedAt && (
                       <span>Studied {relativeTime(enrollment.lastAccessedAt)}</span>
@@ -187,7 +187,7 @@ function EnrollmentsCard({ detail }) {
                   </p>
                 </>
               ) : (
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Requested {formatDate(enrollment.requestedAt)}. The lessons open once you approve
                   it.
                 </p>
@@ -224,13 +224,13 @@ function ModuleProgress({ courses }) {
       <CardBody className="space-y-6">
         {courses.map(({ course, enrollmentStatus, progress, modules }) => (
           <section key={course.id} aria-label={course.title} className="space-y-3">
-            <h3 className="flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-900">
+            <h3 className="flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white">
               {course.title}
               {enrollmentStatus === 'removed' && <EnrollmentBadge status="removed" />}
-              <span className="font-normal text-slate-500">{progress.percent}%</span>
+              <span className="font-normal text-slate-500 dark:text-slate-400">{progress.percent}%</span>
             </h3>
             {modules.length === 0 ? (
-              <p className="text-xs text-slate-500">No lessons are published in this course.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">No lessons are published in this course.</p>
             ) : (
               <ul className="space-y-2">
                 {modules.map((module) => (
@@ -238,8 +238,8 @@ function ModuleProgress({ courses }) {
                     key={module.id}
                     className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 text-xs"
                   >
-                    <span className="truncate text-slate-700">{module.title}</span>
-                    <span className="text-slate-500 tabular-nums">
+                    <span className="truncate text-slate-700 dark:text-slate-300">{module.title}</span>
+                    <span className="text-slate-500 dark:text-slate-400 tabular-nums">
                       {module.completedLessons}/{module.totalLessons}
                     </span>
                     <ProgressBar
@@ -265,10 +265,10 @@ function AssignmentsCard({ assignments }) {
       <CardHeader title="Assignments" description="What the student sees in their courses now." />
       {assignments.items.length === 0 ? (
         <CardBody>
-          <p className="text-sm text-slate-500">No assignments in their active courses.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No assignments in their active courses.</p>
         </CardBody>
       ) : (
-        <ul className="divide-y divide-slate-100">
+        <ul className="divide-y divide-slate-100 dark:divide-slate-800/60">
           {assignments.items.map((row) => (
             <li
               key={row.id}
@@ -281,7 +281,7 @@ function AssignmentsCard({ assignments }) {
                 >
                   {row.title}
                 </Link>
-                <p className="truncate text-xs text-slate-500">
+                <p className="truncate text-xs text-slate-500 dark:text-slate-400">
                   {row.course.title} · Due {formatDateTime(row.dueAt)}
                 </p>
               </div>
@@ -307,10 +307,10 @@ function SubmissionsCard({ submissions, marks, from }) {
       />
       {submissions.length === 0 ? (
         <CardBody>
-          <p className="text-sm text-slate-500">Nothing handed in yet.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Nothing handed in yet.</p>
         </CardBody>
       ) : (
-        <ul className="divide-y divide-slate-100">
+        <ul className="divide-y divide-slate-100 dark:divide-slate-800/60">
           {submissions.map((row) => (
             <li
               key={row.id}
@@ -326,15 +326,15 @@ function SubmissionsCard({ submissions, marks, from }) {
                     {row.assignment.title}
                   </Link>
                 ) : (
-                  <span className="text-sm text-slate-500">A deleted assignment</span>
+                  <span className="text-sm text-slate-500 dark:text-slate-400">A deleted assignment</span>
                 )}
-                <p className="truncate text-xs text-slate-500">
+                <p className="truncate text-xs text-slate-500 dark:text-slate-400">
                   {row.course?.title} · Attempt {row.attempt} · {formatDateTime(row.submittedAt)}
                 </p>
               </div>
               <LateBadge show={row.isLate} />
               <SubmissionStateBadge status={row.status} />
-              <span className="w-20 text-right text-sm text-slate-700 tabular-nums">
+              <span className="w-20 text-right text-sm text-slate-700 dark:text-slate-300 tabular-nums">
                 {formatMarks(row.review?.finalMarks, row.assignment?.maxMarks)}
               </span>
             </li>
@@ -371,7 +371,7 @@ export function StudentDetailPage() {
         />
         <Link
           to="/admin/students"
-          className="text-sm font-medium text-brand-700 hover:text-brand-800"
+          className="text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-cyan-400 dark:hover:text-cyan-300 transition-colors"
         >
           ← All students
         </Link>
@@ -392,12 +392,12 @@ export function StudentDetailPage() {
       >
         <Link
           to="/admin/students"
-          className="mb-2 inline-block text-sm font-medium text-brand-700 hover:text-brand-800"
+          className="mb-2 inline-block text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-cyan-400 dark:hover:text-cyan-300 transition-colors"
         >
           ← All students
         </Link>
       </PageHeader>
-      {student.bio && <p className="max-w-2xl text-sm text-slate-600">{student.bio}</p>}
+      {student.bio && <p className="max-w-2xl text-sm text-slate-600 dark:text-slate-300">{student.bio}</p>}
 
       <dl className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile

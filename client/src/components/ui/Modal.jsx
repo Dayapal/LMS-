@@ -30,7 +30,11 @@ export function Modal({ open, onClose, title, description, size = 'md', children
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4">
-      <div className="absolute inset-0 bg-slate-900/50" aria-hidden="true" onClick={onClose} />
+      <div
+        className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity"
+        aria-hidden="true"
+        onClick={onClose}
+      />
       <div
         ref={panelRef}
         role="dialog"
@@ -38,15 +42,15 @@ export function Modal({ open, onClose, title, description, size = 'md', children
         aria-labelledby={titleId}
         aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
-        className={`relative flex max-h-[92vh] w-full ${width} flex-col rounded-t-xl bg-white shadow-xl focus:outline-none sm:rounded-xl`}
+        className={`relative flex max-h-[92vh] w-full ${width} flex-col rounded-t-3xl border border-slate-200/80 bg-white/95 shadow-[0_20px_50px_rgba(0,0,0,0.25)] backdrop-blur-2xl focus:outline-none dark:border-white/15 dark:bg-[#0d1527]/95 dark:shadow-[0_25px_60px_rgba(0,0,0,0.6)] sm:rounded-3xl`}
       >
-        <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
+        <div className="flex items-start justify-between gap-4 border-b border-slate-200/70 px-6 py-5 dark:border-white/10">
           <div>
-            <h2 id={titleId} className="text-base font-semibold text-slate-900">
+            <h2 id={titleId} className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
               {title}
             </h2>
             {description && (
-              <p id={descriptionId} className="mt-1 text-sm text-slate-500">
+              <p id={descriptionId} className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                 {description}
               </p>
             )}
@@ -54,13 +58,13 @@ export function Modal({ open, onClose, title, description, size = 'md', children
           <button
             type="button"
             onClick={onClose}
-            className="-mr-1 rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+            className="-mr-1.5 rounded-xl p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white"
             aria-label="Close dialog"
           >
             <Icon name="close" />
           </button>
         </div>
-        <div ref={bodyRef} className="overflow-y-auto px-5 py-5">
+        <div ref={bodyRef} className="overflow-y-auto px-6 py-6">
           {children}
         </div>
       </div>

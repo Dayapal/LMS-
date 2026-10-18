@@ -66,10 +66,10 @@ function SubmissionsList({ assignment, courseId }) {
     <section aria-labelledby="submissions-heading" className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 id="submissions-heading" className="text-lg font-semibold text-slate-900">
+          <h2 id="submissions-heading" className="text-lg font-semibold text-slate-900 dark:text-white">
             Submissions
           </h2>
-          <p className="text-sm text-slate-500">The latest attempt of each student.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">The latest attempt of each student.</p>
         </div>
         <div role="group" aria-label="Filter submissions" className="flex flex-wrap gap-1">
           {FILTERS.map((filter) => (
@@ -81,10 +81,10 @@ function SubmissionsList({ assignment, courseId }) {
                 setStatus(filter.value);
                 setPage(1);
               }}
-              className={`rounded-full px-3 py-1 text-sm font-medium ${
+              className={`rounded-full px-3 py-1 text-sm font-medium transition-all ${
                 status === filter.value
-                  ? 'bg-brand-600 text-white'
-                  : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50'
+                  ? 'bg-gradient-to-r from-cyan-500 to-cyan-600 text-white shadow-xs'
+                  : 'bg-white/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 ring-1 ring-slate-200 dark:ring-white/10 hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
             >
               {filter.label}
@@ -104,17 +104,17 @@ function SubmissionsList({ assignment, courseId }) {
         </EmptyState>
       ) : (
         <>
-          <ul className="divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs">
+          <ul className="divide-y divide-slate-100 dark:divide-slate-800/60 overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl shadow-xs">
             {data.items.map((submission) => (
               <li
                 key={submission.id}
-                className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:flex-nowrap"
+                className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:flex-nowrap hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
               >
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-slate-900">
+                  <p className="truncate text-sm font-medium text-slate-900 dark:text-white">
                     {submission.student.name}
                   </p>
-                  <p className="truncate text-xs text-slate-500">
+                  <p className="truncate text-xs text-slate-500 dark:text-slate-400">
                     {submission.student.email} · Attempt {submission.attempt}
                     {submission.attempts > 1 ? ` of ${submission.attempts}` : ''} ·{' '}
                     {formatDateTime(submission.submittedAt)}
@@ -123,13 +123,13 @@ function SubmissionsList({ assignment, courseId }) {
                 <div className="flex shrink-0 flex-wrap items-center gap-2">
                   <LateBadge show={submission.isLate} />
                   <SubmissionStateBadge status={submission.status} />
-                  <span className="w-20 text-right text-sm text-slate-700">
+                  <span className="w-20 text-right text-sm text-slate-700 dark:text-slate-300">
                     {formatMarks(submission.review?.finalMarks, assignment.maxMarks)}
                   </span>
                   <Link
                     to={`/admin/courses/${courseId}/assignments/${assignment.id}/submissions/${submission.id}`}
                     aria-label={`${submission.status === 'submitted' ? 'Review' : 'Open'} ${submission.student.name}'s submission`}
-                    className="rounded-md px-2 py-1 text-sm font-medium text-brand-700 hover:bg-brand-50"
+                    className="rounded-lg px-2.5 py-1 text-sm font-medium text-brand-700 hover:bg-brand-50 dark:text-cyan-400 dark:hover:bg-cyan-950/30 transition-colors"
                   >
                     {submission.status === 'submitted' ? 'Review' : 'Open'}
                   </Link>
@@ -180,7 +180,7 @@ export function AdminAssignmentPage() {
         <Link
           to={`/admin/courses/${courseId}`}
           state={{ tab: 'assignments' }}
-          className="text-sm font-medium text-brand-700 hover:text-brand-800"
+          className="text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-cyan-400 dark:hover:text-cyan-300 transition-colors"
         >
           ← Back to the course
         </Link>
@@ -219,7 +219,7 @@ export function AdminAssignmentPage() {
           <>
             <Link
               to={`/admin/courses/${courseId}/assignments/${assignment.id}/edit`}
-              className="inline-flex h-10 items-center rounded-lg bg-white px-4 text-sm font-medium text-slate-700 ring-1 ring-slate-300 ring-inset hover:bg-slate-50"
+              className="inline-flex h-10 items-center rounded-xl bg-white/80 dark:bg-slate-800/80 px-4 text-sm font-medium text-slate-700 dark:text-slate-200 ring-1 ring-slate-300 dark:ring-white/10 ring-inset hover:bg-slate-50 dark:hover:bg-slate-800 shadow-xs backdrop-blur-md transition-colors"
             >
               Edit
             </Link>
@@ -245,13 +245,13 @@ export function AdminAssignmentPage() {
         <Link
           to={`/admin/courses/${courseId}`}
           state={{ tab: 'assignments' }}
-          className="mb-2 inline-block text-sm font-medium text-brand-700 hover:text-brand-800"
+          className="mb-2 inline-block text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-cyan-400 dark:hover:text-cyan-300 transition-colors"
         >
           ← Course assignments
         </Link>
       </PageHeader>
 
-      <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
+      <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
         <StatusBadge status={assignment.status} />
         <span>
           {assignment.stats.students} student{assignment.stats.students === 1 ? '' : 's'} submitted
@@ -264,7 +264,7 @@ export function AdminAssignmentPage() {
           <CardHeader title="Instructions" />
           <CardBody className="space-y-5">
             {assignment.objectives.length > 0 && (
-              <ul className="list-disc space-y-1 pl-5 text-sm text-slate-700">
+              <ul className="list-disc space-y-1 pl-5 text-sm text-slate-700 dark:text-slate-300">
                 {assignment.objectives.map((objective) => (
                   <li key={objective}>{objective}</li>
                 ))}
@@ -273,7 +273,7 @@ export function AdminAssignmentPage() {
             {assignment.instructions ? (
               <MarkdownView>{assignment.instructions}</MarkdownView>
             ) : (
-              <p className="text-sm text-slate-500">No instructions yet.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">No instructions yet.</p>
             )}
           </CardBody>
         </Card>

@@ -18,7 +18,7 @@ function IconButton({ label, onClick, disabled, children }) {
       disabled={disabled}
       aria-label={label}
       title={label}
-      className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30"
+      className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 disabled:cursor-not-allowed disabled:opacity-30 transition-colors"
     >
       {children}
     </button>
@@ -92,7 +92,7 @@ export function RoadmapEditor({ courseId, modules }) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           {plural(modules.length, 'module')} ·{' '}
           {plural(
             modules.reduce((sum, m) => sum + m.lessons.length, 0),
@@ -118,19 +118,19 @@ export function RoadmapEditor({ courseId, modules }) {
             return (
               <li
                 key={module.id}
-                className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs"
+                className="overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl shadow-xs"
               >
-                <div className="flex flex-wrap items-start gap-3 border-b border-slate-100 bg-slate-50/60 px-4 py-3">
-                  <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">
+                <div className="flex flex-wrap items-start gap-3 border-b border-slate-100 dark:border-white/10 bg-slate-50/60 dark:bg-slate-800/40 px-4 py-3">
+                  <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-700 dark:bg-cyan-950/60 dark:text-cyan-300 text-sm font-semibold">
                     {moduleIndex + 1}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="font-semibold text-slate-900">{module.title}</h3>
+                      <h3 className="font-semibold text-slate-900 dark:text-white">{module.title}</h3>
                       <StatusBadge status={module.status} />
                     </div>
                     {module.description && (
-                      <p className="mt-0.5 text-sm text-slate-500">{module.description}</p>
+                      <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{module.description}</p>
                     )}
                   </div>
                   <div className="flex items-center gap-1">
@@ -187,7 +187,7 @@ export function RoadmapEditor({ courseId, modules }) {
                       size="sm"
                       variant="ghost"
                       aria-label={`Delete module ${module.title}`}
-                      className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                      className="text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950/30"
                       onClick={() => askDelete('module', module)}
                     >
                       Delete
@@ -196,22 +196,22 @@ export function RoadmapEditor({ courseId, modules }) {
                 </div>
 
                 {module.lessons.length === 0 ? (
-                  <p className="px-4 py-4 text-sm text-slate-500">No lessons in this module yet.</p>
+                  <p className="px-4 py-4 text-sm text-slate-500 dark:text-slate-400">No lessons in this module yet.</p>
                 ) : (
-                  <ol className="divide-y divide-slate-100">
+                  <ol className="divide-y divide-slate-100 dark:divide-slate-800/60">
                     {module.lessons.map((lesson, lessonIndex) => (
                       <li
                         key={lesson.id}
-                        className="flex flex-wrap items-center gap-3 px-4 py-2.5 sm:flex-nowrap"
+                        className="flex flex-wrap items-center gap-3 px-4 py-2.5 sm:flex-nowrap hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
                       >
-                        <span className="w-10 shrink-0 text-xs font-medium text-slate-500">
+                        <span className="w-10 shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">
                           {moduleIndex + 1}.{lessonIndex + 1}
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium text-slate-800">
+                          <p className="truncate text-sm font-medium text-slate-800 dark:text-slate-200">
                             {lesson.title}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             {formatMinutes(lesson.estimatedMinutes)} ·{' '}
                             {plural(lesson.objectives.length, 'objective')}
                           </p>
@@ -249,7 +249,7 @@ export function RoadmapEditor({ courseId, modules }) {
                           <Link
                             to={`/admin/courses/${courseId}/lessons/${lesson.id}`}
                             aria-label={`Materials for lesson ${lesson.title}`}
-                            className="inline-flex h-8 items-center rounded-lg px-3 text-sm font-medium text-brand-700 hover:bg-brand-50"
+                            className="inline-flex h-8 items-center rounded-lg px-3 text-sm font-medium text-brand-700 hover:bg-brand-50 dark:text-cyan-400 dark:hover:bg-cyan-950/30 transition-colors"
                           >
                             Materials
                           </Link>
@@ -265,7 +265,7 @@ export function RoadmapEditor({ courseId, modules }) {
                             size="sm"
                             variant="ghost"
                             aria-label={`Delete lesson ${lesson.title}`}
-                            className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                            className="text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950/30"
                             onClick={() => askDelete('lesson', lesson)}
                           >
                             Delete
@@ -275,7 +275,7 @@ export function RoadmapEditor({ courseId, modules }) {
                     ))}
                   </ol>
                 )}
-                <div className="border-t border-slate-100 px-4 py-2">
+                <div className="border-t border-slate-100 dark:border-white/10 px-4 py-2">
                   <Button
                     size="sm"
                     variant="ghost"

@@ -108,7 +108,7 @@ export function EnrollmentsPanel({ courseId }) {
           title="Students"
           description="Approve enrollment requests and manage who can study this course."
         />
-        <div className="border-b border-slate-200 px-5 py-3 sm:px-6">
+        <div className="border-b border-slate-200 dark:border-white/10 px-5 py-3 sm:px-6">
           <FilterPills
             label="Show students"
             options={FILTERS}
@@ -136,19 +136,19 @@ export function EnrollmentsPanel({ courseId }) {
             </EmptyState>
           ) : (
             <>
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-slate-100 dark:divide-slate-800/60">
                 {data.items.map((enrollment) => (
                   <li
                     key={enrollment.id}
                     className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-slate-900">
+                      <p className="truncate text-sm font-medium text-slate-900 dark:text-white">
                         {enrollment.user.name}
                       </p>
-                      <p className="truncate text-sm text-slate-500">{enrollment.user.email}</p>
+                      <p className="truncate text-sm text-slate-500 dark:text-slate-400">{enrollment.user.email}</p>
                     </div>
-                    <div className="flex items-center gap-3 text-sm text-slate-500">
+                    <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
                       {STATUS_BADGE[enrollment.status]}
                       <span>
                         {enrollment.status === 'active'

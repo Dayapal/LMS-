@@ -20,7 +20,7 @@ export function Spinner({ className = 'size-5', label = 'Loading' }) {
 
 export function FullPageSpinner() {
   return (
-    <div className="flex min-h-screen items-center justify-center text-brand-600">
+    <div className="flex min-h-screen items-center justify-center text-cyan-500 bg-[rgb(var(--surface-base))] transition-colors duration-200">
       <Spinner className="size-8" label="Loading your session" />
     </div>
   );

@@ -20,13 +20,13 @@ function CourseLine({ course }) {
   return (
     <li className="space-y-1">
       <div className="flex flex-wrap items-center gap-2 text-xs">
-        <span className="min-w-0 truncate font-medium text-slate-700">{course.title}</span>
+        <span className="min-w-0 truncate font-medium text-slate-700 dark:text-slate-200">{course.title}</span>
         {course.enrollmentStatus !== 'active' && (
           <EnrollmentBadge status={course.enrollmentStatus} />
         )}
         {course.status === 'archived' && <Badge tone="muted">Course archived</Badge>}
         {course.progress && (
-          <span className="text-slate-500 tabular-nums">
+          <span className="text-slate-500 dark:text-slate-400 tabular-nums">
             {course.progress.percent}% · {course.progress.completedLessons}/
             {course.progress.totalLessons}
           </span>
@@ -41,27 +41,27 @@ function CourseLine({ course }) {
 
 function StudentRow({ student }) {
   return (
-    <li className="grid gap-3 px-4 py-4 sm:px-5 md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)_auto] md:items-start">
+    <li className="grid gap-3 px-4 py-4 sm:px-5 md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)_auto] md:items-start hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
       <div className="min-w-0">
         <Link to={studentPath(student.id)} className={`${linkClass} text-sm`}>
           {student.name}
         </Link>
-        <p className="truncate text-xs text-slate-500">{student.email}</p>
-        <p className="text-xs text-slate-500">
+        <p className="truncate text-xs text-slate-500 dark:text-slate-400">{student.email}</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">
           {student.lastLoginAt
             ? `Signed in ${relativeTime(student.lastLoginAt)}`
             : `Joined ${formatDate(student.createdAt)}`}
         </p>
       </div>
       {student.courses.length === 0 ? (
-        <p className="text-xs text-slate-500">Not enrolled in any course.</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">Not enrolled in any course.</p>
       ) : (
         <ul className="min-w-0 space-y-2">
           {student.courses.slice(0, 3).map((course) => (
             <CourseLine key={course.id} course={course} />
           ))}
           {student.courses.length > 3 && (
-            <li className="text-xs text-slate-500">and {student.courses.length - 3} more</li>
+            <li className="text-xs text-slate-500 dark:text-slate-400">and {student.courses.length - 3} more</li>
           )}
         </ul>
       )}
@@ -173,7 +173,7 @@ export function StudentsPage() {
           <ul
             aria-label="Students"
             aria-busy={isFetching || undefined}
-            className={`divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs ${isFetching ? 'opacity-70' : ''}`}
+            className={`divide-y divide-slate-100 dark:divide-slate-800/60 overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl shadow-xs ${isFetching ? 'opacity-70' : ''}`}
           >
             {data.items.map((student) => (
               <StudentRow key={student.id} student={student} />

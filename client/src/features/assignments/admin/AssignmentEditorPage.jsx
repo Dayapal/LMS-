@@ -100,7 +100,7 @@ export function AssignmentEditorPage() {
               : `/admin/courses/${courseId}`
           }
           state={assignmentId ? undefined : { tab: 'assignments' }}
-          className="mb-2 inline-block text-sm font-medium text-brand-700 hover:text-brand-800"
+          className="mb-2 inline-block text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-cyan-400 dark:hover:text-cyan-300 transition-colors"
         >
           ← {assignmentId ? 'Back to the assignment' : 'Back to the course'}
         </Link>
@@ -219,8 +219,8 @@ function AssignmentForm({ courseId, modules, assignment }) {
       type="button"
       aria-pressed={pane === id}
       onClick={() => setPane(id)}
-      className={`rounded-md px-3 py-1 text-sm font-medium ${
-        pane === id ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+      className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${
+        pane === id ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
       }`}
     >
       {label}
@@ -301,15 +301,15 @@ function AssignmentForm({ courseId, modules, assignment }) {
               {...register('maxAttempts')}
             />
           </div>
-          <label className="flex items-start gap-3 text-sm text-slate-700">
+          <label className="flex items-start gap-3 text-sm text-slate-700 dark:text-slate-300">
             <input
               type="checkbox"
-              className="mt-0.5 size-4 rounded border-slate-300 text-brand-600"
+              className="mt-0.5 size-4 rounded border-slate-300 dark:border-white/20 text-brand-600 focus:ring-cyan-500"
               {...register('latePolicy.allowLate')}
             />
             <span>
               <span className="font-medium">Accept late work</span>
-              <span className="block text-slate-500">
+              <span className="block text-slate-500 dark:text-slate-400">
                 Work handed in after the due date is marked late and loses the penalty below.
               </span>
             </span>
@@ -340,16 +340,16 @@ function AssignmentForm({ courseId, modules, assignment }) {
         <CardHeader title="How students submit" />
         <CardBody>
           <fieldset aria-describedby={errors.allowedSubmissionTypes ? typesId : undefined}>
-            <legend className="mb-3 text-sm font-medium text-slate-700">
+            <legend className="mb-3 text-sm font-medium text-slate-700 dark:text-slate-300">
               Accepted submission types
             </legend>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {SUBMISSION_TYPES.map((type) => (
-                <label key={type.value} className="flex items-center gap-3 text-sm text-slate-700">
+                <label key={type.value} className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300">
                   <input
                     type="checkbox"
                     value={type.value}
-                    className="size-4 rounded border-slate-300 text-brand-600"
+                    className="size-4 rounded border-slate-300 dark:border-white/20 text-brand-600 focus:ring-cyan-500"
                     {...register('allowedSubmissionTypes')}
                   />
                   {type.label}
@@ -357,7 +357,7 @@ function AssignmentForm({ courseId, modules, assignment }) {
               ))}
             </div>
             {errors.allowedSubmissionTypes && (
-              <p id={typesId} className="mt-2 text-sm text-red-600">
+              <p id={typesId} className="mt-2 text-sm text-red-600 dark:text-red-400">
                 {errors.allowedSubmissionTypes.message}
               </p>
             )}
@@ -379,7 +379,7 @@ function AssignmentForm({ courseId, modules, assignment }) {
             {...register('objectives')}
           />
           <div
-            className="flex gap-1 rounded-lg bg-slate-100 p-1 lg:hidden"
+            className="flex gap-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 p-1 lg:hidden"
             role="group"
             aria-label="Editor view"
           >
@@ -399,17 +399,17 @@ function AssignmentForm({ courseId, modules, assignment }) {
               aria-label="Live preview"
               // Focusable so keyboard users can scroll a long preview (WCAG 2.1.1).
               tabIndex={0}
-              className={`min-h-48 overflow-y-auto rounded-lg border border-slate-200 bg-white p-4 lg:max-h-[24rem] ${
+              className={`min-h-48 overflow-y-auto rounded-xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 p-4 lg:max-h-[24rem] backdrop-blur-md ${
                 pane === 'preview' ? '' : 'max-lg:hidden'
               }`}
             >
-              <p className="mb-3 text-xs font-semibold tracking-wide text-slate-500 uppercase">
+              <p className="mb-3 text-xs font-semibold tracking-wide text-slate-500 dark:text-slate-400 uppercase">
                 Preview
               </p>
               {instructions.trim() ? (
                 <MarkdownView>{instructions}</MarkdownView>
               ) : (
-                <p className="text-sm text-slate-500">The formatted instructions appear here.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">The formatted instructions appear here.</p>
               )}
             </section>
           </div>
@@ -423,12 +423,12 @@ function AssignmentForm({ courseId, modules, assignment }) {
         />
         <CardBody className="space-y-4">
           {kept.length + pending.length > 0 && (
-            <ul className="divide-y divide-slate-100 rounded-lg border border-slate-200">
+            <ul className="divide-y divide-slate-100 dark:divide-slate-800/60 rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
               {kept.map((file) => (
-                <li key={file.id} className="flex items-center gap-3 px-3 py-2 text-sm">
+                <li key={file.id} className="flex items-center gap-3 px-3 py-2 text-sm hover:bg-slate-50/60 dark:hover:bg-slate-800/40 text-slate-800 dark:text-slate-200 transition-colors">
                   <span className="min-w-0 flex-1 truncate">
                     {file.originalName}{' '}
-                    <span className="text-slate-500">({formatBytes(file.size)})</span>
+                    <span className="text-slate-500 dark:text-slate-400">({formatBytes(file.size)})</span>
                   </span>
                   <Button
                     size="sm"
@@ -443,11 +443,11 @@ function AssignmentForm({ courseId, modules, assignment }) {
               {pending.map((file, index) => (
                 <li
                   key={`${file.name}-${index}`}
-                  className="flex items-center gap-3 px-3 py-2 text-sm"
+                  className="flex items-center gap-3 px-3 py-2 text-sm hover:bg-slate-50/60 dark:hover:bg-slate-800/40 text-slate-800 dark:text-slate-200 transition-colors"
                 >
                   <span className="min-w-0 flex-1 truncate">
                     {file.name}{' '}
-                    <span className="text-slate-500">
+                    <span className="text-slate-500 dark:text-slate-400">
                       ({formatBytes(file.size)}, uploaded when you save)
                     </span>
                   </span>
@@ -466,7 +466,7 @@ function AssignmentForm({ courseId, modules, assignment }) {
           <div>
             <label
               htmlFor={fileInputId}
-              className="mb-1.5 block text-sm font-medium text-slate-700"
+              className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300"
             >
               Add files
             </label>
@@ -477,16 +477,16 @@ function AssignmentForm({ courseId, modules, assignment }) {
               accept={ATTACHMENT_RULES.accept}
               onChange={onFilesChosen}
               aria-invalid={fileError ? true : undefined}
-              className="block w-full text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-brand-700 hover:file:bg-brand-100"
+              className="block w-full text-sm text-slate-700 dark:text-slate-300 file:mr-3 file:rounded-xl file:border-0 file:bg-brand-50 dark:file:bg-cyan-950/40 file:px-3 file:py-2 file:text-sm file:font-medium file:text-brand-700 dark:file:text-cyan-300 hover:file:bg-brand-100 dark:hover:file:bg-cyan-900/40 cursor-pointer"
             />
-            {fileError && <p className="mt-1.5 text-sm text-red-600">{fileError}</p>}
+            {fileError && <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{fileError}</p>}
           </div>
         </CardBody>
       </Card>
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
         {uploading && (
-          <p role="status" className="text-sm text-slate-600 sm:mr-auto">
+          <p role="status" className="text-sm text-slate-600 dark:text-slate-400 sm:mr-auto">
             {uploading}
           </p>
         )}
@@ -497,7 +497,7 @@ function AssignmentForm({ courseId, modules, assignment }) {
               : `/admin/courses/${courseId}`
           }
           state={assignment ? undefined : { tab: 'assignments' }}
-          className="inline-flex h-10 items-center justify-center rounded-lg bg-white px-4 text-sm font-medium text-slate-700 ring-1 ring-slate-300 ring-inset hover:bg-slate-50"
+          className="inline-flex h-10 items-center justify-center rounded-xl bg-white/80 dark:bg-slate-800/80 px-4 text-sm font-medium text-slate-700 dark:text-slate-200 ring-1 ring-slate-300 dark:ring-white/10 ring-inset hover:bg-slate-50 dark:hover:bg-slate-800 shadow-xs backdrop-blur-md transition-colors"
         >
           Cancel
         </Link>

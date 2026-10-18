@@ -35,8 +35,8 @@ export function LoginPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Welcome back</h1>
-      <p className="mt-2 text-sm text-slate-600">Sign in to continue learning.</p>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">Welcome back</h1>
+      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Sign in to continue learning.</p>
 
       {formError && (
         <Alert tone="error" className="mt-6">
@@ -66,9 +66,9 @@ export function LoginPage() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-600">
+      <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-400">
         New here?{' '}
-        <Link to="/register" className="font-medium text-brand-700 hover:text-brand-800">
+        <Link to="/register" className="font-semibold text-brand-600 transition-colors hover:text-brand-700 hover:underline dark:text-cyan-400 dark:hover:text-cyan-300">
           Create a student account
         </Link>
       </p>

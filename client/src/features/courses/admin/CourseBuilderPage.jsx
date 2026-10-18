@@ -131,13 +131,13 @@ export function CourseBuilderPage() {
       >
         <Link
           to="/admin/courses"
-          className="mb-2 inline-block text-sm font-medium text-brand-700 hover:text-brand-800"
+          className="mb-2 inline-block text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-cyan-400 dark:hover:text-cyan-300 transition-colors"
         >
           ← All courses
         </Link>
       </PageHeader>
 
-      <dl className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-600">
+      <dl className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-600 dark:text-slate-300">
         <div className="flex items-center gap-2">
           <dt className="sr-only">Status</dt>
           <dd>
@@ -145,11 +145,11 @@ export function CourseBuilderPage() {
           </dd>
         </div>
         <div>
-          <dt className="inline text-slate-500">Level: </dt>
+          <dt className="inline text-slate-500 dark:text-slate-400">Level: </dt>
           <dd className="inline">{LEVEL_LABEL[course.level]}</dd>
         </div>
         <div>
-          <dt className="inline text-slate-500">Content: </dt>
+          <dt className="inline text-slate-500 dark:text-slate-400">Content: </dt>
           <dd className="inline">
             {plural(course.stats.moduleCount, 'module')},{' '}
             {plural(course.stats.lessonCount, 'lesson')} ({formatMinutes(course.stats.totalMinutes)}
@@ -157,7 +157,7 @@ export function CourseBuilderPage() {
           </dd>
         </div>
         <div>
-          <dt className="inline text-slate-500">Estimated: </dt>
+          <dt className="inline text-slate-500 dark:text-slate-400">Estimated: </dt>
           <dd className="inline">{course.estimatedHours} hours</dd>
         </div>
       </dl>

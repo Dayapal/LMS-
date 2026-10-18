@@ -13,13 +13,13 @@ export function SubmissionItems({ items, forReviewer = false }) {
     <ul className="space-y-4">
       {items.map((item, index) => (
         <li key={`${item.type}-${index}`} className="space-y-1.5">
-          <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">
+          <p className="text-xs font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400">
             {submissionTypeLabel(item.type)}
           </p>
           {item.type === 'pdf' ? (
             <>
               {forReviewer && (
-                <p className="text-xs text-slate-600">
+                <p className="text-xs text-slate-600 dark:text-slate-400">
                   Checked to be a real PDF, but not scanned for viruses. Open it with the same care
                   as an email attachment.
                 </p>
@@ -34,14 +34,14 @@ export function SubmissionItems({ items, forReviewer = false }) {
                 label={`Submitted code ${index + 1}`}
               />
             ) : (
-              <p className="text-sm text-slate-600">{item.code.lines} lines of code</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">{item.code.lines} lines of code</p>
             )
           ) : (
             <a
               href={item.url}
               target="_blank"
               rel="noopener noreferrer nofollow"
-              className="text-sm font-medium break-all text-brand-700 hover:text-brand-800 hover:underline"
+              className="text-sm font-semibold break-all text-brand-600 transition-colors hover:text-brand-700 hover:underline dark:text-cyan-400 dark:hover:text-cyan-300"
             >
               {item.url}
               <span className="sr-only"> (opens in a new tab)</span>

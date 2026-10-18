@@ -1,19 +1,19 @@
 import { forwardRef, useId } from 'react';
 
 const controlClasses = (invalid) =>
-  `block w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 disabled:bg-slate-100 ${
+  `block w-full rounded-xl border px-3.5 py-2.5 text-sm backdrop-blur-md transition-all duration-200 focus:outline-none focus:ring-2 disabled:cursor-not-allowed ${
     invalid
-      ? 'border-red-400 focus:border-red-500 focus:ring-red-200'
-      : 'border-slate-300 focus:border-brand-500 focus:ring-brand-100'
-  }`;
+      ? 'border-rose-400 bg-white/80 text-slate-900 focus:border-rose-500 focus:ring-rose-500/25 dark:border-rose-500/60 dark:bg-white/[0.07] dark:text-white'
+      : 'border-slate-300/80 bg-white/80 text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:ring-brand-500/20 dark:border-white/15 dark:bg-white/[0.07] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-cyan-400 dark:focus:ring-cyan-400/25'
+  } disabled:bg-slate-100/60 disabled:text-slate-400 dark:disabled:bg-white/5 dark:disabled:text-slate-500`;
 
 function Field({ id, label, hint, error, required, children }) {
   return (
     <div>
-      <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-slate-700">
+      <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200">
         {label}
         {required && (
-          <span className="text-red-600" aria-hidden="true">
+          <span className="text-[#D12052] dark:text-rose-400" aria-hidden="true">
             {' '}
             *
           </span>
@@ -21,12 +21,12 @@ function Field({ id, label, hint, error, required, children }) {
       </label>
       {children}
       {hint && (
-        <p id={`${id}-hint`} className="mt-1.5 text-sm text-slate-500">
+        <p id={`${id}-hint`} className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
           {hint}
         </p>
       )}
       {error && (
-        <p id={`${id}-error`} className="mt-1.5 text-sm text-red-600">
+        <p id={`${id}-error`} className="mt-1.5 text-sm font-medium text-[#D12052] dark:text-rose-400">
           {error}
         </p>
       )}
@@ -96,7 +96,7 @@ export const SelectField = forwardRef(function SelectField(
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy(id, error, hint)}
         aria-required={required || undefined}
-        className={controlClasses(Boolean(error))}
+        className={`${controlClasses(Boolean(error))} [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-slate-900 dark:[&>option]:text-slate-100`}
         {...props}
       >
         {children}

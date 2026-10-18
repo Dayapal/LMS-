@@ -26,7 +26,7 @@ export function AssignmentFacts({ assignment }) {
       'Due',
       <>
         {formatDateTime(assignment.dueAt)}{' '}
-        <span className="text-slate-500">({relativeTime(assignment.dueAt)})</span>
+        <span className="text-slate-500 dark:text-slate-400">({relativeTime(assignment.dueAt)})</span>
       </>,
     ],
     ['Late work', latePolicyText(assignment.latePolicy)],
@@ -38,8 +38,8 @@ export function AssignmentFacts({ assignment }) {
     <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-[max-content_1fr]">
       {rows.map(([term, value]) => (
         <div key={term} className="contents">
-          <dt className="font-medium text-slate-500">{term}</dt>
-          <dd className="text-slate-800">{value}</dd>
+          <dt className="font-semibold text-slate-500 dark:text-slate-400">{term}</dt>
+          <dd className="text-slate-800 dark:text-slate-200">{value}</dd>
         </div>
       ))}
     </dl>
@@ -52,17 +52,17 @@ export function AssignmentFacts({ assignment }) {
  */
 export function AssignmentList({ assignments, pathFor, showState = true }) {
   return (
-    <ul className="divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs">
+    <ul className="divide-y divide-slate-100 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/75 shadow-xs backdrop-blur-xl dark:divide-white/5 dark:border-white/10 dark:bg-white/[0.04]">
       {assignments.map((assignment) => (
-        <li key={assignment.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
+        <li key={assignment.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3.5 transition-colors hover:bg-white/40 dark:hover:bg-white/[0.02]">
           <div className="min-w-0 flex-1">
             <Link
               to={pathFor(assignment)}
-              className="text-sm font-medium text-brand-700 hover:text-brand-800 hover:underline"
+              className="text-sm font-semibold text-brand-600 transition-colors hover:text-brand-700 hover:underline dark:text-cyan-400 dark:hover:text-cyan-300"
             >
               {assignment.title}
             </Link>
-            <p className="text-xs text-slate-500">
+            <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
               Due {formatDateTime(assignment.dueAt)} · {assignment.maxMarks} marks
             </p>
           </div>

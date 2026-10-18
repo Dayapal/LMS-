@@ -26,7 +26,7 @@ const QUEUE_FROM = { pathname: '/admin', search: '', label: 'Dashboard' };
 function Stats({ summary }) {
   const { students, enrollments, reviews, overdue } = summary;
   return (
-    <dl className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <dl className="grid grid-cols-2 gap-3.5 lg:grid-cols-4">
       <StatTile
         label="Students"
         value={students.total}
@@ -70,24 +70,24 @@ function ReviewQueueCard({ rows, total }) {
         title="Waiting for review"
         description="The longest-waiting first"
         actions={
-          <Link to="/admin/reviews" className={`${linkClass} text-sm`}>
+          <Link to="/admin/reviews" className={`${linkClass} text-xs sm:text-sm`}>
             Review queue{total > rows.length ? ` (${total})` : ''}
           </Link>
         }
       />
       {rows.length === 0 ? (
         <CardBody>
-          <p className="text-sm text-slate-500">You&apos;re all caught up.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">You&apos;re all caught up.</p>
         </CardBody>
       ) : (
-        <ul className="divide-y divide-slate-100">
+        <ul className="divide-y divide-slate-100 dark:divide-white/5">
           {rows.map((row) => (
-            <li key={row.id} className="flex items-center gap-3 px-5 py-3 sm:px-6">
+            <li key={row.id} className="flex items-center gap-3 px-5 py-3.5 sm:px-6 transition-colors hover:bg-white/40 dark:hover:bg-white/[0.02]">
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-slate-900">
+                <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
                   {row.student.name ?? 'A deleted student'} · {row.assignment?.title}
                 </p>
-                <p className="truncate text-xs text-slate-500">
+                <p className="truncate text-xs text-slate-500 dark:text-slate-400">
                   {row.course?.title} · {row.attempt > 1 ? `Attempt ${row.attempt} · ` : ''}
                   {relativeTime(row.submittedAt)}
                   {row.isLate ? ' · late' : ''}
@@ -96,7 +96,7 @@ function ReviewQueueCard({ rows, total }) {
               <Link
                 to={reviewPath(row)}
                 state={{ from: QUEUE_FROM }}
-                className="shrink-0 rounded-md px-2 py-1 text-sm font-medium text-brand-700 hover:bg-brand-50"
+                className="shrink-0 rounded-lg px-2.5 py-1 text-sm font-semibold text-brand-600 transition-colors hover:bg-brand-500/10 dark:text-cyan-400 dark:hover:bg-cyan-500/15"
                 aria-label={`Review ${row.student.name}'s ${row.assignment?.title}`}
               >
                 Review
@@ -128,20 +128,20 @@ function PendingRequestsCard({ requests }) {
         description={`${plural(requests.total, 'request')} waiting`}
         actions={
           requests.total > requests.items.length && (
-            <Link to="/admin/students?enrollment=pending" className={`${linkClass} text-sm`}>
+            <Link to="/admin/students?enrollment=pending" className={`${linkClass} text-xs sm:text-sm`}>
               All requests
             </Link>
           )
         }
       />
-      <ul className="divide-y divide-slate-100">
+      <ul className="divide-y divide-slate-100 dark:divide-white/5">
         {requests.items.map((request) => (
-          <li key={request.id} className="flex flex-wrap items-center gap-3 px-5 py-3 sm:px-6">
+          <li key={request.id} className="flex flex-wrap items-center gap-3 px-5 py-3.5 sm:px-6 transition-colors hover:bg-white/40 dark:hover:bg-white/[0.02]">
             <div className="min-w-0 flex-1">
               <Link to={studentPath(request.user.id)} className={`${linkClass} text-sm`}>
                 {request.user.name}
               </Link>
-              <p className="truncate text-xs text-slate-500">
+              <p className="truncate text-xs text-slate-500 dark:text-slate-400">
                 {request.course.title} · {relativeTime(request.updatedAt)}
               </p>
             </div>
@@ -178,14 +178,14 @@ function CoursesCard({ courses }) {
         title="Courses"
         description="Average progress of the students enrolled now"
         actions={
-          <Link to="/admin/reports" className={`${linkClass} text-sm`}>
+          <Link to="/admin/reports" className={`${linkClass} text-xs sm:text-sm`}>
             Reports
           </Link>
         }
       />
       {courses.length === 0 ? (
         <CardBody>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             No courses yet.{' '}
             <Link to="/admin/courses" className={linkClass}>
               Create one
@@ -194,9 +194,9 @@ function CoursesCard({ courses }) {
           </p>
         </CardBody>
       ) : (
-        <ul className="divide-y divide-slate-100">
+        <ul className="divide-y divide-slate-100 dark:divide-white/5">
           {courses.map((course) => (
-            <li key={course.id} className="space-y-2 px-5 py-4 sm:px-6">
+            <li key={course.id} className="space-y-2.5 px-5 py-4 sm:px-6 transition-colors hover:bg-white/40 dark:hover:bg-white/[0.02]">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex min-w-0 items-center gap-2">
                   <Link
@@ -219,7 +219,7 @@ function CoursesCard({ courses }) {
                 label={`${course.title} average progress`}
                 size="sm"
               />
-              <p className="flex flex-wrap gap-x-3 text-xs text-slate-600">
+              <p className="flex flex-wrap gap-x-3 text-xs font-medium text-slate-600 dark:text-slate-400">
                 <span>Average {formatPercent(course.progress.averagePercent)}</span>
                 <span>{plural(course.enrollments.active, 'student')}</span>
                 {course.progress.completedStudents > 0 && (
@@ -243,25 +243,25 @@ function DeadlinesCard({ title, description, rows, empty, overdue = false }) {
       <CardHeader title={title} description={description} />
       {rows.length === 0 ? (
         <CardBody>
-          <p className="text-sm text-slate-500">{empty}</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{empty}</p>
         </CardBody>
       ) : (
-        <ul className="divide-y divide-slate-100">
+        <ul className="divide-y divide-slate-100 dark:divide-white/5">
           {rows.map((row) => (
-            <li key={row.id} className="px-5 py-3 sm:px-6">
+            <li key={row.id} className="px-5 py-3.5 sm:px-6 transition-colors hover:bg-white/40 dark:hover:bg-white/[0.02]">
               <Link
                 to={assignmentAdminPath(row.course.id, row.id)}
                 className={`${linkClass} text-sm`}
               >
                 {row.title}
               </Link>
-              <p className="truncate text-xs text-slate-500">
+              <p className="truncate text-xs text-slate-500 dark:text-slate-400">
                 {row.course.title} · Due {formatDateTime(row.dueAt)} ({relativeTime(row.dueAt)})
               </p>
-              <p className="text-xs text-slate-600">
+              <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-400">
                 {row.stats.handedIn} of {row.stats.expected} handed in
                 {overdue ? (
-                  <span className="font-medium text-red-700"> · {row.stats.overdue} missing</span>
+                  <span className="font-semibold text-[#D12052] dark:text-rose-400"> · {row.stats.overdue} missing</span>
                 ) : (
                   row.stats.pending > 0 && ` · ${row.stats.pending} still to hand in`
                 )}
@@ -278,7 +278,7 @@ function DeadlinesCard({ title, description, rows, empty, overdue = false }) {
 function DashboardSkeleton() {
   return (
     <div className="space-y-6" role="status" aria-label="Loading dashboard">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3.5 lg:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
           <Skeleton key={i} className="h-24" />
         ))}

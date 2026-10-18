@@ -73,7 +73,7 @@ function ProfileForm() {
             error={errors.bio?.message}
             {...register('bio')}
           />
-          <div className="flex justify-end">
+          <div className="flex justify-end pt-2">
             <Button type="submit" loading={isSubmitting} disabled={!isDirty}>
               Save changes
             </Button>
@@ -148,7 +148,7 @@ function PasswordForm() {
             error={errors.confirmPassword?.message}
             {...register('confirmPassword')}
           />
-          <div className="flex justify-end">
+          <div className="flex justify-end pt-2">
             <Button type="submit" loading={isSubmitting}>
               Update password
             </Button>
@@ -164,10 +164,10 @@ export function ProfilePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Avatar name={user.name} src={user.avatarUrl} className="size-14 text-lg" />
+        <Avatar name={user.name} src={user.avatarUrl} className="size-16 text-xl shadow-md" />
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{user.name}</h1>
-          <p className="text-sm text-slate-500">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">{user.name}</h1>
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
             {ROLE_LABEL[user.role]} · {user.email}
           </p>
         </div>

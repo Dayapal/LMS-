@@ -76,8 +76,8 @@ function NoteForm({ material, onCancel, onSubmit }) {
       type="button"
       aria-pressed={pane === id}
       onClick={() => setPane(id)}
-      className={`rounded-md px-3 py-1 text-sm font-medium ${
-        pane === id ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+      className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${
+        pane === id ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
       }`}
     >
       {label}
@@ -89,7 +89,7 @@ function NoteForm({ material, onCancel, onSubmit }) {
       {formError && <Alert tone="error">{formError}</Alert>}
       <TitleAndStatus register={register} errors={errors} />
       <div
-        className="flex gap-1 rounded-lg bg-slate-100 p-1 lg:hidden"
+        className="flex gap-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 p-1 lg:hidden"
         role="group"
         aria-label="Editor view"
       >
@@ -111,17 +111,17 @@ function NoteForm({ material, onCancel, onSubmit }) {
           aria-label="Live preview"
           // Focusable so keyboard users can scroll a long preview (WCAG 2.1.1).
           tabIndex={0}
-          className={`min-h-48 overflow-y-auto rounded-lg border border-slate-200 bg-white p-4 lg:max-h-[29rem] ${
+          className={`min-h-48 overflow-y-auto rounded-xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 p-4 lg:max-h-[29rem] backdrop-blur-md ${
             pane === 'preview' ? '' : 'max-lg:hidden'
           }`}
         >
-          <p className="mb-3 text-xs font-semibold tracking-wide text-slate-500 uppercase">
+          <p className="mb-3 text-xs font-semibold tracking-wide text-slate-500 dark:text-slate-400 uppercase">
             Preview
           </p>
           {body.trim() ? (
             <MarkdownView>{body}</MarkdownView>
           ) : (
-            <p className="text-sm text-slate-500">The formatted note appears here as you type.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">The formatted note appears here as you type.</p>
           )}
         </section>
       </div>
@@ -169,7 +169,7 @@ function CodeForm({ material, onCancel, onSubmit }) {
         ))}
       </SelectField>
       <div>
-        <p id={labelId} className="mb-1.5 block text-sm font-medium text-slate-700">
+        <p id={labelId} className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
           Code{' '}
           <span className="text-red-600" aria-hidden="true">
             *
@@ -275,7 +275,7 @@ function FileForm({ material, courseId, onCancel, onSubmit }) {
       {formError && <Alert tone="error">{formError}</Alert>}
       <TitleAndStatus register={register} errors={errors} />
       <div>
-        <label htmlFor={inputId} className="mb-1.5 block text-sm font-medium text-slate-700">
+        <label htmlFor={inputId} className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
           {material ? 'Replace the file' : 'File'}
           {!material && (
             <span className="text-red-600" aria-hidden="true">
@@ -285,8 +285,8 @@ function FileForm({ material, courseId, onCancel, onSubmit }) {
           )}
         </label>
         {material?.file && (
-          <p className="mb-2 text-sm text-slate-600">
-            Current file: <span className="font-medium">{material.file.originalName}</span> (
+          <p className="mb-2 text-sm text-slate-600 dark:text-slate-400">
+            Current file: <span className="font-medium text-slate-800 dark:text-slate-200">{material.file.originalName}</span> (
             {formatBytes(material.file.size)})
           </p>
         )}
@@ -297,11 +297,11 @@ function FileForm({ material, courseId, onCancel, onSubmit }) {
           onChange={onFileChange}
           aria-invalid={fileError ? true : undefined}
           aria-describedby={hintId}
-          className="block w-full text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-brand-700 hover:file:bg-brand-100"
+          className="block w-full text-sm text-slate-700 dark:text-slate-300 file:mr-3 file:rounded-xl file:border-0 file:bg-brand-50 dark:file:bg-cyan-950/40 file:px-3 file:py-2 file:text-sm file:font-medium file:text-brand-700 dark:file:text-cyan-300 hover:file:bg-brand-100 dark:hover:file:bg-cyan-900/40 cursor-pointer"
         />
         <p
           id={hintId}
-          className={`mt-1.5 text-sm ${fileError ? 'text-red-600' : 'text-slate-500'}`}
+          className={`mt-1.5 text-sm ${fileError ? 'text-red-600 dark:text-red-400' : 'text-slate-500 dark:text-slate-400'}`}
         >
           {fileError ??
             (file
@@ -310,24 +310,24 @@ function FileForm({ material, courseId, onCancel, onSubmit }) {
         </p>
         {progress !== null && (
           <div className="mt-2" role="status" aria-label={`Uploading: ${progress}%`}>
-            <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+            <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
               <div
-                className="h-full bg-brand-600 transition-all"
+                className="h-full bg-gradient-to-r from-cyan-500 to-cyan-400 transition-all shadow-sm"
                 style={{ width: `${progress}%` }}
               />
             </div>
           </div>
         )}
       </div>
-      <label className="flex items-start gap-3 text-sm text-slate-700">
+      <label className="flex items-start gap-3 text-sm text-slate-700 dark:text-slate-300">
         <input
           type="checkbox"
-          className="mt-0.5 size-4 rounded border-slate-300 text-brand-600"
+          className="mt-0.5 size-4 rounded border-slate-300 dark:border-white/20 text-brand-600 focus:ring-cyan-500"
           {...register('downloadable')}
         />
         <span>
           <span className="font-medium">Allow students to download</span>
-          <span className="block text-slate-500">
+          <span className="block text-slate-500 dark:text-slate-400">
             When off, PDFs can only be viewed in the lesson. This hides the download button; it
             can&apos;t stop a determined student from saving what they can view.
           </span>

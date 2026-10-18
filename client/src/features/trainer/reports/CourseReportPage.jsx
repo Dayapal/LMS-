@@ -17,22 +17,22 @@ import { assignmentAdminPath, formatPercent, studentPath } from '../format.js';
 import { BarList, FilterPills, FilterSelect, linkClass } from '../components/TrainerParts.jsx';
 import { useSearch, useUrlFilters } from '../hooks.jsx';
 
-const th = 'px-3 py-2 text-left text-xs font-semibold text-slate-500 whitespace-nowrap';
-const td = 'px-3 py-2.5 text-sm text-slate-700 tabular-nums whitespace-nowrap';
+const th = 'px-3 py-2 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap';
+const td = 'px-3 py-2.5 text-sm text-slate-700 dark:text-slate-200 tabular-nums whitespace-nowrap';
 
 function AssignmentsTable({ courseId, assignments }) {
   if (assignments.length === 0) {
     return (
       <CardBody>
-        <p className="text-sm text-slate-500">This course has no assignments yet.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">This course has no assignments yet.</p>
       </CardBody>
     );
   }
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-slate-200">
+      <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
         <caption className="sr-only">Assignment statistics</caption>
-        <thead className="bg-slate-50">
+        <thead className="bg-slate-50/70 dark:bg-slate-800/50">
           <tr>
             <th scope="col" className={th}>
               Assignment
@@ -60,9 +60,9 @@ function AssignmentsTable({ courseId, assignments }) {
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
           {assignments.map((a) => (
-            <tr key={a.id}>
+            <tr key={a.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
               <th scope="row" className="px-3 py-2.5 text-left text-sm font-normal">
                 <div className="flex items-center gap-2">
                   <Link to={assignmentAdminPath(courseId, a.id)} className={linkClass}>
@@ -77,7 +77,7 @@ function AssignmentsTable({ courseId, assignments }) {
                   ? `${a.stats.handedIn} of ${a.stats.expected}`
                   : a.stats.students}
               </td>
-              <td className={`${td} ${a.stats.overdue ? 'font-medium text-red-700' : ''}`}>
+              <td className={`${td} ${a.stats.overdue ? 'font-medium text-red-700 dark:text-red-400' : ''}`}>
                 {a.stats.openToStudents ? a.stats.overdue : '—'}
               </td>
               <td className={td}>{a.stats.submitted}</td>
@@ -105,7 +105,7 @@ function StudentsTable({ report, filters, searchInput, isFetching }) {
   return (
     <Card aria-label="Students">
       <CardHeader title="Students" />
-      <div className="flex flex-col gap-3 border-b border-slate-200 px-5 py-3 sm:px-6 lg:flex-row lg:items-end lg:justify-between">
+      <div className="flex flex-col gap-3 border-b border-slate-200 dark:border-white/10 px-5 py-3 sm:px-6 lg:flex-row lg:items-end lg:justify-between">
         <FilterPills
           label="Enrollment"
           options={ENROLLMENT_TABS}
@@ -129,20 +129,20 @@ function StudentsTable({ report, filters, searchInput, isFetching }) {
       </div>
       {students.length === 0 ? (
         <CardBody>
-          <p className="text-sm text-slate-500">No students here.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No students here.</p>
         </CardBody>
       ) : (
-        <ul className={`divide-y divide-slate-100 ${isFetching ? 'opacity-70' : ''}`}>
+        <ul className={`divide-y divide-slate-100 dark:divide-slate-800/60 ${isFetching ? 'opacity-70' : ''}`}>
           {students.map((row) => (
             <li
               key={row.enrollmentId}
-              className="grid gap-2 px-5 py-3 sm:px-6 md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)_auto] md:items-center"
+              className="grid gap-2 px-5 py-3 sm:px-6 md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)_auto] md:items-center hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
             >
               <div className="min-w-0">
                 <Link to={studentPath(row.student.id)} className={`${linkClass} text-sm`}>
                   {row.student.name}
                 </Link>
-                <p className="truncate text-xs text-slate-500">{row.student.email}</p>
+                <p className="truncate text-xs text-slate-500 dark:text-slate-400">{row.student.email}</p>
               </div>
               {row.progress ? (
                 <div className="space-y-1">
@@ -151,14 +151,14 @@ function StudentsTable({ report, filters, searchInput, isFetching }) {
                     label={`${row.student.name} progress`}
                     size="sm"
                   />
-                  <p className="text-xs text-slate-600">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     {row.progress.percent}% · {row.progress.completedLessons} of{' '}
                     {row.progress.totalLessons} lessons
                     {row.lastAccessedAt && ` · studied ${relativeTime(row.lastAccessedAt)}`}
                   </p>
                 </div>
               ) : (
-                <p className="text-xs text-slate-500">Requested {relativeTime(row.requestedAt)}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Requested {relativeTime(row.requestedAt)}</p>
               )}
               <div className="flex flex-wrap gap-2 md:justify-end">
                 {row.reviews.submitted > 0 && (
@@ -235,7 +235,7 @@ export function CourseReportPage() {
         actions={
           <Link
             to={`/admin/courses/${course.id}`}
-            className="inline-flex h-10 items-center rounded-lg bg-white px-4 text-sm font-medium text-slate-700 ring-1 ring-slate-300 ring-inset hover:bg-slate-50"
+            className="inline-flex h-10 items-center rounded-xl bg-white/80 dark:bg-slate-800/80 px-4 text-sm font-medium text-slate-700 dark:text-slate-200 ring-1 ring-slate-300 dark:ring-white/10 ring-inset hover:bg-slate-50 dark:hover:bg-slate-800 shadow-xs backdrop-blur-md transition-colors"
           >
             Open course builder
           </Link>
@@ -244,7 +244,7 @@ export function CourseReportPage() {
         <div className="mb-2 flex items-center gap-3">
           <Link
             to="/admin/reports"
-            className="text-sm font-medium text-brand-700 hover:text-brand-800"
+            className="text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-cyan-400 dark:hover:text-cyan-300 transition-colors"
           >
             ← Reports
           </Link>
@@ -301,14 +301,14 @@ export function CourseReportPage() {
             />
             <CardBody>
               {modules.length === 0 ? (
-                <p className="text-sm text-slate-500">No lessons are published yet.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">No lessons are published yet.</p>
               ) : (
                 <ul className="space-y-3">
                   {modules.map((module) => (
                     <li key={module.id} className="space-y-1">
                       <div className="flex justify-between gap-3 text-sm">
-                        <span className="truncate text-slate-700">{module.title}</span>
-                        <span className="text-slate-900 tabular-nums">
+                        <span className="truncate text-slate-700 dark:text-slate-300">{module.title}</span>
+                        <span className="text-slate-900 dark:text-white tabular-nums">
                           {formatPercent(module.percent)}
                         </span>
                       </div>

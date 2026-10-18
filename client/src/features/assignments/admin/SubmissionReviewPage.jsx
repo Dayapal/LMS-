@@ -102,7 +102,7 @@ function ReviewForm({ submission, assignment, canResubmit }) {
         </Button>
       </div>
       {!canResubmit && (
-        <p className="text-right text-xs text-slate-500">
+        <p className="text-right text-xs text-slate-500 dark:text-slate-400">
           The student has used all {assignment.maxAttempts} attempts, so only a final review is
           possible.
         </p>
@@ -151,7 +151,7 @@ export function SubmissionReviewPage() {
         />
         <Link
           to={returnTo?.to ?? back}
-          className="text-sm font-medium text-brand-700 hover:text-brand-800"
+          className="text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-cyan-400 dark:hover:text-cyan-300 transition-colors"
         >
           ← {returnTo ? returnTo.label : 'Back to the assignment'}
         </Link>
@@ -171,30 +171,30 @@ export function SubmissionReviewPage() {
       >
         <div className="mb-2 flex flex-wrap gap-x-4 gap-y-1 text-sm font-medium">
           {returnTo && (
-            <Link to={returnTo.to} className="text-brand-700 hover:text-brand-800">
+            <Link to={returnTo.to} className="text-brand-700 hover:text-brand-800 dark:text-cyan-400 dark:hover:text-cyan-300 transition-colors">
               ← {returnTo.label}
             </Link>
           )}
-          <Link to={back} className="text-brand-700 hover:text-brand-800">
+          <Link to={back} className="text-brand-700 hover:text-brand-800 dark:text-cyan-400 dark:hover:text-cyan-300 transition-colors">
             {returnTo ? '' : '← '}
             {assignment.title}
           </Link>
         </div>
       </PageHeader>
 
-      <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
+      <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
         <SubmissionStateBadge status={submission.status} />
         <LateBadge show={submission.isLate} />
         <span>
           Submitted {formatDateTime(submission.submittedAt)}
           {submission.editedAt && ` · edited ${formatDateTime(submission.editedAt)}`}
         </span>
-        <span className="text-slate-400" aria-hidden="true">
+        <span className="text-slate-400 dark:text-slate-500" aria-hidden="true">
           ·
         </span>
         <Link
           to={`/admin/students/${submission.student.id}`}
-          className="font-medium text-brand-700 hover:text-brand-800 hover:underline"
+          className="font-medium text-brand-700 hover:text-brand-800 dark:text-cyan-400 dark:hover:text-cyan-300 hover:underline transition-colors"
         >
           {submission.student.email}
         </Link>
@@ -208,10 +208,10 @@ export function SubmissionReviewPage() {
               <SubmissionItems items={submission.items} forReviewer />
               {submission.note && (
                 <div>
-                  <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">
+                  <p className="text-xs font-semibold tracking-wide text-slate-500 dark:text-slate-400 uppercase">
                     Note from the student
                   </p>
-                  <p className="mt-1.5 text-sm whitespace-pre-wrap text-slate-700">
+                  <p className="mt-1.5 text-sm whitespace-pre-wrap text-slate-700 dark:text-slate-200">
                     {submission.note}
                   </p>
                 </div>
@@ -236,7 +236,7 @@ export function SubmissionReviewPage() {
                   <Alert tone="info">
                     This is an earlier attempt. Only the latest attempt can be reviewed.
                   </Alert>
-                  <p className="text-sm text-slate-700">
+                  <p className="text-sm text-slate-700 dark:text-slate-200">
                     Marks: {formatMarks(submission.review?.finalMarks, assignment.maxMarks)}
                   </p>
                   {submission.review?.feedback && (
@@ -254,21 +254,21 @@ export function SubmissionReviewPage() {
                 {history.map((attempt) => (
                   <li key={attempt.id} className="flex flex-wrap items-center gap-2 text-sm">
                     {attempt.id === submission.id ? (
-                      <span className="font-semibold text-slate-900" aria-current="page">
+                      <span className="font-semibold text-slate-900 dark:text-white" aria-current="page">
                         Attempt {attempt.attempt}
                       </span>
                     ) : (
                       <Link
                         to={`${back}/submissions/${attempt.id}`}
                         state={returnTo?.state}
-                        className="font-medium text-brand-700 hover:text-brand-800 hover:underline"
+                        className="font-medium text-brand-700 hover:text-brand-800 dark:text-cyan-400 dark:hover:text-cyan-300 hover:underline transition-colors"
                       >
                         Attempt {attempt.attempt}
                       </Link>
                     )}
                     <SubmissionStateBadge status={attempt.status} />
                     <LateBadge show={attempt.isLate} />
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-slate-500 dark:text-slate-400">
                       {formatDateTime(attempt.submittedAt)} ·{' '}
                       {formatMarks(attempt.review?.finalMarks, assignment.maxMarks)}
                     </span>

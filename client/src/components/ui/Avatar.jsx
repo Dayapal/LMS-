@@ -16,14 +16,14 @@ export function Avatar({ name, src, className = 'size-9 text-sm' }) {
         src={src}
         alt=""
         onError={() => setFailed(true)}
-        className={`rounded-full object-cover ${className}`}
+        className={`rounded-full object-cover ring-2 ring-white/40 dark:ring-white/20 ${className}`}
       />
     );
   }
   return (
     <span
       aria-hidden="true"
-      className={`inline-flex items-center justify-center rounded-full bg-brand-100 font-semibold text-brand-700 ${className}`}
+      className={`inline-flex items-center justify-center rounded-full bg-linear-to-br from-brand-500 via-[#03AED2] to-[#D12052] font-semibold text-white shadow-xs ring-2 ring-white/40 dark:ring-white/20 ${className}`}
     >
       {initials(name)}
     </span>
