@@ -38,6 +38,16 @@ const lessonMaterials = () => import('../features/lessons/admin/LessonMaterialsP
 const assignments = () => import('../features/assignments/pages.js');
 // The trainer's dashboard, review queue, students and reports (Phase 6), as one chunk.
 const trainer = () => import('../features/trainer/pages.js');
+const studyPages = () => import('../features/study-materials/pages.js');
+
+const studyReader = (mode, title) => ({
+  lazy: async () => {
+    const { StudyReaderPage } = await studyPages();
+    return { element: <StudyReaderPage mode={mode} /> };
+  },
+  hydrateFallbackElement: pageLoading,
+  handle: { title },
+});
 
 const readerPage = (mode, title) => ({
   lazy: async () => {
@@ -86,6 +96,8 @@ export const routes = [
     { path: 'reports', ...page(trainer, 'ReportsPage', 'Reports') },
     { path: 'reports/courses/:courseId', ...page(trainer, 'CourseReportPage', 'Course report') },
     { path: 'courses', ...page(coursesAdmin, 'AdminCoursesPage', 'Courses') },
+    { path: 'study-materials', ...page(studyPages, 'AdminStudyMaterialsPage', 'Study Books') },
+    { path: 'study-materials/preview/:moduleId', ...studyReader('preview', 'Study Book Preview') },
     { path: 'courses/:courseId', ...page(coursesAdmin, 'CourseBuilderPage', 'Course builder') },
     {
       path: 'courses/:courseId/lessons/:lessonId',
@@ -118,6 +130,9 @@ export const routes = [
     { index: true, ...page(coursesStudent, 'StudentDashboardPage', 'Dashboard') },
     { path: 'courses', ...page(coursesStudent, 'CourseCatalogPage', 'Courses') },
     { path: 'courses/:courseId', ...page(coursesStudent, 'CourseDetailPage', 'Course') },
+    { path: 'study-materials', ...page(studyPages, 'StudyLibraryPage', 'Study Books') },
+    { path: 'study-materials/:bookSlug', ...page(studyPages, 'StudentBookRoadmapPage', 'Study Book') },
+    { path: 'study-materials/:bookSlug/modules/:moduleSlug', ...studyReader('student', 'Study Book') },
     { path: 'assignments', ...page(assignments, 'MyAssignmentsPage', 'Assignments') },
     { path: 'courses/:courseId/lessons/:lessonId', ...readerPage('student', 'Lesson') },
     {

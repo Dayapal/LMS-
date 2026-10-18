@@ -110,6 +110,18 @@ const MATRIX = {
   'GET /api/v1/notifications/unread-count': ANY,
   'PATCH /api/v1/notifications/read-all': ANY,
   'PATCH /api/v1/notifications/:id/read': ANY,
+
+  'GET /api/v1/study-materials/admin/catalogue': ADMIN,
+  'PATCH /api/v1/study-materials/admin/books/:id': ADMIN,
+  'PATCH /api/v1/study-materials/admin/modules/:id': ADMIN,
+  'GET /api/v1/study-materials/admin/modules/:id/preview': ADMIN,
+  'GET /api/v1/study-materials/admin/access': ADMIN,
+  'GET /api/v1/study-materials/admin/access/:id': ADMIN,
+  'PUT /api/v1/study-materials/admin/access/:id': ADMIN,
+  'POST /api/v1/study-materials/admin/access/bulk': ADMIN,
+  'GET /api/v1/study-materials': ANY,
+  'GET /api/v1/study-materials/:bookSlug': ANY,
+  'GET /api/v1/study-materials/:bookSlug/modules/:moduleSlug/content': ANY,
 };
 
 const ROUTES_DIR = fileURLToPath(new URL('../src/routes/', import.meta.url));
