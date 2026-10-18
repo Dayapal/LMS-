@@ -51,9 +51,14 @@ export function studyMaterialsRoutes() {
     studyMaterials.bulkUpdateStudentAccess,
   );
 
+  // Admin study reports & CSV export
+  router.get('/admin/reports', admin, studyMaterials.getAdminReports);
+  router.get('/admin/reports/export', admin, studyMaterials.exportAdminReportsCsv);
+
   // Student & viewer library, reader, telemetry & completion endpoints
   router.get('/', studyMaterials.getStudentBooks);
   router.get('/summary', studyMaterials.getStudentStudySummary);
+  router.get('/my-report', studyMaterials.getMyReport);
   router.get('/:bookSlug', studyMaterials.getStudentBookDetail);
   router.get('/:bookSlug/modules/:moduleSlug/content', studyMaterials.getStudentModuleContent);
   router.post(

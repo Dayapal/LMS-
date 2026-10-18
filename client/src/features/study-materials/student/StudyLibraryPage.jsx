@@ -38,13 +38,22 @@ export function StudyLibraryPage() {
   return (
     <div className="space-y-8">
       {/* Page Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
-          Study Materials & Books
-        </h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Access your interactive study handbooks, deep-dive modules, and code references.
-        </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
+            Study Materials & Books
+          </h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Access your interactive study handbooks, deep-dive modules, and code references.
+          </p>
+        </div>
+        <Link
+          to="/app/study-materials/report"
+          className="flex items-center gap-2 rounded-xl border border-slate-200/80 bg-white/70 px-4 py-2.5 text-xs font-semibold text-slate-700 shadow-xs backdrop-blur-md transition-all hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
+        >
+          <span>📊</span>
+          <span>My Progress Report</span>
+        </Link>
       </div>
 
       {/* 3 Categories Grid */}

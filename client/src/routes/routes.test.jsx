@@ -33,8 +33,8 @@ describe('route table', () => {
       (route) => route.element && !route.children && route.path !== '*' && route.path !== '/',
     );
     expect(eager.map((route) => route.fullPath)).toEqual([]);
-    // 18 trainer pages, 11 student pages, sign-in and sign-up.
-    expect(pages).toHaveLength(31);
+    // 19 trainer pages, 12 student pages, sign-in and sign-up.
+    expect(pages).toHaveLength(33);
   });
 
   it.each(pages.map((route) => [route.fullPath || '(index)', route]))(

@@ -11,6 +11,8 @@ export const studyKeys = {
   adminAccessDetail: (id) => ['study-materials', 'admin', 'access', id],
   studentBooks: ['study-materials', 'student', 'books'],
   studentSummary: ['study-materials', 'student', 'summary'],
+  studentReport: ['study-materials', 'student', 'report'],
+  adminReports: (params) => ['study-materials', 'admin', 'reports', params],
   studentBookDetail: (slug) => ['study-materials', 'student', 'book', slug],
   studentModuleContent: (bookSlug, moduleSlug) => [
     'study-materials',
@@ -24,6 +26,8 @@ export const studyKeys = {
 export const studyMaterialsApi = {
   // Admin endpoints
   getAdminCatalogue: () => http.get('/study-materials/admin/catalogue').then(data),
+  getAdminReports: (params) =>
+    http.get('/study-materials/admin/reports', { params }).then(data),
   updateModule: (id, body) =>
     http.patch(`/study-materials/admin/modules/${id}`, body).then(data),
   updateBook: (id, body) =>
@@ -41,6 +45,7 @@ export const studyMaterialsApi = {
   // Student endpoints
   getStudentBooks: () => http.get('/study-materials').then(data),
   getStudentStudySummary: () => http.get('/study-materials/summary').then(data),
+  getMyReport: () => http.get('/study-materials/my-report').then(data),
   getStudentBookDetail: (bookSlug) =>
     http.get(`/study-materials/${bookSlug}`).then(data),
   getStudentModuleContent: (bookSlug, moduleSlug) =>
@@ -168,4 +173,18 @@ export const useToggleModuleCompletion = (bookSlug, moduleSlug) => {
     },
   });
 };
+
+export const useAdminStudyReports = (params = {}) =>
+  useQuery({
+    queryKey: studyKeys.adminReports(params),
+    queryFn: () => studyMaterialsApi.getAdminReports(params),
+  });
+
+export const useStudentStudyReport = () =>
+  useQuery({
+    queryKey: studyKeys.studentReport,
+    queryFn: studyMaterialsApi.getMyReport,
+    retry: false,
+  });
+
 

@@ -269,6 +269,13 @@ export function AdminStudyMaterialsPage() {
             <Icon name="users" className="size-4" />
             <span>Student Access</span>
           </button>
+          <Link
+            to="/admin/study-materials/reports"
+            className="flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-all"
+          >
+            <span>📊</span>
+            <span>Progress Reports</span>
+          </Link>
         </div>
       </div>
 

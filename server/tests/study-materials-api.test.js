@@ -272,5 +272,80 @@ describe('Study Materials API — Student Access & Security Enforcement', () => 
       expect(compRes.status).toBe(404);
     });
   });
+
+  describe('Admin Reports & Visibility Permission Controls (Milestone 6)', () => {
+    it('allows admin to view reports and export CSV, but forbids students', async () => {
+      // Admin reads reports
+      const adminRes = await api(app)
+        .get('/api/v1/study-materials/admin/reports')
+        .set('Origin', ORIGIN)
+        .set(bearer(admin));
+
+      expect(adminRes.status).toBe(200);
+      expect(adminRes.body.data.rows).toBeInstanceOf(Array);
+
+      // Student gets 403 Forbidden
+      const studentRes = await api(app)
+        .get('/api/v1/study-materials/admin/reports')
+        .set('Origin', ORIGIN)
+        .set(bearer(student));
+
+      expect(studentRes.status).toBe(403);
+
+      // Admin exports CSV
+      const csvRes = await api(app)
+        .get('/api/v1/study-materials/admin/reports/export')
+        .set('Origin', ORIGIN)
+        .set(bearer(admin));
+
+      expect(csvRes.status).toBe(200);
+      expect(csvRes.headers['content-type']).toContain('text/csv');
+      expect(csvRes.text).toContain('Student Name,Student Email');
+    });
+
+    it('enforces student report visibility toggle without affecting reading access', async () => {
+      const dsaBook = await StudyBook.findOne({ slug: 'dsa-javascript' });
+      const mod1 = await StudyModule.findOne({ book: dsaBook._id, order: 1 });
+
+      // Grant access with report visibility enabled
+      const access = await StudyAccess.create({
+        student: student._id,
+        book: dsaBook._id,
+        isBookAssigned: true,
+        releasedModules: [mod1._id],
+        canViewReport: true,
+      });
+
+      // Student can view report
+      const rep1 = await api(app)
+        .get('/api/v1/study-materials/my-report')
+        .set('Origin', ORIGIN)
+        .set(bearer(student));
+
+      expect(rep1.status).toBe(200);
+      expect(rep1.body.data.student.email).toBe(student.email);
+
+      // Trainer disables report visibility
+      access.canViewReport = false;
+      await access.save();
+
+      // Student receives 403 Forbidden
+      const rep2 = await api(app)
+        .get('/api/v1/study-materials/my-report')
+        .set('Origin', ORIGIN)
+        .set(bearer(student));
+
+      expect(rep2.status).toBe(403);
+      expect(rep2.body.error.message).toContain('disabled');
+
+      // However, reading access is still functional!
+      const contentRes = await api(app)
+        .get(`/api/v1/study-materials/dsa-javascript/modules/${mod1.slug}/content`)
+        .set('Origin', ORIGIN)
+        .set(bearer(student));
+
+      expect(contentRes.status).toBe(200);
+    });
+  });
 });
 

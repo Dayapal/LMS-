@@ -100,3 +100,26 @@ export async function getStudentStudySummary(req, res) {
   ok(res, data);
 }
 
+export async function getAdminReports(req, res) {
+  const data = await studyMaterials.getAdminStudyReports({
+    subject: req.query.subject,
+    search: req.query.search,
+  });
+  ok(res, data);
+}
+
+export async function exportAdminReportsCsv(req, res) {
+  const csv = await studyMaterials.exportAdminStudyReportsCsv({
+    subject: req.query.subject,
+  });
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename="study-materials-report.csv"');
+  res.send(csv);
+}
+
+export async function getMyReport(req, res) {
+  const data = await studyMaterials.getStudentProgressReport(req.user);
+  ok(res, data);
+}
+
+

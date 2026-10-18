@@ -114,3 +114,4 @@ export function useReadingTelemetry({ bookSlug, moduleSlug, enabled = true, init
     isIdle,
   };
 }
+

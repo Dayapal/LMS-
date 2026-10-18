@@ -20,3 +20,4 @@ studyAccessSchema.index({ student: 1 });
 studyAccessSchema.index({ book: 1 });
 
 export const StudyAccess = mongoose.model('StudyAccess', studyAccessSchema);
+

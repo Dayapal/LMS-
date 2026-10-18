@@ -97,6 +97,7 @@ export const routes = [
     { path: 'reports/courses/:courseId', ...page(trainer, 'CourseReportPage', 'Course report') },
     { path: 'courses', ...page(coursesAdmin, 'AdminCoursesPage', 'Courses') },
     { path: 'study-materials', ...page(studyPages, 'AdminStudyMaterialsPage', 'Study Books') },
+    { path: 'study-materials/reports', ...page(studyPages, 'AdminStudyReportsPage', 'Study Reports') },
     { path: 'study-materials/preview/:moduleId', ...studyReader('preview', 'Study Book Preview') },
     { path: 'courses/:courseId', ...page(coursesAdmin, 'CourseBuilderPage', 'Course builder') },
     {
@@ -131,6 +132,7 @@ export const routes = [
     { path: 'courses', ...page(coursesStudent, 'CourseCatalogPage', 'Courses') },
     { path: 'courses/:courseId', ...page(coursesStudent, 'CourseDetailPage', 'Course') },
     { path: 'study-materials', ...page(studyPages, 'StudyLibraryPage', 'Study Books') },
+    { path: 'study-materials/report', ...page(studyPages, 'StudentProgressReportPage', 'Study Report') },
     { path: 'study-materials/:bookSlug', ...page(studyPages, 'StudentBookRoadmapPage', 'Study Book') },
     { path: 'study-materials/:bookSlug/modules/:moduleSlug', ...studyReader('student', 'Study Book') },
     { path: 'assignments', ...page(assignments, 'MyAssignmentsPage', 'Assignments') },

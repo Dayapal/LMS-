@@ -775,3 +775,266 @@ export async function getStudentStudySummary(user) {
   };
 }
 
+/**
+ * Admin: Get multi-student study progress report with filters.
+ */
+export async function getAdminStudyReports({ subject, search } = {}) {
+  const filter = { role: 'student', isActive: true };
+  if (search) {
+    const rx = new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    filter.$or = [{ name: rx }, { email: rx }];
+  }
+
+  const [students, books, allModules, allAccesses, allProgresses] = await Promise.all([
+    User.find(filter).sort({ name: 1 }),
+    StudyBook.find().sort({ order: 1 }),
+    StudyModule.find().sort({ order: 1 }),
+    StudyAccess.find(),
+    StudyProgress.find(),
+  ]);
+
+  const accessByKey = new Map();
+  for (const acc of allAccesses) {
+    accessByKey.set(`${acc.student.toString()}:${acc.book.toString()}`, acc);
+  }
+
+  const progressByKey = new Map();
+  for (const prog of allProgresses) {
+    progressByKey.set(`${prog.student.toString()}:${prog.module.toString()}`, prog);
+  }
+
+  const modulesByBook = new Map();
+  for (const m of allModules) {
+    const bId = m.book.toString();
+    if (!modulesByBook.has(bId)) modulesByBook.set(bId, []);
+    modulesByBook.get(bId).push(m);
+  }
+
+  const filteredBooks = subject
+    ? books.filter((b) => b.category === subject || b.slug === subject)
+    : books;
+
+  const rows = [];
+  for (const student of students) {
+    const sId = student._id.toString();
+
+    let studentAssignedCount = 0;
+    let studentReleasedTotal = 0;
+    let studentCompletedTotal = 0;
+    let studentTotalReadingSeconds = 0;
+
+    const bookBreakdowns = filteredBooks.map((book) => {
+      const bId = book._id.toString();
+      const acc = accessByKey.get(`${sId}:${bId}`);
+      const isAssigned = Boolean(acc?.isBookAssigned);
+      const releasedSet = new Set((acc?.releasedModules || []).map((id) => id.toString()));
+      const bModules = modulesByBook.get(bId) || [];
+
+      if (isAssigned) studentAssignedCount++;
+
+      let bCompleted = 0;
+      let bReadingSecs = 0;
+      for (const m of bModules) {
+        if (releasedSet.has(m._id.toString())) {
+          if (isAssigned) studentReleasedTotal++;
+          const p = progressByKey.get(`${sId}:${m._id.toString()}`);
+          if (p?.isCompleted) {
+            bCompleted++;
+            if (isAssigned) studentCompletedTotal++;
+          }
+          if (p?.totalReadingSeconds) {
+            bReadingSecs += p.totalReadingSeconds;
+            if (isAssigned) studentTotalReadingSeconds += p.totalReadingSeconds;
+          }
+        }
+      }
+
+      const releasedCount = releasedSet.size;
+      const percent = releasedCount > 0 ? Math.round((bCompleted / releasedCount) * 100) : 0;
+
+      return {
+        bookId: bId,
+        slug: book.slug,
+        title: book.title,
+        category: book.category,
+        isAssigned,
+        releasedCount,
+        completedCount: bCompleted,
+        percent,
+        totalReadingSeconds: bReadingSecs,
+        canViewReport: acc?.canViewReport !== false,
+      };
+    });
+
+    const overallPercent =
+      studentReleasedTotal > 0
+        ? Math.round((studentCompletedTotal / studentReleasedTotal) * 100)
+        : 0;
+
+    rows.push({
+      student: {
+        id: sId,
+        name: student.name,
+        email: student.email,
+        avatarUrl: student.avatarUrl,
+      },
+      assignedBooksCount: studentAssignedCount,
+      totalReleasedModules: studentReleasedTotal,
+      totalCompletedModules: studentCompletedTotal,
+      totalReadingSeconds: studentTotalReadingSeconds,
+      overallPercent,
+      books: bookBreakdowns,
+    });
+  }
+
+  return {
+    totals: {
+      totalStudents: students.length,
+      filteredBooksCount: filteredBooks.length,
+    },
+    rows,
+  };
+}
+
+/**
+ * Admin: Generate CSV string of study materials progress report.
+ */
+export async function exportAdminStudyReportsCsv({ subject } = {}) {
+  const { rows } = await getAdminStudyReports({ subject });
+
+  const headers = [
+    'Student Name',
+    'Student Email',
+    'Assigned Books',
+    'Total Released Modules',
+    'Total Completed Modules',
+    'Overall Completion %',
+    'Total Reading Time (mins)',
+  ];
+
+  const csvRows = [headers.join(',')];
+  for (const r of rows) {
+    const mins = Math.round(r.totalReadingSeconds / 60);
+    const row = [
+      `"${r.student.name.replace(/"/g, '""')}"`,
+      `"${r.student.email.replace(/"/g, '""')}"`,
+      r.assignedBooksCount,
+      r.totalReleasedModules,
+      r.totalCompletedModules,
+      `${r.overallPercent}%`,
+      mins,
+    ];
+    csvRows.push(row.join(','));
+  }
+
+  return csvRows.join('\r\n');
+}
+
+/**
+ * Student: Get personal study report.
+ * Strictly checks `canViewReport`. If false, returns 403 Forbidden.
+ */
+export async function getStudentProgressReport(user) {
+  const accesses = await StudyAccess.find({ student: user._id, isBookAssigned: true });
+  const hasHiddenReport = accesses.some((a) => a.canViewReport === false);
+
+  if (hasHiddenReport) {
+    throw ApiError.forbidden('Progress report visibility is currently disabled by your trainer');
+  }
+
+  const [books, modules, progresses] = await Promise.all([
+    StudyBook.find({ status: CONTENT_STATUS.PUBLISHED }).sort({ order: 1 }),
+    StudyModule.find({ status: CONTENT_STATUS.PUBLISHED }).sort({ order: 1 }),
+    StudyProgress.find({ student: user._id }),
+  ]);
+
+  const accessByBook = new Map(accesses.map((a) => [a.book.toString(), a]));
+  const progressByModule = new Map(progresses.map((p) => [p.module.toString(), p]));
+
+  const modulesByBook = new Map();
+  for (const m of modules) {
+    const bId = m.book.toString();
+    if (!modulesByBook.has(bId)) modulesByBook.set(bId, []);
+    modulesByBook.get(bId).push(m);
+  }
+
+  const bookReports = [];
+  let totalReleased = 0;
+  let totalCompleted = 0;
+  let totalSeconds = 0;
+
+  for (const book of books) {
+    const bId = book._id.toString();
+    const acc = accessByBook.get(bId);
+    if (!acc) continue;
+
+    const releasedSet = new Set((acc.releasedModules || []).map((id) => id.toString()));
+    const bModules = modulesByBook.get(bId) || [];
+
+    const moduleReports = [];
+    let bCompleted = 0;
+    let bSeconds = 0;
+
+    for (const m of bModules) {
+      if (releasedSet.has(m._id.toString())) {
+        totalReleased++;
+        const p = progressByModule.get(m._id.toString());
+        const isDone = Boolean(p?.isCompleted);
+        const secs = p?.totalReadingSeconds || 0;
+
+        if (isDone) {
+          bCompleted++;
+          totalCompleted++;
+        }
+        bSeconds += secs;
+        totalSeconds += secs;
+
+        moduleReports.push({
+          id: m._id.toString(),
+          slug: m.slug,
+          title: m.title,
+          phaseLabel: m.phaseLabel,
+          estimatedMinutes: m.estimatedMinutes,
+          isCompleted: isDone,
+          completedAt: p?.completedAt || null,
+          readingSeconds: secs,
+          lastAccessedAt: p?.lastAccessedAt || null,
+        });
+      }
+    }
+
+    const percent =
+      moduleReports.length > 0 ? Math.round((bCompleted / moduleReports.length) * 100) : 0;
+
+    bookReports.push({
+      book: {
+        id: bId,
+        slug: book.slug,
+        title: book.title,
+        category: book.category,
+      },
+      releasedCount: moduleReports.length,
+      completedCount: bCompleted,
+      percent,
+      readingSeconds: bSeconds,
+      modules: moduleReports,
+    });
+  }
+
+  const overallPercent =
+    totalReleased > 0 ? Math.round((totalCompleted / totalReleased) * 100) : 0;
+
+  return {
+    student: {
+      name: user.name,
+      email: user.email,
+    },
+    totalReleasedModules: totalReleased,
+    totalCompletedModules: totalCompleted,
+    totalReadingSeconds: totalSeconds,
+    overallPercent,
+    books: bookReports,
+  };
+}
+
+

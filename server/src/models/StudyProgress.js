@@ -27,3 +27,4 @@ studyProgressSchema.index({ student: 1, isCompleted: 1 });
 studyProgressSchema.index({ module: 1 });
 
 export const StudyProgress = mongoose.model('StudyProgress', studyProgressSchema);
+
