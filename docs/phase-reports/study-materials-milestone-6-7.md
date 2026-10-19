@@ -117,3 +117,4 @@
    - Quick navigation to linked homework assignments.
 4. **Personal Study Progress Report:** `/app/study-materials/report`
    - Detailed breakdown of reading time, module completions, and syllabus progress.
+

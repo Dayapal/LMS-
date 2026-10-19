@@ -52,7 +52,29 @@ export async function readSourceHtml(sourcePath, expectedHash = null) {
     }
   }
 
-  return buffer.toString('utf8');
+  const rawHtml = buffer.toString('utf8');
+
+  // Handle fragment documents: if an authoritative original file is an HTML fragment missing <html>/<head>,
+  // dynamically supply the companion styling at stream time so it renders properly in the sandboxed reader
+  // without modifying the byte-for-byte authoritative file on disk.
+  if (normalizedRel.replace(/\\/g, '/').endsWith('ReactjsStudy-Material/Phase-10-Reactjs.html') && !rawHtml.includes('<html')) {
+    try {
+      const p9Path = path.resolve(MATERIALS_ROOT, 'ReactjsStudy-Material/phase-9-Reactjs.html');
+      const p9Content = await fs.readFile(p9Path, 'utf8');
+      const headMatch = p9Content.match(/<head>([\s\S]*?)<\/head>/i);
+      if (headMatch) {
+        const headContent = headMatch[1].replace(
+          /<title>[\s\S]*?<\/title>/i,
+          '<title>React JS — Phase 10: TypeScript with React & Generic Components</title>',
+        );
+        return `<!DOCTYPE html>\n<html lang="en">\n<head>${headContent}</head>\n<body>\n${rawHtml}`;
+      }
+    } catch {
+      // Fallback: return rawHtml if companion file reading fails
+    }
+  }
+
+  return rawHtml;
 }
 
 /**

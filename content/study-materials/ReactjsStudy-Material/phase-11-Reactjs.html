@@ -1,0 +1,3337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React JS — Phase 11: Testing and Debugging</title>
+<style>
+/* ============================================================
+   PREMIUM REACT PHASE 11 BOOK — PRINT / PDF STYLESHEET
+   Thick-book spine · page edges · chapter tabs · testing green/blue
+   ============================================================ */
+
+:root{
+  --ink:#0a1a14;
+  --ink-soft:#28423a;
+  --muted:#5d7a70;
+  --brand:#0f766e;
+  --brand-2:#14b8a6;
+  --brand-3:#a7f3d0;
+  --accent:#f59e0b;
+  --accent-2:#fb7185;
+  --emerald:#10b981;
+  --rose:#e11d48;
+  --indigo:#4f46e5;
+  --violet:#7c3aed;
+  --amber:#d97706;
+  --paper:#ffffff;
+  --paper-edge:#e8f5f1;
+  --paper-edge-2:#d5ebe5;
+  --line:#d5e8e3;
+  --code-bg:#071612;
+  --code-head:#0f2d28;
+  --spine-w:16px;
+}
+
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, #e0f2ec 0%, transparent 60%),
+    #d9ebe5;
+  color:var(--ink);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size:11.4pt;
+  line-height:1.78;
+  -webkit-font-smoothing:antialiased;
+  padding: 30px 0 80px;
+}
+
+/* ============================================================
+   BOOK SHELL
+   ============================================================ */
+.book-wrap{
+  position: relative;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 22px;
+}
+
+.book-wrap::after{
+  content:"";
+  position:absolute;
+  left:44px; right:44px; bottom:-26px;
+  height:48px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(10,40,35,.26), transparent 70%);
+  border-radius: 50%;
+  filter: blur(7px);
+  z-index: -1;
+}
+
+.book{
+  position: relative;
+  background: var(--paper);
+  border-radius: 3px 8px 8px 3px;
+  padding: 0 74px 92px;
+  box-shadow:
+    2px 0 0 var(--paper-edge),
+    4px 0 0 var(--paper-edge-2),
+    6px 0 0 var(--paper-edge),
+    8px 0 0 var(--paper-edge-2),
+    10px 0 0 var(--paper-edge),
+    12px 0 0 var(--paper-edge-2),
+    -3px 0 0 rgba(10,40,35,.10),
+    -6px 0 0 rgba(10,40,35,.06),
+    0 22px 55px rgba(10,40,35,.18),
+    0 8px 18px rgba(10,40,35,.10);
+}
+
+.book::before{
+  content:"";
+  position:absolute;
+  top: 0; bottom: 0; left: 0;
+  width: var(--spine-w);
+  background: linear-gradient(90deg,
+    rgba(10,40,35,.14) 0%,
+    rgba(10,40,35,.07) 40%,
+    rgba(10,40,35,.02) 75%,
+    transparent 100%);
+  border-radius: 3px 0 0 3px;
+  pointer-events:none;
+}
+
+.book::after{
+  content:"";
+  position:absolute;
+  top: 0; right: 0;
+  width: 32px; height: 32px;
+  background: linear-gradient(225deg,
+    transparent 45%,
+    rgba(10,40,35,.08) 50%,
+    rgba(10,40,35,.14) 100%);
+  border-bottom-left-radius: 8px;
+  pointer-events:none;
+}
+
+/* ============================================================
+   COVER
+   ============================================================ */
+.cover{
+  position:relative;
+  margin: 0 -74px 62px;
+  padding: 86px 78px 76px;
+  background:
+    radial-gradient(1100px 600px at 12% -10%, #14b8a6 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 110%, #042f2e 0%, transparent 60%),
+    linear-gradient(150deg,#021412 0%, #0b3b38 42%, #0f766e 78%, #14b8a6 100%);
+  color:#fff;
+  overflow:hidden;
+  border-radius: 3px 8px 0 0;
+  box-shadow: 0 22px 42px rgba(5,30,25,.28);
+}
+.cover::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(ellipse at 70% 20%, #000 0%, transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse at 70% 20%, #000 0%, transparent 78%);
+  pointer-events:none;
+}
+.cover::after{
+  content:"";
+  position:absolute;
+  width:580px; height:580px; right:-170px; bottom:-230px;
+  background:radial-gradient(circle, rgba(245,158,11,.30) 0%, transparent 68%);
+  border-radius:50%;
+  pointer-events:none;
+}
+.cover-spine{
+  position:absolute;
+  top:0; bottom:0; left:0;
+  width: 28px;
+  background:
+    linear-gradient(90deg,
+      rgba(0,0,0,.32) 0%,
+      rgba(0,0,0,.18) 30%,
+      rgba(255,255,255,.07) 55%,
+      rgba(0,0,0,.12) 75%,
+      rgba(0,0,0,.24) 100%);
+  pointer-events:none;
+  z-index:3;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+.cover-inner{ position:relative; z-index:2; }
+
+.phase-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  font-size:10pt;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  font-weight:800;
+  color:#ffd479;
+  border:1.5px solid rgba(255,212,121,.55);
+  background:rgba(255,212,121,.10);
+  padding:9px 20px;
+  border-radius:100px;
+  margin-bottom:34px;
+  backdrop-filter:blur(4px);
+}
+.phase-badge .dot-pulse{
+  width:8px; height:8px; border-radius:50%; background:#ffd479;
+  box-shadow:0 0 0 4px rgba(255,212,121,.25);
+}
+
+.cover h1{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size:52pt;
+  line-height:1.02;
+  margin:0 0 6px;
+  letter-spacing:-.025em;
+  font-weight:700;
+}
+.cover h1 .grad{
+  background:linear-gradient(100deg,#67e8f9 0%, #ffd479 55%, #fb7185 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.cover .sub{
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size:18pt;
+  color:#a7f3d0;
+  margin:16px 0 0;
+  font-weight:400;
+  letter-spacing:.005em;
+}
+.cover .rule{
+  width:110px; height:5px; border-radius:6px;
+  background:linear-gradient(90deg,#ffd479,#fb7185);
+  margin:32px 0 30px;
+}
+.cover .lede{
+  max-width:660px;
+  font-size:12.3pt;
+  line-height:1.85;
+  color:#cbf5e6;
+  margin:0 0 42px;
+}
+.cover-chips{ display:flex; flex-wrap:wrap; gap:10px; }
+.chip{
+  font-size:9.6pt;
+  font-weight:600;
+  letter-spacing:.02em;
+  padding:8px 15px;
+  border-radius:9px;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.18);
+  color:#dff8ee;
+  backdrop-filter:blur(4px);
+}
+.cover-foot{
+  margin-top:58px;
+  padding-top:24px;
+  border-top:1px solid rgba(255,255,255,.16);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  flex-wrap:wrap;
+  font-size:10pt;
+  color:#8fd4c1;
+}
+.cover-foot strong{ color:#fff; font-weight:700; letter-spacing:.02em; }
+
+/* ============================================================
+   TOC / PANELS
+   ============================================================ */
+.toc{
+  background: linear-gradient(180deg,#f5fbf9 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:44px 46px;
+  margin: 0 0 62px;
+  position: relative;
+  box-shadow: 0 2px 0 rgba(10,40,35,.03);
+}
+.toc h2{
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size:24pt;
+  margin:0 0 6px;
+  color:var(--brand);
+  letter-spacing:-.01em;
+}
+.toc .toc-sub{ color:var(--muted); font-size:10.4pt; margin:0 0 30px; }
+.toc ol{ list-style:none; margin:0; padding:0; counter-reset:toc; }
+.toc li{
+  counter-increment:toc;
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  padding:10px 0;
+  border-bottom:1px dashed #d5e8e3;
+  font-size:11.2pt;
+}
+.toc li:last-child{ border-bottom:none; }
+.toc li .n{
+  flex:0 0 34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(140deg,#0f766e,#14b8a6);
+  color:#fff;
+  font-size:10pt;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transform:translateY(6px);
+}
+.toc li .t{ font-weight:600; color:var(--ink); }
+.toc li .t small{ display:block; font-weight:400; color:var(--muted); font-size:9.6pt; }
+
+/* ============================================================
+   CHAPTER TABS
+   ============================================================ */
+.topic{
+  position: relative;
+  margin: 0 0 62px;
+}
+.chapter-tab{
+  position: absolute;
+  right: -74px;
+  top: 34px;
+  width: 54px;
+  height: 66px;
+  border-radius: 0 8px 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: Georgia, serif;
+  font-weight: 700;
+  font-size: 10pt;
+  letter-spacing: .05em;
+  box-shadow: 4px 4px 8px rgba(10,40,35,.14);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding: 6px 0;
+  z-index: 1;
+}
+.chapter-tab::before{
+  content:"";
+  position: absolute;
+  left: -3px; top: 0; bottom: 0;
+  width: 3px;
+  background: rgba(0,0,0,.14);
+  border-radius: 2px 0 0 2px;
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1,h2,h3,h4{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  color:var(--brand);
+  line-height:1.25;
+  letter-spacing:-.005em;
+}
+
+.topic-head{
+  margin:0 0 34px;
+  padding:34px 42px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#021412 0%, #0b3b38 58%, #0f766e 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 8px 22px rgba(5,30,25,.18);
+}
+.topic-head::after{
+  content:"";
+  position:absolute; width:320px; height:320px; right:-100px; top:-150px;
+  background:radial-gradient(circle, rgba(245,158,11,.34), transparent 70%);
+  border-radius:50%;
+}
+.topic-head .kicker{
+  position:relative; z-index:2;
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#ffd479; font-weight:700; margin-bottom:12px;
+}
+.topic-head h2{
+  position:relative; z-index:2;
+  color:#fff; font-size:25pt; margin:0; letter-spacing:-.015em;
+}
+.topic-head p{
+  position:relative; z-index:2;
+  margin:12px 0 0; color:#a7f3d0; font-size:10.6pt; max-width:640px;
+}
+
+h3{
+  font-size:15.5pt;
+  margin:40px 0 12px;
+  padding-left:16px;
+  border-left:5px solid var(--accent);
+  color:#0b3b38;
+}
+h4{
+  font-size:12.6pt;
+  margin:26px 0 8px;
+  color:var(--brand-2);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-weight:700;
+  letter-spacing:0;
+}
+p{ margin:0 0 15px; color:var(--ink-soft); }
+strong{ color:var(--ink); font-weight:700; }
+
+ul,ol{ margin:0 0 16px; padding-left:24px; color:var(--ink-soft); }
+li{ margin-bottom:7px; }
+
+a{ color:var(--brand); text-decoration:none; border-bottom:1px solid var(--brand-3); }
+
+code{
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size:.87em;
+  background:#e7f7f2;
+  color:#0b4f47;
+  padding:2px 6px;
+  border-radius:5px;
+  border:1px solid #c9ebe2;
+  white-space:nowrap;
+}
+
+/* ============================================================
+   CODE CARDS
+   ============================================================ */
+.code-card{
+  margin:22px 0 26px;
+  border-radius:13px;
+  overflow:hidden;
+  background:var(--code-bg);
+  box-shadow:0 10px 30px rgba(7,22,18,.28), 0 2px 6px rgba(7,22,18,.16);
+  border:1px solid #143a33;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.code-head{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  background:linear-gradient(180deg,#0f2d28 0%, #0a201c 100%);
+  border-bottom:1px solid #17443b;
+}
+.dot{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+.dot.r{ background:#ff5f57; } .dot.y{ background:#febc2e; } .dot.g{ background:#28c840; }
+.code-title{
+  margin-left:12px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.2pt;
+  color:#6fb3a5;
+  letter-spacing:.03em;
+}
+.code-lang{
+  margin-left:auto;
+  font-size:8pt;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#4a8578;
+  font-weight:700;
+}
+.code-card pre{
+  margin:0;
+  padding:20px 22px;
+  overflow-x:auto;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px) 0 0 / 46px 100%,
+    var(--code-bg);
+}
+.code-card pre code{
+  display:block;
+  background:none;
+  border:none;
+  padding:0;
+  color:#d1f2e9;
+  font-family:"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size:9.6pt;
+  line-height:1.72;
+  white-space:pre;
+  tab-size:2;
+}
+.tok-com{ color:#4a8578; font-style:italic; }
+.tok-str{ color:#7ee2a8; }
+.tok-kw { color:#c792ea; font-weight:600; }
+.tok-num{ color:#ffb86c; }
+.tok-tag{ color:#5cc8ff; }
+.tok-tagp{ color:#709c92; }
+.tok-attr{ color:#ffd479; }
+
+/* Terminal blocks */
+.term{
+  margin:18px 0 24px;
+  border-radius:11px;
+  overflow:hidden;
+  border:1px solid #c9ebe2;
+  background:#071612;
+  break-inside:avoid;
+}
+.term .term-head{
+  background:#0f2d28; color:#6fb3a5;
+  font-size:8.6pt; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:700; padding:8px 16px;
+  border-bottom:1px solid #17443b;
+}
+.term pre{
+  margin:0; padding:16px 20px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.6pt; line-height:1.7; color:#a7f3d0; white-space:pre-wrap;
+}
+.term.out pre{ color:#ffe9a8; }
+
+/* ============================================================
+   CALLOUTS
+   ============================================================ */
+.callout{
+  border-radius:13px;
+  padding:20px 24px 18px;
+  margin:24px 0;
+  border:1px solid;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.callout .ct{
+  font-weight:800;
+  font-size:10pt;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:10px;
+  display:flex; align-items:center; gap:9px;
+}
+.callout p:last-child{ margin-bottom:0; }
+
+.callout.remember{
+  background:linear-gradient(135deg,#e9f7f4 0%, #f7fdfb 100%);
+  border-color:#b9e0d8;
+}
+.callout.remember .ct{ color:#0f766e; }
+
+.callout.analogy{
+  background:linear-gradient(135deg,#fff8ec 0%, #fffdf8 100%);
+  border-color:#ffdfae;
+}
+.callout.analogy .ct{ color:#b45309; }
+
+.callout.warn{
+  background:linear-gradient(135deg,#fff1f2 0%, #fff8f8 100%);
+  border-color:#ffd0d5;
+}
+.callout.warn .ct{ color:#be123c; }
+
+.callout.info{
+  background:linear-gradient(135deg,#eefbf6 0%, #f7fffc 100%);
+  border-color:#b8ecd8;
+}
+.callout.info .ct{ color:#047857; }
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  margin:24px 0;
+  font-size:10.2pt;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+thead th{
+  background:linear-gradient(135deg,#0b3b38,#0f766e);
+  color:#fff;
+  text-align:left;
+  padding:11px 14px;
+  font-weight:700;
+  font-size:9.6pt;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+tbody td{
+  padding:10px 14px;
+  border-top:1px solid var(--line);
+  color:var(--ink-soft);
+  vertical-align:top;
+}
+tbody tr:nth-child(even){ background:#f7fbfa; }
+tbody td:first-child{ font-weight:600; color:var(--ink); }
+
+/* ============================================================
+   FIGURES
+   ============================================================ */
+figure{
+  margin:28px 0;
+  padding:22px 22px 14px;
+  background:linear-gradient(180deg,#f5fbfa 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  border-radius:16px;
+  break-inside:avoid;
+  page-break-inside:avoid;
+  box-shadow: 0 2px 0 rgba(10,40,35,.03);
+}
+figure svg{ width:100%; height:auto; display:block; }
+figcaption{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px dashed #d5e8e3;
+  font-size:9.6pt;
+  color:var(--muted);
+  text-align:center;
+  font-style:italic;
+}
+figcaption b{ color:var(--brand); font-style:normal; }
+
+/* Photo figure — real images for analogies */
+.photo-figure{
+  position: relative;
+  margin: 26px 0;
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  break-inside: avoid;
+  page-break-inside: avoid;
+  box-shadow: 0 6px 20px rgba(10,40,35,.10);
+}
+.photo-figure img{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.photo-figure .photo-caption{
+  padding: 12px 18px;
+  background: #0b3b38;
+  color: #cbf5e6;
+  font-family: Georgia, serif;
+  font-size: 9.6pt;
+  font-style: italic;
+  text-align: center;
+}
+.photo-figure .photo-caption b{
+  color: #ffd479;
+  font-style: normal;
+  font-weight: 700;
+}
+.photo-figure .photo-badge{
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: rgba(2,20,18,.72);
+  color: #ffd479;
+  border: 1px solid rgba(255,212,121,.5);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 8.6pt;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 100px;
+  backdrop-filter: blur(4px);
+}
+
+/* ============================================================
+   FILE TREE
+   ============================================================ */
+.tree{
+  background:#071612;
+  color:#c4e3dd;
+  border-radius:12px;
+  padding:20px 24px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.6pt;
+  line-height:1.75;
+  white-space:pre;
+  margin:22px 0;
+  border:1px solid #143a33;
+  overflow-x:auto;
+  break-inside:avoid;
+}
+.tree .dir{ color:#5cc8ff; font-weight:600; }
+.tree .file{ color:#d1f2e9; }
+
+/* ============================================================
+   MISC
+   ============================================================ */
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:22px 0; }
+.mini-card{
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:18px 20px;
+  background:#fbfefd;
+  break-inside:avoid;
+}
+.mini-card h5{
+  margin:0 0 8px;
+  font-size:10.4pt;
+  color:var(--brand);
+  font-family: ui-sans-serif, sans-serif;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.mini-card p{ margin:0; font-size:10.2pt; }
+
+.steps{ counter-reset:st; list-style:none; padding:0; margin:24px 0; }
+.steps li{
+  counter-increment:st;
+  position:relative;
+  padding:14px 0 14px 58px;
+  border-bottom:1px dashed #d6e7e3;
+  margin:0;
+}
+.steps li:last-child{ border-bottom:none; }
+.steps li::before{
+  content:counter(st);
+  position:absolute; left:0; top:13px;
+  width:34px; height:34px; border-radius:10px;
+  background:linear-gradient(140deg,#0f766e,#14b8a6);
+  color:#fff; font-weight:800; font-size:10.5pt;
+  display:flex; align-items:center; justify-content:center;
+}
+
+hr.sep{
+  border:none; height:1px;
+  background:linear-gradient(90deg,transparent,#d5e8e3,transparent);
+  margin:46px 0;
+}
+
+/* ============================================================
+   PAGE FOOTER
+   ============================================================ */
+.page-footer{
+  margin-top: 40px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: Georgia, serif;
+  font-size: 9.5pt;
+  font-style: italic;
+  color: var(--muted);
+}
+.page-footer .pg{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+}
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+@media print{
+  @page{
+    size:A4;
+    margin:14mm 12mm 16mm;
+  }
+  @page:first{
+    margin:0;
+  }
+  body{
+    background:#fff;
+    font-size:10.4pt;
+    line-height:1.68;
+    padding:0;
+  }
+  .book-wrap{
+    max-width:none;
+    margin:0;
+    padding:0;
+  }
+  .book-wrap::after{ display:none; }
+  .book{
+    max-width:none;
+    margin:0;
+    padding: 0 14mm 10mm;
+    box-shadow: none;
+    border-radius: 0;
+    background: #fff;
+  }
+  .book::before,
+  .book::after{ display:none; }
+  .cover{
+    margin:0;
+    height:297mm;
+    padding:80px 60px 60px;
+    border-radius:0;
+    display:flex;
+    align-items:center;
+    break-after:page;
+    page-break-after:always;
+    box-shadow: none;
+  }
+  .cover-inner{ width:100%; }
+  .cover-spine{ display:none; }
+  .toc{ break-after:page; page-break-after:always; }
+
+  .topic{ break-before:page; page-break-before:always; }
+  .chapter-tab{ display: none; }
+  h1,h2,h3,h4{ break-after:avoid; page-break-after:avoid; }
+  p, li{ orphans:2; widows:2; }
+
+  .code-card, figure, table, .callout, .term, .photo-figure{ break-inside:avoid; page-break-inside:avoid; }
+
+  a{ color:var(--brand); border-bottom:none; }
+  a[href^="http"]::after{
+    content:" (" attr(href) ")";
+    font-size:7.4pt;
+    color:#7d9690;
+    word-break:break-all;
+  }
+  .no-print{ display:none !important; }
+  .page-footer{ display: none; }
+}
+
+@media screen{
+  .topic{ margin-top:0; }
+}
+</style>
+</head>
+<body>
+<div class="book-wrap">
+<div class="book">
+
+<!-- ============================================================
+     COVER
+     ============================================================ -->
+<section class="cover">
+  <div class="cover-spine"></div>
+  <div class="cover-inner">
+    <span class="phase-badge"><span class="dot-pulse"></span>Phase 11 · Testing and Debugging</span>
+
+    <h1>React&nbsp;JS<br><span class="grad">Testing and<br>Debugging</span></h1>
+
+    <p class="sub">Vitest · React Testing Library · DevTools · Playwright · Accessibility</p>
+
+    <div class="rule"></div>
+
+    <p class="lede">
+      A complete, practical guide to verifying that your React application
+      works as intended. Learn to inspect components with React Developer Tools,
+      diagnose problems with browser DevTools, write reliable tests with Vitest and
+      React Testing Library, mock APIs, test custom Hooks, and automate real browser
+      workflows with Playwright — while keeping accessibility and regressions in check.
+    </p>
+
+    <div class="cover-chips">
+      <span class="chip">React DevTools</span>
+      <span class="chip">Browser Debugging</span>
+      <span class="chip">Network Inspection</span>
+      <span class="chip">React Testing Library</span>
+      <span class="chip">Vitest</span>
+      <span class="chip">User Events</span>
+      <span class="chip">Form Validation</span>
+      <span class="chip">API Mocking</span>
+      <span class="chip">Loading &amp; Error States</span>
+      <span class="chip">Custom Hooks</span>
+      <span class="chip">Playwright</span>
+      <span class="chip">Accessibility</span>
+    </div>
+
+    <div class="cover-foot">
+      <div>
+        <strong>Learning Track</strong><br>
+        Frontend Development · React Series
+      </div>
+      <div style="text-align:right">
+        <strong>Module</strong><br>
+        Phase 11 of the React Curriculum
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     WHAT YOU WILL LEARN
+     ============================================================ -->
+<section class="toc" style="break-after:page;">
+  <h2>What you will learn</h2>
+  <p class="toc-sub">A complete tour of testing and debugging React applications.</p>
+
+  <p>In this phase, you'll learn to test React applications using Vitest and React Testing Library, diagnose problems with browser developer tools, mock external APIs, test custom Hooks, and automate real browser workflows with Playwright.</p>
+  <p>You'll use a student management dashboard as the running example.</p>
+  <p>Imagine you've built an institute's LMS with a student list, course enrollment form, dashboard statistics, and student profile page. Everything appears to work during development, but how do you know that:</p>
+  <ul>
+    <li>The form rejects invalid information?</li>
+    <li>The right student appears after searching?</li>
+    <li>The interface handles a slow API correctly?</li>
+    <li>An API failure does not crash the page?</li>
+    <li>A future code change does not break enrollment?</li>
+    <li>Keyboard users can navigate the interface?</li>
+  </ul>
+  <p>That is what testing and debugging help you verify.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Testing and debugging cover the known and unknown">
+      <defs>
+        <linearGradient id="introA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+        <linearGradient id="introB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#d97706"/>
+        </linearGradient>
+        <linearGradient id="introC" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0f766e"/><stop offset="100%" stop-color="#14b8a6"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="20" y="40" width="220" height="180" rx="14" fill="url(#introA)"/>
+      <text x="130" y="70" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Known unknowns</text>
+      <text x="130" y="96" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#d1fae5">Does the form reject</text>
+      <text x="130" y="114" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#d1fae5">invalid data?</text>
+      <text x="130" y="138" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#d1fae5">Does search find</text>
+      <text x="130" y="156" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#d1fae5">the right student?</text>
+      <text x="130" y="184" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#d1fae5">What we want to verify</text>
+
+      <path d="M252 130 H 288" stroke="#b9e0d8" stroke-width="2.5"/>
+      <polygon points="288,122 304,130 288,138" fill="#0f766e"/>
+
+      <rect x="316" y="40" width="200" height="180" rx="14" fill="url(#introB)"/>
+      <text x="416" y="70" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#4a2c00">Unknown unknowns</text>
+      <text x="416" y="96" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#4a2c00">Slow API behaves?</text>
+      <text x="416" y="118" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#4a2c00">API failure crashes?</text>
+      <text x="416" y="140" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#4a2c00">Future change breaks?</text>
+      <text x="416" y="162" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#4a2c00">Keyboard blocked?</text>
+      <text x="416" y="190" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#4a2c00">What tests surface</text>
+
+      <path d="M528 130 H 564" stroke="#b9e0d8" stroke-width="2.5"/>
+      <polygon points="564,122 580,130 564,138" fill="#0f766e"/>
+
+      <rect x="592" y="60" width="144" height="140" rx="12" fill="url(#introC)"/>
+      <text x="664" y="88" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Verified</text>
+      <text x="664" y="118" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#a7f3d0">Observable</text>
+      <text x="664" y="136" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#a7f3d0">behavior</text>
+      <text x="664" y="162" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9" font-style="italic" fill="#a7f3d0">debug · test · automate</text>
+
+      <text x="380" y="248" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#5d7a70">Testing turns assumptions into verified behavior.</text>
+    </svg>
+    <figcaption><b>Figure 0.1</b> — Testing and debugging convert assumptions into verified behavior.</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================
+     TESTING TOOLS
+     ============================================================ -->
+<section class="toc">
+  <h2>Testing tools you will use</h2>
+  <p class="toc-sub">A quick reference for the tools used throughout this phase.</p>
+
+  <table>
+    <thead><tr><th>Tool</th><th>Main purpose</th></tr></thead>
+    <tbody>
+      <tr><td>React Developer Tools</td><td>Inspect React components, props, state, and rendering performance</td></tr>
+      <tr><td>Chrome DevTools</td><td>Inspect console errors, network requests, elements, and JavaScript execution</td></tr>
+      <tr><td>Vitest</td><td>Run unit and component tests</td></tr>
+      <tr><td>React Testing Library</td><td>Test UI behavior through the DOM the way a user experiences it</td></tr>
+      <tr><td><code>@testing-library/user-event</code></td><td>Simulate realistic user interactions</td></tr>
+      <tr><td>Playwright</td><td>Run automated tests in real browsers</td></tr>
+      <tr><td>Cypress</td><td>An alternative for browser-based end-to-end and component testing</td></tr>
+      <tr><td>Accessibility checks</td><td>Find common accessibility problems before users encounter them</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout remember">
+    <div class="ct">◆ The main principle</div>
+    <p>Test what a user can observe and do, rather than depending on the private implementation details of a component.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">Tools Overview</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TABLE OF CONTENTS
+     ============================================================ -->
+<section class="toc">
+  <h2>Table of Contents</h2>
+  <p class="toc-sub">Eleven topics, one capstone, and a full revision set.</p>
+
+  <ol>
+    <li><span class="n">1</span><span class="t">React Developer Tools<small>Components panel, props, state, Profiler</small></span></li>
+    <li><span class="n">2</span><span class="t">Browser Debugging and Network Inspection<small>Console, breakpoints, Network panel, API problems</small></span></li>
+    <li><span class="n">3</span><span class="t">React Testing Library<small>Arrange–Act–Assert, queries, user events</small></span></li>
+    <li><span class="n">4</span><span class="t">Vitest and Test Configuration<small>Setup, jsdom, scripts, test files</small></span></li>
+    <li><span class="n">5</span><span class="t">Testing Rendering and User Interactions<small>Visibility, toggles, initial state</small></span></li>
+    <li><span class="n">6</span><span class="t">Testing Forms and Validation<small>Invalid and valid submission paths</small></span></li>
+    <li><span class="n">7</span><span class="t">Mocking API Calls<small>Controlled success and failure responses</small></span></li>
+    <li><span class="n">8</span><span class="t">Testing Loading and Error States<small>Pending promises, empty results, alerts</small></span></li>
+    <li><span class="n">9</span><span class="t">Testing Custom Hooks<small>renderHook, fake timers, cleanup</small></span></li>
+    <li><span class="n">10</span><span class="t">End-to-End Testing with Playwright or Cypress<small>Real browsers, real workflows</small></span></li>
+    <li><span class="n">11</span><span class="t">Accessibility Checks and Regression Testing<small>Semantic queries, axe-core, visual diffs</small></span></li>
+    <li><span class="n">★</span><span class="t">Capstone: Tested Student Management Dashboard<small>Apply everything you have learned</small></span></li>
+    <li><span class="n">!</span><span class="t">Common Testing Mistakes to Avoid<small>Fourteen pitfalls and fixes</small></span></li>
+    <li><span class="n">↺</span><span class="t">Interview Questions &amp; Completion Checklist<small>Review and self-assessment</small></span></li>
+  </ol>
+</section>
+
+<!-- ============================================================
+     SECTION 1 — REACT DEVELOPER TOOLS
+     ============================================================ -->
+<section class="topic" id="s1">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0f766e,#14b8a6);">DEVT</div>
+  <div class="topic-head">
+    <div class="kicker">Section 01</div>
+    <h2>React Developer Tools</h2>
+    <p>See what React actually rendered — component by component.</p>
+  </div>
+
+  <h3>1.1 What is React Developer Tools?</h3>
+  <p>React Developer Tools is a browser extension for inspecting applications built with React.</p>
+  <p>It adds two especially useful panels to your browser's developer tools:</p>
+  <ul>
+    <li><strong>Components:</strong> Inspect the React component tree and examine props, state, and context.</li>
+    <li><strong>Profiler:</strong> Record rendering activity and investigate performance issues.</li>
+  </ul>
+  <p>Official documentation: <a href="https://react.dev/learn/react-developer-tools">React Developer Tools</a>.</p>
+
+  <h3>1.2 Real-life example: A student profile shows the wrong name</h3>
+  <p>Suppose you select a student from the list, but the profile panel still displays another student's name.</p>
+  <p>You could add <code>console.log()</code> statements throughout your application, but that may take a while.</p>
+  <p>Instead, inspect the component directly.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/8/80/Magnifying_glass.jpg"
+      alt="Magnifying glass — inspecting a detail closely"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · 01</div>
+    <div class="photo-caption">
+      <b>The detective's lens</b> — before adding logs everywhere, look directly at the evidence. React Developer Tools is the magnifying glass for your component tree.
+    </div>
+  </div>
+
+  <h4>Steps</h4>
+  <ol>
+    <li>Install the React Developer Tools browser extension for your browser.</li>
+    <li>Open your LMS in development mode.</li>
+    <li>Open browser developer tools.</li>
+    <li>Open the <strong>Components</strong> panel.</li>
+    <li>Find the student profile component in the tree.</li>
+    <li>Inspect the props and state that it receives.</li>
+  </ol>
+
+  <p>Imagine the component looks like this:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentProfile.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">interface Student {
+  id: string;
+  name: string;
+}
+
+interface StudentProfileProps {
+  student: Student | null;
+}
+
+function StudentProfile({ student }: StudentProfileProps) {
+  if (!student) {
+    return &lt;p&gt;Select a student&lt;/p&gt;;
+  }
+
+  return &lt;h2&gt;{student.name}&lt;/h2&gt;;
+}</code></pre>
+  </div>
+
+  <p>The component itself expects a student object or <code>null</code>.</p>
+  <p>If Developer Tools shows the wrong object being passed in, the bug may be in the parent component or in the selection logic rather than in the profile display.</p>
+  <p>That is a key debugging lesson: <strong>trace incorrect data back to where it originates.</strong></p>
+
+  <figure>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tracing wrong data from parent to child">
+      <defs>
+        <linearGradient id="dtA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0f766e"/><stop offset="100%" stop-color="#14b8a6"/>
+        </linearGradient>
+        <linearGradient id="dtB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f43f5e"/><stop offset="100%" stop-color="#be123c"/>
+        </linearGradient>
+        <linearGradient id="dtC" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="24" y="40" width="220" height="160" rx="14" fill="url(#dtA)"/>
+      <text x="134" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Parent (selection)</text>
+      <text x="134" y="94" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#d1f2e9">selectedStudentId</text>
+      <text x="134" y="116" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#d1f2e9">= "STU-102"</text>
+      <text x="134" y="148" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#a7f3d0">the origin</text>
+
+      <path d="M256 120 H 296" stroke="#b9e0d8" stroke-width="2.5"/>
+      <polygon points="296,112 312,120 296,128" fill="#0f766e"/>
+
+      <rect x="324" y="40" width="200" height="160" rx="14" fill="url(#dtB)"/>
+      <text x="424" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Props (wrong)</text>
+      <text x="424" y="94" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#ffe4e6">student = Aarav</text>
+      <text x="424" y="116" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#ffe4e6">but user chose Diya</text>
+      <text x="424" y="148" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#ffe4e6">where the bug lives</text>
+
+      <path d="M536 120 H 572" stroke="#b9e0d8" stroke-width="2.5"/>
+      <polygon points="572,112 588,120 572,128" fill="#0f766e"/>
+
+      <rect x="612" y="40" width="124" height="160" rx="12" fill="url(#dtC)"/>
+      <text x="674" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Child</text>
+      <text x="674" y="100" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#04322e">renders</text>
+      <text x="674" y="122" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#04322e">Aarav</text>
+      <text x="674" y="152" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#04322e">victim, not cause</text>
+
+      <text x="380" y="232" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#5d7a70">Trace incorrect props upward until you find the wrong source.</text>
+    </svg>
+    <figcaption><b>Figure 1.1</b> — The child displays the wrong name because the parent passed the wrong object.</figcaption>
+  </figure>
+
+  <h3>1.3 Inspect props and state</h3>
+  <p>Suppose the application has this counter:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentCounter.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useState } from "react";
+
+function StudentCounter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;button onClick={() =&gt; setCount((value) =&gt; value + 1)}&gt;
+      Students enrolled: {count}
+    &lt;/button&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Use the Components panel to inspect the component and its state.</p>
+  <p>Click the button and observe what changes. This can help you understand whether the application is receiving and updating state as expected.</p>
+  <p>Don't use the DevTools display as a substitute for application logic. It is an inspection aid, not the source of truth for your app.</p>
+
+  <h3>1.4 What is the Profiler?</h3>
+  <p>The React Profiler records rendering activity so you can investigate components that take time to render or render more frequently than expected.</p>
+  <p>Imagine a dashboard with 500 student rows. Whenever you select one row, the entire list seems to become slow.</p>
+  <p>A systematic approach is:</p>
+  <ol>
+    <li>Open the <strong>Profiler</strong> panel.</li>
+    <li>Start recording.</li>
+    <li>Select a student or apply a filter.</li>
+    <li>Stop the recording.</li>
+    <li>Inspect the commits and components involved.</li>
+    <li>Identify expensive rendering work before deciding whether to optimize it.</li>
+  </ol>
+
+  <p>You might discover that every row recalculates an expensive value or that a parent recreates props on each render.</p>
+  <p>You can then consider optimizations such as simpler calculations, more localized state, or memoization where it provides a measurable benefit.</p>
+  <p>Do not assume every render is a problem. Small components often render quickly, and optimization should be based on evidence.</p>
+
+  <h4>When should you use React Developer Tools?</h4>
+  <p>Use it when:</p>
+  <ul>
+    <li>The wrong props or state seem to be reaching a component.</li>
+    <li>A component does not display the updated state you expect.</li>
+    <li>You want to understand the React component tree.</li>
+    <li>You need to investigate rendering performance.</li>
+    <li>You want to understand which part of the UI is responsible for an issue.</li>
+  </ul>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">§ 1 · React Developer Tools</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 2 — BROWSER DEBUGGING
+     ============================================================ -->
+<section class="topic" id="s2">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0ea5e9,#0284c7);">DEBUG</div>
+  <div class="topic-head">
+    <div class="kicker">Section 02</div>
+    <h2>Browser Debugging and Network Inspection</h2>
+    <p>Console, breakpoints, and the truth about what the network returned.</p>
+  </div>
+
+  <p>React Developer Tools helps you investigate React-specific behavior. Browser DevTools gives you additional tools for diagnosing JavaScript, DOM, styling, and network problems.</p>
+
+  <h3>2.1 The Console panel</h3>
+  <p>Imagine your student dashboard shows a blank screen.</p>
+  <p>Open Chrome DevTools and select <strong>Console</strong>.</p>
+  <p>You might see an error such as:</p>
+
+  <div class="term out">
+    <div class="term-head">Console</div>
+    <pre>TypeError: Cannot read properties of undefined (reading 'name')</pre>
+  </div>
+
+  <p>This suggests the code attempted to access <code>.name</code> on a value that was <code>undefined</code>.</p>
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentName.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">function StudentName({ student }: { student: Student }) {
+  return &lt;h2&gt;{student.name}&lt;/h2&gt;;
+}</code></pre>
+  </div>
+
+  <p>This component expects a valid student object. If the parent passes data that does not satisfy that expectation, the render may fail.</p>
+  <p>If the student is legitimately optional, model that correctly:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentName.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">function StudentName({
+  student,
+}: {
+  student: Student | null;
+}) {
+  if (!student) {
+    return &lt;p&gt;No student selected&lt;/p&gt;;
+  }
+
+  return &lt;h2&gt;{student.name}&lt;/h2&gt;;
+}</code></pre>
+  </div>
+
+  <p>Notice that this fixes the underlying state requirement rather than simply hiding the error.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&q=80&auto=format&fit=crop"
+      alt="Network cables and server infrastructure"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · 02</div>
+    <div class="photo-caption">
+      <b>The network is a physical system</b> — requests travel through wires, servers, and gates. When something is stuck on “Loading…”, the Network panel lets you follow the wire.
+    </div>
+  </div>
+
+  <h3>2.2 Use <code>console.log()</code> intelligently</h3>
+  <p>For quick debugging:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">logging</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">function selectStudent(studentId: string) {
+  console.log("Selected student:", studentId);
+  setSelectedStudentId(studentId);
+}</code></pre>
+  </div>
+
+  <p>You can also inspect objects:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">log object</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">console.log({
+  selectedStudentId,
+  filteredStudents,
+});</code></pre>
+  </div>
+
+  <p>Useful console methods include:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">console methods</span><span class="code-lang">JS</span></div>
+    <pre><code class="lang-js">console.log("General information");
+console.warn("Unexpected condition");
+console.error("Request failed");
+console.table(students);</code></pre>
+  </div>
+
+  <p>Use logging temporarily and remove noisy debugging statements before merging production code.</p>
+  <p>For problems that occur only under certain conditions, a breakpoint is often more effective.</p>
+
+  <h3>2.3 Breakpoints and step-by-step debugging</h3>
+  <p>A breakpoint pauses JavaScript execution so you can inspect values at the point where something happens.</p>
+  <p>Real-life example: clicking <strong>Enroll Student</strong> sends the wrong course ID to the backend.</p>
+  <p>You can:</p>
+  <ol>
+    <li>Open the <strong>Sources</strong> panel.</li>
+    <li>Find the event-handler code.</li>
+    <li>Click a line number to set a breakpoint.</li>
+    <li>Submit the enrollment form.</li>
+    <li>Inspect the values of <code>studentId</code> and <code>courseId</code>.</li>
+    <li>Step through the function to understand where the wrong value is introduced.</li>
+  </ol>
+  <p>This is especially useful when a problem is difficult to reproduce through logs alone.</p>
+
+  <h3>2.4 The Network panel</h3>
+  <p>Imagine the course list remains stuck on “Loading courses...”.</p>
+  <p>The Network panel helps answer questions such as:</p>
+  <ul>
+    <li>Did the browser send the request?</li>
+    <li>Which URL was requested?</li>
+    <li>What HTTP status was returned?</li>
+    <li>What data did the server return?</li>
+    <li>Did the request take too long?</li>
+    <li>Was the request blocked or cancelled?</li>
+  </ul>
+  <p>Open DevTools, select <strong>Network</strong>, and reload the page while recording is enabled.</p>
+  <p>Click the request of interest and inspect its Headers, Payload, Response, and Timing information.</p>
+  <p>Official guide: <a href="https://developer.chrome.com/docs/devtools/network/">Inspect network activity in Chrome DevTools</a>.</p>
+
+  <h3>2.5 Understanding common API problems</h3>
+  <p>Suppose your code calls:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">fetch</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const response = await fetch("/api/students");
+const students = await response.json();</code></pre>
+  </div>
+
+  <p>A request can fail in several different ways.</p>
+
+  <table>
+    <thead><tr><th>Observation</th><th>Possible problem</th></tr></thead>
+    <tbody>
+      <tr><td>No request appears</td><td>The code path may not run, or the URL may never be requested</td></tr>
+      <tr><td><code>404</code></td><td>The requested endpoint was not found</td></tr>
+      <tr><td><code>401</code> or <code>403</code></td><td>Authentication or authorization may be required</td></tr>
+      <tr><td><code>500</code></td><td>The server reported an internal error</td></tr>
+      <tr><td>CORS error</td><td>The browser rejected the cross-origin request under its CORS rules</td></tr>
+      <tr><td>Response is not valid JSON</td><td>The frontend may be calling the wrong endpoint or receiving an unexpected response</td></tr>
+      <tr><td>Request is very slow</td><td>The network, server, or request processing may be slow</td></tr>
+    </tbody>
+  </table>
+
+  <p>These are diagnostic clues, not definitive explanations. Inspect the response and application logic before deciding what caused the issue.</p>
+  <p>Also remember that <code>fetch()</code> does not automatically reject its Promise just because the server returns an HTTP error status such as <code>404</code>. Check <code>response.ok</code>.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">getStudents.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">async function getStudents(): Promise&lt;Student[]&gt; {
+  const response = await fetch("/api/students");
+
+  if (!response.ok) {
+    throw new Error(
+      `Could not load students: ${response.status}`
+    );
+  }
+
+  return response.json() as Promise&lt;Student[]&gt;;
+}</code></pre>
+  </div>
+
+  <p>This snippet illustrates HTTP error handling, but the type assertion does not validate the real response body. Validate untrusted server data before treating it as <code>Student[]</code>.</p>
+
+  <h3>2.6 A practical debugging workflow</h3>
+  <p>When a bug appears, ask these questions in order:</p>
+  <ol class="steps">
+    <li><strong>Reproduce:</strong> What exact steps cause the bug?</li>
+    <li><strong>Observe:</strong> Is there an error in the Console, Elements, React Components, or Network panel?</li>
+    <li><strong>Locate:</strong> Which component, event handler, or request is involved?</li>
+    <li><strong>Inspect:</strong> Which values are incorrect?</li>
+    <li><strong>Fix:</strong> Correct the underlying logic.</li>
+    <li><strong>Verify:</strong> Repeat the original steps and test nearby behavior.</li>
+    <li><strong>Prevent regression:</strong> Add a test for the bug.</li>
+  </ol>
+  <p>This workflow is more reliable than making random changes until the problem disappears.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">§ 2 · Browser Debugging</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 3 — REACT TESTING LIBRARY
+     ============================================================ -->
+<section class="topic" id="s3">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#e11d48,#be123c);">RTL</div>
+  <div class="topic-head">
+    <div class="kicker">Section 03</div>
+    <h2>React Testing Library</h2>
+    <p>Test the page the user sees — not the state the user can't.</p>
+  </div>
+
+  <h3>3.1 What is React Testing Library?</h3>
+  <p>React Testing Library helps you test React components through their rendered DOM.</p>
+  <p>Its guiding principle is that tests should resemble how users interact with the application.</p>
+  <p>For instance, instead of checking whether a component's internal state variable equals <code>"Aarav"</code>, test whether the rendered page displays the student's name after the user selects that student.</p>
+  <p>Official documentation: <a href="https://testing-library.com/docs/react-testing-library/intro/">React Testing Library</a>.</p>
+
+  <h3>3.2 Install the testing packages</h3>
+  <p>In an existing React + TypeScript + Vite project, install these development dependencies:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm install -D vitest jsdom @testing-library/react @testing-library/dom @testing-library/user-event @testing-library/jest-dom</code></pre>
+  </div>
+
+  <p>The packages serve different roles:</p>
+  <ul>
+    <li><code>vitest</code> runs the tests.</li>
+    <li><code>jsdom</code> provides a simulated browser DOM for component tests.</li>
+    <li><code>@testing-library/react</code> renders and queries React components.</li>
+    <li><code>@testing-library/user-event</code> simulates user interactions.</li>
+    <li><code>@testing-library/jest-dom</code> adds readable DOM assertions such as <code>toBeInTheDocument()</code>.</li>
+  </ul>
+
+  <h3>3.3 Understand the basic structure of a test</h3>
+  <p>A test commonly follows the <strong>Arrange, Act, Assert</strong> pattern.</p>
+  <ul>
+    <li><strong>Arrange:</strong> Set up the component and inputs.</li>
+    <li><strong>Act:</strong> Perform a user action.</li>
+    <li><strong>Assert:</strong> Check the expected result.</li>
+  </ul>
+  <p>Imagine you want to verify that clicking the counter button adds one student.</p>
+  <p>Create <code>Counter.tsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Counter.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useState } from "react";
+
+export default function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;section&gt;
+      &lt;p&gt;Enrolled students: {count}&lt;/p&gt;
+
+      &lt;button
+        type="button"
+        onClick={() =&gt; setCount((value) =&gt; value + 1)}
+      &gt;
+        Add student
+      &lt;/button&gt;
+    &lt;/section&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Now write <code>Counter.test.tsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Counter.test.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { expect, it } from "vitest";
+import Counter from "./Counter";
+
+it("increments the student count when clicked", async () =&gt; {
+  const user = userEvent.setup();
+
+  render(&lt;Counter /&gt;);
+
+  expect(
+    screen.getByText("Enrolled students: 0")
+  ).toBeInTheDocument();
+
+  await user.click(
+    screen.getByRole("button", { name: /add student/i })
+  );
+
+  expect(
+    screen.getByText("Enrolled students: 1")
+  ).toBeInTheDocument();
+});</code></pre>
+  </div>
+
+  <h4>Understand the test</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">render</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">render(&lt;Counter /&gt;);</code></pre>
+  </div>
+
+  <p>This renders the component into the test DOM.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">query</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">screen.getByRole("button", { name: /add student/i });</code></pre>
+  </div>
+
+  <p>This finds the button the way an assistive technology user would identify it: through its role and accessible name.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">click</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">await user.click(...);</code></pre>
+  </div>
+
+  <p>This simulates clicking the button.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">assert</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">expect(...).toBeInTheDocument();</code></pre>
+  </div>
+
+  <p>This verifies the visible result.</p>
+  <p>The test does not inspect the component's state directly. It verifies its behavior from the user's perspective.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1200&q=80&auto=format&fit=crop"
+      alt="Checklist on a desk — planning and quality control"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · 03</div>
+    <div class="photo-caption">
+      <b>The quality-control checklist</b> — a test suite is a checklist for behavior. You check what a user can see and do, not the private machinery behind it.
+    </div>
+  </div>
+
+  <h3>3.4 Learn the main query methods</h3>
+  <p>Testing Library offers several ways to locate elements.</p>
+
+  <table>
+    <thead><tr><th>Query</th><th>When to use it</th></tr></thead>
+    <tbody>
+      <tr><td><code>getByRole</code></td><td>An element should already be present</td></tr>
+      <tr><td><code>getByLabelText</code></td><td>Find a form field through its label</td></tr>
+      <tr><td><code>getByText</code></td><td>Find visible text when a role query is not suitable</td></tr>
+      <tr><td><code>queryByRole</code></td><td>Check that something is absent</td></tr>
+      <tr><td><code>findByRole</code></td><td>Wait for an element to appear asynchronously</td></tr>
+      <tr><td><code>getByTestId</code></td><td>Use as a fallback when suitable user-facing queries are impractical</td></tr>
+    </tbody>
+  </table>
+
+  <p>The recommended preference is usually a semantic query such as <code>getByRole</code> or <code>getByLabelText</code>. These queries often help uncover missing labels and accessibility problems.</p>
+  <p>For asynchronous UI:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">findByRole</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">expect(
+  await screen.findByRole("heading", {
+    name: /student dashboard/i,
+  })
+).toBeInTheDocument();</code></pre>
+  </div>
+
+  <p><code>findByRole</code> waits for the element to appear within the configured timeout.</p>
+  <p>To verify that a dialog is absent:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">queryByRole</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">expect(
+  screen.queryByRole("dialog")
+).not.toBeInTheDocument();</code></pre>
+  </div>
+
+  <p>Do not use <code>getByRole</code> when your intention is to check absence, because <code>getByRole</code> throws when it cannot find the element.</p>
+
+  <h3>3.5 What should you test?</h3>
+  <p>For a student card, useful tests include:</p>
+  <ul>
+    <li>The student's name is visible.</li>
+    <li>The course name is visible.</li>
+    <li>Clicking the card triggers the appropriate interaction.</li>
+    <li>A disabled action cannot be activated normally.</li>
+    <li>Missing optional information is displayed appropriately.</li>
+  </ul>
+  <p>Avoid testing implementation details that users cannot observe unless there is a specific reason.</p>
+  <p>Testing Library guidance: <a href="https://testing-library.com/docs/queries/about/">About queries</a>.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">§ 3 · React Testing Library</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 4 — VITEST AND TEST CONFIGURATION
+     ============================================================ -->
+<section class="topic" id="s4">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#7c3aed,#a78bfa);">VITE</div>
+  <div class="topic-head">
+    <div class="kicker">Section 04</div>
+    <h2>Vitest and Test Configuration</h2>
+    <p>The runner, the environment, and the setup that makes tests reliable.</p>
+  </div>
+
+  <h3>4.1 What is Vitest?</h3>
+  <p>Vitest is a testing framework designed to work with Vite. It supplies a test runner, assertions, mocking utilities, and related testing features.</p>
+  <p>For a Vite-based React application, Vitest is a natural starting point for unit and component tests.</p>
+  <p>Official documentation: <a href="https://main.vitest.dev/guide/">Vitest getting started</a>.</p>
+
+  <h3>4.2 Configure Vitest for React</h3>
+  <p>A normal React + TypeScript Vite application already has a <code>vite.config.ts</code> file.</p>
+  <p>Update it to include the Vitest configuration:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">vite.config.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
+
+export default defineConfig({
+  plugins: [react()],
+
+  test: {
+    environment: "jsdom",
+    setupFiles: "./src/test/setup.ts",
+    clearMocks: true,
+  },
+});</code></pre>
+  </div>
+
+  <p>If your existing configuration contains other plugins or settings, keep them and add the relevant test options.</p>
+  <p>Why <code>jsdom</code>?</p>
+  <p>By default, Vitest runs tests in a Node.js environment. React component tests often need browser-like APIs such as <code>document</code>, <code>window</code>, and DOM elements. <code>jsdom</code> simulates many of those APIs.</p>
+  <p>It is not a full browser, so browser-specific behavior should also be tested in a real browser when necessary.</p>
+  <p>Reference: <a href="https://vitest.dev/config/environment">Vitest test environment</a>.</p>
+
+  <h3>4.3 Configure test setup</h3>
+  <p>Create <code>src/test/setup.ts</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/test/setup.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">import "@testing-library/jest-dom/vitest";
+
+import { cleanup } from "@testing-library/react";
+import { afterEach, vi } from "vitest";
+
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});</code></pre>
+  </div>
+
+  <p>This setup:</p>
+  <ul>
+    <li>Enables DOM assertions from <code>jest-dom</code> for Vitest.</li>
+    <li>Cleans up rendered React components between tests.</li>
+    <li>Restores stubbed global objects, such as a mock <code>fetch</code>.</li>
+  </ul>
+  <p>Importing <code>@testing-library/jest-dom/vitest</code> is important when using Vitest rather than assuming the standard Jest entry point is appropriate.</p>
+
+  <h3>4.4 Add scripts to <code>package.json</code></h3>
+  <p>Preserve your existing Vite scripts and add these:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">package.json</span><span class="code-lang">JSON</span></div>
+    <pre><code class="lang-json">{
+  "scripts": {
+    "test": "vitest",
+    "test:run": "vitest run"
+  }
+}</code></pre>
+  </div>
+
+  <p>Run the tests in watch mode:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm run test</code></pre>
+  </div>
+
+  <p>Run the suite once:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm run test:run</code></pre>
+  </div>
+
+  <p>Watch mode is useful during development because tests can rerun as you change your code.</p>
+  <p>Also check that your Node.js and Vite versions are compatible with the version of Vitest you install. Current setup requirements can change as these tools evolve.</p>
+
+  <h3>4.5 What is a test file?</h3>
+  <p>Vitest normally discovers files using conventional names such as:</p>
+
+  <div class="term out">
+    <div class="term-head">Test files</div>
+    <pre>Counter.test.tsx
+StudentForm.test.tsx
+StudentDirectory.test.tsx</pre>
+  </div>
+
+  <p>A useful folder arrangement is:</p>
+
+  <div class="tree"><span class="dir">src/</span>
+├── <span class="dir">components/</span>
+│   ├── <span class="file">Counter.tsx</span>
+│   ├── <span class="file">Counter.test.tsx</span>
+│   ├── <span class="file">StudentForm.tsx</span>
+│   └── <span class="file">StudentForm.test.tsx</span>
+├── <span class="dir">test/</span>
+│   └── <span class="file">setup.ts</span>
+└── <span class="file">App.tsx</span></div>
+
+  <p>You can also keep tests in a dedicated <code>tests</code> or <code>__tests__</code> directory if that better suits the project.</p>
+
+  <h3>4.6 Unit tests versus component tests</h3>
+  <p>A <strong>unit test</strong> typically tests a small function or piece of logic.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">formatStudentName.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">export function formatStudentName(name: string): string {
+  return name.trim().replace(/\s+/g, " ");
+}</code></pre>
+  </div>
+
+  <p>Test it:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">formatStudentName.test.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">import { expect, it } from "vitest";
+import { formatStudentName } from "./formatStudentName";
+
+it("removes extra spaces from a name", () => {
+  expect(formatStudentName("  Aarav   Patel ")).toBe(
+    "Aarav Patel"
+  );
+});</code></pre>
+  </div>
+
+  <p>A <strong>component test</strong> renders React UI and checks how it behaves.</p>
+  <p>The counter and form tests in this phase are examples of component tests.</p>
+  <p>Both matter: unit tests are useful for business logic, while component tests verify that the logic works correctly with the rendered interface.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">§ 4 · Vitest Configuration</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 5 — TESTING RENDERING AND INTERACTIONS
+     ============================================================ -->
+<section class="topic" id="s5">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#f59e0b,#d97706);">UI</div>
+  <div class="topic-head">
+    <div class="kicker">Section 05</div>
+    <h2>Testing Rendering and User Interactions</h2>
+    <p>What the user sees first — and what happens after they act.</p>
+  </div>
+
+  <p>Imagine a trainer dashboard containing a button to toggle whether a course is visible to students.</p>
+  <p>The test should verify both the initial appearance and the outcome of the interaction.</p>
+
+  <h3>5.1 Create the component</h3>
+  <p><code>CourseVisibility.tsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">CourseVisibility.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useState } from "react";
+
+export default function CourseVisibility() {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    &lt;section&gt;
+      &lt;p&gt;
+        Course availability: {visible ? "Published" : "Draft"}
+      &lt;/p&gt;
+
+      &lt;button
+        type="button"
+        aria-pressed={visible}
+        onClick={() => setVisible((value) => !value)}
+      &gt;
+        {visible ? "Unpublish Course" : "Publish Course"}
+      &lt;/button&gt;
+    &lt;/section&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The component exposes the toggle state through readable text and <code>aria-pressed</code>.</p>
+
+  <h3>5.2 Write the test</h3>
+  <p><code>CourseVisibility.test.tsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">CourseVisibility.test.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { expect, it } from "vitest";
+
+import CourseVisibility from "./CourseVisibility";
+
+it("publishes and unpublishes a course", async () => {
+  const user = userEvent.setup();
+
+  render(<CourseVisibility />);
+
+  const button = screen.getByRole("button", {
+    name: /publish course/i,
+  });
+
+  expect(button).toHaveAttribute("aria-pressed", "false");
+  expect(screen.getByText(/availability: draft/i))
+    .toBeInTheDocument();
+
+  await user.click(button);
+
+  expect(screen.getByRole("button", {
+    name: /unpublish course/i,
+  })).toHaveAttribute("aria-pressed", "true");
+
+  expect(screen.getByText(/availability: published/i))
+    .toBeInTheDocument();
+});</code></pre>
+  </div>
+
+  <p>The test verifies behavior rather than checking that <code>useState</code> was called or that the state variable has a particular internal value.</p>
+
+  <h3>5.3 Why use <code>user-event</code>?</h3>
+  <p><code>user-event</code> models browser interactions at a higher level than manually dispatching a single DOM event.</p>
+  <p>For example, entering text can involve focus, keyboard events, and input changes. Using <code>user-event</code> helps tests exercise these interactions through the user-facing interface.</p>
+  <p>Prefer:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">user-event</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const user = userEvent.setup();
+
+await user.click(
+  screen.getByRole("button", { name: /publish course/i })
+);</code></pre>
+  </div>
+
+  <p>over directly calling an internal handler.</p>
+
+  <h3>5.4 Test a component's initial state</h3>
+  <p>Suppose a modal should be closed initially. You can verify that:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">modal</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">expect(screen.queryByRole("dialog")).not.toBeInTheDocument();</code></pre>
+  </div>
+
+  <p>Then click its opener and check that the dialog appears.</p>
+  <p>For a dropdown, you might test that options only appear after the user opens the menu.</p>
+  <p>For pagination, verify that clicking Next changes the visible records.</p>
+  <p>For a navigation component, verify that its links and accessible names are correct.</p>
+
+  <h4>Practical rule</h4>
+  <p>Write tests based on meaningful behavior, not on the number of component renders. Rendering counts can change when implementation details change, even if the user-facing behavior remains correct.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">§ 5 · Rendering &amp; Interactions</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 6 — TESTING FORMS AND VALIDATION
+     ============================================================ -->
+<section class="topic" id="s6">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#10b981,#34d399);">FORMS</div>
+  <div class="topic-head">
+    <div class="kicker">Section 06</div>
+    <h2>Testing Forms and Validation</h2>
+    <p>The gatekeeper: invalid data must not pass.</p>
+  </div>
+
+  <p>Forms are a particularly important area to test because they receive user input and usually submit data to a backend.</p>
+  <p>Imagine an LMS form where an administrator adds a new student. The form requires a name and a course.</p>
+
+  <h3>6.1 Build the form component</h3>
+  <p><code>StudentForm.tsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentForm.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useState } from "react";
+import type { FormEvent } from "react";
+
+export interface NewStudent {
+  name: string;
+  course: string;
+}
+
+interface StudentFormProps {
+  onSubmit: (student: NewStudent) => void;
+}
+
+export default function StudentForm({
+  onSubmit,
+}: StudentFormProps) {
+  const [name, setName] = useState("");
+  const [course, setCourse] = useState("React");
+  const [error, setError] = useState("");
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const cleanedName = name.trim();
+
+    if (!cleanedName) {
+      setError("Enter a student name.");
+      return;
+    }
+
+    setError("");
+
+    onSubmit({
+      name: cleanedName,
+      course,
+    });
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-lg space-y-4">
+      <div>
+        <label htmlFor="student-name" className="mb-1 block">
+          Student name
+        </label>
+
+        <input
+          id="student-name"
+          value={name}
+          onChange={(event) => setName(event.currentTarget.value)}
+          className="w-full rounded-lg border p-3"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="student-course" className="mb-1 block">
+          Course
+        </label>
+
+        <select
+          id="student-course"
+          value={course}
+          onChange={(event) => setCourse(event.currentTarget.value)}
+          className="w-full rounded-lg border p-3"
+        >
+          <option value="React">React</option>
+          <option value="Full Stack">Full Stack</option>
+          <option value="Data Analytics">Data Analytics</option>
+        </select>
+      </div>
+
+      {error && <p role="alert">{error}</p>}
+
+      <button
+        type="submit"
+        className="rounded-lg bg-indigo-600 px-4 py-2 text-white"
+      >
+        Add Student
+      </button>
+    </form>
+  );
+}</code></pre>
+  </div>
+
+  <p>The component delegates the actual creation operation to <code>onSubmit</code>. That makes it easier to test the form separately from API integration.</p>
+
+  <h3>6.2 Test validation</h3>
+  <p><code>StudentForm.test.tsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentForm.test.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { expect, it, vi } from "vitest";
+
+import StudentForm from "./StudentForm";
+
+it("shows a validation error for an empty name", async () => {
+  const user = userEvent.setup();
+  const onSubmit = vi.fn();
+
+  render(<StudentForm onSubmit={onSubmit} />);
+
+  await user.click(
+    screen.getByRole("button", { name: /add student/i })
+  );
+
+  expect(screen.getByRole("alert"))
+    .toHaveTextContent("Enter a student name.");
+
+  expect(onSubmit).not.toHaveBeenCalled();
+});</code></pre>
+  </div>
+
+  <p>The test confirms two important behaviors:</p>
+  <ol>
+    <li>The user sees a validation message.</li>
+    <li>The invalid data is not submitted.</li>
+  </ol>
+
+  <h3>6.3 Test successful submission</h3>
+  <p>Add another test:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">success test</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">it("submits the student's trimmed name and selected course", async () => {
+  const user = userEvent.setup();
+  const onSubmit = vi.fn();
+
+  render(<StudentForm onSubmit={onSubmit} />);
+
+  await user.type(
+    screen.getByRole("textbox", { name: /student name/i }),
+    "  Aarav Patel  "
+  );
+
+  await user.selectOptions(
+    screen.getByRole("combobox", { name: /course/i }),
+    "Full Stack"
+  );
+
+  await user.click(
+    screen.getByRole("button", { name: /add student/i })
+  );
+
+  expect(onSubmit).toHaveBeenCalledWith({
+    name: "Aarav Patel",
+    course: "Full Stack",
+  });
+});</code></pre>
+  </div>
+
+  <p>This verifies the real result of the user's interaction, including whitespace trimming.</p>
+
+  <h3>6.4 What else should you test in a form?</h3>
+  <p>For a professional LMS or workshop platform, useful cases include:</p>
+  <ul>
+    <li>Required fields</li>
+    <li>Invalid email addresses</li>
+    <li>Minimum and maximum lengths</li>
+    <li>Invalid course selections</li>
+    <li>Submitting with Enter</li>
+    <li>Clear error messages</li>
+    <li>Disabled submission while a request is pending</li>
+    <li>Success messages</li>
+    <li>API errors</li>
+    <li>Duplicate submissions</li>
+    <li>Keyboard navigation and visible focus</li>
+  </ul>
+  <p>Not every validation case requires a separate test if cases can be grouped clearly, but the key rules of a form should be explicitly verified.</p>
+
+  <div class="callout warn">
+    <div class="ct">▲ Important</div>
+    <p>Frontend validation improves user experience. The backend must still validate the submitted data and enforce authorization.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">§ 6 · Forms &amp; Validation</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 7 — MOCKING API CALLS
+     ============================================================ -->
+<section class="topic" id="s7">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0ea5e9,#0284c7);">MOCK</div>
+  <div class="topic-head">
+    <div class="kicker">Section 07</div>
+    <h2>Mocking API Calls</h2>
+    <p>A controlled substitute for the network — so tests are predictable.</p>
+  </div>
+
+  <h3>7.1 What is mocking?</h3>
+  <p>Mocking means replacing a dependency with a controlled substitute during a test.</p>
+  <p>Imagine your dashboard retrieves hundreds of students from an API. You don't want every component test to depend on an internet connection, a running backend, or production data.</p>
+  <p>You can mock the API response and provide known data.</p>
+  <p>This gives you predictable tests for success, empty responses, delays, and failures.</p>
+
+  <h3>7.2 Create a student API service</h3>
+  <p><code>studentsApi.ts</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">studentsApi.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">export interface Student {
+  id: string;
+  name: string;
+  course: string;
+}
+
+function isRecord(
+  value: unknown
+): value is Record<string, unknown> {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value)
+  );
+}
+
+function isStudent(value: unknown): value is Student {
+  return (
+    isRecord(value) &&
+    typeof value.id === "string" &&
+    typeof value.name === "string" &&
+    typeof value.course === "string"
+  );
+}
+
+export async function fetchStudents(): Promise<Student[]> {
+  const response = await fetch("/api/students");
+
+  if (!response.ok) {
+    throw new Error("Could not load students.");
+  }
+
+  const payload: unknown = await response.json();
+
+  if (!Array.isArray(payload) || !payload.every(isStudent)) {
+    throw new Error("The server returned invalid student data.");
+  }
+
+  return payload;
+}</code></pre>
+  </div>
+
+  <p>The function verifies the HTTP status and checks that the received value matches the expected student structure.</p>
+  <p>In a real project, the validator should reflect the actual API contract, including any nested objects and business constraints.</p>
+
+  <h3>7.3 Mock a <code>fetch</code> response</h3>
+  <p>Imagine you want to verify that the API service can return a list of students.</p>
+  <p>A mocked response can be created like this:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">studentsApi.test.ts</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { expect, it, vi } from "vitest";
+import { fetchStudents } from "./studentsApi";
+
+it("returns students from the API", async () => {
+  const students = [
+    {
+      id: "STU-101",
+      name: "Aarav Patel",
+      course: "React",
+    },
+  ];
+
+  const mockFetch = vi.fn().mockResolvedValue({
+    ok: true,
+    json: async () => students,
+  });
+
+  vi.stubGlobal("fetch", mockFetch);
+
+  await expect(fetchStudents()).resolves.toEqual(students);
+  expect(mockFetch).toHaveBeenCalledWith("/api/students");
+});</code></pre>
+  </div>
+
+  <p>This test does not contact the actual backend. It replaces <code>fetch</code> with a function that returns a predetermined response.</p>
+  <p>The object is a lightweight test double for the subset of the Fetch API used by this service. More complex code that uses additional <code>Response</code> behavior may require a fuller mock.</p>
+  <p>Because <code>fetch</code> is a global, restore the stub after the test with <code>vi.unstubAllGlobals()</code> or the test cleanup mechanism configured for your project.</p>
+
+  <h3>7.4 Test API failures</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">failure test</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">it("throws when the server returns an unsuccessful status", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      json: async () => ({}),
+    })
+  );
+
+  await expect(fetchStudents()).rejects.toThrow(
+    "Could not load students."
+  );
+});</code></pre>
+  </div>
+
+  <p>This verifies how the service handles an HTTP failure.</p>
+  <p>It is different from a network failure, in which the <code>fetch</code> Promise rejects. You should test both when both cases matter.</p>
+
+  <h3>7.5 When should you mock API requests?</h3>
+  <p>Mocks are useful when testing:</p>
+  <ul>
+    <li>An API service's handling of responses</li>
+    <li>A component's rendering after a known API result</li>
+    <li>Loading indicators</li>
+    <li>Error messages</li>
+    <li>Empty responses</li>
+    <li>Unusual or invalid data</li>
+    <li>Slow requests</li>
+    <li>Rare failure conditions</li>
+  </ul>
+  <p>Do not mock away the actual behavior you want to test. If your goal is to verify that the frontend and backend are correctly integrated, you will also need integration or end-to-end tests that exercise more of the real system.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mocking the API as a controlled stand-in">
+      <defs>
+        <linearGradient id="mkA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#0284c7"/>
+        </linearGradient>
+        <linearGradient id="mkB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#d97706"/>
+        </linearGradient>
+        <linearGradient id="mkC" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="24" y="40" width="200" height="160" rx="14" fill="url(#mkA)"/>
+      <text x="124" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Component</text>
+      <text x="124" y="94" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#e0f2fe">fetchStudents()</text>
+      <text x="124" y="116" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#e0f2fe">expects students</text>
+      <text x="124" y="148" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#bae6fd">doesn't care who answers</text>
+
+      <path d="M236 120 H 276" stroke="#cbe7f5" stroke-width="2.5"/>
+      <polygon points="276,112 292,120 276,128" fill="#0ea5e9"/>
+
+      <rect x="304" y="40" width="180" height="160" rx="14" fill="url(#mkB)"/>
+      <text x="394" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#4a2c00">Mock fetch</text>
+      <text x="394" y="94" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#4a2c00">ok: true</text>
+      <text x="394" y="116" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#4a2c00">json: () =&gt; [...]</text>
+      <text x="394" y="148" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#4a2c00">the controlled stand-in</text>
+
+      <path d="M496 120 H 536" stroke="#f6c667" stroke-width="2.5"/>
+      <polygon points="536,112 552,120 536,128" fill="#f59e0b"/>
+
+      <rect x="564" y="60" width="172" height="140" rx="12" fill="url(#mkC)"/>
+      <text x="650" y="88" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Assertions</text>
+      <text x="650" y="116" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#d1fae5">resolves to known</text>
+      <text x="650" y="134" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#d1fae5">students</text>
+      <text x="650" y="166" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9" font-style="italic" fill="#d1fae5">deterministic · fast</text>
+
+      <text x="380" y="228" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#5d7a70">Swap the network for a known actor; keep the same script.</text>
+    </svg>
+    <figcaption><b>Figure 7.1</b> — A mocked fetch is a controlled stand-in that answers exactly what the test expects.</figcaption>
+  </figure>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">§ 7 · Mocking API Calls</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 8 — TESTING LOADING AND ERROR STATES
+     ============================================================ -->
+<section class="topic" id="s8">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#f43f5e,#be123c);">STATES</div>
+  <div class="topic-head">
+    <div class="kicker">Section 08</div>
+    <h2>Testing Loading and Error States</h2>
+    <p>The interface must be honest before, during, and after a request.</p>
+  </div>
+
+  <p>A well-designed React interface must handle more than the ideal success case.</p>
+  <p>When an API request is in progress, the user needs to know what is happening. When it fails, the interface should explain the problem and provide a reasonable path forward.</p>
+
+  <h3>8.1 Build a directory component with explicit states</h3>
+  <p><code>StudentDirectory.tsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentDirectory.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useEffect, useState } from "react";
+import { fetchStudents } from "./studentsApi";
+import type { Student } from "./studentsApi";
+
+type StudentState =
+  | { status: "loading" }
+  | { status: "success"; students: Student[] }
+  | { status: "error"; message: string };
+
+export default function StudentDirectory() {
+  const [state, setState] = useState<StudentState>({
+    status: "loading",
+  });
+
+  useEffect(() => {
+    let active = true;
+
+    fetchStudents()
+      .then((students) => {
+        if (active) {
+          setState({ status: "success", students });
+        }
+      })
+      .catch((error: unknown) => {
+        if (active) {
+          setState({
+            status: "error",
+            message:
+              error instanceof Error
+                ? error.message
+                : "An unexpected error occurred.",
+          });
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (state.status === "loading") {
+    return <p role="status">Loading students...</p>;
+  }
+
+  if (state.status === "error") {
+    return <p role="alert">{state.message}</p>;
+  }
+
+  if (state.students.length === 0) {
+    return <p>No students found.</p>;
+  }
+
+  return (
+    <ul aria-label="Students" className="space-y-2">
+      {state.students.map((student) => (
+        <li key={student.id} className="rounded-lg border p-3">
+          <strong>{student.name}</strong>
+          <p>{student.course}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}</code></pre>
+  </div>
+
+  <p>The component uses a discriminated union so its loading, success, and error states remain separate.</p>
+  <p>For a production data layer, consider a maintained data-fetching library or an abortable request implementation as appropriate. The <code>active</code> flag prevents this component from updating state after its effect has been cleaned up, but it does not cancel the network request.</p>
+
+  <h3>8.2 Test the success state</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">success test</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { render, screen } from "@testing-library/react";
+import { expect, it, vi } from "vitest";
+
+import StudentDirectory from "./StudentDirectory";
+
+it("renders students when the request succeeds", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [
+        {
+          id: "STU-101",
+          name: "Aarav Patel",
+          course: "React",
+        },
+      ],
+    })
+  );
+
+  render(<StudentDirectory />);
+
+  expect(await screen.findByText("Aarav Patel"))
+    .toBeInTheDocument();
+});</code></pre>
+  </div>
+
+  <p><code>findByText</code> waits until the UI contains the student name or the query times out.</p>
+
+  <h3>8.3 Test the loading state</h3>
+  <p>A loading test needs to keep the request pending long enough for you to inspect that state.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">loading test</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { act, render, screen } from "@testing-library/react";
+
+it("shows a loading message while the request is pending", async () => {
+  let resolveResponse!: (value: {
+    ok: boolean;
+    json: () => Promise<unknown>;
+  }) => void;
+
+  const pendingResponse = new Promise<{
+    ok: boolean;
+    json: () => Promise<unknown>;
+  }>((resolve) => {
+    resolveResponse = resolve;
+  });
+
+  vi.stubGlobal("fetch", vi.fn(() => pendingResponse));
+
+  render(<StudentDirectory />);
+
+  expect(screen.getByRole("status"))
+    .toHaveTextContent("Loading students...");
+
+  await act(async () => {
+    resolveResponse({
+      ok: true,
+      json: async () => [],
+    });
+  });
+
+  expect(await screen.findByText("No students found."))
+    .toBeInTheDocument();
+});</code></pre>
+  </div>
+
+  <p>This snippet uses a simplified response object shaped around the behavior required by this component. If your service directly uses additional <code>Response</code> methods, adapt the test double accordingly.</p>
+  <p>The test checks the intermediate loading state and then verifies the result after resolving the request.</p>
+
+  <h3>8.4 Test the error state</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">error test</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">it("displays an error when the server fails", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      json: async () => ({}),
+    })
+  );
+
+  render(<StudentDirectory />);
+
+  expect(await screen.findByRole("alert"))
+    .toHaveTextContent("Could not load students.");
+});</code></pre>
+  </div>
+
+  <p>Here, the API service throws an error because the HTTP response is unsuccessful. The directory catches it and renders an alert.</p>
+
+  <h3>8.5 What else should you test?</h3>
+  <p>For a reliable API-driven UI, consider:</p>
+  <ul>
+    <li>A successful request</li>
+    <li>An empty result</li>
+    <li>A non-success HTTP status</li>
+    <li>A network failure</li>
+    <li>Malformed response data</li>
+    <li>A delayed response</li>
+    <li>A component unmounting before a request completes</li>
+    <li>A retry action, if the interface supports retries</li>
+  </ul>
+  <p>Testing all these conditions is especially valuable when users rely on the data for enrollment, billing, attendance, or administration.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>A component that works when the API succeeds is not necessarily a robust component.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">§ 8 · Loading &amp; Error States</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 9 — TESTING CUSTOM HOOKS
+     ============================================================ -->
+<section class="topic" id="s9">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#7c3aed,#a78bfa);">HOOKS</div>
+  <div class="topic-head">
+    <div class="kicker">Section 09</div>
+    <h2>Testing Custom Hooks</h2>
+    <p>Testing behavior that lives between components — with control over time.</p>
+  </div>
+
+  <p>Custom Hooks allow you to reuse behavior across React components.</p>
+  <p>Examples include:</p>
+  <ul>
+    <li><code>useDebouncedValue</code></li>
+    <li><code>useLocalStorage</code></li>
+    <li><code>useOnlineStatus</code></li>
+    <li><code>useWindowSize</code></li>
+    <li><code>useStudentSearch</code></li>
+  </ul>
+  <p>Testing the Hook independently can be useful when its behavior is complex or shared across multiple components.</p>
+
+  <h3>9.1 Create a realistic Hook: <code>useDebouncedValue</code></h3>
+  <p>Imagine a student search box that queries a large student database. You don't want the search logic to run immediately for every keystroke; instead, you may want to wait until the user has stopped typing for a short time.</p>
+  <p>Create <code>useDebouncedValue.ts</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">useDebouncedValue.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">import { useEffect, useState } from "react";
+
+export function useDebouncedValue<T>(
+  value: T,
+  delayMs = 300
+): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timerId = window.setTimeout(() => {
+      setDebouncedValue(value);
+    }, delayMs);
+
+    return () => {
+      window.clearTimeout(timerId);
+    };
+  }, [value, delayMs]);
+
+  return debouncedValue;
+}</code></pre>
+  </div>
+
+  <p>The Hook returns the latest value after the delay has passed without a newer value resetting the timer.</p>
+  <p>It is useful for debouncing a value, but it does not itself perform an API request or cache the results.</p>
+
+  <h3>9.2 Test the Hook with <code>renderHook</code></h3>
+  <p>React Testing Library provides <code>renderHook</code> for rendering a Hook inside an appropriate test component.</p>
+  <p>Create <code>useDebouncedValue.test.ts</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">useDebouncedValue.test.ts</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { act, renderHook } from "@testing-library/react";
+import { afterEach, expect, it, vi } from "vitest";
+
+import { useDebouncedValue } from "./useDebouncedValue";
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
+it("updates only after the delay has passed", () => {
+  vi.useFakeTimers();
+
+  const { result, rerender } = renderHook(
+    ({ value }) => useDebouncedValue(value, 300),
+    {
+      initialProps: { value: "aar" },
+    }
+  );
+
+  expect(result.current).toBe("aar");
+
+  rerender({ value: "aara" });
+
+  expect(result.current).toBe("aar");
+
+  act(() => {
+    vi.advanceTimersByTime(300);
+  });
+
+  expect(result.current).toBe("aara");
+});</code></pre>
+  </div>
+
+  <h4>How the test works</h4>
+  <p><strong>Step 1:</strong> Fake timers allow the test to control the passage of time.</p>
+  <p><strong>Step 2:</strong> <code>renderHook</code> initializes the Hook with <code>"aar"</code>.</p>
+  <p><strong>Step 3:</strong> <code>rerender</code> provides <code>"aara"</code> as the new input value.</p>
+  <p><strong>Step 4:</strong> Before 300 milliseconds have passed, the Hook still returns the earlier debounced value.</p>
+  <p><strong>Step 5:</strong> Advancing the fake timer allows the pending timeout callback to run. <code>act()</code> makes sure React processes the resulting update before the assertion.</p>
+
+  <h3>9.3 Test timer cleanup</h3>
+  <p>The cleanup function is just as important as the value update.</p>
+  <p>If the value changes several times, previous timers should be cancelled so that only the latest value is returned after the delay.</p>
+  <p>You can extend the test by updating the input several times and verifying that advancing the clock by less than the full delay does not reveal an earlier, intermediate value.</p>
+
+  <h3>9.4 Should you test every custom Hook independently?</h3>
+  <p>Not necessarily.</p>
+  <p>A tiny Hook may be adequately tested through a component that uses it. A shared or complicated Hook often benefits from its own focused tests.</p>
+  <p>Choose the test style that makes the behavior easiest to understand and maintain.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">§ 9 · Custom Hooks</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 10 — END-TO-END TESTING
+     ============================================================ -->
+<section class="topic" id="s10">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0f766e,#14b8a6);">E2E</div>
+  <div class="topic-head">
+    <div class="kicker">Section 10</div>
+    <h2>End-to-End Testing with Playwright or Cypress</h2>
+    <p>The whole workflow, in a real browser, with real clicks.</p>
+  </div>
+
+  <p>Unit and component tests are helpful, but they do not verify the entire application in the same way a real user experiences it.</p>
+  <p>End-to-end (E2E) tests run through important workflows in a real browser and check that multiple parts of the system work together.</p>
+  <p>Imagine a user opening your institute LMS, navigating to the enrollment page, adding a student, and verifying the student's entry in the list.</p>
+  <p>An E2E test can check that flow across the rendered application.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Comedy_and_tragedy_masks.svg/640px-Comedy_and_tragedy_masks.svg.png"
+      alt="Theatre masks — comedy and tragedy"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · 04</div>
+    <div class="photo-caption">
+      <b>The theatre of the browser</b> — an E2E test is a full performance: real props, real stage, real audience. Playwright and Cypress put your application on stage in a real browser.
+    </div>
+  </div>
+
+  <h3>10.1 What is Playwright?</h3>
+  <p>Playwright is an end-to-end testing framework with browser automation, assertions, browser isolation, and other testing capabilities.</p>
+  <p>It supports Chromium, Firefox, and WebKit. Its web-first assertions can retry until the expected UI condition is met or the timeout is reached.</p>
+  <p>Official documentation:</p>
+  <ul>
+    <li><a href="https://playwright.dev/docs/intro">Playwright introduction</a></li>
+    <li><a href="https://playwright.dev/docs/test-assertions">Playwright assertions</a></li>
+  </ul>
+
+  <h3>10.2 Install Playwright</h3>
+  <p>From your application project directory:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm init playwright@latest</code></pre>
+  </div>
+
+  <p>Follow the prompts to configure end-to-end testing and install the desired browser dependencies.</p>
+  <p>The setup may create a <code>playwright.config.ts</code> file and an example test directory.</p>
+
+  <h3>10.3 Configure the development server</h3>
+  <p>For a Vite application, an illustrative <code>playwright.config.ts</code> is:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">playwright.config.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">import { defineConfig, devices } from "@playwright/test";
+
+export default defineConfig({
+  testDir: "./e2e",
+
+  use: {
+    baseURL: "http://127.0.0.1:5173",
+    trace: "on-first-retry",
+  },
+
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
+    },
+  ],
+
+  webServer: {
+    command: "npm run dev -- --host 127.0.0.1",
+    url: "http://127.0.0.1:5173",
+    reuseExistingServer: !process.env.CI,
+  },
+});</code></pre>
+  </div>
+
+  <p>This configuration launches the Vite development server when needed and points Playwright at the local application.</p>
+  <p>Adapt it if your app runs on a different port or if your tests need a separate backend process.</p>
+  <p>Reference: <a href="https://playwright.dev/docs/test-webserver">Playwright web server configuration</a>.</p>
+
+  <h3>10.4 Write an E2E test for student enrollment</h3>
+  <p>Imagine your real application has a page with a student enrollment form. The form provides a textbox labeled <strong>Student name</strong>, a course selector, and an <strong>Add Student</strong> button.</p>
+  <p>Create <code>e2e/student-enrollment.spec.ts</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">e2e/student-enrollment.spec.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">import { test, expect } from "@playwright/test";
+
+test("an administrator can add a student", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByLabel("Student name").fill("Aarav Patel");
+
+  await page.getByLabel("Course").selectOption("React");
+
+  await page.getByRole("button", {
+    name: /add student/i,
+  }).click();
+
+  await expect(
+    page.getByText("Aarav Patel")
+  ).toBeVisible();
+
+  await expect(
+    page.getByText("React", { exact: true })
+  ).toBeVisible();
+});</code></pre>
+  </div>
+
+  <p>This is an example of the intended test flow. It assumes your application has matching labels and behavior.</p>
+
+  <h4>Explanation</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">goto</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">await page.goto("/");</code></pre>
+  </div>
+
+  <p>Opens the application.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">fill</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">await page.getByLabel("Student name").fill("Aarav Patel");</code></pre>
+  </div>
+
+  <p>Finds the field through its accessible label and enters text.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">selectOption</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">await page.getByLabel("Course").selectOption("React");</code></pre>
+  </div>
+
+  <p>Selects the course.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">click</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">await page.getByRole("button", {
+  name: /add student/i,
+}).click();</code></pre>
+  </div>
+
+  <p>Finds and clicks the enrollment button.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">assert visible</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">await expect(page.getByText("Aarav Patel")).toBeVisible();</code></pre>
+  </div>
+
+  <p>Verifies that the expected student appears after the workflow.</p>
+  <p>Unlike a component test, this exercise includes the actual browser and the running application.</p>
+
+  <h3>10.5 Mock network requests in Playwright</h3>
+  <p>Playwright can intercept network traffic. This is useful when an E2E test needs a deterministic API response rather than depending on a separate backend service.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">mock network</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">import { test, expect } from "@playwright/test";
+
+test("shows students returned by the API", async ({ page }) => {
+  await page.route("**/api/students", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify([
+        {
+          id: "STU-101",
+          name: "Aarav Patel",
+          course: "React",
+        },
+      ]),
+    });
+  });
+
+  await page.goto("/");
+
+  await expect(
+    page.getByText("Aarav Patel")
+  ).toBeVisible();
+});</code></pre>
+  </div>
+
+  <p>The test intercepts requests to <code>/api/students</code> and returns the specified JSON data.</p>
+  <p>This is still an end-to-end test of the frontend workflow in a real browser, but the backend response is mocked. For full-stack integration testing, include separate tests against a real test backend where appropriate.</p>
+  <p>Network documentation: <a href="https://playwright.dev/docs/network">Playwright network mocking</a>.</p>
+
+  <h3>10.6 What about Cypress?</h3>
+  <p>Cypress is an alternative browser-testing tool.</p>
+  <p>It supports end-to-end tests and component testing. Cypress Component Testing mounts components directly in a real browser and provides tools for inspecting and interacting with them.</p>
+  <p>Official documentation: <a href="https://docs.cypress.io/app/component-testing/react/overview">Cypress React Component Testing</a>.</p>
+  <p>A component test might look like this:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Cypress</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { StudentForm } from "./StudentForm";
+
+it("renders the student form", () => {
+  cy.mount(<StudentForm onSubmit={cy.stub()} />);
+
+  cy.get("input").should("be.visible");
+});</code></pre>
+  </div>
+
+  <p>This assumes the <code>StudentForm</code> component exports a named <code>StudentForm</code> function. In your project, adapt the import to the actual export.</p>
+  <p>Cypress commands such as <code>cy.mount()</code> are configured through Cypress's component testing setup; this snippet is not a Vitest test.</p>
+
+  <h3>10.7 Playwright or Cypress: which should you choose?</h3>
+  <p>Both are capable tools. You do not need to adopt both at the beginning.</p>
+  <p>Choose a primary tool based on your application's requirements, your team's experience, integration support, and the workflows you need to automate.</p>
+  <p>For this learning phase, the main E2E examples use <strong>Playwright</strong>.</p>
+  <p>Use it to automate critical workflows such as login, enrollment, search, editing records, and submitting forms. Use React Testing Library and Vitest for faster feedback on individual components.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">§ 10 · End-to-End Testing</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 11 — ACCESSIBILITY & REGRESSION
+     ============================================================ -->
+<section class="topic" id="s11">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#d97706,#f59e0b);">A11Y</div>
+  <div class="topic-head">
+    <div class="kicker">Section 11</div>
+    <h2>Accessibility Checks and Regression Testing</h2>
+    <p>Making sure real people can use the app — and that today's fix stays fixed.</p>
+  </div>
+
+  <p>Testing is not complete merely because a component renders without an error.</p>
+  <p>A page can appear correct while missing form labels, using inaccessible controls, or breaking an important workflow after a code change.</p>
+  <p>This topic combines accessibility testing with regression testing.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=1200&q=80&auto=format&fit=crop"
+      alt="Hands typing on a keyboard"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · 05</div>
+    <div class="photo-caption">
+      <b>The keyboard-only path</b> — many users never touch a mouse. Accessibility tests verify that the same workflow works with only a keyboard and an accessible name.
+    </div>
+  </div>
+
+  <h3>11.1 What is accessibility testing?</h3>
+  <p>Accessibility testing checks whether people with different abilities can use an application, including people who rely on keyboards or assistive technology.</p>
+  <p>For an LMS, you should investigate questions such as:</p>
+  <ul>
+    <li>Can the user navigate the interface without a mouse?</li>
+    <li>Are inputs associated with labels?</li>
+    <li>Do buttons have understandable names?</li>
+    <li>Are validation errors announced appropriately?</li>
+    <li>Can the user see keyboard focus?</li>
+    <li>Do dialogs manage focus correctly?</li>
+    <li>Is text readable against its background?</li>
+  </ul>
+  <p>React Testing Library helps by encouraging queries that use accessible roles and labels. It does not guarantee that a full page is accessible, so automated checks and manual testing remain important.</p>
+
+  <h3>11.2 Prefer accessible queries in tests</h3>
+  <p>For example, this form has a correctly associated label:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">label</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">&lt;label htmlFor="email"&gt;Email address&lt;/label&gt;
+&lt;input id="email" type="email" /&gt;</code></pre>
+  </div>
+
+  <p>A test can find it through the label:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">getByRole</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">screen.getByRole("textbox", {
+  name: /email address/i,
+});</code></pre>
+  </div>
+
+  <p>A properly labeled button can be located through its role and accessible name.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">button query</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">screen.getByRole("button", {
+  name: /save student/i,
+});</code></pre>
+  </div>
+
+  <p>These queries can uncover a missing accessible name. If you cannot locate an element in the way a user or assistive technology would, the underlying markup may need improvement.</p>
+
+  <h3>11.3 Automated accessibility checks with Playwright</h3>
+  <p>You can add an accessibility scanner to your browser tests.</p>
+  <p>Install the Playwright integration for axe-core:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm install -D @axe-core/playwright</code></pre>
+  </div>
+
+  <p>Create an accessibility test:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">accessibility.spec.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">import AxeBuilder from "@axe-core/playwright";
+import { test, expect } from "@playwright/test";
+
+test("student dashboard has no detected accessibility violations", async ({ page }) => {
+  await page.goto("/");
+
+  const results = await new AxeBuilder({ page }).analyze();
+
+  expect(results.violations).toEqual([]);
+});</code></pre>
+  </div>
+
+  <p>This runs a set of automated accessibility rules against the loaded page.</p>
+  <p>Automated tools can detect many issues, but they do not prove that a page is fully accessible. Manual keyboard checks, focus testing, and assistive-technology testing remain important.</p>
+
+  <h3>11.4 What is regression testing?</h3>
+  <p>Regression testing verifies that previously working behavior still works after code changes.</p>
+  <p>Real-life example: you update the styling and validation logic for the enrollment form. The form now looks better, but accidentally stops submitting selected courses.</p>
+  <p>A regression test catches the problem.</p>
+  <p>Your test suite might include:</p>
+  <ul>
+    <li>The student list renders.</li>
+    <li>Searching finds the correct student.</li>
+    <li>Enrollment rejects an empty name.</li>
+    <li>Enrollment submits the correct data.</li>
+    <li>API errors display a helpful message.</li>
+    <li>Course visibility can be toggled.</li>
+    <li>The dashboard loads at common viewport widths.</li>
+  </ul>
+  <p>The purpose is not to prove that every possible input works. It is to protect important behavior from accidental changes.</p>
+
+  <h3>11.5 Regression tests for a critical workflow</h3>
+  <p>Suppose your dashboard filters students by course.</p>
+  <p>A simple component test may verify that selecting React displays only React students.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">filter test</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">it("filters the student list by course", async () => {
+  const user = userEvent.setup();
+
+  render(
+    &lt;StudentDirectoryWithFilter
+      students={[
+        { id: "1", name: "Aarav", course: "React" },
+        { id: "2", name: "Diya", course: "Data Analytics" },
+      ]}
+    /&gt;
+  );
+
+  await user.selectOptions(
+    screen.getByRole("combobox", { name: /course/i }),
+    "React"
+  );
+
+  expect(screen.getByText("Aarav")).toBeInTheDocument();
+  expect(screen.queryByText("Diya")).not.toBeInTheDocument();
+});</code></pre>
+  </div>
+
+  <p>This example assumes <code>StudentDirectoryWithFilter</code> accepts a <code>students</code> prop and includes a course selector labeled "Course". Adjust the test to the actual component contract in your project.</p>
+  <p>Once added, it can help catch future changes that accidentally break filtering.</p>
+
+  <h3>11.6 Visual regression testing</h3>
+  <p>Visual regression tests compare screenshots to check for unintended changes in appearance.</p>
+  <p>For example, after changing Tailwind styles, a dashboard card may become too narrow or a button may overflow on mobile.</p>
+  <p>Playwright can compare screenshots against approved baseline images:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">screenshot assertion</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">await expect(page).toHaveScreenshot("student-dashboard.png");</code></pre>
+  </div>
+
+  <p>This is an illustrative assertion for a configured Playwright screenshot test. You must generate and review the baseline first.</p>
+  <p>Visual tests work best when the test environment is stable. Dynamic dates, animations, random content, and network timing can produce screenshot differences unrelated to a genuine defect.</p>
+  <p>Visual regression tests complement functional tests; they do not replace them.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">§ 11 · Accessibility &amp; Regression</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     HOW ALL 11 TOPICS FIT TOGETHER
+     ============================================================ -->
+<section class="topic" id="synthesis">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#4f46e5,#a78bfa);">11/11</div>
+  <div class="topic-head">
+    <div class="kicker">Synthesis</div>
+    <h2>How all 11 topics fit together</h2>
+    <p>One workflow, eleven layers of verification.</p>
+  </div>
+
+  <p>Consider a single workflow in your LMS: an administrator adds a student.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The eleven testing layers around one enrollment workflow">
+      <defs>
+        <linearGradient id="synA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0f766e"/><stop offset="100%" stop-color="#14b8a6"/>
+        </linearGradient>
+        <linearGradient id="synB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#d97706"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Center -->
+      <circle cx="380" cy="180" r="54" fill="url(#synA)"/>
+      <text x="380" y="176" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-weight="700" fill="#fff">Add</text>
+      <text x="380" y="194" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-weight="700" fill="#fff">student</text>
+
+      <!-- ring labels -->
+      <g font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#0b3b38">
+        <rect x="46" y="40" width="150" height="30" rx="8" fill="#e9f7f4" stroke="#b9e0d8"/>
+        <text x="121" y="60" text-anchor="middle">1 · React DevTools</text>
+
+        <rect x="306" y="26" width="150" height="30" rx="8" fill="#e9f7f4" stroke="#b9e0d8"/>
+        <text x="381" y="46" text-anchor="middle">2 · Browser DevTools</text>
+
+        <rect x="566" y="40" width="150" height="30" rx="8" fill="#e9f7f4" stroke="#b9e0d8"/>
+        <text x="641" y="60" text-anchor="middle">3 · React Testing Library</text>
+
+        <rect x="620" y="132" width="120" height="30" rx="8" fill="#fff8ec" stroke="#ffdfae"/>
+        <text x="680" y="152" text-anchor="middle">4 · Vitest</text>
+
+        <rect x="620" y="196" width="120" height="30" rx="8" fill="#fff8ec" stroke="#ffdfae"/>
+        <text x="680" y="216" text-anchor="middle">5 · Interaction tests</text>
+
+        <rect x="566" y="288" width="150" height="30" rx="8" fill="#fff8ec" stroke="#ffdfae"/>
+        <text x="641" y="308" text-anchor="middle">6 · Form tests</text>
+
+        <rect x="306" y="308" width="150" height="30" rx="8" fill="#f0fbf7" stroke="#b8ecd8"/>
+        <text x="381" y="328" text-anchor="middle">7 · API mocks</text>
+
+        <rect x="46" y="288" width="150" height="30" rx="8" fill="#f0fbf7" stroke="#b8ecd8"/>
+        <text x="121" y="308" text-anchor="middle">8 · Loading &amp; error</text>
+
+        <rect x="20" y="196" width="150" height="30" rx="8" fill="#f0fbf7" stroke="#b8ecd8"/>
+        <text x="95" y="216" text-anchor="middle">9 · Custom Hooks</text>
+
+        <rect x="20" y="132" width="150" height="30" rx="8" fill="#e9f7f4" stroke="#b9e0d8"/>
+        <text x="95" y="152" text-anchor="middle">10 · Playwright</text>
+
+        <rect x="146" y="90" width="160" height="30" rx="8" fill="url(#synB)"/>
+        <text x="226" y="110" text-anchor="middle" fill="#4a2c00">11 · Accessibility &amp; regression</text>
+      </g>
+
+      <text x="380" y="352" text-anchor="middle" font-family="Georgia, serif" font-size="10.5" font-style="italic" fill="#5d7a70">Each layer catches what the others miss.</text>
+    </svg>
+    <figcaption><b>Figure S.1</b> — One enrollment workflow, eleven complementary layers of verification.</figcaption>
+  </figure>
+
+  <ol>
+    <li><strong>React Developer Tools</strong> helps inspect the component props and state when the form behaves incorrectly.</li>
+    <li><strong>Browser DevTools</strong> helps inspect JavaScript errors and API requests.</li>
+    <li><strong>React Testing Library</strong> helps test the visible behavior of the form.</li>
+    <li><strong>Vitest</strong> runs those tests and reports failures.</li>
+    <li><strong>Interaction tests</strong> verify that users can enter and submit data.</li>
+    <li><strong>Form tests</strong> verify validation and successful submission.</li>
+    <li><strong>API mocks</strong> provide controlled backend responses.</li>
+    <li><strong>Loading and error tests</strong> verify behavior when requests succeed, fail, or take time.</li>
+    <li><strong>Custom Hook tests</strong> verify shared behavior such as debouncing a search value.</li>
+    <li><strong>Playwright</strong> verifies that the complete enrollment workflow works in the browser.</li>
+    <li><strong>Accessibility and regression tests</strong> help ensure that future changes do not silently break usability.</li>
+  </ol>
+
+  <p>A good testing strategy combines these techniques instead of trying to solve every problem with a single test type.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">Synthesis · The Eleven Layers</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMMON MISTAKES
+     ============================================================ -->
+<section class="topic" id="mistakes">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#be123c,#e11d48);">!</div>
+  <div class="topic-head">
+    <div class="kicker">Reference</div>
+    <h2>Common testing mistakes to avoid</h2>
+    <p>Fourteen pitfalls that make tests fragile, slow, or misleading.</p>
+  </div>
+
+  <ol>
+    <li>Testing a component's internal state instead of its observable behavior.</li>
+    <li>Using arbitrary CSS selectors when an accessible role or label is available.</li>
+    <li>Testing only the successful API response.</li>
+    <li>Using fixed delays such as <code>setTimeout</code> in tests when a proper async query or controlled promise would be more reliable.</li>
+    <li>Forgetting to restore mocks and clean up rendered components.</li>
+    <li>Using real production data or an unreliable external API in every component test.</li>
+    <li>Believing a mocked frontend request proves the backend works correctly.</li>
+    <li>Assuming TypeScript types guarantee that server data is valid.</li>
+    <li>Using <code>getByRole</code> for an element that should not exist.</li>
+    <li>Writing E2E tests for every tiny implementation detail instead of focusing on important user journeys.</li>
+    <li>Ignoring keyboard navigation and accessible labels.</li>
+    <li>Relying on screenshot tests alone to catch functional problems.</li>
+    <li>Skipping tests after fixing a production bug.</li>
+    <li>Trying to achieve a high test coverage percentage without checking whether important behavior is actually tested.</li>
+  </ol>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">! · Common Mistakes</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     CAPSTONE PROJECT
+     ============================================================ -->
+<section class="topic" id="capstone">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0f766e,#14b8a6);">PROJECT</div>
+  <div class="topic-head">
+    <div class="kicker">Capstone</div>
+    <h2>Tested Student Management Dashboard</h2>
+    <p>Every layer of Phase 11, applied to one application.</p>
+  </div>
+
+  <h3>Project objective</h3>
+  <p>Build a React application with a tested student directory, enrollment form, and student search workflow.</p>
+
+  <h3>Features to implement</h3>
+  <ul>
+    <li>Render a list of student records.</li>
+    <li>Search for a student by name.</li>
+    <li>Filter students by course.</li>
+    <li>Validate the enrollment form.</li>
+    <li>Show success feedback after successful submission.</li>
+    <li>Show a loading indicator during API requests.</li>
+    <li>Display a useful error message when an API request fails.</li>
+    <li>Add accessible labels and keyboard navigation.</li>
+    <li>Automate at least one enrollment workflow in Playwright.</li>
+  </ul>
+
+  <h3>Suggested project structure</h3>
+
+  <div class="tree"><span class="dir">src/</span>
+├── <span class="dir">api/</span>
+│   └── <span class="file">studentsApi.ts</span>
+├── <span class="dir">components/</span>
+│   ├── <span class="file">StudentForm.tsx</span>
+│   ├── <span class="file">StudentForm.test.tsx</span>
+│   ├── <span class="file">StudentDirectory.tsx</span>
+│   └── <span class="file">StudentDirectory.test.tsx</span>
+├── <span class="dir">hooks/</span>
+│   ├── <span class="file">useDebouncedValue.ts</span>
+│   └── <span class="file">useDebouncedValue.test.ts</span>
+├── <span class="dir">test/</span>
+│   └── <span class="file">setup.ts</span>
+├── <span class="file">App.tsx</span>
+└── <span class="file">main.tsx</span>
+
+<span class="dir">e2e/</span>
+└── <span class="file">student-enrollment.spec.ts</span></div>
+
+  <figure>
+    <svg viewBox="0 0 760 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tested dashboard layout with test layers">
+      <defs>
+        <linearGradient id="capA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0f766e"/><stop offset="100%" stop-color="#14b8a6"/>
+        </linearGradient>
+        <linearGradient id="capB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+        <linearGradient id="capC" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#d97706"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="20" y="20" width="720" height="280" rx="14" fill="#f5fbf9" stroke="#c9ebe2" stroke-width="2"/>
+      <rect x="20" y="20" width="720" height="34" rx="14" fill="url(#capA)"/>
+      <rect x="20" y="40" width="720" height="14" fill="url(#capA)"/>
+      <circle cx="42" cy="38" r="5" fill="#ff5f57"/>
+      <circle cx="60" cy="38" r="5" fill="#febc2e"/>
+      <circle cx="78" cy="38" r="5" fill="#28c840"/>
+      <text x="112" y="42" font-family="Segoe UI, sans-serif" font-size="10" fill="#a7f3d0">localhost:5173 — Tested Dashboard</text>
+
+      <!-- Layout -->
+      <rect x="36" y="68" width="688" height="216" rx="8" fill="#fff"/>
+
+      <!-- top row: form -->
+      <rect x="52" y="82" width="400" height="90" rx="8" fill="url(#capC)"/>
+      <text x="252" y="106" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-weight="700" fill="#4a2c00">StudentForm</text>
+      <text x="252" y="126" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" fill="#4a2c00">name · course · error</text>
+      <text x="252" y="148" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#4a2c00">tests: validation · success · empty name</text>
+
+      <!-- right: hook -->
+      <rect x="468" y="82" width="240" height="90" rx="8" fill="url(#capB)"/>
+      <text x="588" y="106" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-weight="700" fill="#fff">useDebouncedValue</text>
+      <text x="588" y="126" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" fill="#fff">renderHook + fake timers</text>
+      <text x="588" y="148" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#fff">tests: delay · cleanup</text>
+
+      <!-- bottom: directory -->
+      <rect x="52" y="184" width="656" height="86" rx="8" fill="url(#capA)"/>
+      <text x="380" y="208" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-weight="700" fill="#fff">StudentDirectory</text>
+      <text x="380" y="228" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" fill="#d1f2e9">loading · success · empty · error</text>
+      <text x="380" y="250" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#a7f3d0">tests: success · pending · 500 · empty</text>
+
+      <text x="380" y="292" text-anchor="middle" font-family="Georgia, serif" font-size="10.5" font-style="italic" fill="#5d7a70">Plus Playwright E2E, accessibility check, TypeScript build.</text>
+    </svg>
+    <figcaption><b>Figure P.1</b> — The capstone dashboard and the test layers attached to each part.</figcaption>
+  </figure>
+
+  <h3>Acceptance criteria</h3>
+  <ol>
+    <li>Unit tests verify the important data transformations.</li>
+    <li>Component tests verify rendering and user interactions.</li>
+    <li>Form tests cover both invalid and valid submission.</li>
+    <li>API tests cover success and failure.</li>
+    <li>Loading states are tested with a controlled pending request.</li>
+    <li>Hook tests cover the delay and cleanup behavior.</li>
+    <li>Playwright runs at least one critical user journey.</li>
+    <li>Automated accessibility checks run on the main page.</li>
+    <li>The TypeScript check and production build succeed.</li>
+  </ol>
+
+  <h3>Run the checks</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm run test:run
+npx tsc -b
+npm run build
+npx playwright test</code></pre>
+  </div>
+
+  <p>These commands assume you added the relevant scripts and installed Playwright. Use the commands configured by your own project's scripts if the template differs.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">Capstone · Tested Dashboard</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     INTERVIEW QUESTIONS
+     ============================================================ -->
+<section class="topic" id="interview">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#d97706,#f59e0b);">?</div>
+  <div class="topic-head">
+    <div class="kicker">Interview Prep</div>
+    <h2>Phase 11 Interview Questions</h2>
+    <p>Beginner, intermediate, and advanced questions to test your understanding.</p>
+  </div>
+
+  <h3>Beginner level</h3>
+  <ol>
+    <li>What is the difference between debugging and testing?</li>
+    <li>What is React Developer Tools used for?</li>
+    <li>What information can you find in the browser Network panel?</li>
+    <li>What is React Testing Library?</li>
+    <li>What is Vitest?</li>
+    <li>What is the Arrange, Act, Assert pattern?</li>
+    <li>Why is <code>user-event</code> useful?</li>
+    <li>What is the difference between <code>getByRole</code> and <code>findByRole</code>?</li>
+    <li>What is mocking in a component test?</li>
+    <li>What is regression testing?</li>
+  </ol>
+
+  <h3>Intermediate level</h3>
+  <ol>
+    <li>How would you debug a component that displays the wrong data?</li>
+    <li>How would you test a form that has custom validation?</li>
+    <li>How can you test API success and failure without using a real backend?</li>
+    <li>How would you verify that an API-driven component displays a loading state?</li>
+    <li>How do you test a custom Hook with fake timers?</li>
+    <li>When should you use Playwright instead of React Testing Library?</li>
+    <li>How would you test a disabled button and an accessible dialog?</li>
+    <li>Why should you prefer semantic queries to implementation-specific selectors?</li>
+    <li>How can automated accessibility checks help, and what can they miss?</li>
+    <li>Why are tests still required even if TypeScript reports no errors?</li>
+  </ol>
+
+  <h3>Advanced level</h3>
+  <ol>
+    <li>How would you design a reliable testing strategy for a large React application?</li>
+    <li>How do component tests and E2E tests complement one another?</li>
+    <li>How would you reduce flaky tests caused by asynchronous behavior?</li>
+    <li>How would you test API retries, cancellation, and race conditions?</li>
+    <li>What are the limitations of mocking a frontend API request?</li>
+    <li>How would you organize shared test utilities for a component library?</li>
+    <li>How do you decide which workflows deserve regression tests?</li>
+    <li>What is the role of visual regression testing?</li>
+    <li>How do you validate accessibility beyond automated rule checks?</li>
+    <li>How would you ensure that a test suite remains maintainable as an application evolves?</li>
+  </ol>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">? · Interview Questions</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMPLETION CHECKLIST
+     ============================================================ -->
+<section class="topic" id="checklist">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#10b981,#34d399);">✓</div>
+  <div class="topic-head">
+    <div class="kicker">Wrap-Up</div>
+    <h2>Phase 11 Completion Checklist</h2>
+    <p>You are ready to move on when every item below is true.</p>
+  </div>
+
+  <ul style="list-style:none; padding-left:0;">
+    <li>☐ I can inspect React components, props, state, and performance.</li>
+    <li>☐ I can debug browser console errors and inspect HTTP requests.</li>
+    <li>☐ I can render React components and test their visible behavior with React Testing Library.</li>
+    <li>☐ I can configure Vitest for React and TypeScript.</li>
+    <li>☐ I can test rendering, events, and user interactions.</li>
+    <li>☐ I can test form validation and successful submission.</li>
+    <li>☐ I can mock APIs and control responses in tests.</li>
+    <li>☐ I can test loading, empty, success, and error states.</li>
+    <li>☐ I can test a custom Hook with <code>renderHook</code> and fake timers.</li>
+    <li>☐ I can write at least one end-to-end test using Playwright or Cypress.</li>
+    <li>☐ I can run accessibility checks and create regression tests.</li>
+  </ul>
+
+  <h3>Official learning resources</h3>
+  <ol>
+    <li><a href="https://react.dev/learn/react-developer-tools">React Developer Tools</a></li>
+    <li><a href="https://developer.chrome.com/docs/devtools/network/">Chrome DevTools Network panel</a></li>
+    <li><a href="https://testing-library.com/docs/react-testing-library/intro/">React Testing Library</a></li>
+    <li><a href="https://testing-library.com/docs/user-event/setup/">Testing Library user-event</a></li>
+    <li><a href="https://main.vitest.dev/guide/">Vitest Getting Started</a></li>
+    <li><a href="https://vitest.dev/config/environment">Vitest Test Environment</a></li>
+    <li><a href="https://react.dev/reference/react/act">React <code>act</code></a></li>
+    <li><a href="https://playwright.dev/docs/intro">Playwright Installation</a></li>
+    <li><a href="https://playwright.dev/docs/test-assertions">Playwright Assertions</a></li>
+    <li><a href="https://playwright.dev/docs/network">Playwright Network Mocking</a></li>
+    <li><a href="https://docs.cypress.io/app/component-testing/react/overview">Cypress React Component Testing</a></li>
+  </ol>
+
+  <div class="callout remember" style="margin-top:34px;">
+    <div class="ct">◆ Final goal for Phase 11</div>
+    <p>Build confidence that your React application works as intended—not only when everything succeeds, but also when inputs are invalid, requests fail, UI updates are asynchronous, and other parts of the system change.</p>
+    <p><strong>The key principle:</strong> Debug to understand the cause, test behavior to prevent regressions, and automate critical workflows so that the same bug does not keep returning.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 11 · Testing and Debugging</span>
+    <span class="pg">✓ · Completion Checklist</span>
+  </div>
+</section>
+
+</div><!-- /book -->
+</div><!-- /book-wrap -->
+
+<script>
+/* ============================================================
+   Lightweight, dependency-free syntax highlighter.
+   Runs in the browser before you print to PDF.
+   ============================================================ */
+(function () {
+  function esc(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'|`(?:[^`\\\\]|\\\\.)*`)" +
+    "|(<\\/?)([A-Za-z][A-Za-z0-9.]*)" +
+    "|(\\/?>)" +
+    "|\\b(const|let|var|function|return|import|from|export|default|if|else|for|while|class|new|this|true|false|null|undefined|typeof|async|await|of|in|try|catch|finally|throw|switch|case|break|interface|type|extends|readonly|unknown|never|as|describe|expect|it|vi|test)\\b" +
+    "|\\b(\\d+(?:\\.\\d+)?)\\b",
+    "g"
+  );
+
+  function highlight(src) {
+    var out = "", last = 0, m;
+    RE.lastIndex = 0;
+    while ((m = RE.exec(src)) !== null) {
+      out += esc(src.slice(last, m.index));
+      if (m[1] !== undefined)      out += '<span class="tok-com">' + esc(m[1]) + "</span>";
+      else if (m[2] !== undefined) out += '<span class="tok-str">' + esc(m[2]) + "</span>";
+      else if (m[4] !== undefined) out += '<span class="tok-tagp">' + esc(m[3]) + '</span><span class="tok-tag">' + esc(m[4]) + "</span>";
+      else if (m[5] !== undefined) out += '<span class="tok-tagp">' + esc(m[5]) + "</span>";
+      else if (m[6] !== undefined) out += '<span class="tok-kw">' + esc(m[6]) + "</span>";
+      else if (m[7] !== undefined) out += '<span class="tok-num">' + esc(m[7]) + "</span>";
+      last = RE.lastIndex;
+    }
+    out += esc(src.slice(last));
+    return out;
+  }
+
+  function run() {
+    var blocks = document.querySelectorAll("pre > code");
+    for (var i = 0; i < blocks.length; i++) {
+      var el = blocks[i];
+      if (el.dataset.highlighted === "1") continue;
+      if (el.parentElement && el.parentElement.parentElement &&
+          el.parentElement.parentElement.classList.contains("term")) {
+        el.dataset.highlighted = "1";
+        continue;
+      }
+      el.innerHTML = highlight(el.textContent);
+      el.dataset.highlighted = "1";
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run);
+  } else {
+    run();
+  }
+  window.addEventListener("beforeprint", run);
+})();
+</script>
+</body>
+</html>

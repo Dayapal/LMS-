@@ -1,0 +1,1365 @@
+<!-- ============================================================
+     SECTION 7 (CONTINUED) — GENERIC COMPONENTS
+     ============================================================ -->
+<section class="topic" id="s7-cont">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#7c3aed,#a78bfa);">GENERICS</div>
+  <div class="topic-head">
+    <div class="kicker">Section 07 · continued</div>
+    <h2>Generic Reusable Components</h2>
+    <p>The cookie-cutter that keeps its type, no matter what you press into it.</p>
+  </div>
+
+  <p>Generics are especially useful for:</p>
+  <ul>
+    <li>Reusable tables and lists</li>
+    <li>Select components</li>
+    <li>API response wrappers</li>
+    <li>Utility functions</li>
+    <li>Form field helpers</li>
+    <li>Shared data-management components</li>
+    <li>Hooks that operate on typed data</li>
+  </ul>
+  <p>Do not make every component generic automatically. If a component will only ever render one specific data type, a simple interface may be clearer.</p>
+
+  <p>Official guide: <a href="https://www.typescriptlang.org/docs/handbook/2/generics.html">https://www.typescriptlang.org/docs/handbook/2/generics.html</a></p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 10 · TypeScript with React</span>
+    <span class="pg">§ 7 · Generics</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 8 — TYPING API RESPONSES
+     ============================================================ -->
+<section class="topic" id="s8">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0ea5e9,#0284c7);">API</div>
+  <div class="topic-head">
+    <div class="kicker">Section 08</div>
+    <h2>Typing API Responses</h2>
+    <p>The type system is a promise. The network is the wild. Only one of them can be trusted.</p>
+  </div>
+
+  <p>Typing API data is particularly important because a React component often receives information from a backend service.</p>
+  <p>Imagine your CRM fetches student records from an Express API. The frontend expects the response to contain a student's <code>id</code>, <code>name</code>, and <code>course</code>.</p>
+  <p>TypeScript can describe the expected structure. However, <strong>a TypeScript type does not validate the JSON returned by the server at runtime</strong>.</p>
+  <p>This distinction is critical.</p>
+
+  <div class="callout warn">
+    <div class="ct">▲ Trust boundary</div>
+    <p>API responses are runtime data. TypeScript can prove what <em>your</em> code does. It cannot prove what the server sent. That is why validation belongs at the boundary where the data enters your application[reference:6].</p>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TypeScript type versus runtime validation at the API boundary">
+      <defs>
+        <linearGradient id="apiA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+        <linearGradient id="apiB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#d97706"/>
+        </linearGradient>
+        <linearGradient id="apiC" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f43f5e"/><stop offset="100%" stop-color="#be123c"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Left: trusted -->
+      <rect x="24" y="40" width="220" height="200" rx="14" fill="#f0fbf7" stroke="#b8ecd8" stroke-width="2"/>
+      <text x="134" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#047857">Inside your app</text>
+
+      <rect x="46" y="86" width="176" height="26" rx="6" fill="url(#apiA)"/>
+      <text x="134" y="104" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">interface Student</text>
+
+      <rect x="46" y="118" width="176" height="26" rx="6" fill="url(#apiA)"/>
+      <text x="134" y="136" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">Student[]</text>
+
+      <rect x="46" y="150" width="176" height="26" rx="6" fill="url(#apiA)"/>
+      <text x="134" y="168" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">setStudents(data)</text>
+
+      <text x="134" y="196" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#047857">TypeScript guarantees</text>
+      <text x="134" y="214" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#047857">what your code does</text>
+
+      <!-- Boundary -->
+      <line x1="264" y1="40" x2="264" y2="240" stroke="#f59e0b" stroke-width="3" stroke-dasharray="6 4"/>
+      <text x="264" y="258" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#b45309">TRUST BOUNDARY</text>
+
+      <!-- Right: untrusted -->
+      <rect x="276" y="40" width="200" height="200" rx="14" fill="#fff1f2" stroke="#ffd0d5" stroke-width="2"/>
+      <text x="376" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#be123c">The network</text>
+
+      <rect x="298" y="86" width="156" height="26" rx="6" fill="url(#apiC)"/>
+      <text x="376" y="104" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">Malformed JSON</text>
+
+      <rect x="298" y="118" width="156" height="26" rx="6" fill="url(#apiC)"/>
+      <text x="376" y="136" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">Wrong types</text>
+
+      <rect x="298" y="150" width="156" height="26" rx="6" fill="url(#apiC)"/>
+      <text x="376" y="168" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">Missing fields</text>
+
+      <text x="376" y="196" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#8c4152">Compile-time types do</text>
+      <text x="376" y="214" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#8c4152">not travel over the wire</text>
+
+      <!-- Arrow to guard -->
+      <path d="M484 140 H 520" stroke="#f6c667" stroke-width="2.5"/>
+      <polygon points="520,132 536,140 520,148" fill="#f59e0b"/>
+
+      <!-- Guard -->
+      <rect x="544" y="60" width="192" height="160" rx="12" fill="url(#apiB)"/>
+      <text x="640" y="88" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#4a2c00">Type guard</text>
+      <text x="640" y="112" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#4a2c00">isStudent()</text>
+      <text x="640" y="134" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#4a2c00">isRecord()</text>
+      <text x="640" y="164" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#4a2c00">checks every field</text>
+      <text x="640" y="182" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#4a2c00">before trust</text>
+      <text x="640" y="204" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#4a2c00">the security checkpoint</text>
+
+      <text x="380" y="274" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#5f6b86">Types describe the contract. Validation enforces it.</text>
+    </svg>
+    <figcaption><b>Figure 8.1</b> — A type guard acts like a security checkpoint at the trust boundary: nothing enters the app without being checked[reference:7][reference:8].</figcaption>
+  </figure>
+
+  <h3>8.1 Define an API data type</h3>
+  <p>Create <code>types/student.ts</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">types/student.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">export interface Student {
+  id: string;
+  name: string;
+  email: string;
+  course: string;
+}</code></pre>
+  </div>
+
+  <p>Then define the state:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">state</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const [students, setStudents] = useState&lt;Student[]&gt;([]);</code></pre>
+  </div>
+
+  <p>This tells TypeScript what the frontend expects to manage.</p>
+  <p>But it does not prove that an API response actually contains valid <code>Student</code> objects.</p>
+
+  <h3>8.2 A simple API request with typed data</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">fetchStudents.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">async function fetchStudents(): Promise&lt;Student[]&gt; {
+  const response = await fetch("/api/students");
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch students");
+  }
+
+  return (await response.json()) as Student[];
+}</code></pre>
+  </div>
+
+  <p>This demonstrates the function signature and the success check. However, the <code>as Student[]</code> assertion only tells TypeScript to trust the programmer. It does not inspect the actual response.</p>
+  <p>If the backend sends malformed data, this function can still return data that does not match <code>Student[]</code> at runtime.</p>
+  <p>For production-quality code, consider validating untrusted API data.</p>
+
+  <h3>8.3 Safely validating unknown API data</h3>
+  <p>Start with a type guard:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">type guards</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">interface Student {
+  id: string;
+  name: string;
+  email: string;
+  course: string;
+}
+
+function isRecord(value: unknown): value is Record&lt;string, unknown&gt; {
+  return (
+    typeof value === "object" &amp;&amp;
+    value !== null &amp;&amp;
+    !Array.isArray(value)
+  );
+}
+
+function isStudent(value: unknown): value is Student {
+  return (
+    isRecord(value) &amp;&amp;
+    typeof value.id === "string" &amp;&amp;
+    typeof value.name === "string" &amp;&amp;
+    typeof value.email === "string" &amp;&amp;
+    typeof value.course === "string"
+  );
+}</code></pre>
+  </div>
+
+  <p>The guard checks the actual properties before treating the value as a <code>Student</code>.</p>
+  <p>Now validate the array:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">validated fetch</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">async function fetchStudents(): Promise&lt;Student[]&gt; {
+  const response = await fetch("/api/students");
+
+  if (!response.ok) {
+    throw new Error(`Student request failed: ${response.status}`);
+  }
+
+  const payload: unknown = await response.json();
+
+  if (!Array.isArray(payload) || !payload.every(isStudent)) {
+    throw new Error("Invalid student response");
+  }
+
+  return payload;
+}</code></pre>
+  </div>
+
+  <p>This is safer than blindly asserting the response type.</p>
+  <p>The type guard validates the fields defined in the example. A production validator may need to check nested objects, optional fields, dates, numeric constraints, and business rules.</p>
+
+  <h3>8.4 Display API loading, success, and error states</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentPage.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useEffect, useState } from "react";
+
+type StudentState =
+  | { status: "loading" }
+  | { status: "success"; data: Student[] }
+  | { status: "error"; message: string };
+
+function StudentPage() {
+  const [state, setState] = useState&lt;StudentState&gt;({
+    status: "loading",
+  });
+
+  useEffect(() =&gt; {
+    let ignore = false;
+
+    async function loadStudents() {
+      try {
+        const data = await fetchStudents();
+
+        if (!ignore) {
+          setState({ status: "success", data });
+        }
+      } catch (error: unknown) {
+        if (!ignore) {
+          setState({
+            status: "error",
+            message:
+              error instanceof Error
+                ? error.message
+                : "An unexpected error occurred",
+          });
+        }
+      }
+    }
+
+    loadStudents();
+
+    return () =&gt; {
+      ignore = true;
+    };
+  }, []);
+
+  if (state.status === "loading") {
+    return &lt;p&gt;Loading students...&lt;/p&gt;;
+  }
+
+  if (state.status === "error") {
+    return &lt;p role="alert"&gt;{state.message}&lt;/p&gt;;
+  }
+
+  return (
+    &lt;ul&gt;
+      {state.data.map((student) =&gt; (
+        &lt;li key={student.id}&gt;
+          {student.name} — {student.course}
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>This demonstrates typed request states, response data, and error handling.</p>
+  <p>For production applications, a data-fetching library such as TanStack Query or RTK Query may be a better choice than manually coordinating request state and effects. The types of the returned data should still be grounded in validation or a trustworthy API contract.</p>
+
+  <h3>8.5 Typing error values correctly</h3>
+  <p>In strict TypeScript, catch variables are commonly typed as <code>unknown</code>.</p>
+  <p>That is helpful because not every thrown value is guaranteed to be an <code>Error</code> object.</p>
+  <p>Use a check before accessing <code>.message</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">catch</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">catch (error: unknown) {
+  if (error instanceof Error) {
+    console.error(error.message);
+  } else {
+    console.error("Unknown error");
+  }
+}</code></pre>
+  </div>
+
+  <h3>8.6 API types are not the same as validation</h3>
+
+  <table>
+    <thead><tr><th>Technique</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><code>interface Student</code></td><td>Describes the expected structure at development time</td></tr>
+      <tr><td><code>as Student</code></td><td>Tells TypeScript to trust an assertion</td></tr>
+      <tr><td>Type guard</td><td>Checks specified properties at runtime</td></tr>
+      <tr><td>Runtime validation library</td><td>Validates input against a declared schema</td></tr>
+      <tr><td>Backend validation</td><td>Validates incoming data at the server boundary</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>Type the API contract, validate untrusted data, and handle request failures separately.</p>
+    <p>Useful resources:</p>
+    <ul>
+      <li><a href="https://www.typescriptlang.org/docs/handbook/2/narrowing.html">https://www.typescriptlang.org/docs/handbook/2/narrowing.html</a></li>
+      <li><a href="https://react.dev/reference/react/useEffect">https://react.dev/reference/react/useEffect</a></li>
+    </ul>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 10 · TypeScript with React</span>
+    <span class="pg">§ 8 · Typing API Responses</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 9 — TYPING CONTEXT AND REDUCERS
+     ============================================================ -->
+<section class="topic" id="s9">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#7c3aed,#a78bfa);">CONTEXT</div>
+  <div class="topic-head">
+    <div class="kicker">Section 09</div>
+    <h2>Typing Context and Reducers</h2>
+    <p>A typed distribution system for shared state — with an exhaustive audit trail.</p>
+  </div>
+
+  <p>Context is useful when information must be shared across several parts of a component tree without passing the same props through every intermediate component.</p>
+  <p>A reducer is useful when state has multiple actions or related transitions that benefit from being handled in one place.</p>
+  <p>Imagine an institute portal containing:</p>
+  <ul>
+    <li>A dashboard</li>
+    <li>A student list</li>
+    <li>A student editor</li>
+    <li>A student details panel</li>
+  </ul>
+  <p>All those components may need access to the selected student or shared student-management state.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Typed context and reducer as a distribution office with an audit trail">
+      <defs>
+        <linearGradient id="ctxA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#a78bfa"/>
+        </linearGradient>
+        <linearGradient id="ctxB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#0284c7"/>
+        </linearGradient>
+        <linearGradient id="ctxC" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Provider -->
+      <rect x="24" y="40" width="220" height="160" rx="14" fill="url(#ctxA)"/>
+      <text x="134" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">StudentProvider</text>
+      <text x="134" y="92" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#e0d3ff">state: StudentState</text>
+      <text x="134" y="112" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#e0d3ff">dispatch: Dispatch</text>
+      <text x="134" y="134" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#e0d3ff">&lt;StudentAction&gt;</text>
+
+      <text x="134" y="170" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#e0d3ff">the central office</text>
+
+      <!-- Arrow out -->
+      <path d="M256 120 H 320" stroke="#c6daf7" stroke-width="2.5"/>
+      <polygon points="320,112 336,120 320,128" fill="#3b82f6"/>
+
+      <!-- Reducer -->
+      <rect x="348" y="40" width="180" height="160" rx="14" fill="url(#ctxB)"/>
+      <text x="438" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">studentReducer</text>
+
+      <rect x="368" y="86" width="140" height="24" rx="6" fill="rgba(255,255,255,.24)"/>
+      <text x="438" y="103" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" fill="#fff">student/added</text>
+
+      <rect x="368" y="116" width="140" height="24" rx="6" fill="rgba(255,255,255,.24)"/>
+      <text x="438" y="133" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" fill="#fff">student/selected</text>
+
+      <rect x="368" y="146" width="140" height="24" rx="6" fill="rgba(255,255,255,.24)"/>
+      <text x="438" y="163" text-anchor="middle" font-family="Consolas, monospace" font-size="9.5" fill="#fff">student/removed</text>
+
+      <text x="438" y="190" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9" font-style="italic" fill="#e0f2fe">every action is typed</text>
+
+      <!-- Audit -->
+      <rect x="552" y="60" width="184" height="120" rx="12" fill="#08101f"/>
+      <text x="644" y="88" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#7ee2a8" letter-spacing="0.12em">EXHAUSTIVE</text>
+      <text x="644" y="114" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" fill="#ffd479">const _: never = action</text>
+      <text x="644" y="140" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#a7f3d0">compile-time proof that</text>
+      <text x="644" y="156" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#a7f3d0">every case is handled</text>
+
+      <!-- Consumers -->
+      <rect x="60" y="220" width="130" height="30" rx="6" fill="url(#ctxC)"/>
+      <text x="125" y="240" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#04322e">useStudents()</text>
+
+      <rect x="210" y="220" width="130" height="30" rx="6" fill="url(#ctxC)"/>
+      <text x="275" y="240" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#04322e">useStudents()</text>
+
+      <rect x="360" y="220" width="130" height="30" rx="6" fill="url(#ctxC)"/>
+      <text x="425" y="240" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-weight="700" fill="#04322e">useStudents()</text>
+
+      <path d="M134 200 V 220" stroke="#a7f3d0" stroke-width="2" stroke-dasharray="4 3"/>
+      <path d="M438 200 V 220" stroke="#a7f3d0" stroke-width="2" stroke-dasharray="4 3"/>
+
+      <text x="380" y="270" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#5f6b86">Typed context guarantees the shape; the reducer guarantees the transitions.</text>
+    </svg>
+    <figcaption><b>Figure 9.1</b> — Context distributes the shared state; the typed reducer acts as an audit trail where every action is checked.</figcaption>
+  </figure>
+
+  <h3>9.1 Define the state and actions</h3>
+  <p>Create <code>studentState.ts</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">studentState.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">export interface Student {
+  id: string;
+  name: string;
+  course: string;
+}
+
+export interface StudentState {
+  students: Student[];
+  selectedStudentId: string | null;
+}
+
+export type StudentAction =
+  | { type: "student/added"; student: Student }
+  | { type: "student/selected"; studentId: string }
+  | { type: "student/removed"; studentId: string };</code></pre>
+  </div>
+
+  <p>The action union ensures every action has a known structure.</p>
+
+  <h3>9.2 Write a typed reducer</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">studentReducer.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">import type { StudentAction, StudentState } from "./studentState";
+
+export function studentReducer(
+  state: StudentState,
+  action: StudentAction
+): StudentState {
+  switch (action.type) {
+    case "student/added":
+      return {
+        ...state,
+        students: [...state.students, action.student],
+      };
+
+    case "student/selected":
+      return {
+        ...state,
+        selectedStudentId: action.studentId,
+      };
+
+    case "student/removed":
+      return {
+        students: state.students.filter(
+          (student) =&gt; student.id !== action.studentId
+        ),
+        selectedStudentId:
+          state.selectedStudentId === action.studentId
+            ? null
+            : state.selectedStudentId,
+      };
+
+    default: {
+      const exhaustiveCheck: never = action;
+      return exhaustiveCheck;
+    }
+  }
+}</code></pre>
+  </div>
+
+  <h3>Why use <code>never</code>?</h3>
+  <p>The final branch expects that all possible actions have already been handled.</p>
+  <p>If you add another action to <code>StudentAction</code> but forget to handle it in the reducer, TypeScript can report the missing case at the exhaustive check.</p>
+  <p>This pattern helps maintain reducers as applications become more complex.</p>
+
+  <h3>9.3 Create a typed Context</h3>
+  <p>Create <code>StudentContext.tsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentContext.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import {
+  createContext,
+  useContext,
+  useReducer,
+} from "react";
+
+import type { ReactNode } from "react";
+
+import { studentReducer } from "./studentReducer";
+
+import type {
+  StudentState,
+  StudentAction,
+} from "./studentState";
+
+interface StudentContextValue {
+  state: StudentState;
+  dispatch: React.Dispatch&lt;StudentAction&gt;;
+}
+
+const StudentContext = createContext&lt;StudentContextValue | null&gt;(
+  null
+);
+
+const initialState: StudentState = {
+  students: [],
+  selectedStudentId: null,
+};
+
+interface StudentProviderProps {
+  children: ReactNode;
+}
+
+export function StudentProvider({
+  children,
+}: StudentProviderProps) {
+  const [state, dispatch] = useReducer(studentReducer, initialState);
+
+  return (
+    &lt;StudentContext value={{ state, dispatch }}&gt;
+      {children}
+    &lt;/StudentContext&gt;
+  );
+}
+
+export function useStudents() {
+  const context = useContext(StudentContext);
+
+  if (context === null) {
+    throw new Error(
+      "useStudents must be used inside StudentProvider"
+    );
+  }
+
+  return context;
+}</code></pre>
+  </div>
+
+  <p>This uses the React 19 context-provider syntax:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">React 19</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">&lt;StudentContext value={{ state, dispatch }}&gt;
+  {children}
+&lt;/StudentContext&gt;</code></pre>
+  </div>
+
+  <p>For React 18 and earlier versions, use:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">React 18</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">&lt;StudentContext.Provider value={{ state, dispatch }}&gt;
+  {children}
+&lt;/StudentContext.Provider&gt;</code></pre>
+  </div>
+
+  <p>The type for <code>StudentContextValue</code> ensures consumers receive both the state and a dispatch function that accepts only valid student actions.</p>
+
+  <h3>9.4 Provide the context to the application</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { StudentProvider } from "./StudentContext";
+import StudentDashboard from "./StudentDashboard";
+
+function App() {
+  return (
+    &lt;StudentProvider&gt;
+      &lt;StudentDashboard /&gt;
+    &lt;/StudentProvider&gt;
+  );
+}
+
+export default App;</code></pre>
+  </div>
+
+  <p>Now descendants can access the state.</p>
+
+  <h3>9.5 Use Context in a child component</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentDashboard.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useStudents } from "./StudentContext";
+
+function StudentDashboard() {
+  const { state, dispatch } = useStudents();
+
+  function selectStudent(studentId: string) {
+    dispatch({
+      type: "student/selected",
+      studentId,
+    });
+  }
+
+  return (
+    &lt;div className="space-y-3"&gt;
+      &lt;h2 className="text-xl font-bold"&gt;Students&lt;/h2&gt;
+
+      {state.students.map((student) =&gt; (
+        &lt;button
+          type="button"
+          key={student.id}
+          onClick={() =&gt; selectStudent(student.id)}
+          className="block w-full rounded-lg border p-3 text-left"
+        &gt;
+          {student.name}
+        &lt;/button&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The action must include a valid <code>studentId</code> string. Sending a different action structure is caught by TypeScript.</p>
+
+  <h3>9.6 When should you use a reducer?</h3>
+  <p><code>useReducer</code> is useful when:</p>
+  <ul>
+    <li>Many related actions change one state object.</li>
+    <li>State transitions have multiple conditions.</li>
+    <li>You want to centralize state-update logic.</li>
+    <li>The same reducer logic should be independently testable.</li>
+    <li>A component's state logic is becoming difficult to understand.</li>
+  </ul>
+  <p>For a single boolean such as a modal's open state, <code>useState</code> is often simpler.</p>
+
+  <h3>9.7 A practical Context warning</h3>
+  <p>Context is a way to distribute a value through the component tree; it is not automatically a complete state-management solution.</p>
+  <p>When a context value changes, components that consume it can re-render. Consider splitting unrelated context values into separate contexts or using an appropriate state library if your application becomes large.</p>
+  <p>Also avoid choosing <code>null</code> as the context default and then simply assuming a value exists. The custom <code>useStudents</code> Hook uses a runtime check to handle the case where a component is rendered outside its provider.</p>
+
+  <p>Official references:</p>
+  <ul>
+    <li><a href="https://react.dev/reference/react/createContext">https://react.dev/reference/react/createContext</a></li>
+    <li><a href="https://react.dev/reference/react/useContext">https://react.dev/reference/react/useContext</a></li>
+    <li><a href="https://react.dev/reference/react/useReducer">https://react.dev/reference/react/useReducer</a></li>
+  </ul>
+
+  <div class="page-footer">
+    <span>React JS — Phase 10 · TypeScript with React</span>
+    <span class="pg">§ 9 · Typed Context &amp; Reducers</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 10 — STRICT TYPE CHECKING
+     ============================================================ -->
+<section class="topic" id="s10">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#e11d48,#be123c);">STRICT</div>
+  <div class="topic-head">
+    <div class="kicker">Section 10</div>
+    <h2>Strict Type Checking and Avoiding <code>any</code></h2>
+    <p>The safety net that catches what <code>any</code> would quietly let fall.</p>
+  </div>
+
+  <p>TypeScript provides many of its benefits when you enable strict checks and handle uncertain values explicitly.</p>
+
+  <h3>10.1 What is strict mode?</h3>
+  <p>The <code>strict</code> compiler option enables a group of stricter type-checking options.</p>
+  <p>In a React Vite TypeScript project, inspect the TypeScript configuration files created by the template. Make sure strict checking is enabled where intended.</p>
+  <p>A minimal example of the relevant options is:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">tsconfig.json</span><span class="code-lang">JSON</span></div>
+    <pre><code class="lang-json">{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
+  }
+}</code></pre>
+  </div>
+
+  <p>This is an illustrative configuration fragment, not a complete replacement for a Vite template's <code>tsconfig</code> files. Existing project settings may be split across several config files, so preserve the other required options.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Any as cutting the safety net versus strict mode keeping it">
+      <defs>
+        <linearGradient id="stA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f43f5e"/><stop offset="100%" stop-color="#be123c"/>
+        </linearGradient>
+        <linearGradient id="stB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+        <linearGradient id="stC" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#d97706"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Tightrope walker left -->
+      <rect x="24" y="30" width="340" height="200" rx="14" fill="#fff1f2" stroke="#ffd0d5" stroke-width="2"/>
+      <text x="194" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="13.5" font-weight="700" fill="#be123c">With <tspan font-family="Consolas, monospace">any</tspan></text>
+
+      <!-- Tightrope -->
+      <line x1="60" y1="130" x2="330" y2="130" stroke="#8c4152" stroke-width="2" stroke-dasharray="4 4"/>
+
+      <!-- Walker -->
+      <circle cx="160" cy="112" r="10" fill="#8c4152"/>
+      <line x1="160" y1="122" x2="160" y2="130" stroke="#8c4152" stroke-width="2"/>
+      <line x1="148" y1="118" x2="172" y2="118" stroke="#8c4152" stroke-width="2"/>
+
+      <!-- Cut net -->
+      <path d="M60 172 Q 194 200 330 172" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+      <path d="M194 186 L 194 200" stroke="#f43f5e" stroke-width="3"/>
+      <text x="194" y="220" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="700" fill="#be123c">// net cut</text>
+
+      <text x="194" y="88" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#8c4152">no type checking</text>
+      <text x="194" y="104" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#be123c">mistakes fall through silently</text>
+
+      <!-- Arrow -->
+      <path d="M376 130 H 408" stroke="#c6daf7" stroke-width="2.5"/>
+      <polygon points="408,122 424,130 408,138" fill="#3b82f6"/>
+
+      <!-- Right: with strict -->
+      <rect x="436" y="30" width="300" height="200" rx="14" fill="#f0fbf7" stroke="#b8ecd8" stroke-width="2"/>
+      <text x="586" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="13.5" font-weight="700" fill="#047857">With strict mode</text>
+
+      <line x1="466" y1="130" x2="706" y2="130" stroke="#0f9d76" stroke-width="2"/>
+
+      <circle cx="586" cy="112" r="10" fill="#0f9d76"/>
+      <line x1="586" y1="122" x2="586" y2="130" stroke="#0f9d76" stroke-width="2"/>
+      <line x1="574" y1="118" x2="598" y2="118" stroke="#0f9d76" stroke-width="2"/>
+
+      <!-- Net -->
+      <path d="M466 172 Q 586 208 706 172" stroke="url(#stB)" stroke-width="3" fill="none"/>
+      <path d="M526 190 L 526 206" stroke="#10b981" stroke-width="2"/>
+      <path d="M586 198 L 586 214" stroke="#10b981" stroke-width="2"/>
+      <path d="M646 190 L 646 206" stroke="#10b981" stroke-width="2"/>
+
+      <text x="586" y="88" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#047857">strict checks active</text>
+      <text x="586" y="104" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-style="italic" fill="#047857">caught before runtime</text>
+
+      <text x="586" y="240" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="700" fill="#047857">// net intact</text>
+
+      <text x="380" y="252" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#5f6b86">Using <tspan font-family="Consolas, monospace">any</tspan> is like cutting the safety net while you are still on the rope[reference:9].</text>
+    </svg>
+    <figcaption><b>Figure 10.1</b> — <code>any</code> removes the safety net; strict mode keeps it in place while you work.</figcaption>
+  </figure>
+
+  <h3>10.2 Why is <code>any</code> dangerous?</h3>
+  <p>Consider:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ any</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">let student: any = {
+  name: "Aarav",
+  course: "React",
+};
+
+student.age.toUpperCase();</code></pre>
+  </div>
+
+  <p>TypeScript allows the property access because <code>student</code> is typed as <code>any</code>. The application may fail when it runs because the property does not exist or has the wrong type.</p>
+  <p>The <code>any</code> type effectively opts out of checking for that value and can cause that loss of type safety to propagate through your code.</p>
+
+  <h3>10.3 Prefer <code>unknown</code> for uncertain data</h3>
+  <p>If you receive an untrusted value, <code>unknown</code> makes you validate it before using its properties.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">unknown</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">const responseData: unknown = await response.json();</code></pre>
+  </div>
+
+  <p>You must narrow or validate that value before treating it as a <code>Student</code>.</p>
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">narrow</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">function printName(value: unknown) {
+  if (
+    typeof value === "object" &amp;&amp;
+    value !== null &amp;&amp;
+    "name" in value &amp;&amp;
+    typeof value.name === "string"
+  ) {
+    console.log(value.name);
+  }
+}</code></pre>
+  </div>
+
+  <p>TypeScript knows that accessing <code>.name</code> is valid after these checks.</p>
+
+  <h3>10.4 Avoid implicit <code>any</code></h3>
+  <p>This function does not provide enough type information for the parameter:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ implicit any</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">function greet(name) {
+  return `Hello, ${name}`;
+}</code></pre>
+  </div>
+
+  <p>Under strict settings, TypeScript flags an implicitly <code>any</code> parameter.</p>
+  <p>Correct it:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ explicit</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">function greet(name: string): string {
+  return `Hello, ${name}`;
+}</code></pre>
+  </div>
+
+  <p>Now the function requires a string and returns a string.</p>
+
+  <h3>10.5 Handle <code>null</code> and <code>undefined</code> explicitly</h3>
+  <p>Consider a selected student:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">nullable</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">interface Student {
+  id: string;
+  name: string;
+}
+
+const selectedStudent: Student | null = null;</code></pre>
+  </div>
+
+  <p>This is unsafe:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ unsafe</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">// selectedStudent.name</code></pre>
+  </div>
+
+  <p>TypeScript reports that the selected student could be <code>null</code>.</p>
+  <p>Check first:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ safe</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">if (selectedStudent !== null) {
+  console.log(selectedStudent.name);
+}</code></pre>
+  </div>
+
+  <p>Or use optional chaining when it is appropriate:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">optional chaining</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">console.log(selectedStudent?.name);</code></pre>
+  </div>
+
+  <p>Optional chaining does not guarantee that the value exists; it returns <code>undefined</code> when the receiver is nullish.</p>
+
+  <h3>10.6 Avoid unnecessary type assertions</h3>
+  <p>A type assertion tells TypeScript to treat a value as a specified type:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">assertion</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">const student = responseData as Student;</code></pre>
+  </div>
+
+  <p>It does not perform validation. Use it only when you have a sound reason to trust the value and understand what the compiler can no longer verify.</p>
+  <p>When data comes from the network, a type guard or runtime schema validation is usually a safer starting point.</p>
+
+  <h3>10.7 Replace weakly typed code</h3>
+  <p>Avoid:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ weak</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">function StudentCard({ student }: any) {
+  return &lt;div&gt;{student.name}&lt;/div&gt;;
+}</code></pre>
+  </div>
+
+  <p>Prefer:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✓ strong</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">interface Student {
+  id: string;
+  name: string;
+  course: string;
+}
+
+interface StudentCardProps {
+  student: Student;
+}
+
+function StudentCard({ student }: StudentCardProps) {
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;{student.name}&lt;/h2&gt;
+      &lt;p&gt;{student.course}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The second version provides editor autocomplete, checks the expected fields, and documents the component contract.</p>
+
+  <h3>10.8 Practical strict-TypeScript rules</h3>
+  <ul>
+    <li>Prefer <code>string</code>, <code>number</code>, and <code>boolean</code> for primitive value types.</li>
+    <li>Avoid <code>any</code> when a precise type or <code>unknown</code> is possible.</li>
+    <li>Represent optional and nullable values explicitly.</li>
+    <li>Let TypeScript infer straightforward values when inference is clear.</li>
+    <li>Use unions for known alternatives.</li>
+    <li>Validate data at runtime when it crosses a trust boundary.</li>
+    <li>Keep event handlers, reducers, and public component props typed.</li>
+    <li>Run the type checker regularly.</li>
+    <li>Do not silence an error with <code>as any</code> just to make the build pass.</li>
+  </ul>
+
+  <div class="callout remember">
+    <div class="ct">◆ Remember</div>
+    <p>Strict mode does not make incorrect code impossible, but it helps expose missing assumptions before they become runtime bugs.</p>
+    <p>Official references:</p>
+    <ul>
+      <li><a href="https://www.typescriptlang.org/docs/handbook/2/basic-types.html">https://www.typescriptlang.org/docs/handbook/2/basic-types.html</a></li>
+      <li><a href="https://www.typescriptlang.org/docs/handbook/2/narrowing.html">https://www.typescriptlang.org/docs/handbook/2/narrowing.html</a></li>
+    </ul>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 10 · TypeScript with React</span>
+    <span class="pg">§ 10 · Strict Mode</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     CAPSTONE PROJECT
+     ============================================================ -->
+<section class="topic" id="capstone">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0f9d76,#34d399);">PROJECT</div>
+  <div class="topic-head">
+    <div class="kicker">Capstone</div>
+    <h2>Typed Student Management Dashboard</h2>
+    <p>Every concept, combined into one compile-clean application.</p>
+  </div>
+
+  <p>Now combine the concepts into one small project using React, TypeScript, and Tailwind CSS.</p>
+
+  <h3>Project goal</h3>
+  <p>Build a dashboard that:</p>
+  <ul>
+    <li>Displays a list of student records.</li>
+    <li>Allows filtering by course.</li>
+    <li>Lets the user select a student.</li>
+    <li>Uses a reusable generic list component.</li>
+    <li>Maintains typed student state.</li>
+    <li>Uses a discriminated union for API status.</li>
+    <li>Has properly typed form events.</li>
+    <li>Validates external data.</li>
+    <li>Uses reusable components with typed props.</li>
+    <li>Compiles without avoidable TypeScript errors.</li>
+  </ul>
+
+  <figure>
+    <svg viewBox="0 0 760 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Capstone dashboard composition of typed components">
+      <defs>
+        <linearGradient id="cpA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e40af"/><stop offset="100%" stop-color="#3b82f6"/>
+        </linearGradient>
+        <linearGradient id="cpB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+        <linearGradient id="cpC" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#d97706"/>
+        </linearGradient>
+        <linearGradient id="cpD" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#a78bfa"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Browser shell -->
+      <rect x="20" y="20" width="720" height="280" rx="14" fill="#f8fbff" stroke="#c6daf7" stroke-width="2"/>
+      <rect x="20" y="20" width="720" height="34" rx="14" fill="url(#cpA)"/>
+      <rect x="20" y="40" width="720" height="14" fill="url(#cpA)"/>
+      <circle cx="42" cy="38" r="5" fill="#ff5f57"/>
+      <circle cx="60" cy="38" r="5" fill="#febc2e"/>
+      <circle cx="78" cy="38" r="5" fill="#28c840"/>
+      <rect x="100" y="28" width="360" height="20" rx="5" fill="rgba(255,255,255,.2)"/>
+      <text x="112" y="42" font-family="Segoe UI, sans-serif" font-size="10" fill="#dbe8ff">my-react-ts-app — TypeScript</text>
+
+      <!-- Layout -->
+      <rect x="36" y="68" width="688" height="216" rx="8" fill="#fff"/>
+
+      <!-- Sidebar -->
+      <rect x="48" y="80" width="148" height="192" rx="8" fill="url(#cpD)"/>
+      <text x="122" y="104" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="700" fill="#fff">Navigator</text>
+
+      <rect x="62" y="118" width="120" height="22" rx="5" fill="rgba(255,255,255,.24)"/>
+      <text x="122" y="134" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#fff">All Students</text>
+
+      <rect x="62" y="146" width="120" height="22" rx="5" fill="rgba(255,255,255,.24)"/>
+      <text x="122" y="162" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#fff">React</text>
+
+      <rect x="62" y="174" width="120" height="22" rx="5" fill="rgba(255,255,255,.24)"/>
+      <text x="122" y="190" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#fff">Full Stack</text>
+
+      <rect x="62" y="202" width="120" height="22" rx="5" fill="rgba(255,255,255,.24)"/>
+      <text x="122" y="218" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#fff">Data Analytics</text>
+
+      <text x="122" y="254" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#e0d3ff">course filter</text>
+
+      <!-- Main -->
+      <rect x="208" y="80" width="336" height="192" rx="8" fill="#fff" stroke="#dbe6f5"/>
+      <text x="376" y="104" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-weight="700" fill="#1e40af">Student Directory</text>
+
+      <rect x="222" y="118" width="308" height="26" rx="6" fill="#fff" stroke="#cbd5e1"/>
+      <text x="234" y="136" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#94a3b8">🔍 Search...</text>
+
+      <rect x="222" y="154" width="308" height="34" rx="6" fill="url(#cpB)"/>
+      <text x="234" y="174" font-family="Consolas, monospace" font-size="9.5" font-weight="700" fill="#fff">&lt;GenericList items={students} /&gt;</text>
+
+      <rect x="222" y="194" width="308" height="34" rx="6" fill="#fff" stroke="#cbd5e1"/>
+      <text x="234" y="212" font-family="Consolas, monospace" font-size="9" fill="#5f6b86">getKey={(s) =&gt; s.id}</text>
+
+      <rect x="222" y="234" width="308" height="34" rx="6" fill="#fff" stroke="#cbd5e1"/>
+      <text x="234" y="252" font-family="Consolas, monospace" font-size="9" fill="#5f6b86">renderItem={(s) =&gt; &lt;StudentCard /&gt;}</text>
+
+      <!-- Right panel -->
+      <rect x="556" y="80" width="156" height="192" rx="8" fill="url(#cpC)"/>
+      <text x="634" y="104" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="700" fill="#4a2c00">Editor</text>
+
+      <rect x="570" y="118" width="128" height="22" rx="5" fill="rgba(255,255,255,.32)"/>
+      <text x="634" y="134" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#4a2c00">StudentForm</text>
+
+      <rect x="570" y="146" width="128" height="22" rx="5" fill="rgba(255,255,255,.32)"/>
+      <text x="634" y="162" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#4a2c00">FormEvent</text>
+
+      <rect x="570" y="174" width="128" height="22" rx="5" fill="rgba(255,255,255,.32)"/>
+      <text x="634" y="190" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#4a2c00">useState&lt;T&gt;</text>
+
+      <rect x="570" y="202" width="128" height="22" rx="5" fill="rgba(255,255,255,.32)"/>
+      <text x="634" y="218" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#4a2c00">StudentContext</text>
+
+      <text x="634" y="254" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9" font-style="italic" fill="#4a2c00">all typed</text>
+
+      <text x="380" y="312" text-anchor="middle" font-family="Georgia, serif" font-size="10.5" font-style="italic" fill="#5f6b86">Props · interfaces · unions · generics · events · API validation · context · reducer — all in one dashboard.</text>
+    </svg>
+    <figcaption><b>Figure P.1</b> — The capstone combines every Phase 10 tool into a single typed dashboard.</figcaption>
+  </figure>
+
+  <h3>Suggested structure</h3>
+
+  <div class="tree"><span class="dir">src/</span>
+├── <span class="dir">components/</span>
+│   ├── <span class="file">Button.tsx</span>
+│   ├── <span class="file">StudentCard.tsx</span>
+│   ├── <span class="file">StudentForm.tsx</span>
+│   └── <span class="file">GenericList.tsx</span>
+├── <span class="dir">context/</span>
+│   └── <span class="file">StudentContext.tsx</span>
+├── <span class="dir">types/</span>
+│   └── <span class="file">student.ts</span>
+├── <span class="file">App.tsx</span>
+└── <span class="file">main.tsx</span></div>
+
+  <h3>Suggested Student type</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">types/student.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">export interface Student {
+  id: string;
+  name: string;
+  email: string;
+  course: "React" | "Full Stack" | "Data Analytics";
+  status: "active" | "inactive";
+}</code></pre>
+  </div>
+
+  <h3>Suggested API state</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">ApiState</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">type ApiState&lt;T&gt; =
+  | { status: "loading" }
+  | { status: "success"; data: T }
+  | { status: "error"; message: string };</code></pre>
+  </div>
+
+  <h3>Suggested acceptance criteria</h3>
+  <ol>
+    <li>Invalid student properties produce type errors.</li>
+    <li>A form can update student data without using <code>any</code>.</li>
+    <li>The generic list renders both students and courses.</li>
+    <li>Empty and loading states are explicitly represented.</li>
+    <li>The API data is validated at runtime before being treated as a student record.</li>
+    <li>Context and reducer actions accept only valid state transitions.</li>
+    <li>Components use stable record IDs as list keys.</li>
+    <li>The project builds and passes the TypeScript type check.</li>
+  </ol>
+
+  <p>For Vite projects, you can run:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npx tsc -b
+npm run build</code></pre>
+  </div>
+
+  <p>Check your project's scripts if the generated template uses a different type-check command. A successful production build is useful, but make sure the TypeScript compiler is actually being run; not every development server or build configuration type-checks all files automatically.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 10 · TypeScript with React</span>
+    <span class="pg">Capstone · Typed Student Dashboard</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMMON MISTAKES
+     ============================================================ -->
+<section class="topic" id="mistakes">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#be123c,#e11d48);">!</div>
+  <div class="topic-head">
+    <div class="kicker">Reference</div>
+    <h2>Common Mistakes to Avoid</h2>
+    <p>Fourteen pitfalls every typed React developer runs into.</p>
+  </div>
+
+  <ol>
+    <li>Using <code>any</code> for component props rather than defining the expected data shape.</li>
+    <li>Assuming the <code>Student</code> interface validates data returned from a backend.</li>
+    <li>Typing every component return value unnecessarily instead of using inference.</li>
+    <li>Forgetting that DOM input values are usually strings.</li>
+    <li>Treating checkbox <code>.value</code> as the checkbox's checked state.</li>
+    <li>Using an untyped empty array when the intended item type is not obvious.</li>
+    <li>Forgetting that DOM refs may be <code>null</code> before a component mounts or after it unmounts.</li>
+    <li>Using <code>ReactNode</code> when a particular component genuinely requires a single element.</li>
+    <li>Making every component generic even when there is only one relevant data type.</li>
+    <li>Creating a context with <code>null</code> and using it without checking that its provider exists.</li>
+    <li>Forgetting to handle every action in a reducer's discriminated union.</li>
+    <li>Using <code>as Student</code> as a substitute for validating API responses.</li>
+    <li>Silencing type errors with <code>as any</code>.</li>
+    <li>Disabling strict compiler checks because of one difficult error rather than addressing the underlying type issue.</li>
+  </ol>
+
+  <div class="page-footer">
+    <span>React JS — Phase 10 · TypeScript with React</span>
+    <span class="pg">! · Common Mistakes</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     REVISION NOTES
+     ============================================================ -->
+<section class="topic" id="revision">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0ea5e9,#0284c7);">↺</div>
+  <div class="topic-head">
+    <div class="kicker">Revision</div>
+    <h2>Phase 10 Revision Notes</h2>
+    <p>One-line reminders for every typed concept.</p>
+  </div>
+
+  <table>
+    <thead><tr><th>Concept</th><th>What to remember</th></tr></thead>
+    <tbody>
+      <tr><td>Props</td><td>Describe component inputs</td></tr>
+      <tr><td>Interface</td><td>Defines an object-shaped contract</td></tr>
+      <tr><td>Type alias</td><td>Names a type, including unions and intersections</td></tr>
+      <tr><td>Union</td><td>Allows one of several types</td></tr>
+      <tr><td>Discriminated union</td><td>Uses a shared literal field to distinguish variants</td></tr>
+      <tr><td>Typed event</td><td>Describes the event and target element</td></tr>
+      <tr><td><code>useState&lt;T&gt;</code></td><td>Defines state when inference needs assistance</td></tr>
+      <tr><td><code>useRef&lt;T&gt;</code></td><td>Types a stored value or DOM reference</td></tr>
+      <tr><td><code>ReactNode</code></td><td>Describes a wide range of renderable children</td></tr>
+      <tr><td>Generics</td><td>Reuse code while preserving type information</td></tr>
+      <tr><td>API validation</td><td>Checks the actual external data at runtime</td></tr>
+      <tr><td>Context</td><td>Shares values through the component tree</td></tr>
+      <tr><td>Reducer</td><td>Centralizes state transitions</td></tr>
+      <tr><td><code>unknown</code></td><td>Requires checking before use</td></tr>
+      <tr><td><code>any</code></td><td>Disables checking for the value</td></tr>
+      <tr><td>Strict mode</td><td>Enables stronger TypeScript checks</td></tr>
+    </tbody>
+  </table>
+
+  <div class="page-footer">
+    <span>React JS — Phase 10 · TypeScript with React</span>
+    <span class="pg">↺ · Revision Notes</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     INTERVIEW QUESTIONS
+     ============================================================ -->
+<section class="topic" id="interview">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#f59e0b,#d97706);">?</div>
+  <div class="topic-head">
+    <div class="kicker">Interview Prep</div>
+    <h2>Phase 10 Interview Questions</h2>
+    <p>Beginner, intermediate, and advanced questions to test your understanding.</p>
+  </div>
+
+  <h3>Beginner level</h3>
+  <ol>
+    <li>What is TypeScript, and why is it useful with React?</li>
+    <li>What is the difference between <code>.ts</code> and <code>.tsx</code>?</li>
+    <li>How do you type component props?</li>
+    <li>What is the difference between <code>interface</code> and <code>type</code>?</li>
+    <li>What does the question mark mean in an interface property?</li>
+    <li>What is a union type?</li>
+    <li>How do you type an input change event?</li>
+    <li>What does <code>useState&lt;Student | null&gt;(null)</code> mean?</li>
+    <li>What is <code>ReactNode</code>?</li>
+    <li>Why should you avoid using <code>any</code>?</li>
+  </ol>
+
+  <h3>Intermediate level</h3>
+  <ol>
+    <li>When should you use an explicit component return type?</li>
+    <li>What are discriminated unions?</li>
+    <li>How do you type <code>useRef</code> for an input element?</li>
+    <li>How would you create a generic reusable list?</li>
+    <li>Why does <code>response.json()</code> need special care when typing API data?</li>
+    <li>How do you validate external data with a type guard?</li>
+    <li>How do you type a context value and its reducer actions?</li>
+    <li>What does <code>unknown</code> provide that <code>any</code> does not?</li>
+    <li>What is the purpose of <code>strictNullChecks</code>?</li>
+    <li>How does a reducer's <code>never</code> check help prevent mistakes?</li>
+  </ol>
+
+  <h3>Advanced level</h3>
+  <ol>
+    <li>How can generics preserve the relationship between input and output types?</li>
+    <li>How would you model asynchronous API states without contradictory combinations?</li>
+    <li>How would you design typed component variants?</li>
+    <li>What is the difference between compile-time checking and runtime validation?</li>
+    <li>How would you migrate an existing JavaScript React project to TypeScript incrementally?</li>
+    <li>How would you type API responses while preventing unsafe assertions?</li>
+    <li>How can Context and reducers be used together?</li>
+    <li>When does a type assertion make sense, and what can go wrong?</li>
+    <li>What is the difference between structural typing and runtime object validation?</li>
+    <li>How would you structure types for a large React application to keep components reusable and maintainable?</li>
+  </ol>
+
+  <div class="page-footer">
+    <span>React JS — Phase 10 · TypeScript with React</span>
+    <span class="pg">? · Interview Questions</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMPLETION CHECKLIST
+     ============================================================ -->
+<section class="topic" id="checklist">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#10b981,#34d399);">✓</div>
+  <div class="topic-head">
+    <div class="kicker">Wrap-Up</div>
+    <h2>Phase 10 Completion Checklist</h2>
+    <p>You are ready to move on when you can do the following without merely copying the examples.</p>
+  </div>
+
+  <ul style="list-style:none; padding-left:0;">
+    <li>☐ I can type component props and understand return-type inference.</li>
+    <li>☐ I can use interfaces and type aliases appropriately.</li>
+    <li>☐ I can model alternatives with unions and discriminated unions.</li>
+    <li>☐ I can type form events and input handlers.</li>
+    <li>☐ I can correctly type <code>useState</code> and <code>useRef</code>.</li>
+    <li>☐ I can type <code>children</code> and build composed components.</li>
+    <li>☐ I can create reusable generic components.</li>
+    <li>☐ I can type and validate API responses.</li>
+    <li>☐ I can combine typed Context with a reducer.</li>
+    <li>☐ I can enable strict checks and write code that avoids unnecessary <code>any</code>.</li>
+  </ul>
+
+  <h3>Official learning resources</h3>
+  <ol>
+    <li><a href="https://react.dev/learn/typescript">React — Using TypeScript</a></li>
+    <li><a href="https://www.typescriptlang.org/docs/handbook/2/everyday-types.html">TypeScript — Everyday Types</a></li>
+    <li><a href="https://www.typescriptlang.org/docs/handbook/2/narrowing.html">TypeScript — Narrowing</a></li>
+    <li><a href="https://www.typescriptlang.org/docs/handbook/2/generics.html">TypeScript — Generics</a></li>
+    <li><a href="https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html">TypeScript — TypeScript for the New Programmer</a></li>
+    <li><a href="https://react.dev/reference/react/useState">React — <code>useState</code></a></li>
+    <li><a href="https://react.dev/reference/react/useRef">React — <code>useRef</code></a></li>
+    <li><a href="https://react.dev/reference/react/useContext">React — <code>useContext</code></a></li>
+    <li><a href="https://react.dev/reference/react/useReducer">React — <code>useReducer</code></a></li>
+  </ol>
+
+  <div class="callout remember" style="margin-top:34px;">
+    <div class="ct">◆ Final goal for Phase 10</div>
+    <p>Build a React application where components, forms, shared state, and API data have meaningful types. You should be able to explain why each type exists, recognize where runtime validation is necessary, and use TypeScript to catch errors instead of bypassing the type checker.</p>
+    <p><strong>The key principle:</strong> Make your code's assumptions explicit, use inference where it helps, and validate data when it enters your application from the outside world.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 10 · TypeScript with React</span>
+    <span class="pg">✓ · Completion Checklist</span>
+  </div>
+</section>
+
+</div><!-- /book -->
+</div><!-- /book-wrap -->
+
+<script>
+/* ============================================================
+   Lightweight, dependency-free syntax highlighter.
+   Runs in the browser before you print to PDF.
+   ============================================================ */
+(function () {
+  function esc(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  var RE = new RegExp(
+    "(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)" +
+    "|(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'|`(?:[^`\\\\]|\\\\.)*`)" +
+    "|(<\\/?)([A-Za-z][A-Za-z0-9.]*)" +
+    "|(\\/?>)" +
+    "|\\b(const|let|var|function|return|import|from|export|default|if|else|for|while|class|new|this|true|false|null|undefined|typeof|async|await|of|in|try|catch|finally|throw|switch|case|break|interface|type|extends|readonly|unknown|never|as)\\b" +
+    "|\\b(\\d+(?:\\.\\d+)?)\\b",
+    "g"
+  );
+
+  function highlight(src) {
+    var out = "", last = 0, m;
+    RE.lastIndex = 0;
+    while ((m = RE.exec(src)) !== null) {
+      out += esc(src.slice(last, m.index));
+      if (m[1] !== undefined)      out += '<span class="tok-com">' + esc(m[1]) + "</span>";
+      else if (m[2] !== undefined) out += '<span class="tok-str">' + esc(m[2]) + "</span>";
+      else if (m[4] !== undefined) out += '<span class="tok-tagp">' + esc(m[3]) + '</span><span class="tok-tag">' + esc(m[4]) + "</span>";
+      else if (m[5] !== undefined) out += '<span class="tok-tagp">' + esc(m[5]) + "</span>";
+      else if (m[6] !== undefined) out += '<span class="tok-kw">' + esc(m[6]) + "</span>";
+      else if (m[7] !== undefined) out += '<span class="tok-num">' + esc(m[7]) + "</span>";
+      last = RE.lastIndex;
+    }
+    out += esc(src.slice(last));
+    return out;
+  }
+
+  function run() {
+    var blocks = document.querySelectorAll("pre > code");
+    for (var i = 0; i < blocks.length; i++) {
+      var el = blocks[i];
+      if (el.dataset.highlighted === "1") continue;
+      if (el.parentElement && el.parentElement.parentElement &&
+          el.parentElement.parentElement.classList.contains("term")) {
+        el.dataset.highlighted = "1";
+        continue;
+      }
+      el.innerHTML = highlight(el.textContent);
+      el.dataset.highlighted = "1";
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run);
+  } else {
+    run();
+  }
+  window.addEventListener("beforeprint", run);
+})();
+</script>
+</body>
+</html>

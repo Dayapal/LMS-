@@ -1,0 +1,4041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React JS — Phase 14: Architecture and Advanced Patterns</title>
+<style>
+/* ============================================================
+   PREMIUM REACT PHASE 14 BOOK — PRINT / PDF STYLESHEET
+   Thick-book spine · page edges · chapter tabs · architecture violet
+   ============================================================ */
+
+:root{
+  --ink:#0d0a1f;
+  --ink-soft:#2a2440;
+  --muted:#6b6585;
+  --brand:#3b0764;
+  --brand-2:#7c3aed;
+  --brand-3:#ddd6fe;
+  --accent:#f59e0b;
+  --accent-2:#14b8a6;
+  --emerald:#10b981;
+  --rose:#e11d48;
+  --indigo:#4f46e5;
+  --violet:#7c3aed;
+  --teal:#0d9488;
+  --cyan:#0891b2;
+  --paper:#ffffff;
+  --paper-edge:#f1ecfe;
+  --paper-edge-2:#e5dcfb;
+  --line:#e5dcfb;
+  --code-bg:#0a0618;
+  --code-head:#1a1038;
+  --spine-w:16px;
+}
+
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, #e9e0fd 0%, transparent 60%),
+    #ddd3f3;
+  color:var(--ink);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size:11.4pt;
+  line-height:1.78;
+  -webkit-font-smoothing:antialiased;
+  padding: 30px 0 80px;
+}
+
+/* ============================================================
+   BOOK SHELL
+   ============================================================ */
+.book-wrap{
+  position: relative;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 22px;
+}
+.book-wrap::after{
+  content:"";
+  position:absolute;
+  left:44px; right:44px; bottom:-26px;
+  height:48px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(30,10,70,.24), transparent 70%);
+  border-radius: 50%;
+  filter: blur(7px);
+  z-index: -1;
+}
+.book{
+  position: relative;
+  background: var(--paper);
+  border-radius: 3px 8px 8px 3px;
+  padding: 0 74px 92px;
+  box-shadow:
+    2px 0 0 var(--paper-edge),
+    4px 0 0 var(--paper-edge-2),
+    6px 0 0 var(--paper-edge),
+    8px 0 0 var(--paper-edge-2),
+    10px 0 0 var(--paper-edge),
+    12px 0 0 var(--paper-edge-2),
+    -3px 0 0 rgba(30,10,70,.10),
+    -6px 0 0 rgba(30,10,70,.06),
+    0 22px 55px rgba(30,10,70,.18),
+    0 8px 18px rgba(30,10,70,.10);
+}
+.book::before{
+  content:"";
+  position:absolute;
+  top:0; bottom:0; left:0;
+  width: var(--spine-w);
+  background: linear-gradient(90deg,
+    rgba(30,10,70,.16) 0%,
+    rgba(30,10,70,.08) 40%,
+    rgba(30,10,70,.02) 75%,
+    transparent 100%);
+  border-radius: 3px 0 0 3px;
+  pointer-events:none;
+}
+.book::after{
+  content:"";
+  position:absolute;
+  top:0; right:0;
+  width:32px; height:32px;
+  background: linear-gradient(225deg,
+    transparent 45%,
+    rgba(30,10,70,.08) 50%,
+    rgba(30,10,70,.14) 100%);
+  border-bottom-left-radius: 8px;
+  pointer-events:none;
+}
+
+/* ============================================================
+   COVER
+   ============================================================ */
+.cover{
+  position:relative;
+  margin: 0 -74px 62px;
+  padding: 86px 78px 76px;
+  background:
+    radial-gradient(1100px 600px at 12% -10%, #7c3aed 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 110%, #0a0618 0%, transparent 60%),
+    linear-gradient(150deg,#0a0618 0%, #3b0764 38%, #7c3aed 72%, #0d9488 100%);
+  color:#fff;
+  overflow:hidden;
+  border-radius: 3px 8px 0 0;
+  box-shadow: 0 22px 42px rgba(20,5,50,.30);
+}
+.cover::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(ellipse at 70% 20%, #000 0%, transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse at 70% 20%, #000 0%, transparent 78%);
+  pointer-events:none;
+}
+.cover::after{
+  content:"";
+  position:absolute;
+  width:580px; height:580px; right:-170px; bottom:-230px;
+  background:radial-gradient(circle, rgba(245,158,11,.30) 0%, transparent 68%);
+  border-radius:50%;
+  pointer-events:none;
+}
+.cover-spine{
+  position:absolute;
+  top:0; bottom:0; left:0;
+  width:28px;
+  background:
+    linear-gradient(90deg,
+      rgba(0,0,0,.32) 0%,
+      rgba(0,0,0,.18) 30%,
+      rgba(255,255,255,.07) 55%,
+      rgba(0,0,0,.12) 75%,
+      rgba(0,0,0,.24) 100%);
+  pointer-events:none;
+  z-index:3;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+.cover-inner{ position:relative; z-index:2; }
+
+.phase-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  font-size:10pt;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  font-weight:800;
+  color:#ffd479;
+  border:1.5px solid rgba(255,212,121,.55);
+  background:rgba(255,212,121,.10);
+  padding:9px 20px;
+  border-radius:100px;
+  margin-bottom:34px;
+  backdrop-filter:blur(4px);
+}
+.phase-badge .dot-pulse{
+  width:8px; height:8px; border-radius:50%; background:#ffd479;
+  box-shadow:0 0 0 4px rgba(255,212,121,.25);
+}
+.cover h1{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size:52pt;
+  line-height:1.02;
+  margin:0 0 6px;
+  letter-spacing:-.025em;
+  font-weight:700;
+}
+.cover h1 .grad{
+  background:linear-gradient(100deg,#5eead4 0%, #ffd479 55%, #c4b5fd 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.cover .sub{
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size:18pt;
+  color:#d8cfff;
+  margin:16px 0 0;
+  font-weight:400;
+  letter-spacing:.005em;
+}
+.cover .rule{
+  width:110px; height:5px; border-radius:6px;
+  background:linear-gradient(90deg,#ffd479,#5eead4);
+  margin:32px 0 30px;
+}
+.cover .lede{
+  max-width:660px;
+  font-size:12.3pt;
+  line-height:1.85;
+  color:#e6defb;
+  margin:0 0 42px;
+}
+.cover-chips{ display:flex; flex-wrap:wrap; gap:10px; }
+.chip{
+  font-size:9.6pt;
+  font-weight:600;
+  letter-spacing:.02em;
+  padding:8px 15px;
+  border-radius:9px;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.18);
+  color:#f0ecff;
+  backdrop-filter:blur(4px);
+}
+.cover-foot{
+  margin-top:58px;
+  padding-top:24px;
+  border-top:1px solid rgba(255,255,255,.16);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  flex-wrap:wrap;
+  font-size:10pt;
+  color:#b8a8e8;
+}
+.cover-foot strong{ color:#fff; font-weight:700; letter-spacing:.02em; }
+
+/* ============================================================
+   TOC / PANELS
+   ============================================================ */
+.toc{
+  background: linear-gradient(180deg,#f7f3ff 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:44px 46px;
+  margin: 0 0 62px;
+  position: relative;
+  box-shadow: 0 2px 0 rgba(30,10,70,.03);
+}
+.toc h2{
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size:24pt;
+  margin:0 0 6px;
+  color:var(--brand-2);
+  letter-spacing:-.01em;
+}
+.toc .toc-sub{ color:var(--muted); font-size:10.4pt; margin:0 0 30px; }
+.toc ol{ list-style:none; margin:0; padding:0; counter-reset:toc; }
+.toc li{
+  counter-increment:toc;
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  padding:10px 0;
+  border-bottom:1px dashed #e5dcfb;
+  font-size:11.2pt;
+}
+.toc li:last-child{ border-bottom:none; }
+.toc li .n{
+  flex:0 0 34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(140deg,#3b0764,#7c3aed);
+  color:#fff;
+  font-size:10pt;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transform:translateY(6px);
+}
+.toc li .t{ font-weight:600; color:var(--ink); }
+.toc li .t small{ display:block; font-weight:400; color:var(--muted); font-size:9.6pt; }
+
+/* ============================================================
+   CHAPTER TABS
+   ============================================================ */
+.topic{
+  position: relative;
+  margin: 0 0 62px;
+}
+.chapter-tab{
+  position: absolute;
+  right: -74px;
+  top: 34px;
+  width: 54px;
+  height: 66px;
+  border-radius: 0 8px 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: Georgia, serif;
+  font-weight: 700;
+  font-size: 9.6pt;
+  letter-spacing: .05em;
+  box-shadow: 4px 4px 8px rgba(30,10,70,.14);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding: 6px 0;
+  z-index: 1;
+}
+.chapter-tab::before{
+  content:"";
+  position: absolute;
+  left: -3px; top: 0; bottom: 0;
+  width: 3px;
+  background: rgba(0,0,0,.14);
+  border-radius: 2px 0 0 2px;
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1,h2,h3,h4{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  color:var(--brand-2);
+  line-height:1.25;
+  letter-spacing:-.005em;
+}
+
+.topic-head{
+  margin:0 0 34px;
+  padding:34px 42px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#0a0618 0%, #3b0764 58%, #7c3aed 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 8px 22px rgba(20,5,50,.18);
+}
+.topic-head::after{
+  content:"";
+  position:absolute; width:320px; height:320px; right:-100px; top:-150px;
+  background:radial-gradient(circle, rgba(245,158,11,.34), transparent 70%);
+  border-radius:50%;
+}
+.topic-head .kicker{
+  position:relative; z-index:2;
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#ffd479; font-weight:700; margin-bottom:12px;
+}
+.topic-head h2{
+  position:relative; z-index:2;
+  color:#fff; font-size:25pt; margin:0; letter-spacing:-.015em;
+}
+.topic-head p{
+  position:relative; z-index:2;
+  margin:12px 0 0; color:#d8cfff; font-size:10.6pt; max-width:640px;
+}
+
+h3{
+  font-size:15.5pt;
+  margin:40px 0 12px;
+  padding-left:16px;
+  border-left:5px solid var(--accent);
+  color:#3b0764;
+}
+h4{
+  font-size:12.6pt;
+  margin:26px 0 8px;
+  color:var(--brand-2);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-weight:700;
+  letter-spacing:0;
+}
+p{ margin:0 0 15px; color:var(--ink-soft); }
+strong{ color:var(--ink); font-weight:700; }
+ul,ol{ margin:0 0 16px; padding-left:24px; color:var(--ink-soft); }
+li{ margin-bottom:7px; }
+a{ color:var(--brand-2); text-decoration:none; border-bottom:1px solid var(--brand-3); }
+
+code{
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size:.87em;
+  background:#f3eeff;
+  color:#5b21b6;
+  padding:2px 6px;
+  border-radius:5px;
+  border:1px solid #e5dcfb;
+  white-space:nowrap;
+}
+
+/* ============================================================
+   CODE CARDS
+   ============================================================ */
+.code-card{
+  margin:22px 0 26px;
+  border-radius:13px;
+  overflow:hidden;
+  background:var(--code-bg);
+  box-shadow:0 10px 30px rgba(10,6,24,.28), 0 2px 6px rgba(10,6,24,.16);
+  border:1px solid #2a1a52;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.code-head{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  background:linear-gradient(180deg,#1a1038 0%, #130b2c 100%);
+  border-bottom:1px solid #2c1e57;
+}
+.dot{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+.dot.r{ background:#ff5f57; } .dot.y{ background:#febc2e; } .dot.g{ background:#28c840; }
+.code-title{
+  margin-left:12px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.2pt;
+  color:#a897d8;
+  letter-spacing:.03em;
+}
+.code-lang{
+  margin-left:auto;
+  font-size:8pt;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#7a6aa8;
+  font-weight:700;
+}
+.code-card pre{
+  margin:0;
+  padding:20px 22px;
+  overflow-x:auto;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px) 0 0 / 46px 100%,
+    var(--code-bg);
+}
+.code-card pre code{
+  display:block;
+  background:none;
+  border:none;
+  padding:0;
+  color:#e2dcff;
+  font-family:"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size:9.6pt;
+  line-height:1.72;
+  white-space:pre;
+  tab-size:2;
+}
+
+/* Terminal blocks */
+.term{
+  margin:18px 0 24px;
+  border-radius:11px;
+  overflow:hidden;
+  border:1px solid #e0d6f5;
+  background:#0a0618;
+  break-inside:avoid;
+}
+.term .term-head{
+  background:#1a1038; color:#a897d8;
+  font-size:8.6pt; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:700; padding:8px 16px;
+  border-bottom:1px solid #2c1e57;
+}
+.term pre{
+  margin:0; padding:16px 20px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.6pt; line-height:1.7; color:#a7f3d0; white-space:pre-wrap;
+}
+.term.out pre{ color:#ffe9a8; }
+
+/* ============================================================
+   OUTPUT PREVIEW — rendered UI mockups
+   ============================================================ */
+.output-preview{
+  margin: 20px 0 26px;
+  border-radius: 13px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1.5px solid #ddd6fe;
+  box-shadow: 0 8px 24px rgba(30,10,70,.10), 0 2px 4px rgba(30,10,70,.06);
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.output-head{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: linear-gradient(180deg, #f3eeff 0%, #e5dcfb 100%);
+  border-bottom: 1px solid #ddd6fe;
+}
+.output-title{
+  margin-left: 12px;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 8.8pt;
+  color: #5b21b6;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.output-badge{
+  margin-left: auto;
+  font-size: 7.6pt;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #b45309;
+  font-weight: 700;
+  border: 1px solid #f6c667;
+  background: #fef3e2;
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+.output-body{
+  padding: 26px 28px;
+  background: #fbf9ff;
+  color: #0d0a1f;
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 11pt;
+  line-height: 1.65;
+}
+.output-body > *:first-child{ margin-top: 0; }
+.output-body > *:last-child{ margin-bottom: 0; }
+
+.o-btn{
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border: none; border-radius: 8px;
+  background: #7c3aed; color: #fff;
+  font-weight: 600; font-size: 10.5pt; cursor: pointer;
+}
+.o-btn.outline{ background: transparent; border: 1px solid #cbd5e1; color: #1f2937; }
+.o-btn.danger{ background: #dc2626; }
+.o-btn.amber{ background: #d97706; }
+.o-btn.sm{ padding: 5px 11px; font-size: 9.5pt; }
+.o-btn.teal{ background: #0d9488; }
+
+.o-card{
+  border: 1px solid #e5e7eb; border-radius: 10px;
+  padding: 14px 16px; background: #fff; margin-bottom: 10px;
+}
+.o-card h4{ margin: 0 0 4px; color: #111827; font-family: ui-sans-serif, sans-serif; font-size: 10.8pt; font-weight: 700; }
+.o-card p{ margin: 0; color: #6b7280; font-size: 10pt; }
+
+.o-input{
+  display: block; width: 100%; padding: 10px 12px;
+  border: 1px solid #cbd5e1; border-radius: 8px;
+  font-size: 10.5pt; background: #fff; color: #111827; margin-bottom: 8px;
+}
+.o-error{ color: #b91c1c; font-size: 10pt; margin: 6px 0 0; }
+.o-row{ display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.o-muted{ color: #6b7280; font-size: 10pt; }
+.o-badge{
+  display: inline-block; padding: 2px 10px; border-radius: 100px;
+  font-size: 9pt; font-weight: 700;
+}
+.o-badge.green{ background: #dcfce7; color: #166534; }
+.o-badge.amber{ background: #fef3c7; color: #92400e; }
+.o-badge.rose { background: #fee2e2; color: #991b1b; }
+.o-badge.blue { background: #dbeafe; color: #1e40af; }
+.o-badge.violet { background: #ede9fe; color: #5b21b6; }
+
+.o-tab{
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 10.5pt;
+  font-weight: 600;
+  color: #4b5563;
+  cursor: pointer;
+}
+.o-tab.active{
+  background: #ede9fe;
+  color: #5b21b6;
+  box-shadow: inset 0 -2px 0 #7c3aed;
+}
+.o-tabbar{
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 14px;
+  display: flex;
+  gap: 6px;
+}
+.o-panel{
+  padding: 14px 4px;
+  color: #374151;
+  font-size: 10.5pt;
+}
+.o-skeleton{
+  background: linear-gradient(90deg,#ede9fe 0%,#f5f3ff 50%,#ede9fe 100%);
+  border-radius: 8px;
+  height: 14px;
+  margin-bottom: 8px;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{ opacity:1; }
+  50%{ opacity:.55; }
+}
+
+/* ============================================================
+   PHOTO FIGURE — Google-sourced real images for analogies
+   ============================================================ */
+.photo-figure{
+  position: relative;
+  margin: 26px 0;
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  break-inside: avoid;
+  page-break-inside: avoid;
+  box-shadow: 0 6px 20px rgba(30,10,70,.10);
+}
+.photo-figure img{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.photo-figure .photo-badge{
+  position: absolute;
+  top: 14px; left: 14px;
+  background: rgba(10,6,24,.80);
+  color: #ffd479;
+  border: 1px solid rgba(255,212,121,.5);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 8.6pt;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 100px;
+  backdrop-filter: blur(4px);
+}
+.photo-figure .photo-caption{
+  padding: 14px 20px;
+  background: #0a0618;
+  color: #e6defb;
+  font-family: Georgia, serif;
+  font-size: 9.8pt;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.55;
+}
+.photo-figure .photo-caption b{
+  color: #ffd479;
+  font-style: normal;
+  font-weight: 700;
+}
+
+/* ============================================================
+   CALLOUTS
+   ============================================================ */
+.callout{
+  border-radius:13px;
+  padding:20px 24px 18px;
+  margin:24px 0;
+  border:1px solid;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.callout .ct{
+  font-weight:800;
+  font-size:10pt;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:10px;
+  display:flex; align-items:center; gap:9px;
+}
+.callout p:last-child{ margin-bottom:0; }
+.callout.remember{
+  background:linear-gradient(135deg,#f3eeff 0%, #fbf9ff 100%);
+  border-color:#ddd6fe;
+}
+.callout.remember .ct{ color:#5b21b6; }
+.callout.analogy{
+  background:linear-gradient(135deg,#fff8ec 0%, #fffdf8 100%);
+  border-color:#ffdfae;
+}
+.callout.analogy .ct{ color:#b45309; }
+.callout.warn{
+  background:linear-gradient(135deg,#fff1f2 0%, #fff8f8 100%);
+  border-color:#ffd0d5;
+}
+.callout.warn .ct{ color:#be123c; }
+.callout.info{
+  background:linear-gradient(135deg,#eefbf6 0%, #f7fffc 100%);
+  border-color:#b8ecd8;
+}
+.callout.info .ct{ color:#047857; }
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  margin:24px 0;
+  font-size:10.2pt;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+thead th{
+  background:linear-gradient(135deg,#3b0764,#7c3aed);
+  color:#fff;
+  text-align:left;
+  padding:11px 14px;
+  font-weight:700;
+  font-size:9.6pt;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+tbody td{
+  padding:10px 14px;
+  border-top:1px solid var(--line);
+  color:var(--ink-soft);
+  vertical-align:top;
+}
+tbody tr:nth-child(even){ background:#fbf9ff; }
+tbody td:first-child{ font-weight:600; color:var(--ink); }
+
+/* ============================================================
+   FIGURES (custom SVG)
+   ============================================================ */
+figure{
+  margin:28px 0;
+  padding:22px 22px 14px;
+  background:linear-gradient(180deg,#fbf9ff 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  border-radius:16px;
+  break-inside:avoid;
+  page-break-inside:avoid;
+  box-shadow: 0 2px 0 rgba(30,10,70,.03);
+}
+figure svg{ width:100%; height:auto; display:block; }
+figcaption{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px dashed #e5dcfb;
+  font-size:9.6pt;
+  color:var(--muted);
+  text-align:center;
+  font-style:italic;
+}
+figcaption b{ color:var(--brand-2); font-style:normal; }
+
+/* ============================================================
+   FILE TREE
+   ============================================================ */
+.tree{
+  background:#0a0618;
+  color:#d8cef5;
+  border-radius:12px;
+  padding:20px 24px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.6pt;
+  line-height:1.75;
+  white-space:pre;
+  margin:22px 0;
+  border:1px solid #2a1a52;
+  overflow-x:auto;
+  break-inside:avoid;
+}
+.tree .dir{ color:#5eead4; font-weight:600; }
+.tree .file{ color:#e2dcff; }
+
+/* ============================================================
+   STEPS / PAGE FOOTER
+   ============================================================ */
+.steps{ counter-reset:st; list-style:none; padding:0; margin:24px 0; }
+.steps li{
+  counter-increment:st;
+  position:relative;
+  padding:14px 0 14px 58px;
+  border-bottom:1px dashed #e5dcfb;
+  margin:0;
+}
+.steps li:last-child{ border-bottom:none; }
+.steps li::before{
+  content:counter(st);
+  position:absolute; left:0; top:13px;
+  width:34px; height:34px; border-radius:10px;
+  background:linear-gradient(140deg,#3b0764,#7c3aed);
+  color:#fff; font-weight:800; font-size:10.5pt;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.page-footer{
+  margin-top: 40px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: Georgia, serif;
+  font-size: 9.5pt;
+  font-style: italic;
+  color: var(--muted);
+}
+
+/* ============================================================
+   CAPSTONE
+   ============================================================ */
+.capstone{
+  position: relative;
+  margin: 0 0 62px;
+}
+.capstone-head{
+  margin:0 0 34px;
+  padding:38px 44px;
+  border-radius:14px;
+  background:
+    radial-gradient(700px 320px at 100% 0%, rgba(20,184,166,.28), transparent 65%),
+    linear-gradient(135deg,#0a0618 0%, #3b0764 55%, #0d9488 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 10px 26px rgba(20,5,50,.22);
+}
+.capstone-head::after{
+  content:"★";
+  position:absolute;
+  right:34px; top:22px;
+  font-size:64pt;
+  color:rgba(255,212,121,.16);
+  font-family:Georgia, serif;
+  line-height:1;
+}
+.capstone-head .kicker{
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#5eead4; font-weight:700; margin-bottom:12px;
+}
+.capstone-head h2{
+  color:#fff; font-size:25pt; margin:0; letter-spacing:-.015em;
+}
+.capstone-head p{
+  margin:12px 0 0; color:#d8cfff; font-size:10.8pt; max-width:660px;
+}
+
+.checklist{
+  list-style:none;
+  padding:0;
+  margin:22px 0;
+  display:grid;
+  gap:10px;
+}
+.checklist li{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding:13px 16px;
+  border-radius:11px;
+  background:linear-gradient(135deg,#fbf9ff 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  font-size:10.6pt;
+  color:var(--ink-soft);
+}
+.checklist li::before{
+  content:"✓";
+  flex:0 0 24px;
+  height:24px;
+  border-radius:7px;
+  background:linear-gradient(140deg,#0f766e,#14b8a6);
+  color:#fff;
+  font-weight:800;
+  font-size:10pt;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transform:translateY(1px);
+}
+
+/* ============================================================
+   MISTAKES
+   ============================================================ */
+.mistakes{
+  margin:0 0 62px;
+}
+.mistakes-head{
+  margin:0 0 26px;
+  padding:34px 42px;
+  border-radius:14px;
+  background:
+    radial-gradient(600px 300px at 100% 0%, rgba(225,29,72,.26), transparent 65%),
+    linear-gradient(135deg,#0a0618 0%, #3b0764 55%, #be123c 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+}
+.mistakes-head::after{
+  content:"⚠";
+  position:absolute;
+  right:38px; top:16px;
+  font-size:60pt;
+  color:rgba(255,255,255,.10);
+  line-height:1;
+}
+.mistakes-head .kicker{
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#fda4af; font-weight:700; margin-bottom:12px;
+}
+.mistakes-head h2{
+  color:#fff; font-size:25pt; margin:0; letter-spacing:-.015em;
+}
+.mistakes-head p{
+  margin:12px 0 0; color:#fecdd3; font-size:10.6pt; max-width:620px;
+}
+
+ol.mistakes-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  counter-reset:mis;
+}
+ol.mistakes-list li{
+  counter-increment:mis;
+  position:relative;
+  padding:14px 0 14px 58px;
+  border-bottom:1px dashed #e5dcfb;
+  margin:0;
+  font-size:10.8pt;
+  color:var(--ink-soft);
+}
+ol.mistakes-list li:last-child{ border-bottom:none; }
+ol.mistakes-list li::before{
+  content:counter(mis);
+  position:absolute; left:0; top:13px;
+  width:36px; height:36px; border-radius:10px;
+  background:linear-gradient(140deg,#be123c,#e11d48);
+  color:#fff; font-weight:800; font-size:10.5pt;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* ============================================================
+   INTERVIEW QUESTIONS
+   ============================================================ */
+.qa-section{
+  margin:0 0 62px;
+}
+.qa-head{
+  margin:0 0 30px;
+  padding:34px 42px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#0a0618 0%, #3b0764 58%, #4f46e5 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+}
+.qa-head::after{
+  content:"?";
+  position:absolute;
+  right:40px; top:14px;
+  font-family:Georgia, serif;
+  font-size:72pt;
+  color:rgba(221,214,254,.14);
+  line-height:1;
+}
+.qa-head .kicker{
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#ddd6fe; font-weight:700; margin-bottom:12px;
+}
+.qa-head h2{
+  color:#fff; font-size:25pt; margin:0; letter-spacing:-.015em;
+}
+.qa-head p{
+  margin:12px 0 0; color:#d8cfff; font-size:10.6pt; max-width:620px;
+}
+
+.qa-level{
+  margin:26px 0 10px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:7px 16px;
+  border-radius:100px;
+  font-size:9.4pt;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.qa-level.beginner{ background:#dcfce7; color:#166534; }
+.qa-level.intermediate{ background:#fef3c7; color:#92400e; }
+.qa-level.advanced{ background:#fee2e2; color:#991b1b; }
+
+ol.qa-list{
+  margin:6px 0 22px;
+  padding-left:24px;
+  color:var(--ink-soft);
+}
+ol.qa-list li{
+  margin-bottom:9px;
+  font-size:10.8pt;
+  line-height:1.7;
+}
+
+/* ============================================================
+   RESOURCES
+   ============================================================ */
+.resources{
+  margin:0 0 62px;
+}
+.resources-head{
+  margin:0 0 26px;
+  padding:30px 38px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#0a0618 0%, #3b0764 60%, #0d9488 100%);
+  color:#fff;
+}
+.resources-head h2{ color:#fff; font-size:23pt; margin:0; }
+.resources-head p{ color:#d8cfff; margin:10px 0 0; font-size:10.6pt; }
+
+ol.res-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  counter-reset:res;
+}
+ol.res-list li{
+  counter-increment:res;
+  position:relative;
+  padding:13px 0 13px 52px;
+  border-bottom:1px dashed #e5dcfb;
+  font-size:10.6pt;
+}
+ol.res-list li:last-child{ border-bottom:none; }
+ol.res-list li::before{
+  content:counter(res);
+  position:absolute; left:0; top:13px;
+  width:32px; height:32px;
+  border-radius:9px;
+  background:linear-gradient(140deg,#3b0764,#7c3aed);
+  color:#fff; font-weight:800; font-size:10pt;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* ============================================================
+   FINAL / BACK COVER
+   ============================================================ */
+.final-section{
+  margin:0 0 62px;
+}
+.final-card{
+  padding:44px 48px;
+  border-radius:18px;
+  background:
+    radial-gradient(800px 400px at 0% 0%, rgba(245,158,11,.22), transparent 60%),
+    linear-gradient(135deg,#0a0618 0%, #3b0764 55%, #7c3aed 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 16px 36px rgba(20,5,50,.26);
+}
+.final-card::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(ellipse at 80% 0%, #000 0%, transparent 70%);
+  -webkit-mask-image:radial-gradient(ellipse at 80% 0%, #000 0%, transparent 70%);
+  pointer-events:none;
+}
+.final-card .fc-kicker{
+  position:relative; z-index:2;
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#ffd479; font-weight:700; margin-bottom:14px;
+}
+.final-card h2{
+  position:relative; z-index:2;
+  color:#fff; font-size:24pt; margin:0 0 16px; letter-spacing:-.015em;
+}
+.final-card p{
+  position:relative; z-index:2;
+  color:#e6defb; font-size:11.4pt; max-width:680px;
+}
+.final-card .key-principle{
+  position:relative; z-index:2;
+  margin-top:26px;
+  padding:20px 24px;
+  border-radius:12px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,212,121,.4);
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size:12pt;
+  color:#fff;
+  line-height:1.7;
+}
+.final-card .key-principle b{
+  color:#ffd479;
+  font-style: normal;
+}
+
+.back-cover{
+  margin: 0 -74px -92px;
+  padding: 74px 78px 80px;
+  background:
+    radial-gradient(900px 500px at 100% 0%, #7c3aed 0%, transparent 55%),
+    radial-gradient(700px 400px at 0% 100%, #0d9488 0%, transparent 60%),
+    linear-gradient(160deg,#0a0618 0%, #3b0764 50%, #7c3aed 100%);
+  color:#fff;
+  border-radius: 0 0 8px 3px;
+  position:relative;
+  overflow:hidden;
+}
+.back-cover::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse at 50% 30%, #000 0%, transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 30%, #000 0%, transparent 78%);
+  pointer-events:none;
+}
+.back-cover-inner{ position:relative; z-index:2; }
+.back-cover .bc-badge{
+  display:inline-block;
+  font-size:9pt; letter-spacing:.28em; text-transform:uppercase;
+  font-weight:800; color:#ffd479;
+  border:1.5px solid rgba(255,212,121,.5);
+  background:rgba(255,212,121,.1);
+  padding:8px 18px; border-radius:100px; margin-bottom:26px;
+}
+.back-cover h2{
+  font-family: Georgia, serif;
+  color:#fff; font-size:32pt; line-height:1.1; margin:0 0 18px;
+  letter-spacing:-.02em;
+}
+.back-cover p{
+  color:#d8cfff; font-size:11.4pt; max-width:680px; line-height:1.85;
+}
+.back-cover .bc-rule{
+  width:90px; height:4px; border-radius:6px;
+  background:linear-gradient(90deg,#ffd479,#5eead4);
+  margin:30px 0;
+}
+.back-cover .bc-foot{
+  margin-top:40px;
+  padding-top:22px;
+  border-top:1px solid rgba(255,255,255,.16);
+  display:flex; justify-content:space-between; align-items:flex-end;
+  gap:20px; flex-wrap:wrap;
+  font-size:10pt; color:#b8a8e8;
+}
+.back-cover .bc-foot strong{ color:#fff; }
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+@media print{
+  @page{ size:A4; margin:14mm 12mm 16mm; }
+  @page:first{ margin:0; }
+  body{
+    background:#fff;
+    font-size:10.4pt;
+    line-height:1.68;
+    padding:0;
+  }
+  .book-wrap{ max-width:none; margin:0; padding:0; }
+  .book-wrap::after{ display:none; }
+  .book{
+    max-width:none; margin:0; padding: 0 14mm 10mm;
+    box-shadow: none; border-radius: 0; background: #fff;
+  }
+  .book::before, .book::after{ display:none; }
+  .cover{
+    margin:0; height:297mm; padding:80px 60px 60px;
+    border-radius:0; display:flex; align-items:center;
+    break-after:page; page-break-after:always; box-shadow: none;
+  }
+  .cover-inner{ width:100%; }
+  .cover-spine{ display:none; }
+  .toc{ break-after:page; page-break-after:always; }
+  .topic, .capstone, .mistakes, .qa-section, .resources, .final-section{
+    break-before:page; page-break-before:always;
+  }
+  .chapter-tab{ display: none; }
+  h1,h2,h3,h4{ break-after:avoid; page-break-after:avoid; }
+  p, li{ orphans:2; widows:2; }
+  .code-card, figure, table, .callout, .term, .photo-figure, .output-preview, .final-card{
+    break-inside:avoid; page-break-inside:avoid;
+  }
+  a{ color:var(--brand-2); border-bottom:none; }
+  a[href^="http"]::after{
+    content:" (" attr(href) ")";
+    font-size:7.4pt;
+    color:#8a7ab5;
+    word-break:break-all;
+  }
+  .page-footer{ display: none; }
+  .back-cover{ margin:0; border-radius:0; break-before:page; page-break-before:always; }
+}
+@media screen{ .topic{ margin-top:0; } }
+</style>
+</head>
+<body>
+<div class="book-wrap">
+<div class="book">
+
+<!-- ============================================================
+     COVER
+     ============================================================ -->
+<section class="cover">
+  <div class="cover-spine"></div>
+  <div class="cover-inner">
+    <span class="phase-badge"><span class="dot-pulse"></span>Phase 14 · Architecture &amp; Advanced Patterns</span>
+
+    <h1>React&nbsp;JS<br><span class="grad">Architecture and<br>Advanced Patterns</span></h1>
+
+    <p class="sub">Composition · Hooks · State Machines · i18n · RSC · Next.js</p>
+
+    <div class="rule"></div>
+
+    <p class="lede">
+      A complete, practical guide to structuring a React application that stays
+      maintainable as it grows. Learn compound components, render props, HOCs,
+      controlled APIs, feature boundaries, dependency injection, state machines,
+      optimistic updates, internationalization, and the rendering architecture
+      decisions behind React Server Components, hydration, streaming, and choosing
+      between React + Vite and Next.js.
+    </p>
+
+    <div class="cover-chips">
+      <span class="chip">Compound Components</span>
+      <span class="chip">Render Props</span>
+      <span class="chip">HOCs</span>
+      <span class="chip">Controlled APIs</span>
+      <span class="chip">Custom Hooks</span>
+      <span class="chip">Feature Boundaries</span>
+      <span class="chip">Dependency Injection</span>
+      <span class="chip">State Machines</span>
+      <span class="chip">Optimistic UI</span>
+      <span class="chip">i18n</span>
+      <span class="chip">Scalable Architecture</span>
+      <span class="chip">Server Components</span>
+      <span class="chip">Hydration</span>
+      <span class="chip">Streaming &amp; Suspense</span>
+      <span class="chip">Next.js vs Vite</span>
+    </div>
+
+    <div class="cover-foot">
+      <div>
+        <strong>Learning Track</strong><br>
+        Frontend Development · React Series
+      </div>
+      <div style="text-align:right">
+        <strong>Module</strong><br>
+        Phase 14 of the React Curriculum
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     LEARNING OBJECTIVE
+     ============================================================ -->
+<section class="toc" style="break-after:page;">
+  <h2>What you will learn</h2>
+  <p class="toc-sub">From a working prototype to an architecture that scales.</p>
+
+  <p>Imagine you are building a full-stack Training LMS with these features:</p>
+  <ul>
+    <li>Student registration and login</li>
+    <li>Course enrollment</li>
+    <li>Administrator dashboards</li>
+    <li>Book releases for individual students</li>
+    <li>Attendance tracking</li>
+    <li>Payments</li>
+    <li>Notifications</li>
+    <li>Multilingual interfaces</li>
+    <li>Reports and analytics</li>
+  </ul>
+  <p>When an application is small, placing everything in a few React components may seem convenient. As the application grows, however, you need consistent component APIs, reusable behavior, clear feature boundaries, predictable workflows, and an appropriate rendering architecture.</p>
+  <p>This phase will teach you how to make those decisions.</p>
+
+  <div class="callout warn">
+    <div class="ct">▲ Important principle</div>
+    <p>Advanced architecture is not about using every pattern. It is about choosing the simplest pattern that solves the actual problem and remains maintainable as the application grows.</p>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Simple prototype on the left, modular architecture on the right">
+      <defs>
+        <linearGradient id="introA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#94a3b8"/><stop offset="100%" stop-color="#475569"/>
+        </linearGradient>
+        <linearGradient id="introB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#0d9488"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Prototype -->
+      <rect x="20" y="40" width="300" height="160" rx="14" fill="url(#introA)"/>
+      <text x="170" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Prototype</text>
+      <text x="170" y="94" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#f1f5f9">one huge component</text>
+      <text x="170" y="114" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#f1f5f9">dozens of props</text>
+      <text x="170" y="134" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#f1f5f9">unrelated state</text>
+      <text x="170" y="170" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#e2e8f0">works — but brittle</text>
+
+      <!-- Arrow -->
+      <path d="M340 120 H 400" stroke="#c4b5fd" stroke-width="2.5"/>
+      <polygon points="400,112 416,120 400,128" fill="#7c3aed"/>
+      <text x="370" y="106" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#5b21b6">architecture</text>
+
+      <!-- Architecture -->
+      <rect x="428" y="40" width="312" height="160" rx="14" fill="url(#introB)"/>
+      <text x="584" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Architecture</text>
+      <text x="470" y="94" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#f5f3ff">▸ composable components</text>
+      <text x="470" y="114" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#f5f3ff">▸ explicit state machines</text>
+      <text x="470" y="134" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#f5f3ff">▸ testable boundaries</text>
+      <text x="470" y="154" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#f5f3ff">▸ server/client split</text>
+      <text x="584" y="180" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#e6fffa">✓ scales with the product</text>
+
+      <text x="380" y="228" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#6b6585">The simplest pattern that solves the problem and remains maintainable.</text>
+    </svg>
+    <figcaption><b>Figure 0.1</b> — Architecture is the set of decisions that make a growing application easier to change, not harder.</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================
+     TABLE OF CONTENTS
+     ============================================================ -->
+<section class="toc">
+  <h2>Table of Contents</h2>
+  <p class="toc-sub">Thirteen topics, a capstone, common mistakes, and a full revision set.</p>
+
+  <ol>
+    <li><span class="n">1</span><span class="t">Compound Components<small>Shared context · slots · composition</small></span></li>
+    <li><span class="n">2</span><span class="t">Render Props and Higher-Order Components<small>Function-as-children · wrappers · legacy patterns</small></span></li>
+    <li><span class="n">3</span><span class="t">Controlled and Uncontrolled Component APIs<small>Single source of truth · defaultValue · refs</small></span></li>
+    <li><span class="n">4</span><span class="t">Reusable Hooks and Feature Boundaries<small>useDebouncedValue · feature folders · ownership</small></span></li>
+    <li><span class="n">5</span><span class="t">Dependency Injection Through Context<small>Service contracts · providers · fakes in tests</small></span></li>
+    <li><span class="n">6</span><span class="t">State Machines and Complex Workflows<small>Explicit states · events · reducers</small></span></li>
+    <li><span class="n">7</span><span class="t">Optimistic UI Updates<small>useOptimistic · rollback · reconciliation</small></span></li>
+    <li><span class="n">8</span><span class="t">Internationalization<small>i18next · react-i18next · Intl formatting</small></span></li>
+    <li><span class="n">9</span><span class="t">Designing Scalable Frontend Architecture<small>Features · responsibilities · dependencies</small></span></li>
+    <li><span class="n">10</span><span class="t">React Server Components Concepts<small>Server rendering · "use client" · boundaries</small></span></li>
+    <li><span class="n">11</span><span class="t">Server Rendering and Hydration Concepts<small>SSR · hydration · mismatch causes</small></span></li>
+    <li><span class="n">12</span><span class="t">Streaming and Suspense in Frameworks<small>Progressive rendering · loading.tsx · fallbacks</small></span></li>
+    <li><span class="n">13</span><span class="t">When to Use a Framework Such as Next.js<small>Rendering needs · SPA trade-offs · decision process</small></span></li>
+    <li><span class="n">★</span><span class="t">Capstone: Scalable Training LMS Architecture<small>Apply everything you have learned</small></span></li>
+    <li><span class="n">⚠</span><span class="t">Common Mistakes to Avoid<small>Fourteen traps to recognize</small></span></li>
+    <li><span class="n">↺</span><span class="t">Interview Questions &amp; Completion Checklist<small>Review and self-assessment</small></span></li>
+  </ol>
+</section>
+
+<!-- ============================================================
+     TOPIC 1 — COMPOUND COMPONENTS
+     ============================================================ -->
+<section class="topic" id="t1">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#3b0764,#7c3aed);">COMP</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 1</div>
+    <h2>Compound Components</h2>
+    <p>Several related components that share behavior — without a giant prop list.</p>
+  </div>
+
+  <h3>What are compound components?</h3>
+  <p>Compound components are multiple related components that work together to provide one flexible interface.</p>
+  <p>Imagine a reusable tabs component in your LMS. You want to display:</p>
+  <ul>
+    <li>Course Overview</li>
+    <li>Student List</li>
+    <li>Attendance</li>
+    <li>Reports</li>
+  </ul>
+  <p>Rather than building a different tabs implementation for every page, you create a set of related components that work together.</p>
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">CourseTabs.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">&lt;Tabs.Root defaultValue="overview"&gt;
+  &lt;Tabs.List&gt;
+    &lt;Tabs.Trigger value="overview"&gt;Overview&lt;/Tabs.Trigger&gt;
+    &lt;Tabs.Trigger value="students"&gt;Students&lt;/Tabs.Trigger&gt;
+    &lt;Tabs.Trigger value="reports"&gt;Reports&lt;/Tabs.Trigger&gt;
+  &lt;/Tabs.List&gt;
+
+  &lt;Tabs.Panel value="overview"&gt;
+    Course overview content
+  &lt;/Tabs.Panel&gt;
+
+  &lt;Tabs.Panel value="students"&gt;
+    Student list content
+  &lt;/Tabs.Panel&gt;
+
+  &lt;Tabs.Panel value="reports"&gt;
+    Course reports
+  &lt;/Tabs.Panel&gt;
+&lt;/Tabs.Root&gt;</code></pre>
+  </div>
+
+  <p>The API reads almost like a description of the interface.</p>
+  <p>The consumer decides which tabs exist and what each tab contains. The root component coordinates shared state, and the child components use that state to cooperate.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=1200&q=80&auto=format&fit=crop"
+      alt="Colourful modular building blocks stacked together"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · Interlocking blocks</div>
+    <div class="photo-caption">
+      <b>Compound components are interlocking blocks.</b> The root is the baseplate; the triggers, list, and panels clip onto it in whatever configuration the consumer chooses. The blocks know how to fit together — you decide the shape.
+    </div>
+  </div>
+
+  <h3>Why use compound components?</h3>
+  <p>Imagine a complex dropdown menu. You could provide dozens of props:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Props-only API</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">&lt;Dropdown
+  showHeader
+  showDivider
+  showFooter
+  hasSearch
+  searchable
+  selectedItem="React"
+/&gt;</code></pre>
+  </div>
+
+  <p>As the component grows, its API may become difficult to understand.</p>
+  <p>Composition offers another approach:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">CoursePicker.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">&lt;Dropdown.Root&gt;
+  &lt;Dropdown.Trigger&gt;Choose a course&lt;/Dropdown.Trigger&gt;
+
+  &lt;Dropdown.Content&gt;
+    &lt;Dropdown.Search /&gt;
+    &lt;Dropdown.Item value="react"&gt;React&lt;/Dropdown.Item&gt;
+    &lt;Dropdown.Item value="typescript"&gt;TypeScript&lt;/Dropdown.Item&gt;
+  &lt;/Dropdown.Content&gt;
+&lt;/Dropdown.Root&gt;</code></pre>
+  </div>
+
+  <p>This structure allows related components to share behavior without forcing every use case into a single large component.</p>
+
+  <h3>How do compound components share state?</h3>
+  <p>Context is a common solution.</p>
+  <p>The root stores the selected tab:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Tabs.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import {
+  createContext,
+  useContext,
+  useState,
+  type ReactNode,
+} from "react";
+
+interface TabsContextValue {
+  value: string;
+  setValue: (value: string) => void;
+}
+
+const TabsContext = createContext&lt;TabsContextValue | null&gt;(null);
+
+function useTabs() {
+  const context = useContext(TabsContext);
+
+  if (!context) {
+    throw new Error("Tabs components must be inside Tabs.Root");
+  }
+
+  return context;
+}
+
+function TabsRoot({
+  defaultValue,
+  children,
+}: {
+  defaultValue: string;
+  children: ReactNode;
+}) {
+  const [value, setValue] = useState(defaultValue);
+
+  return (
+    &lt;TabsContext.Provider value={{ value, setValue }}&gt;
+      {children}
+    &lt;/TabsContext.Provider&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>A trigger reads and updates the shared value:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">TabsTrigger.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">function TabsTrigger({
+  value,
+  children,
+}: {
+  value: string;
+  children: ReactNode;
+}) {
+  const tabs = useTabs();
+
+  return (
+    &lt;button
+      type="button"
+      role="tab"
+      aria-selected={tabs.value === value}
+      onClick={() =&gt; tabs.setValue(value)}
+      className="rounded-lg px-4 py-2"
+    &gt;
+      {children}
+    &lt;/button&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>A panel uses the same context to determine whether it should be displayed:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">TabsPanel.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">function TabsPanel({
+  value,
+  children,
+}: {
+  value: string;
+  children: ReactNode;
+}) {
+  const tabs = useTabs();
+
+  if (tabs.value !== value) {
+    return null;
+  }
+
+  return &lt;div role="tabpanel"&gt;{children}&lt;/div&gt;;
+}</code></pre>
+  </div>
+
+  <p>You could export these components through a <code>Tabs</code> object:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Tabs.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">export const Tabs = {
+  Root: TabsRoot,
+  Trigger: TabsTrigger,
+  Panel: TabsPanel,
+};</code></pre>
+  </div>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">Tabs — Overview selected</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div class="o-tabbar">
+        <span class="o-tab active">Overview</span>
+        <span class="o-tab">Students</span>
+        <span class="o-tab">Reports</span>
+      </div>
+      <div class="o-panel">Course overview content — components, props, hooks, and a project.</div>
+      <p class="o-muted" style="margin-top:10px;">Only the panel matching the active trigger renders. Context coordinates the whole group.</p>
+    </div>
+  </div>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">Compound Dropdown — open</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <button class="o-btn" style="background:#7c3aed;">Choose a course ▾</button>
+      <div style="margin-top:8px; border:1px solid #e5e7eb; border-radius:8px; padding:8px 10px; background:#fff; max-width:280px;">
+        <input class="o-input" placeholder="Search courses…" style="margin-bottom:8px;" />
+        <div style="padding:8px 10px; border-radius:6px; background:#ede9fe; color:#5b21b6; font-weight:600; font-size:10.5pt;">React</div>
+        <div style="padding:8px 10px; border-radius:6px; color:#374151; font-size:10.5pt;">TypeScript</div>
+      </div>
+      <p class="o-muted" style="margin-top:10px;">Structure comes from the consumer — not from a dozen boolean props.</p>
+    </div>
+  </div>
+
+  <p>This illustrates the core pattern. A complete tabs component should also implement a tab list, correct ARIA relationships, keyboard navigation, focus management, and a clear policy for controlled versus uncontrolled selection. A tested accessibility primitive is usually a better choice for production widgets with complex interaction requirements.</p>
+
+  <h3>Real-life use cases</h3>
+  <p>Compound components work well for:</p>
+  <ul>
+    <li>Tabs</li>
+    <li>Dropdowns</li>
+    <li>Dialogs</li>
+    <li>Accordions</li>
+    <li>Data tables</li>
+    <li>Complex forms</li>
+    <li>Menus</li>
+    <li>Reusable card layouts</li>
+  </ul>
+  <p>They are particularly valuable when consumers need flexibility over the structure of a UI while the components share behavior.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 1.1 — Build compound tabs</h4>
+  <p>Create tabs for Course Overview, Lessons, and Assignments.</p>
+  <p>Requirements:</p>
+  <ul>
+    <li>Use one shared root state.</li>
+    <li>Allow any number of tab triggers.</li>
+    <li>Display only the active panel.</li>
+    <li>Apply Tailwind styles to the selected tab.</li>
+    <li>Prevent the child components from working silently without their root provider.</li>
+  </ul>
+
+  <h4>Exercise 1.2 — Build a compound accordion</h4>
+  <p>Create:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Accordion.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">&lt;Accordion.Root&gt;
+  &lt;Accordion.Item value="fees"&gt;
+    &lt;Accordion.Trigger&gt;Course Fees&lt;/Accordion.Trigger&gt;
+    &lt;Accordion.Panel&gt;Fee details...&lt;/Accordion.Panel&gt;
+  &lt;/Accordion.Item&gt;
+&lt;/Accordion.Root&gt;</code></pre>
+  </div>
+
+  <p>Implement the shared state and allow multiple items to open or only one item to open, depending on your chosen API.</p>
+
+  <h4>Challenge</h4>
+  <p>Add keyboard interaction and accessible state announcements. Explain why simply adding <code>role="tab"</code> to buttons does not implement an entire accessible tabs pattern.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can design a compound component API with shared context, clear invariants, and a refusal to work outside its root provider.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">§ 1 · Compound Components</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 2 — RENDER PROPS & HOCs
+     ============================================================ -->
+<section class="topic" id="t2">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#5b21b6,#8b5cf6);">HOC</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 2</div>
+    <h2>Render Props and Higher-Order Components</h2>
+    <p>Two reusable patterns you will meet in existing React codebases.</p>
+  </div>
+
+  <p>These are reusable component patterns that you'll encounter in existing React codebases and libraries.</p>
+  <p>Modern React often favors custom Hooks and composition for sharing behavior, but understanding both patterns remains useful.</p>
+
+  <h3>2.1 What are render props?</h3>
+  <p>A render prop is a function passed to a component that determines how some content should be rendered.</p>
+  <p>Imagine your dashboard needs to share the logic for tracking a mouse position, but different pages want to display that position differently.</p>
+  <p>One page might display coordinates. Another might draw a marker on a canvas.</p>
+  <p>Instead of coupling the behavior to one UI, the component receives a function that decides what to display.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">MouseTracker.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useState, type ReactNode } from "react";
+
+interface MousePosition {
+  x: number;
+  y: number;
+}
+
+function MouseTracker({
+  render,
+}: {
+  render: (position: MousePosition) =&gt; ReactNode;
+}) {
+  const [position, setPosition] = useState&lt;MousePosition&gt;({
+    x: 0,
+    y: 0,
+  });
+
+  return (
+    &lt;div
+      onMouseMove={(event) =&gt; {
+        setPosition({
+          x: event.clientX,
+          y: event.clientY,
+        });
+      }}
+      className="min-h-40 rounded-xl border p-6"
+    &gt;
+      {render(position)}
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Usage:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Dashboard.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">&lt;MouseTracker
+  render={({ x, y }) =&gt; (
+    &lt;p&gt;Mouse position: {x}, {y}&lt;/p&gt;
+  )}
+/&gt;</code></pre>
+  </div>
+
+  <p>The tracking logic belongs to <code>MouseTracker</code>, while the caller controls the displayed result.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&q=80&auto=format&fit=crop"
+      alt="An assembly line with interchangeable tooling"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The shared workbench</div>
+    <div class="photo-caption">
+      <b>A render prop is a shared workbench with an interchangeable tool head.</b> The bench (the component) supplies the workspace and the raw materials (state); the caller brings the tool head (the render function) that decides what the output looks like.
+    </div>
+  </div>
+
+  <h3>2.2 What is a higher-order component?</h3>
+  <p>A higher-order component (HOC) is a function that takes a React component and returns an enhanced component.</p>
+  <p>Conceptually:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">HOC shape</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const EnhancedComponent = withFeature(BaseComponent);</code></pre>
+  </div>
+
+  <p>Real-life example: a legacy application may have many components that need a shared loading indicator.</p>
+  <p>An HOC can provide that behavior without duplicating the loading check.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">withLoading.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import type { ComponentType } from "react";
+
+function withLoading&lt;P extends object&gt;(
+  WrappedComponent: ComponentType&lt;P&gt;
+) {
+  return function WithLoading(
+    props: P &amp; { isLoading: boolean }
+  ) {
+    const { isLoading, ...componentProps } = props;
+
+    if (isLoading) {
+      return &lt;p role="status"&gt;Loading...&lt;/p&gt;;
+    }
+
+    return (
+      &lt;WrappedComponent
+        {...(componentProps as P)}
+      /&gt;
+    );
+  };
+}</code></pre>
+  </div>
+
+  <p>The type assertion helps TypeScript understand that the remaining props belong to the wrapped component. As with any assertion, it should be used carefully.</p>
+  <p>Usage:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentList.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">interface StudentListProps {
+  students: string[];
+}
+
+function StudentList({ students }: StudentListProps) {
+  return (
+    &lt;ul&gt;
+      {students.map((student) =&gt; (
+        &lt;li key={student}&gt;{student}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+
+const StudentListWithLoading = withLoading(StudentList);</code></pre>
+  </div>
+
+  <p>Then use:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Usage</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">&lt;StudentListWithLoading
+  isLoading={false}
+  students={["Aarav", "Diya"]}
+/&gt;</code></pre>
+  </div>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">withLoading — two states</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div class="o-card" style="border-color:#c4b5fd; background:#faf5ff;">
+        <p style="margin:0; font-size:10pt; color:#5b21b6;"><strong>isLoading=true</strong></p>
+        <p style="margin:6px 0 0; font-size:10.5pt; color:#6b7280;">Loading...</p>
+      </div>
+      <div class="o-card" style="border-color:#86efac; background:#f0fdf4;">
+        <p style="margin:0; font-size:10pt; color:#166534;"><strong>isLoading=false</strong></p>
+        <ul style="margin:6px 0 0; padding-left:18px; font-size:10.5pt; color:#374151;">
+          <li>Aarav</li>
+          <li>Diya</li>
+        </ul>
+      </div>
+      <p class="o-muted" style="margin-top:10px;">Same wrapper logic, different wrapped component — loading state does not leak into the child.</p>
+    </div>
+  </div>
+
+  <h3>2.3 What should you use in modern React?</h3>
+  <p>Consider a custom Hook when the primary goal is to reuse stateful behavior.</p>
+  <p>For example, instead of a component or HOC that owns loading behavior, a data-fetching Hook or query library can share the request logic while leaving each component free to choose its own presentation.</p>
+  <p>Use render props when caller-controlled rendering is genuinely useful. Use HOCs when they fit an established codebase or library API. Don't introduce either pattern merely to make simple code appear more advanced.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 2.1 — Render-prop list</h4>
+  <p>Build a generic <code>DataRenderer</code> component that receives:</p>
+  <ul>
+    <li><code>items</code></li>
+    <li>A <code>renderItem</code> function</li>
+    <li>An optional empty-state renderer</li>
+  </ul>
+  <p>Use it to display both students and courses.</p>
+
+  <h4>Exercise 2.2 — Loading HOC</h4>
+  <p>Create a HOC that wraps a reports component and displays a loading state while the report is loading.</p>
+  <p>Confirm that the wrapped component receives its correct props and that the loading state does not accidentally display stale report content.</p>
+
+  <h4>Challenge</h4>
+  <p>Refactor one of these examples into a custom Hook. Compare the two APIs for readability, testing, and reusability.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can read render props and HOCs, explain when they are appropriate, and migrate simple cases to Hooks or composition when that is clearer.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">§ 2 · Render Props &amp; HOCs</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 3 — CONTROLLED & UNCONTROLLED
+     ============================================================ -->
+<section class="topic" id="t3">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0f766e,#14b8a6);">CTRL</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 3</div>
+    <h2>Controlled and Uncontrolled Component APIs</h2>
+    <p>Who owns the value? React state or the DOM?</p>
+  </div>
+
+  <h3>3.1 What is a controlled component?</h3>
+  <p>A controlled component receives its current value from React state and notifies its parent when the user changes it.</p>
+  <p>Imagine the LMS has a course-search field whose value must remain synchronized with the dashboard's search query.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">CourseSearch.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useState } from "react";
+
+function CourseSearch() {
+  const [query, setQuery] = useState("");
+
+  return (
+    &lt;input
+      value={query}
+      onChange={(event) =&gt; setQuery(event.currentTarget.value)}
+      placeholder="Search courses..."
+      className="w-full rounded-lg border p-3"
+    /&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>React state controls the displayed value.</p>
+  <p>This is especially useful when you need to validate, transform, synchronize, or reset the input based on application state.</p>
+
+  <h3>3.2 What is an uncontrolled component?</h3>
+  <p>An uncontrolled component keeps its current value in the DOM rather than making React state the source of truth for every input change.</p>
+  <p>You can supply an initial value using <code>defaultValue</code> and read the final value through a ref or during form submission.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">QuickStudentSearch.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useRef } from "react";
+
+function QuickStudentSearch() {
+  const inputRef = useRef&lt;HTMLInputElement | null&gt;(null);
+
+  function handleSearch() {
+    const query = inputRef.current?.value ?? "";
+    console.log("Search for:", query);
+  }
+
+  return (
+    &lt;div className="flex gap-2"&gt;
+      &lt;input
+        ref={inputRef}
+        defaultValue=""
+        placeholder="Search students..."
+        className="rounded-lg border p-3"
+      /&gt;
+
+      &lt;button
+        type="button"
+        onClick={handleSearch}
+        className="rounded-lg bg-indigo-600 px-4 py-2 text-white"
+      &gt;
+        Search
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The browser maintains the input value, and React reads it when the button is clicked.</p>
+  <p>Uncontrolled inputs can be convenient for simple forms, while controlled inputs are often easier when the UI depends on input state immediately.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1200&q=80&auto=format&fit=crop"
+      alt="A mixing console with physical faders and knobs"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The mixing console</div>
+    <div class="photo-caption">
+      <b>Controlled inputs are a mixing desk whose faders report back to the studio.</b> Every adjustment is mirrored in React state so the rest of the app can react to it. <b>Uncontrolled inputs are a standalone instrument</b> — the browser holds the value until you ask for it.
+    </div>
+  </div>
+
+  <h3>3.3 Designing reusable APIs that support both</h3>
+  <p>A reusable component may support a controlled mode or an uncontrolled mode, but it should define the rules clearly.</p>
+  <p>For example, a custom disclosure component might accept:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Disclosure.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">interface DisclosureProps {
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) =&gt; void;
+}</code></pre>
+  </div>
+
+  <p>The intended contract is:</p>
+  <ul>
+    <li>If <code>open</code> is provided, the parent controls the state.</li>
+    <li>If <code>open</code> is omitted, the component maintains internal state initialized from <code>defaultOpen</code>.</li>
+    <li><code>onOpenChange</code> notifies the parent about a requested change.</li>
+  </ul>
+
+  <p>Supporting both modes requires careful implementation. Avoid switching between controlled and uncontrolled mode during a single component lifetime, and keep the <code>open</code> value authoritative when controlled.</p>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">Disclosure — controlled vs uncontrolled</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div class="o-card" style="border-color:#c4b5fd;">
+        <p style="margin:0 0 6px; font-size:10pt; color:#5b21b6;"><strong>Controlled</strong></p>
+        <p style="margin:0; font-family:Consolas, monospace; font-size:9.5pt; color:#374151;">&lt;Disclosure open={isOpen} onOpenChange={setIsOpen}&gt;</p>
+        <p class="o-muted" style="margin:6px 0 0;">Parent is the single source of truth.</p>
+      </div>
+      <div class="o-card" style="border-color:#86efac;">
+        <p style="margin:0 0 6px; font-size:10pt; color:#166534;"><strong>Uncontrolled</strong></p>
+        <p style="margin:0; font-family:Consolas, monospace; font-size:9.5pt; color:#374151;">&lt;Disclosure defaultOpen={false}&gt;</p>
+        <p class="o-muted" style="margin:6px 0 0;">Component owns its own internal state.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Real-life example</h3>
+  <p>Use controlled APIs for:</p>
+  <ul>
+    <li>Search input synchronized with URL query parameters</li>
+    <li>Form fields with immediate validation</li>
+    <li>Theme selection</li>
+    <li>Tabs whose selection belongs to a parent</li>
+    <li>Components synchronized with shared application state</li>
+  </ul>
+  <p>Uncontrolled APIs may work well for:</p>
+  <ul>
+    <li>Simple input collections submitted as a form</li>
+    <li>Integrations with native browser forms</li>
+    <li>Small fields that do not need continuous React-controlled state</li>
+  </ul>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 3.1 — Controlled search</h4>
+  <p>Build a controlled student-search field. The search result count must update whenever the user types.</p>
+
+  <h4>Exercise 3.2 — Uncontrolled enrollment form</h4>
+  <p>Use <code>FormData</code> and an uncontrolled form to read a student name and email at submission time.</p>
+  <p>Compare the implementation with a controlled version.</p>
+
+  <h4>Challenge</h4>
+  <p>Build a reusable disclosure component that supports <code>open</code>, <code>defaultOpen</code>, and <code>onOpenChange</code>. Test both modes and document the behavior when the state is controlled.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can choose between controlled and uncontrolled APIs deliberately and design components that support both with a clear contract.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">§ 3 · Controlled &amp; Uncontrolled</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 4 — REUSABLE HOOKS & FEATURE BOUNDARIES
+     ============================================================ -->
+<section class="topic" id="t4">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0891b2,#22d3ee);">HOOK</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 4</div>
+    <h2>Reusable Hooks and Feature Boundaries</h2>
+    <p>Share the logic, keep the ownership clear.</p>
+  </div>
+
+  <h3>4.1 What is a custom Hook?</h3>
+  <p>A custom Hook extracts reusable React logic into a function whose name begins with <code>use</code>.</p>
+  <p>Imagine several LMS components need the current online status. You do not want every component to implement its own browser event listeners.</p>
+  <p>A custom Hook can encapsulate that behavior.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">useOnlineStatus.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">import { useSyncExternalStore } from "react";
+
+function subscribe(callback: () =&gt; void) {
+  window.addEventListener("online", callback);
+  window.addEventListener("offline", callback);
+
+  return () =&gt; {
+    window.removeEventListener("online", callback);
+    window.removeEventListener("offline", callback);
+  };
+}
+
+export function useOnlineStatus() {
+  return useSyncExternalStore(
+    subscribe,
+    () =&gt; navigator.onLine,
+    () =&gt; true
+  );
+}</code></pre>
+  </div>
+
+  <p>This example's server snapshot assumes an online placeholder. For an application that uses server rendering, choose a deterministic initial value and UI strategy that avoids hydration mismatches.</p>
+  <p>Use it in separate components:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">NetworkStatus.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">function NetworkStatus() {
+  const online = useOnlineStatus();
+
+  return (
+    &lt;p&gt;
+      {online ? "Connected" : "Offline"}
+    &lt;/p&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>Another component can use the same Hook.</p>
+  <p>The Hook shares logic, not one common state object. Each Hook call has its own Hook state and lifecycle unless it subscribes to a shared external store or another shared source.</p>
+  <p>Reference: <a href="https://react.dev/learn/reusing-logic-with-custom-hooks">React — Reusing Logic with Custom Hooks</a>.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=1200&q=80&auto=format&fit=crop"
+      alt="A well-organized toolbox with tools arranged by purpose"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The shared toolbox</div>
+    <div class="photo-caption">
+      <b>A custom Hook is a tool in the shared toolbox.</b> It carries its own state and lifecycle, but it is designed to be reached for by many components. Every workshop that picks it up gets the same reliable behaviour without duplicating the tool.
+    </div>
+  </div>
+
+  <h3>4.2 What are feature boundaries?</h3>
+  <p>A feature boundary is an organizational boundary around related functionality.</p>
+  <p>Instead of grouping all components in one enormous directory, organize code around concepts such as students, courses, attendance, or payments.</p>
+  <p>Example:</p>
+
+  <div class="tree"><span class="dir">src/</span>
+├── <span class="dir">app/</span>
+│   ├── <span class="file">App.tsx</span>
+│   └── <span class="file">router.tsx</span>
+├── <span class="dir">features/</span>
+│   ├── <span class="dir">students/</span>
+│   │   ├── <span class="dir">components/</span>
+│   │   ├── <span class="dir">hooks/</span>
+│   │   ├── <span class="dir">api/</span>
+│   │   └── <span class="file">types.ts</span>
+│   ├── <span class="dir">courses/</span>
+│   │   ├── <span class="dir">components/</span>
+│   │   ├── <span class="dir">hooks/</span>
+│   │   ├── <span class="dir">api/</span>
+│   │   └── <span class="file">types.ts</span>
+│   └── <span class="dir">attendance/</span>
+│       ├── <span class="dir">components/</span>
+│       ├── <span class="dir">hooks/</span>
+│       ├── <span class="dir">api/</span>
+│       └── <span class="file">types.ts</span>
+└── <span class="dir">shared/</span>
+    ├── <span class="dir">components/</span>
+    ├── <span class="dir">hooks/</span>
+    └── <span class="dir">utils/</span></div>
+
+  <p>A student-specific search Hook can live in <code>features/students/hooks</code>. A generic <code>useOnlineStatus</code> Hook might belong in <code>shared/hooks</code>.</p>
+  <p>Do not automatically make every feature depend on every other feature. Keep dependencies intentional and easy to understand.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 4.1 — Extract a Hook</h4>
+  <p>Create a <code>useDebouncedValue</code> Hook and use it in both a student search and a course search.</p>
+  <p>Test that changing the value resets the timer and that the previous timer is cleaned up.</p>
+
+  <h4>Exercise 4.2 — Organize by feature</h4>
+  <p>Take a small application with students, courses, and attendance. Refactor the folder structure into feature-based modules.</p>
+  <p>Move the associated types, API functions, hooks, and components together without changing the observable functionality.</p>
+
+  <h4>Challenge</h4>
+  <p>Define which parts of the student feature can be imported by other features. Keep internal implementation details private where practical.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can extract a focused Hook and choose a folder structure that keeps feature ownership obvious.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">§ 4 · Hooks &amp; Boundaries</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 5 — DEPENDENCY INJECTION THROUGH CONTEXT
+     ============================================================ -->
+<section class="topic" id="t5">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#4338ca,#6366f1);">DI</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 5</div>
+    <h2>Dependency Injection Through Context</h2>
+    <p>Supply the service; do not hard-code the implementation.</p>
+  </div>
+
+  <h3>5.1 What is dependency injection?</h3>
+  <p>Dependency injection means supplying a component or function with the services it needs rather than forcing it to create or import every dependency directly.</p>
+  <p>Imagine you have a <code>StudentRepository</code> that talks to a backend. Your component should not need to know whether that repository uses <code>fetch</code>, Axios, a mock implementation, or a different API base URL.</p>
+  <p>Context can provide the required dependency to a subtree.</p>
+
+  <h3>5.2 Define a service contract</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentApi.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">interface Student {
+  id: string;
+  name: string;
+}
+
+interface StudentApi {
+  getStudents(): Promise&lt;Student[]&gt;;
+}</code></pre>
+  </div>
+
+  <p>This defines what a student API must provide without forcing a specific implementation.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80&auto=format&fit=crop"
+      alt="A row of interchangeable electronic modules and connectors"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · Swappable modules</div>
+    <div class="photo-caption">
+      <b>Dependency injection is a swappable module slot.</b> The component knows the shape of the connector, not the brand of the module. Production plugs in the real API; tests plug in a fake. The component never notices the difference.
+    </div>
+  </div>
+
+  <h3>5.3 Provide the dependency with Context</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentApiContext.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import {
+  createContext,
+  useContext,
+  type ReactNode,
+} from "react";
+
+const StudentApiContext = createContext&lt;StudentApi | null&gt;(null);
+
+export function StudentApiProvider({
+  api,
+  children,
+}: {
+  api: StudentApi;
+  children: ReactNode;
+}) {
+  return (
+    &lt;StudentApiContext.Provider value={api}&gt;
+      {children}
+    &lt;/StudentApiContext.Provider&gt;
+  );
+}
+
+export function useStudentApi() {
+  const api = useContext(StudentApiContext);
+
+  if (!api) {
+    throw new Error(
+      "useStudentApi must be used inside StudentApiProvider"
+    );
+  }
+
+  return api;
+}</code></pre>
+  </div>
+
+  <p>The provider makes the API service available to descendants.</p>
+
+  <h3>5.4 Inject different implementations</h3>
+  <p>Production implementation:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">productionStudentApi.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">const productionStudentApi: StudentApi = {
+  async getStudents() {
+    const response = await fetch("/api/students");
+
+    if (!response.ok) {
+      throw new Error("Failed to load students");
+    }
+
+    // A real project should validate the returned JSON.
+    return response.json() as Promise&lt;Student[]&gt;;
+  },
+};</code></pre>
+  </div>
+
+  <p>Test implementation:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">fakeStudentApi.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">const fakeStudentApi: StudentApi = {
+  async getStudents() {
+    return [
+      { id: "STU-101", name: "Aarav Patel" },
+    ];
+  },
+};</code></pre>
+  </div>
+
+  <p>The application can receive either implementation through the provider.</p>
+  <p>A component calls <code>useStudentApi()</code> and does not need to know where the service came from.</p>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">Same component, two providers</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div class="o-card" style="border-color:#c7d2fe;">
+        <p style="margin:0 0 6px; font-size:10pt; color:#4338ca;"><strong>Production provider</strong></p>
+        <p style="margin:0; font-family:Consolas, monospace; font-size:9.5pt; color:#374151;">&lt;StudentApiProvider api={productionStudentApi}&gt;</p>
+        <p class="o-muted" style="margin:6px 0 0;">→ real HTTP request to /api/students</p>
+      </div>
+      <div class="o-card" style="border-color:#86efac;">
+        <p style="margin:0 0 6px; font-size:10pt; color:#166534;"><strong>Test provider</strong></p>
+        <p style="margin:0; font-family:Consolas, monospace; font-size:9.5pt; color:#374151;">&lt;StudentApiProvider api={fakeStudentApi}&gt;</p>
+        <p class="o-muted" style="margin:6px 0 0;">→ returns STU-101 Aarav Patel instantly</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="ct">▲ Security note</div>
+    <p>Dependency injection is an architectural technique, not an access-control mechanism. A frontend-provided service cannot enforce server-side authorization.</p>
+  </div>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 5.1 — Inject an API service</h4>
+  <p>Create a <code>CourseApi</code> interface and supply a production implementation through Context.</p>
+  <p>Use the service in a course-list component.</p>
+
+  <h4>Exercise 5.2 — Replace the dependency in tests</h4>
+  <p>Provide a fake API implementation that returns known courses.</p>
+  <p>Test that the course list renders successfully without calling the real backend.</p>
+
+  <h4>Challenge</h4>
+  <p>Design a provider for analytics that can be switched between a production service and a test implementation. Keep the component unaware of the concrete service implementation.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can define a service contract, provide it through Context, and swap implementations without changing the consuming component.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">§ 5 · Dependency Injection</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 6 — STATE MACHINES
+     ============================================================ -->
+<section class="topic" id="t6">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#b45309,#f59e0b);">FSM</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 6</div>
+    <h2>State Machines and Complex Workflows</h2>
+    <p>Model the states and transitions instead of juggling booleans.</p>
+  </div>
+
+  <h3>6.1 Why do complex workflows need more than a boolean?</h3>
+  <p>Imagine an LMS checkout flow with several steps:</p>
+  <ul>
+    <li>Enter enrollment details</li>
+    <li>Confirm course selection</li>
+    <li>Submit payment</li>
+    <li>Show success</li>
+    <li>Show an error if submission fails</li>
+  </ul>
+  <p>If you use several unrelated booleans, you could accidentally create contradictory states:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Booleans</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const [isLoading, setIsLoading] = useState(false);
+const [isSuccess, setIsSuccess] = useState(false);
+const [hasError, setHasError] = useState(false);</code></pre>
+  </div>
+
+  <p>What should happen if both <code>isSuccess</code> and <code>hasError</code> become <code>true</code>?</p>
+  <p>A state machine models the workflow as a set of defined states and permitted transitions.</p>
+
+  <h3>6.2 Model a checkout workflow</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">checkout.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">type CheckoutState =
+  | { status: "details" }
+  | { status: "payment"; orderId: string }
+  | { status: "submitting"; orderId: string }
+  | { status: "success"; orderId: string }
+  | { status: "error"; message: string };</code></pre>
+  </div>
+
+  <p>This structure expresses which data belongs to each state.</p>
+  <p>For instance, a successful checkout must have an <code>orderId</code>. An error state must have an error message.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1555626906-fcf10d6851b4?w=1200&q=80&auto=format&fit=crop"
+      alt="A subway map showing lines and stations"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The metro map</div>
+    <div class="photo-caption">
+      <b>A state machine is a metro map.</b> Every state is a station; every event is a track connecting two stations. You can only reach the stops that are actually on a line — there is no accidental shortcut from "details" straight to "success".
+    </div>
+  </div>
+
+  <h3>6.3 Define the permitted events</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">checkout.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">type CheckoutEvent =
+  | { type: "CONTINUE"; orderId: string }
+  | { type: "SUBMIT" }
+  | { type: "SUCCESS" }
+  | { type: "FAILURE"; message: string }
+  | { type: "RETRY" }
+  | { type: "EDIT_DETAILS" };</code></pre>
+  </div>
+
+  <p>These event types represent actions the workflow may receive.</p>
+
+  <h3>6.4 Implement transitions</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">checkoutReducer.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">function checkoutReducer(
+  state: CheckoutState,
+  event: CheckoutEvent
+): CheckoutState {
+  switch (state.status) {
+    case "details":
+      if (event.type === "CONTINUE") {
+        return {
+          status: "payment",
+          orderId: event.orderId,
+        };
+      }
+
+      return state;
+
+    case "payment":
+      if (event.type === "SUBMIT") {
+        return {
+          status: "submitting",
+          orderId: state.orderId,
+        };
+      }
+
+      if (event.type === "EDIT_DETAILS") {
+        return { status: "details" };
+      }
+
+      return state;
+
+    case "submitting":
+      if (event.type === "SUCCESS") {
+        return {
+          status: "success",
+          orderId: state.orderId,
+        };
+      }
+
+      if (event.type === "FAILURE") {
+        return {
+          status: "error",
+          message: event.message,
+        };
+      }
+
+      return state;
+
+    case "error":
+      if (event.type === "RETRY") {
+        return {
+          status: "payment",
+          orderId: getCurrentOrderId(),
+        };
+      }
+
+      return state;
+
+    case "success":
+      return state;
+  }
+}</code></pre>
+  </div>
+
+  <p>This demonstrates the idea of defining legal transitions, but <code>getCurrentOrderId()</code> is a placeholder for your actual order-management logic. In a complete implementation, preserve the order ID in the error state or in a separate stable state structure rather than relying on a global lookup.</p>
+  <p>The important principle is that the state and allowed events are explicitly modeled.</p>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">Checkout workflow — reachable states</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+        <span class="o-badge amber">details</span>
+        <span style="color:#9ca3af;">→ CONTINUE →</span>
+        <span class="o-badge blue">payment</span>
+        <span style="color:#9ca3af;">→ SUBMIT →</span>
+        <span class="o-badge violet">submitting</span>
+        <span style="color:#9ca3af;">→ SUCCESS →</span>
+        <span class="o-badge green">success</span>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px;">
+        <span style="color:#9ca3af;">submitting → FAILURE →</span>
+        <span class="o-badge rose">error</span>
+        <span style="color:#9ca3af;">→ RETRY →</span>
+        <span class="o-badge blue">payment</span>
+      </div>
+      <p class="o-muted" style="margin-top:12px;">No transition from <code>success</code> back to <code>submitting</code> exists. Contradictory states like "success and error" are impossible.</p>
+    </div>
+  </div>
+
+  <h3>6.5 When should you use a state machine?</h3>
+  <p>State machines can be especially useful for:</p>
+  <ul>
+    <li>Multi-step forms</li>
+    <li>Checkout and payment flows</li>
+    <li>Authentication workflows</li>
+    <li>Upload processes</li>
+    <li>Booking systems</li>
+    <li>Approval workflows</li>
+    <li>Complex dialogs</li>
+    <li>Operations with retry and cancellation behavior</li>
+  </ul>
+  <p>For simple UI state, <code>useState</code> or <code>useReducer</code> may be enough. A dedicated library such as XState can help when a workflow has many states, guards, delayed transitions, parallel states, or other complex requirements.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 6.1 — Multi-step enrollment form</h4>
+  <p>Create a workflow with the states:</p>
+  <ul>
+    <li>Details</li>
+    <li>Confirmation</li>
+    <li>Submitting</li>
+    <li>Success</li>
+    <li>Error</li>
+  </ul>
+  <p>Specify which events are allowed in each state and prevent accidental transitions such as submitting before confirmation.</p>
+
+  <h4>Exercise 6.2 — Test state transitions</h4>
+  <p>Write unit tests for the reducer.</p>
+  <p>Verify:</p>
+  <ul>
+    <li>Valid events transition to the correct state.</li>
+    <li>Invalid events leave the state unchanged.</li>
+    <li>Success cannot accidentally transition back to submission.</li>
+    <li>The error state retains any information needed for a retry.</li>
+  </ul>
+
+  <h4>Challenge</h4>
+  <p>Add cancellation and retry behavior, then draw a state-transition diagram for the workflow.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can model a workflow as explicit states and events, and you can test that the reducer refuses illegal transitions.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">§ 6 · State Machines</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 7 — OPTIMISTIC UI UPDATES
+     ============================================================ -->
+<section class="topic" id="t7">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#be123c,#e11d48);">OPT</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 7</div>
+    <h2>Optimistic UI Updates</h2>
+    <p>Show the result immediately, but know how to roll back.</p>
+  </div>
+
+  <h3>7.1 What is an optimistic update?</h3>
+  <p>An optimistic update makes the UI reflect an action immediately, before the server confirms that it succeeded.</p>
+  <p>Imagine a student clicks <strong>Mark Lesson Complete</strong>. Waiting for the server may take 800 milliseconds. The application can immediately show the lesson as completed, then reconcile the UI when the request succeeds or fails.</p>
+  <p>Optimistic updates improve perceived responsiveness, but they require a correct strategy for handling failures.</p>
+
+  <h3>7.2 Use React's <code>useOptimistic</code> Hook</h3>
+  <p>React provides <code>useOptimistic</code> to display a temporary optimistic state while an Action is in progress.</p>
+  <p>Example: a student posts a course comment.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">CommentBox.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useOptimistic, useState, useTransition } from "react";
+import type { FormEvent } from "react";
+
+interface Comment {
+  id: string;
+  text: string;
+}
+
+interface CommentBoxProps {
+  comments: Comment[];
+  onSave: (comment: Comment) =&gt; Promise&lt;void&gt;;
+}
+
+function CommentBox({ comments, onSave }: CommentBoxProps) {
+  const [optimisticComments, addOptimisticComment] =
+    useOptimistic(
+      comments,
+      (current, comment: Comment) =&gt; [...current, comment]
+    );
+
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState("");
+
+  function handleSubmit(event: FormEvent&lt;HTMLFormElement&gt;) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const text = String(formData.get("comment") ?? "").trim();
+
+    if (!text) return;
+
+    setError("");
+
+    const newComment: Comment = {
+      id: `temp-${crypto.randomUUID()}`,
+      text,
+    };
+
+    startTransition(async () =&gt; {
+      addOptimisticComment(newComment);
+
+      try {
+        await onSave(newComment);
+      } catch {
+        setError("Unable to post comment. Please try again.");
+      }
+    });
+
+    form.reset();
+  }
+
+  return (
+    &lt;section className="space-y-4"&gt;
+      &lt;form onSubmit={handleSubmit} className="flex gap-2"&gt;
+        &lt;label htmlFor="comment" className="sr-only"&gt;
+          Add a comment
+        &lt;/label&gt;
+
+        &lt;input
+          id="comment"
+          name="comment"
+          className="min-w-0 flex-1 rounded-lg border p-3"
+          placeholder="Write a comment..."
+        /&gt;
+
+        &lt;button
+          type="submit"
+          disabled={isPending}
+          className="rounded-lg bg-indigo-600 px-4 py-2 text-white disabled:opacity-50"
+        &gt;
+          {isPending ? "Posting..." : "Post"}
+        &lt;/button&gt;
+      &lt;/form&gt;
+
+      {error &amp;&amp; &lt;p role="alert"&gt;{error}&lt;/p&gt;}
+
+      &lt;ul className="space-y-2"&gt;
+        {optimisticComments.map((comment) =&gt; (
+          &lt;li key={comment.id} className="rounded-lg border p-3"&gt;
+            {comment.text}
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/section&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>This is an illustrative React 19 pattern. The parent must update the underlying <code>comments</code> prop with the authoritative saved comment after the request succeeds. If saving fails, the temporary optimistic entry is removed when the Action completes.</p>
+  <p>For a production implementation, consider generating temporary IDs carefully, preventing duplicate submissions as needed, displaying pending state per comment, and reconciling temporary IDs with server-generated IDs.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80&auto=format&fit=crop"
+      alt="An analytics dashboard updating in real time"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · Instant feedback</div>
+    <div class="photo-caption">
+      <b>An optimistic update is a light switch that flips instantly — with a quiet "undo" button.</b> The room brightens immediately (perceived performance), but the wiring behind the wall still confirms the switch is real. If the circuit fails, the light reverts and the user is told.
+    </div>
+  </div>
+
+  <h3>7.3 Understand the flow</h3>
+  <ol class="steps">
+    <li>The user submits a comment.</li>
+    <li>The application adds the comment to the optimistic view.</li>
+    <li>The request is sent to the server.</li>
+    <li>If saving succeeds, the parent updates the authoritative comments.</li>
+    <li>If saving fails, the optimistic view reverts to the current authoritative state and the error message is shown.</li>
+  </ol>
+  <p><code>useOptimistic</code> does not automatically save data or make the backend transaction succeed. It only helps present temporary state while the Action is pending.</p>
+  <p>Reference: <a href="https://react.dev/reference/react/useOptimistic">React <code>useOptimistic</code></a>.</p>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">CommentBox — optimistic then error</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div class="o-card" style="border-color:#c4b5fd; background:#faf5ff;">
+        <p style="margin:0 0 6px; font-size:10pt; color:#5b21b6;"><strong>1. User submits</strong></p>
+        <p style="margin:0; font-size:10.5pt; color:#374151;">Comment appears instantly — button shows "Posting…"</p>
+      </div>
+      <div class="o-card" style="border-color:#fca5a5; background:#fef2f2;">
+        <p style="margin:0 0 6px; font-size:10pt; color:#991b1b;"><strong>2. Request fails</strong></p>
+        <p style="margin:0; font-size:10.5pt; color:#374151;">Optimistic comment reverts; error is shown</p>
+        <p style="margin:6px 0 0; font-size:10pt; color:#991b1b;" role="alert">Unable to post comment. Please try again.</p>
+      </div>
+      <p class="o-muted" style="margin-top:10px;">The backend transaction still has to succeed — <code>useOptimistic</code> only presents the temporary state.</p>
+    </div>
+  </div>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 7.1 — Optimistic lesson completion</h4>
+  <p>Build a course lesson checklist.</p>
+  <p>When the student marks a lesson complete:</p>
+  <ul>
+    <li>Update the visible state immediately.</li>
+    <li>Send an API request.</li>
+    <li>Keep the confirmed state after success.</li>
+    <li>Restore the original state on failure.</li>
+    <li>Display a meaningful error message.</li>
+  </ul>
+
+  <h4>Exercise 7.2 — Simulate a slow server</h4>
+  <p>Use a development mock that waits one second before resolving.</p>
+  <p>Compare the perceived responsiveness of a standard update with the optimistic version.</p>
+
+  <h4>Challenge</h4>
+  <p>Test two rapid updates to different lessons and verify that one failed request does not undo an unrelated successful update.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can implement an optimistic update with a clear rollback path and no false "success" when the backend fails.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">§ 7 · Optimistic UI</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 8 — INTERNATIONALIZATION
+     ============================================================ -->
+<section class="topic" id="t8">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#047857,#10b981);">i18n</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 8</div>
+    <h2>Internationalization</h2>
+    <p>Design for languages and locales from the start — not as a retrofit.</p>
+  </div>
+
+  <h3>8.1 What is internationalization?</h3>
+  <p>Internationalization, commonly abbreviated <strong>i18n</strong>, means designing software so it can support different languages and regional conventions.</p>
+  <p>Localization means adapting content for a specific locale, such as Hindi for India or English for the United States.</p>
+  <p>For an LMS, this may include:</p>
+  <ul>
+    <li>English and Hindi translations</li>
+    <li>Locale-aware numbers</li>
+    <li>Date formatting</li>
+    <li>Currency formatting</li>
+    <li>Right-to-left language support where relevant</li>
+    <li>Language-specific plural forms</li>
+    <li>Localized routes or page metadata</li>
+  </ul>
+
+  <h3>8.2 Why hard-coded text becomes difficult to maintain</h3>
+  <p>Suppose your dashboard displays:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Hard-coded</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">&lt;button&gt;Start Learning&lt;/button&gt;</code></pre>
+  </div>
+
+  <p>If every component contains hard-coded strings, supporting multiple languages can become difficult.</p>
+  <p>A translation system stores language-specific messages centrally and lets components request the appropriate version.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80&auto=format&fit=crop"
+      alt="A view of the Earth from space, showing connected continents"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · One app, many voices</div>
+    <div class="photo-caption">
+      <b>i18n is one application speaking many languages.</b> The message catalogue is the phrasebook; <code>Intl</code> is the local convention for numbers, dates, and currency. The component doesn't hard-code a phrase — it asks the catalogue.
+    </div>
+  </div>
+
+  <h3>8.3 Set up <code>i18next</code> with React</h3>
+  <p>Install the dependencies:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm install i18next react-i18next</code></pre>
+  </div>
+
+  <p>Create <code>src/i18n.ts</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">i18n.ts</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+
+const resources = {
+  en: {
+    translation: {
+      welcome: "Welcome to your LMS",
+      courses: "Courses",
+      startLearning: "Start Learning",
+    },
+  },
+  hi: {
+    translation: {
+      welcome: "आपके LMS में स्वागत है",
+      courses: "पाठ्यक्रम",
+      startLearning: "सीखना शुरू करें",
+    },
+  },
+};
+
+i18n.use(initReactI18next).init({
+  resources,
+  lng: "en",
+  fallbackLng: "en",
+  interpolation: {
+    escapeValue: false,
+  },
+});
+
+export default i18n;</code></pre>
+  </div>
+
+  <p>In React applications, <code>react-i18next</code> integrates translation into components. Setting <code>escapeValue: false</code> is commonly appropriate because React escapes ordinary text output. It does <strong>not</strong> make unsafe HTML insertion safe; never insert untrusted translation strings as HTML without appropriate sanitization.</p>
+  <p>Import the initialization module once from your entry point, such as <code>main.tsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">main.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import "./i18n";</code></pre>
+  </div>
+
+  <h3>8.4 Translate text in a component</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">DashboardGreeting.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useTranslation } from "react-i18next";
+
+function DashboardGreeting() {
+  const { t, i18n } = useTranslation();
+
+  return (
+    &lt;section className="space-y-4"&gt;
+      &lt;h1 className="text-2xl font-bold"&gt;
+        {t("welcome")}
+      &lt;/h1&gt;
+
+      &lt;button className="rounded-lg bg-indigo-600 px-4 py-2 text-white"&gt;
+        {t("startLearning")}
+      &lt;/button&gt;
+
+      &lt;div className="flex gap-2"&gt;
+        &lt;button onClick={() =&gt; i18n.changeLanguage("en")}&gt;
+          English
+        &lt;/button&gt;
+
+        &lt;button onClick={() =&gt; i18n.changeLanguage("hi")}&gt;
+          हिन्दी
+        &lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The component obtains its displayed text from the selected language rather than embedding the same English wording in every place.</p>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">DashboardGreeting — English vs Hindi</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div class="o-card" style="border-color:#c7d2fe;">
+        <p style="margin:0 0 6px; font-size:10pt; color:#4338ca;"><strong>English</strong></p>
+        <p style="margin:0; font-size:11pt; color:#111827;">Welcome to your LMS</p>
+        <button class="o-btn sm" style="background:#4f46e5; margin-top:8px;">Start Learning</button>
+      </div>
+      <div class="o-card" style="border-color:#86efac;">
+        <p style="margin:0 0 6px; font-size:10pt; color:#166534;"><strong>हिन्दी</strong></p>
+        <p style="margin:0; font-size:11pt; color:#111827;">आपके LMS में स्वागत है</p>
+        <button class="o-btn sm" style="background:#059669; margin-top:8px;">सीखना शुरू करें</button>
+      </div>
+    </div>
+  </div>
+
+  <h3>8.5 Use locale-aware formatting</h3>
+  <p>Avoid manually formatting every date and number.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Intl.NumberFormat</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const formatter = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+});
+
+console.log(formatter.format(2500));</code></pre>
+  </div>
+
+  <p>For dates:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Intl.DateTimeFormat</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const dateFormatter = new Intl.DateTimeFormat("en-IN", {
+  dateStyle: "medium",
+});
+
+console.log(dateFormatter.format(new Date()));</code></pre>
+  </div>
+
+  <p>Choose locale settings based on the user's selected language and region instead of assuming that every Hindi-speaking user or every English-speaking user prefers the same regional conventions.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 8.1 — Add English and Hindi</h4>
+  <p>Translate your LMS dashboard into English and Hindi.</p>
+  <p>Translate:</p>
+  <ul>
+    <li>Navigation labels</li>
+    <li>Button text</li>
+    <li>Form labels</li>
+    <li>Validation messages</li>
+    <li>Empty states</li>
+    <li>Loading messages</li>
+  </ul>
+  <p>No important user-facing text should remain unexpectedly hard-coded in the component.</p>
+
+  <h4>Exercise 8.2 — Test localization</h4>
+  <p>Test that the language switch updates the visible text. Format a date and a currency value using the selected locale.</p>
+
+  <h4>Challenge</h4>
+  <p>Add a language preference that persists appropriately, and ensure that changing languages does not reset unrelated form data or selected records.</p>
+
+  <p>Official resources:</p>
+  <ul>
+    <li><a href="https://www.i18next.com/overview/getting-started">i18next getting started</a></li>
+    <li><a href="https://react.i18next.com/getting-started">react-i18next getting started</a></li>
+    <li><a href="https://nextjs.org/docs/app/guides/internationalization">Next.js internationalization guide</a></li>
+  </ul>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can internationalize a React application, use locale-aware formatting, and keep translation strings organized outside components.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">§ 8 · i18n</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 9 — SCALABLE FRONTEND ARCHITECTURE
+     ============================================================ -->
+<section class="topic" id="t9">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#1e3a8a,#3b82f6);">ARCH</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 9</div>
+    <h2>Designing Scalable Frontend Architecture</h2>
+    <p>Make the relationships between features explicit and easy to change.</p>
+  </div>
+
+  <h3>9.1 What is frontend architecture?</h3>
+  <p>Frontend architecture is the way an application organizes responsibilities, dependencies, state, reusable UI, data access, and feature boundaries.</p>
+  <p>Imagine a small training portal with only a dashboard and student list. A few files may be sufficient.</p>
+  <p>Now imagine it grows to include authentication, payments, book releases, assignments, attendance, multilingual support, and analytics. If everything remains in a single component or a collection of tangled shared modules, changing one feature can break another.</p>
+  <p>Scalable architecture makes these relationships explicit.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80&auto=format&fit=crop"
+      alt="An architect's blueprint with structured floor plans"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The blueprint</div>
+    <div class="photo-caption">
+      <b>Architecture is a blueprint, not a floor plan.</b> The blueprint shows which walls are load-bearing and which doors connect which rooms. A reader can find the entrance, the kitchen, and the exits without walking every corridor.
+    </div>
+  </div>
+
+  <h3>9.2 Organize around features</h3>
+  <p>A practical organization might look like:</p>
+
+  <div class="tree"><span class="dir">src/</span>
+├── <span class="dir">app/</span>
+│   ├── <span class="file">App.tsx</span>
+│   ├── <span class="file">router.tsx</span>
+│   └── <span class="file">providers.tsx</span>
+├── <span class="dir">features/</span>
+│   ├── <span class="dir">auth/</span>
+│   │   ├── <span class="dir">components/</span>
+│   │   ├── <span class="dir">api/</span>
+│   │   └── <span class="dir">hooks/</span>
+│   ├── <span class="dir">students/</span>
+│   │   ├── <span class="dir">components/</span>
+│   │   ├── <span class="dir">api/</span>
+│   │   ├── <span class="dir">hooks/</span>
+│   │   └── <span class="file">types.ts</span>
+│   ├── <span class="dir">courses/</span>
+│   ├── <span class="dir">books/</span>
+│   ├── <span class="dir">attendance/</span>
+│   └── <span class="dir">analytics/</span>
+├── <span class="dir">shared/</span>
+│   ├── <span class="dir">components/</span>
+│   ├── <span class="dir">hooks/</span>
+│   ├── <span class="dir">utilities/</span>
+│   └── <span class="dir">types/</span>
+└── <span class="dir">styles/</span></div>
+
+  <p>This is one possible structure, not a universal standard.</p>
+  <p>The goal is to keep closely related code together and make the public boundaries between features easy to understand.</p>
+
+  <h3>9.3 Separate responsibilities</h3>
+  <p>A maintainable application often separates these concerns:</p>
+
+  <table>
+    <thead><tr><th>Responsibility</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>Presentation</td><td><code>StudentCard.tsx</code></td></tr>
+      <tr><td>Feature behavior</td><td><code>useStudentSearch.ts</code></td></tr>
+      <tr><td>Data access</td><td><code>studentsApi.ts</code></td></tr>
+      <tr><td>Shared state</td><td>Context or a state-management library</td></tr>
+      <tr><td>Routing</td><td>Route definitions and layouts</td></tr>
+      <tr><td>Shared design system</td><td>Buttons, cards, inputs, dialogs</td></tr>
+      <tr><td>Validation</td><td>Domain-specific schema or validation functions</td></tr>
+      <tr><td>App composition</td><td>Providers and route setup</td></tr>
+    </tbody>
+  </table>
+
+  <p>Do not create a separate layer for every trivial function merely to match a diagram. Introduce boundaries that make changes, testing, and ownership easier.</p>
+
+  <h3>9.4 Keep domain logic out of oversized components</h3>
+  <p>A component may become difficult to maintain if it performs all of these jobs:</p>
+  <ul>
+    <li>Fetches student data</li>
+    <li>Validates input</li>
+    <li>Calculates attendance</li>
+    <li>Manages several dialogs</li>
+    <li>Applies permissions to actions</li>
+    <li>Formats currency</li>
+    <li>Displays a table</li>
+    <li>Handles export functionality</li>
+  </ul>
+  <p>Extract cohesive responsibilities into suitable feature modules, services, Hooks, or utilities.</p>
+  <p>The goal is not to make every component tiny. The goal is to make each component's responsibility clear.</p>
+
+  <h3>9.5 Avoid circular dependencies</h3>
+  <p>A problematic dependency structure looks like:</p>
+
+  <div class="term out">
+    <div class="term-head">Circular dependency</div>
+    <pre>Students → Courses → Attendance → Students</pre>
+  </div>
+
+  <p>When features depend on one another in both directions, changes become difficult to reason about.</p>
+  <p>A clearer structure might place shared types or common domain concepts in a lower-level shared module, then define a deliberate direction of dependency.</p>
+  <p>For example:</p>
+
+  <div class="term out">
+    <div class="term-head">Directed dependencies</div>
+    <pre>Shared Types
+    ↑       ↑
+Students   Courses
+    ↑       ↑
+  Dashboard</pre>
+  </div>
+
+  <p>The exact dependency direction depends on your domain, but aim to avoid unnecessary cycles.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 9.1 — Refactor a monolithic dashboard</h4>
+  <p>Take a single React component containing student data fetching, filtering, form state, and display markup.</p>
+  <p>Separate it into:</p>
+  <ul>
+    <li>A feature API module</li>
+    <li>A focused Hook</li>
+    <li>A reusable presentation component</li>
+    <li>A page-level component that composes them</li>
+  </ul>
+  <p>Keep the user-visible behavior unchanged.</p>
+
+  <h4>Exercise 9.2 — Define feature boundaries</h4>
+  <p>Create a simple dependency diagram for students, courses, books, and attendance.</p>
+  <p>Identify which modules are public to other features and which should remain internal.</p>
+
+  <h4>Challenge</h4>
+  <p>Simulate a change to book-release logic. Explain which modules should change and why unrelated student search code should not need modification.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can refactor a monolithic dashboard into clear feature modules with intentional dependencies and separate responsibilities.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">§ 9 · Scalable Architecture</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 10 — REACT SERVER COMPONENTS
+     ============================================================ -->
+<section class="topic" id="t10">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#5b21b6,#8b5cf6);">RSC</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 10</div>
+    <h2>React Server Components Concepts</h2>
+    <p>Render on the server; send less JavaScript to the browser.</p>
+  </div>
+
+  <h3>10.1 What are React Server Components?</h3>
+  <p>React Server Components (RSC) are components designed to render in a server environment.</p>
+  <p>They allow applications using a compatible React framework or bundler integration to render parts of the component tree on the server. Server Component code can access server-side resources and avoid shipping that component's implementation to the browser.</p>
+  <p>In the Next.js App Router, pages and layouts are Server Components by default. Client Components are introduced for interactivity and browser-only behavior. See the <a href="https://nextjs.org/docs/app/getting-started/server-and-client-components">Next.js Server and Client Components guide</a>.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1200&q=80&auto=format&fit=crop"
+      alt="A busy restaurant kitchen where chefs prepare plates"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The restaurant kitchen</div>
+    <div class="photo-caption">
+      <b>Server Components are the kitchen; Client Components are the dining room.</b> The kitchen (server) has the knives, the oven, and the private recipe book. The dining room (browser) has the chairs, the music, and the customers. The plate that crosses the pass is serializable — you don't hand a customer a stove.
+    </div>
+  </div>
+
+  <h3>10.2 Real-life example: Course catalogue</h3>
+  <p>Imagine your LMS has a public course catalogue.</p>
+  <p>The server can fetch public course information and render the course cards without requiring the browser to fetch the same data after rendering the page.</p>
+  <p>A simplified Server Component could look like:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">app/courses/page.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">// app/courses/page.tsx
+
+interface Course {
+  id: string;
+  title: string;
+  description: string;
+}
+
+export default async function CoursesPage() {
+  const response = await fetch(
+    "https://api.example.com/public/courses"
+  );
+
+  if (!response.ok) {
+    throw new Error("Could not load courses.");
+  }
+
+  const courses: Course[] = await response.json();
+
+  return (
+    &lt;main className="mx-auto max-w-6xl p-6"&gt;
+      &lt;h1 className="mb-6 text-3xl font-bold"&gt;
+        Available Courses
+      &lt;/h1&gt;
+
+      &lt;div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"&gt;
+        {courses.map((course) =&gt; (
+          &lt;article key={course.id} className="rounded-xl border p-5"&gt;
+            &lt;h2 className="font-bold"&gt;{course.title}&lt;/h2&gt;
+            &lt;p className="mt-2 text-slate-600"&gt;
+              {course.description}
+            &lt;/p&gt;
+          &lt;/article&gt;
+        ))}
+      &lt;/div&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>This demonstrates the structure of a Server Component in Next.js. The endpoint is illustrative, and a production application should validate external data and handle errors appropriately.</p>
+  <p>If server-side credentials or private data are involved, access them only through trusted server-side code and check authorization for the current user.</p>
+
+  <h3>10.3 When do you need a Client Component?</h3>
+  <p>Consider a course card with a favorite button.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">FavoriteButton.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">"use client";
+
+import { useState } from "react";
+
+export default function FavoriteButton() {
+  const [favorite, setFavorite] = useState(false);
+
+  return (
+    &lt;button
+      type="button"
+      aria-pressed={favorite}
+      onClick={() =&gt; setFavorite((value) =&gt; !value)}
+    &gt;
+      {favorite ? "Favorited" : "Add to favorites"}
+    &lt;/button&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The <code>"use client"</code> directive declares a boundary between the server and client module graphs in a supported framework such as Next.js.</p>
+  <p>A Client Component is suitable here because the feature requires interactive state and an event handler.</p>
+  <p>It is important to understand that Client Components can still participate in server pre-rendering on the initial page load in Next.js. "Client Component" does not simply mean that its HTML can only ever be created in the browser.</p>
+
+  <h3>10.4 Server Components versus Client Components</h3>
+
+  <table>
+    <thead><tr><th>Capability</th><th>Server Component</th><th>Client Component</th></tr></thead>
+    <tbody>
+      <tr><td>Access server-only resources directly</td><td>Yes, where the server environment and authorization allow it</td><td>No direct access to server-only resources</td></tr>
+      <tr><td>Use state and event handlers</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Use browser APIs such as <code>window</code></td><td>No</td><td>Yes, in appropriate client execution</td></tr>
+      <tr><td>Keep server-only module code out of the client bundle</td><td>Yes, for the Server Component implementation</td><td>Not for client-side module dependencies</td></tr>
+      <tr><td>Use interactive Hooks such as <code>useState</code></td><td>No</td><td>Yes</td></tr>
+      <tr><td>Send serialized props from server to client</td><td>Can pass supported serializable values</td><td>Receives them as props</td></tr>
+    </tbody>
+  </table>
+
+  <p>Props passed across a Server-to-Client Component boundary need to satisfy React's serialization requirements. Do not assume that functions, database connections, or arbitrary server objects can be passed as ordinary props.</p>
+  <p>Also, a Server Component is not automatically a security boundary for every resource it accesses. Server-side authorization is still required.</p>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">Courses page — server-rendered catalogue</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <h3 style="margin:0 0 12px; color:#3b0764; font-family:Georgia, serif; font-size:16pt;">Available Courses</h3>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="o-card" style="border-color:#c4b5fd; background:#faf5ff;">
+          <p style="margin:0 0 4px; font-size:11pt; color:#111827; font-weight:700;">React Fundamentals</p>
+          <p style="margin:0 0 8px; font-size:10pt; color:#6b7280;">Components, props, state, hooks.</p>
+          <button class="o-btn sm" style="background:#7c3aed;">Add to favorites</button>
+        </div>
+        <div class="o-card" style="border-color:#c4b5fd; background:#faf5ff;">
+          <p style="margin:0 0 4px; font-size:11pt; color:#111827; font-weight:700;">TypeScript Deep Dive</p>
+          <p style="margin:0 0 8px; font-size:10pt; color:#6b7280;">Types, generics, inference.</p>
+          <button class="o-btn sm" style="background:#7c3aed;">Add to favorites</button>
+        </div>
+      </div>
+      <p class="o-muted" style="margin-top:12px;">The catalogue data is fetched on the server. Only the favourite button is a Client Component.</p>
+    </div>
+  </div>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 10.1 — Server-render a catalogue</h4>
+  <p>In a Next.js App Router project, create a server-rendered course page.</p>
+  <p>Fetch the course list in a Server Component and render the cards.</p>
+  <p>Keep the data access on the server where appropriate, and validate any untrusted API response.</p>
+
+  <h4>Exercise 10.2 — Add a Client Component</h4>
+  <p>Add a favorite button or interactive course filter.</p>
+  <p>Use a Client Component only for the part requiring client-side interaction.</p>
+
+  <h4>Challenge</h4>
+  <p>Draw the Server/Client Component tree for your course page. Identify which modules enter the client bundle and which data accesses must remain server-side.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can place a Server/Client boundary at the right level and explain which modules and data accesses remain server-side.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">§ 10 · React Server Components</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 11 — SERVER RENDERING AND HYDRATION
+     ============================================================ -->
+<section class="topic" id="t11">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#1d4ed8,#3b82f6);">SSR</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 11</div>
+    <h2>Server Rendering and Hydration Concepts</h2>
+    <p>HTML first. Interactivity second. The two must agree.</p>
+  </div>
+
+  <h3>11.1 What is server-side rendering?</h3>
+  <p>Server-side rendering (SSR) means generating the initial HTML for a React UI on the server and sending it to the browser.</p>
+  <p>Without server-rendered HTML, a client-rendered application may need to load JavaScript and execute it before the main UI appears.</p>
+  <p>SSR can allow users to see useful HTML sooner and may support content discovery by crawlers. Its benefits depend on the application, rendering setup, caching strategy, and performance characteristics.</p>
+
+  <h3>11.2 What is hydration?</h3>
+  <p>Hydration is the process where React attaches event handlers and connects React behavior to existing server-rendered HTML.</p>
+  <p>For example, the server might send:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Server HTML</span><span class="code-lang">HTML</span></div>
+    <pre><code class="lang-html">&lt;div id="root"&gt;
+  &lt;button&gt;Count: 0&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <p>The initial HTML can display a button, but it is not yet interactive merely because its markup exists.</p>
+  <p>The browser loads the client JavaScript and React hydrates the HTML so that the button can respond to interaction.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80&auto=format&fit=crop"
+      alt="An architectural blueprint with structure and detail"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The blueprint and the building</div>
+    <div class="photo-caption">
+      <b>SSR ships the building; hydration turns the lights on.</b> The server delivers the structure (HTML) so people can walk around it. The client wires up the electricity (event handlers). If the client's blueprint disagrees with the server's, the lights flicker — that is a hydration mismatch.
+    </div>
+  </div>
+
+  <h3>11.3 Why hydration mismatches happen</h3>
+  <p>The server-rendered output and the first client render should agree on the UI structure and initial content.</p>
+  <p>For example, this component is risky in a server-rendered application:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Risky</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">function CurrentTime() {
+  return &lt;p&gt;{new Date().toLocaleTimeString()}&lt;/p&gt;;
+}</code></pre>
+  </div>
+
+  <p>The server and browser may evaluate the time at different moments, and their locale settings may differ. Their first rendered outputs can disagree.</p>
+  <p>Other causes can include:</p>
+  <ul>
+    <li>Using <code>window</code> or <code>localStorage</code> during server rendering</li>
+    <li>Generating random values during rendering</li>
+    <li>Incorrect HTML nesting</li>
+    <li>Rendering different branches on the server and initial client pass</li>
+    <li>Nondeterministic data or formatting</li>
+  </ul>
+
+  <h3>11.4 Avoid browser-only values during the initial render</h3>
+  <p>A safer pattern can delay browser-specific logic until the component mounts:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">LocalTime.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">"use client";
+
+import { useEffect, useState } from "react";
+
+function LocalTime() {
+  const [time, setTime] = useState&lt;string | null&gt;(null);
+
+  useEffect(() =&gt; {
+    setTime(new Date().toLocaleTimeString());
+  }, []);
+
+  return &lt;p&gt;{time ?? "Loading time..."}&lt;/p&gt;;
+}</code></pre>
+  </div>
+
+  <p>The server output and initial client render both display the placeholder. After hydration, the effect updates the displayed time.</p>
+  <p>This avoids the specific initial mismatch in the example, but it also means the local time is not present in the server-rendered HTML. Choose the right rendering and formatting strategy for your use case rather than adding effects everywhere.</p>
+
+  <h3>11.5 What is <code>hydrateRoot</code>?</h3>
+  <p>For a manually configured SSR application, React DOM provides <code>hydrateRoot</code> to hydrate existing HTML.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">main.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { hydrateRoot } from "react-dom/client";
+import App from "./App";
+
+const rootElement = document.getElementById("root");
+
+if (!rootElement) {
+  throw new Error("Root element not found.");
+}
+
+hydrateRoot(rootElement, &lt;App /&gt;);</code></pre>
+  </div>
+
+  <p>This is a conceptual client-side hydration example. It assumes the server has already generated compatible HTML for <code>App</code> and that both server and client are configured consistently.</p>
+  <p>For an ordinary Next.js application, the framework coordinates the rendering and hydration process. You generally should not add your own <code>hydrateRoot</code> call to an App Router page.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 11.1 — Identify a hydration mismatch</h4>
+  <p>In a test SSR project, intentionally render a nondeterministic value, such as current time or random content, during the initial render.</p>
+  <p>Inspect the browser console and observe the mismatch behavior.</p>
+  <p>Then refactor the code so server and client start with consistent output.</p>
+
+  <h4>Exercise 11.2 — Use deterministic initial UI</h4>
+  <p>Build a component that displays a time or browser preference.</p>
+  <p>Define how the initial output is rendered, how the browser-specific value is loaded, and what the user sees during the initial phase.</p>
+
+  <h4>Challenge</h4>
+  <p>Explain the difference between server-rendered HTML, hydration, and a subsequent client-side React update.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can explain SSR, hydration, and mismatches, and you can diagnose and prevent browser-only values in the initial render.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">§ 11 · SSR &amp; Hydration</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 12 — STREAMING AND SUSPENSE
+     ============================================================ -->
+<section class="topic" id="t12">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0891b2,#22d3ee);">STRM</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 12</div>
+    <h2>Streaming and Suspense in Frameworks</h2>
+    <p>Send the shell first; stream the slow parts as they become ready.</p>
+  </div>
+
+  <h3>12.1 What is streaming?</h3>
+  <p>Traditional SSR can wait until a complete page is ready before sending the generated HTML.</p>
+  <p>Streaming can allow parts of the page to be sent as they become ready, so slower sections do not have to block all of the useful content.</p>
+  <p>Imagine an LMS dashboard that displays the user's name quickly but loads a large analytics report more slowly.</p>
+  <p>With appropriate streaming support, the server can send the page shell first and stream the slower section when it is ready.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=1200&q=80&auto=format&fit=crop"
+      alt="A waterfall cascading through rocks in stages"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The waterfall</div>
+    <div class="photo-caption">
+      <b>Streaming is a waterfall, not a dam.</b> Each drop does not wait for the last to arrive. The shell of the page falls first, then the slower sections come down in their own time. A Suspend boundary is the lip of each drop.
+    </div>
+  </div>
+
+  <h3>12.2 What is Suspense?</h3>
+  <p>React's <code>Suspense</code> provides a fallback for supported operations that suspend while rendering.</p>
+  <p>Example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Dashboard.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { Suspense } from "react";
+
+function Dashboard() {
+  return (
+    &lt;main&gt;
+      &lt;h1 className="text-2xl font-bold"&gt;
+        Student Dashboard
+      &lt;/h1&gt;
+
+      &lt;Suspense fallback={&lt;p&gt;Loading analytics...&lt;/p&gt;}&gt;
+        &lt;AnalyticsReport /&gt;
+      &lt;/Suspense&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>A boundary is useful only when a descendant uses a supported Suspense-enabled mechanism.</p>
+
+  <div class="callout warn">
+    <div class="ct">▲ Important</div>
+    <p>An ordinary <code>fetch()</code> inside <code>useEffect</code> does not automatically cause a surrounding Suspense boundary to show its fallback.</p>
+  </div>
+
+  <h3>12.3 Streaming with Next.js App Router</h3>
+  <p>In Next.js, Server Components can fetch data, and streaming can progressively reveal UI.</p>
+  <p>A simplified page might look like this:</p>
+  <p><code>app/dashboard/page.tsx</code></p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">app/dashboard/page.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { Suspense } from "react";
+
+async function AnalyticsReport() {
+  const response = await fetch(
+    "https://api.example.com/analytics"
+  );
+
+  if (!response.ok) {
+    throw new Error("Could not load analytics.");
+  }
+
+  const report = await response.json();
+
+  return (
+    &lt;section className="rounded-xl border p-5"&gt;
+      &lt;h2 className="text-xl font-semibold"&gt;
+        Analytics Report
+      &lt;/h2&gt;
+
+      &lt;pre className="mt-3 overflow-auto text-sm"&gt;
+        {JSON.stringify(report, null, 2)}
+      &lt;/pre&gt;
+    &lt;/section&gt;
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    &lt;main className="space-y-6 p-6"&gt;
+      &lt;h1 className="text-3xl font-bold"&gt;
+        Student Dashboard
+      &lt;/h1&gt;
+
+      &lt;Suspense
+        fallback={
+          &lt;div className="animate-pulse rounded-xl bg-slate-200 p-8"&gt;
+            Loading analytics...
+          &lt;/div&gt;
+        }
+      &gt;
+        &lt;AnalyticsReport /&gt;
+      &lt;/Suspense&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>This demonstrates the intended pattern. The analytics component is asynchronous and can suspend while its data is being retrieved.</p>
+  <p>In production:</p>
+  <ul>
+    <li>Validate the response before rendering.</li>
+    <li>Choose the appropriate caching and revalidation policy.</li>
+    <li>Ensure data access is authorized.</li>
+    <li>Handle failures using the framework's appropriate error boundaries and route error handling.</li>
+    <li>Use a meaningful UI fallback.</li>
+  </ul>
+  <p>The example displays JSON to demonstrate the data flow. A real report should render the specific fields it needs.</p>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">Streaming dashboard — shell and fallback</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <h3 style="margin:0 0 12px; color:#3b0764; font-family:Georgia, serif; font-size:16pt;">Student Dashboard</h3>
+      <div style="border:1px solid #c7d2fe; background:#eef2ff; border-radius:10px; padding:14px 16px;">
+        <p style="margin:0 0 8px; font-size:10pt; color:#4338ca;"><strong>Loading analytics…</strong></p>
+        <div class="o-skeleton" style="width:60%;"></div>
+        <div class="o-skeleton" style="width:80%;"></div>
+        <div class="o-skeleton" style="width:45%;"></div>
+      </div>
+      <p class="o-muted" style="margin-top:12px;">The shell is visible immediately. The analytics section streams in when ready.</p>
+    </div>
+  </div>
+
+  <h3>12.4 Route-level loading UI</h3>
+  <p>Next.js supports a special <code>loading.tsx</code> file for a route segment.</p>
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">app/dashboard/loading.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">// app/dashboard/loading.tsx
+
+export default function Loading() {
+  return (
+    &lt;main className="space-y-4 p-6" aria-busy="true"&gt;
+      &lt;div className="h-8 w-64 animate-pulse rounded bg-slate-200" /&gt;
+      &lt;div className="h-40 animate-pulse rounded-xl bg-slate-200" /&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>This helps provide loading feedback while the corresponding route content is being loaded according to the framework's rendering behavior.</p>
+  <p>A route-level loading boundary and a component-level Suspense boundary serve related but different UI composition needs.</p>
+
+  <h3>12.5 How streaming helps</h3>
+  <p>Streaming can make it possible for:</p>
+  <ul>
+    <li>Useful page content to appear sooner.</li>
+    <li>A slow analytics region to load independently.</li>
+    <li>Different page sections to use different loading placeholders.</li>
+    <li>The interface to progressively reveal content as it becomes available.</li>
+  </ul>
+  <p>However, streaming does not automatically make every operation faster. Poor boundary placement, expensive server work, or inappropriate caching can still hurt the experience.</p>
+
+  <p>Official resources:</p>
+  <ul>
+    <li><a href="https://react.dev/reference/react/Suspense">React Suspense</a></li>
+    <li><a href="https://react.dev/reference/react-dom/server">React Server Rendering APIs</a></li>
+    <li><a href="https://nextjs.org/docs/app/getting-started/fetching-data">Next.js Fetching Data and Streaming</a></li>
+  </ul>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 12.1 — Stream a slow analytics section</h4>
+  <p>Build a Next.js page with a heading and an asynchronous analytics component.</p>
+  <p>Delay the report data in a development-only mock. Provide a Suspense fallback and observe how the UI becomes available.</p>
+  <p>Do not add artificial delays to production code.</p>
+
+  <h4>Exercise 12.2 — Create route loading UI</h4>
+  <p>Add a <code>loading.tsx</code> file for a dashboard route.</p>
+  <p>Build a skeleton with approximately the same dimensions as the final content so the page feels stable while loading.</p>
+
+  <h4>Challenge</h4>
+  <p>Divide the dashboard into independently loading sections and explain which content should appear immediately and which can wait.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can place Suspense boundaries intentionally, use route loading UI, and explain why a fetch inside useEffect does not trigger Suspense.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">§ 12 · Streaming &amp; Suspense</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 13 — WHEN TO USE NEXT.JS
+     ============================================================ -->
+<section class="topic" id="t13">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0a0618,#3b0764);">NEXT</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 13</div>
+    <h2>When to Use a Framework Such as Next.js</h2>
+    <p>Choose by requirements, not by fashion.</p>
+  </div>
+
+  <h3>13.1 What is Next.js?</h3>
+  <p>Next.js is a React framework for building web applications. It includes routing, server rendering capabilities, React Server Component support in the App Router, loading and error conventions, and other build and deployment features.</p>
+  <p>It provides an organized way to build larger applications without configuring all the underlying infrastructure from scratch.</p>
+  <p>Official documentation: <a href="https://nextjs.org/docs">Next.js</a>.</p>
+
+  <h3>13.2 When a plain React + Vite project can be enough</h3>
+  <p>Imagine you are building an internal dashboard used after staff sign in.</p>
+  <p>Its requirements include:</p>
+  <ul>
+    <li>Client-side dashboard interactions</li>
+    <li>API-based data access</li>
+    <li>A protected login flow</li>
+    <li>Charts and tables</li>
+    <li>Internal forms and workflows</li>
+  </ul>
+  <p>A React + Vite SPA may be a good fit, especially if the backend already provides routing, APIs, and authentication.</p>
+  <p>You do not necessarily need a full-stack React framework for every React project.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1502085671122-2d218cd434e6?w=1200&q=80&auto=format&fit=crop"
+      alt="A fork in a quiet road with signs"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The fork in the road</div>
+    <div class="photo-caption">
+      <b>Choosing a framework is choosing a fork in the road — not the destination.</b> Vite is the short, direct path for internal apps that consume an existing API. Next.js is the wider highway for public pages, SSR, and server components. Walk the requirements before you pick the road.
+    </div>
+  </div>
+
+  <h3>13.3 When Next.js may be a better choice</h3>
+  <p>Imagine you are building a public online course marketplace.</p>
+  <p>Its requirements include:</p>
+  <ul>
+    <li>Public course pages</li>
+    <li>Discoverability by search engines</li>
+    <li>Dynamic server-rendered pages</li>
+    <li>Server-side data access</li>
+    <li>Page layouts and nested routes</li>
+    <li>Route loading and error UI</li>
+    <li>A mixture of server-rendered content and interactive components</li>
+  </ul>
+  <p>Next.js may be useful because it provides framework-level routing, Server Components, SSR, static rendering, and streaming patterns.</p>
+  <p>The right rendering strategy depends on which requirements the application actually has.</p>
+
+  <h3>13.4 Compare the options</h3>
+
+  <table>
+    <thead><tr><th>Requirement</th><th>React + Vite SPA</th><th>Next.js App Router</th></tr></thead>
+    <tbody>
+      <tr><td>Internal interactive dashboard</td><td>Often suitable</td><td>Also suitable</td></tr>
+      <tr><td>Client-side forms and state</td><td>Yes</td><td>Yes, through Client Components where needed</td></tr>
+      <tr><td>Public pages that benefit from server rendering</td><td>Requires additional setup or a different architecture</td><td>Built-in framework support</td></tr>
+      <tr><td>File-system routing</td><td>Use a router such as React Router</td><td>Built into the framework</td></tr>
+      <tr><td>React Server Components</td><td>Requires compatible integration</td><td>Supported in the App Router</td></tr>
+      <tr><td>Full-stack rendering and routing conventions</td><td>You assemble your own approach</td><td>Framework provides established conventions</td></tr>
+      <tr><td>Simple static client-side app</td><td>Often a straightforward fit</td><td>May introduce capabilities you do not need</td></tr>
+    </tbody>
+  </table>
+
+  <p>Neither option is always better. Consider the team's expertise, hosting constraints, rendering needs, caching behavior, operational complexity, and long-term maintenance.</p>
+
+  <h3>13.5 A practical decision process</h3>
+  <p>Ask yourself:</p>
+  <p><strong>Question 1: Does the application need only a client-side UI?</strong></p>
+  <p>If it is a relatively straightforward SPA that consumes an existing backend API, React + Vite may be enough.</p>
+  <p><strong>Question 2: Do you need server-side rendering or static rendering for public content?</strong></p>
+  <p>If the application benefits from these rendering modes, a framework such as Next.js may be worth considering.</p>
+  <p><strong>Question 3: Do you need server-only data access?</strong></p>
+  <p>Next.js Server Components and server-side application features can help organize this architecture, but secrets and authorization still require proper server-side enforcement.</p>
+  <p><strong>Question 4: Do you need a more structured routing and data-loading model?</strong></p>
+  <p>A framework may supply useful conventions and features. A standalone React project with a router and API layer may still be sufficient.</p>
+  <p><strong>Question 5: Can your team operate the framework reliably?</strong></p>
+  <p>Evaluate deployment, observability, caching, runtime behavior, and maintenance. More capability also means more architectural choices to understand.</p>
+
+  <h3>13.6 Create a Next.js project</h3>
+  <p>For a new learning project, run:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npx create-next-app@latest my-lms-next
+cd my-lms-next
+npm run dev</code></pre>
+  </div>
+
+  <p>Follow the setup prompts for TypeScript, ESLint, Tailwind CSS, and the router approach supported by the current installer.</p>
+  <p>Next.js tooling and setup options evolve, so follow the current <a href="https://nextjs.org/docs/app/getting-started/installation">official installation guide</a> rather than relying on an old configuration tutorial.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 13.1 — Compare project requirements</h4>
+  <p>Choose one of your projects, such as the internal LMS dashboard or public course catalogue.</p>
+  <p>Document:</p>
+  <ul>
+    <li>Rendering requirements</li>
+    <li>Routing needs</li>
+    <li>Public SEO requirements</li>
+    <li>API and server-side requirements</li>
+    <li>Hosting and deployment constraints</li>
+    <li>Team experience</li>
+  </ul>
+  <p>Decide whether React + Vite or Next.js is the better fit, and explain your choice.</p>
+
+  <h4>Exercise 13.2 — Build a small Next.js route</h4>
+  <p>Create:</p>
+  <ul>
+    <li>A public course catalogue page</li>
+    <li>A course details route</li>
+    <li>An interactive course-favorite button</li>
+    <li>A route-level loading UI</li>
+  </ul>
+  <p>Keep server data access separate from client-only interactivity.</p>
+
+  <h4>Challenge</h4>
+  <p>Create an architecture diagram for your proposed LMS, identifying the UI, backend APIs, authentication system, rendering boundaries, database, and deployment environment.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can justify a framework choice from project requirements, and you can draw the architecture that supports it.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">§ 13 · Next.js</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     CAPSTONE PROJECT
+     ============================================================ -->
+<section class="capstone" id="capstone">
+  <div class="capstone-head">
+    <div class="kicker">★ Capstone Project</div>
+    <h2>Scalable Training LMS Architecture</h2>
+    <p>Design a modular LMS that supports different users, reusable UI components, predictable workflows, internationalization, and an appropriate rendering architecture.</p>
+  </div>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1200&q=80&auto=format&fit=crop"
+      alt="A modern building with structural elements and clean architectural lines"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · Ready for the next floor</div>
+    <div class="photo-caption">
+      <b>A scalable architecture is a building designed to grow upward.</b> The foundation (shared types), the columns (features), and the services (APIs) are in place before the next floor is added. Each floor can be built without re-pouring the concrete below.
+    </div>
+  </div>
+
+  <h3>Project objective</h3>
+  <p>Design a modular LMS that supports different users, reusable UI components, predictable workflows, internationalization, and an appropriate rendering architecture.</p>
+
+  <h3>Required features</h3>
+  <ol>
+    <li>Build compound tabs and an accordion component.</li>
+    <li>Demonstrate a render-prop component and understand HOCs.</li>
+    <li>Support controlled and uncontrolled inputs where appropriate.</li>
+    <li>Extract reusable Hooks for repeated behavior.</li>
+    <li>Provide a service through Context and inject a fake service in tests.</li>
+    <li>Model a multi-step enrollment workflow with explicit states and transitions.</li>
+    <li>Add an optimistic course or lesson update with failure recovery.</li>
+    <li>Support English and Hindi with locale-aware formatting.</li>
+    <li>Organize features into clear modules with deliberate dependencies.</li>
+    <li>Build a Server Component and a Client Component in Next.js.</li>
+    <li>Understand hydration and avoid mismatches.</li>
+    <li>Add loading UI and streaming boundaries for slow report data.</li>
+    <li>Document why the chosen application framework fits the requirements.</li>
+  </ol>
+
+  <h3>Suggested architecture</h3>
+
+  <div class="tree"><span class="dir">src/</span>
+├── <span class="dir">app/</span>
+│   ├── <span class="file">providers.tsx</span>
+│   └── <span class="file">routes.tsx</span>
+├── <span class="dir">features/</span>
+│   ├── <span class="dir">auth/</span>
+│   ├── <span class="dir">students/</span>
+│   ├── <span class="dir">courses/</span>
+│   ├── <span class="dir">books/</span>
+│   ├── <span class="dir">attendance/</span>
+│   └── <span class="dir">analytics/</span>
+├── <span class="dir">shared/</span>
+│   ├── <span class="dir">components/</span>
+│   ├── <span class="dir">hooks/</span>
+│   └── <span class="dir">utilities/</span>
+└── <span class="dir">services/</span>
+    ├── <span class="file">studentApi.ts</span>
+    └── <span class="file">courseApi.ts</span></div>
+
+  <p>For a Next.js App Router project, adapt the structure to the framework's <code>app/</code> directory conventions rather than copying a Vite router structure literally.</p>
+
+  <h3>Acceptance criteria</h3>
+
+  <ul class="checklist">
+    <li>Components expose understandable and consistent APIs.</li>
+    <li>Complex workflow states and transitions are explicitly modeled.</li>
+    <li>Shared behavior is extracted into focused Hooks where appropriate.</li>
+    <li>Tests can provide a fake service without relying on the production backend.</li>
+    <li>Optimistic changes recover correctly when a request fails.</li>
+    <li>Translation strings are organized and locale-sensitive formatting is used where appropriate.</li>
+    <li>Feature boundaries are documented.</li>
+    <li>Server-only logic is kept on the server.</li>
+    <li>Hydration issues are prevented or properly diagnosed.</li>
+    <li>Loading boundaries are placed intentionally.</li>
+    <li>The selected framework is justified by actual requirements.</li>
+  </ul>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">★ Capstone</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMMON MISTAKES
+     ============================================================ -->
+<section class="mistakes" id="mistakes">
+  <div class="mistakes-head">
+    <div class="kicker">⚠ Pitfalls</div>
+    <h2>Common mistakes to avoid</h2>
+    <p>Fourteen traps to recognise before they cost you a refactor.</p>
+  </div>
+
+  <ol class="mistakes-list">
+    <li>Building one enormous component with dozens of unrelated props instead of considering composition.</li>
+    <li>Using render props or HOCs where a small custom Hook would be simpler.</li>
+    <li>Supporting controlled and uncontrolled modes without defining their behavior.</li>
+    <li>Extracting Hooks for every tiny repeated line of code.</li>
+    <li>Using Context as a universal replacement for all state-management solutions.</li>
+    <li>Modeling complex workflows with unrelated boolean flags.</li>
+    <li>Showing optimistic success without handling server failures.</li>
+    <li>Hard-coding translated strings throughout the UI.</li>
+    <li>Organizing every file by file type without considering feature dependencies.</li>
+    <li>Mixing server-only dependencies into the client bundle.</li>
+    <li>Assuming Server Components and SSR mean the same thing.</li>
+    <li>Assuming every fetch automatically triggers a Suspense fallback.</li>
+    <li>Using streaming without designing meaningful loading UI.</li>
+    <li>Choosing a framework solely because it is popular rather than because its capabilities fit the requirements.</li>
+  </ol>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">⚠ Common Mistakes</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     INTERVIEW QUESTIONS
+     ============================================================ -->
+<section class="qa-section" id="questions">
+  <div class="qa-head">
+    <div class="kicker">↺ Review</div>
+    <h2>Phase 14 Interview Questions</h2>
+    <p>Three levels of questions to test your understanding — from vocabulary to architecture.</p>
+  </div>
+
+  <h3>Beginner level</h3>
+  <span class="qa-level beginner">Level 1</span>
+  <ol class="qa-list">
+    <li>What are compound components?</li>
+    <li>What are render props?</li>
+    <li>What is a higher-order component?</li>
+    <li>What is the difference between a controlled and uncontrolled input?</li>
+    <li>What is a custom Hook?</li>
+    <li>What is dependency injection?</li>
+    <li>What is a state machine?</li>
+    <li>What is an optimistic UI update?</li>
+    <li>What does internationalization mean?</li>
+    <li>What is Next.js?</li>
+  </ol>
+
+  <h3>Intermediate level</h3>
+  <span class="qa-level intermediate">Level 2</span>
+  <ol class="qa-list">
+    <li>When would you choose compound components over a large configurable component?</li>
+    <li>When are render props or HOCs useful in modern React?</li>
+    <li>How would you share a service with Context?</li>
+    <li>How do you handle failure after an optimistic update?</li>
+    <li>How would you organize code around application features?</li>
+    <li>What are the differences between Server Components and Client Components?</li>
+    <li>What is hydration?</li>
+    <li>Why can server and client rendering produce mismatches?</li>
+    <li>How does Suspense work with streaming?</li>
+    <li>When might Next.js be preferable to React + Vite?</li>
+  </ol>
+
+  <h3>Advanced level</h3>
+  <span class="qa-level advanced">Level 3</span>
+  <ol class="qa-list">
+    <li>How would you design a compound component API that supports controlled and uncontrolled modes?</li>
+    <li>How would you model a checkout process using a state machine?</li>
+    <li>How would you structure a service abstraction that can be replaced in tests?</li>
+    <li>How would you manage optimistic updates with multiple concurrent requests?</li>
+    <li>How would you support internationalization across server and client rendering?</li>
+    <li>How would you prevent server-only dependencies and credentials from entering the client bundle?</li>
+    <li>How does the initial HTML relate to the React Server Component payload in a framework such as Next.js?</li>
+    <li>How would you locate hydration mismatches?</li>
+    <li>How would you place Suspense boundaries across a complex dashboard?</li>
+    <li>How would you decide between a standalone SPA and a full-stack React framework for a growing product?</li>
+  </ol>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">↺ Interview Questions</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMPLETION CHECKLIST
+     ============================================================ -->
+<section class="qa-section" id="checklist">
+  <div class="qa-head" style="background:linear-gradient(135deg,#0a0618 0%, #3b0764 58%, #0d9488 100%);">
+    <div class="kicker">✓ Self-Assessment</div>
+    <h2>Phase 14 Completion Checklist</h2>
+    <p>Tick every item before you consider this phase complete.</p>
+  </div>
+
+  <ul class="checklist">
+    <li>I can create compound components with shared state.</li>
+    <li>I understand render props and higher-order components.</li>
+    <li>I can design controlled and uncontrolled component APIs.</li>
+    <li>I can extract reusable Hooks and define feature boundaries.</li>
+    <li>I can use Context for dependency injection.</li>
+    <li>I can model complex workflows using explicit state transitions.</li>
+    <li>I can implement optimistic updates with failure handling.</li>
+    <li>I can internationalize a React application.</li>
+    <li>I can design a modular frontend architecture.</li>
+    <li>I understand React Server Components.</li>
+    <li>I can explain server rendering and hydration.</li>
+    <li>I understand streaming and Suspense in a compatible framework.</li>
+    <li>I can choose between React + Vite and Next.js based on project requirements.</li>
+  </ul>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">✓ Completion Checklist</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     OFFICIAL LEARNING RESOURCES
+     ============================================================ -->
+<section class="resources" id="resources">
+  <div class="resources-head">
+    <h2>Official learning resources</h2>
+    <p>Keep these references handy throughout your career.</p>
+  </div>
+
+  <ol class="res-list">
+    <li><a href="https://react.dev/learn/reusing-logic-with-custom-hooks">React — Reusing Logic with Custom Hooks</a></li>
+    <li><a href="https://react.dev/learn/passing-data-deeply-with-context">React — Passing Data Deeply with Context</a></li>
+    <li><a href="https://react.dev/reference/react/useOptimistic">React — <code>useOptimistic</code></a></li>
+    <li><a href="https://react.dev/reference/react/Suspense">React — Suspense</a></li>
+    <li><a href="https://react.dev/reference/react-dom/server">React — Server Rendering APIs</a></li>
+    <li><a href="https://nextjs.org/docs/app">Next.js — App Router</a></li>
+    <li><a href="https://nextjs.org/docs/app/getting-started/server-and-client-components">Next.js — Server and Client Components</a></li>
+    <li><a href="https://nextjs.org/docs/app/getting-started/fetching-data">Next.js — Fetching Data and Streaming</a></li>
+    <li><a href="https://nextjs.org/docs/architecture">Next.js — Architecture</a></li>
+    <li><a href="https://nextjs.org/docs/app/guides/internationalization">Next.js — Internationalization</a></li>
+    <li><a href="https://www.i18next.com/overview/getting-started">i18next — Getting Started</a></li>
+    <li><a href="https://react.i18next.com/getting-started">react-i18next — Getting Started</a></li>
+  </ol>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">Resources</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     FINAL GOAL
+     ============================================================ -->
+<section class="final-section" id="final-goal">
+  <div class="final-card">
+    <div class="fc-kicker">Final Goal · Phase 14</div>
+    <h2>Choose the simplest pattern that solves the problem</h2>
+    <p>Design and build a React application in which components are composable, business workflows are predictable, shared dependencies are testable, language support is organized, and the rendering architecture fits the product.</p>
+    <div class="key-principle">
+      <b>The key principle:</b> Advanced architecture is not about using every pattern. It is about choosing the simplest pattern that solves the actual problem and remains maintainable as the application grows.
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 14 · Architecture &amp; Advanced Patterns</span>
+    <span class="pg">Final Goal</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     BACK COVER
+     ============================================================ -->
+<section class="back-cover">
+  <div class="back-cover-inner">
+    <span class="bc-badge">End of Phase 14</span>
+    <h2>Architecture is the art<br>of postponing complexity.</h2>
+    <p>You have worked through the patterns that let a React application grow without collapsing under its own weight — compound components, render props and HOCs, controlled and uncontrolled APIs, feature boundaries, dependency injection, state machines, optimistic updates, internationalization, and the rendering decisions behind React Server Components, hydration, streaming, and choosing between React + Vite and Next.js.</p>
+
+    <div class="bc-rule"></div>
+
+    <p>The strongest architecture is not the one with the most patterns. It is the one that makes the next change easy. Patterns are tools; requirements are the brief; maintenance is the test.</p>
+
+    <div class="bc-foot">
+      <div>
+        <strong>React JS Learning Track</strong><br>
+        Frontend Development · Phase 14 of the React Curriculum
+      </div>
+      <div style="text-align:right">
+        <strong>Next up</strong><br>
+        Phase 15 — Testing, Quality, and Delivery
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- .book -->
+</div><!-- .book-wrap -->
+</body>
+</html>

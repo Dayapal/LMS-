@@ -1,0 +1,3327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React JS — Phase 13: Security and Production Readiness</title>
+<style>
+/* ============================================================
+   PREMIUM REACT PHASE 13 BOOK — PRINT / PDF STYLESHEET
+   Thick-book spine · page edges · chapter tabs · security navy
+   ============================================================ */
+
+:root{
+  --ink:#0a1424;
+  --ink-soft:#243453;
+  --muted:#5b6b89;
+  --brand:#0b1b4d;
+  --brand-2:#1e40af;
+  --brand-3:#c7d2fe;
+  --accent:#f59e0b;
+  --accent-2:#fb7185;
+  --emerald:#10b981;
+  --rose:#e11d48;
+  --indigo:#4f46e5;
+  --violet:#7c3aed;
+  --teal:#0e7490;
+  --paper:#ffffff;
+  --paper-edge:#eaf0fd;
+  --paper-edge-2:#dbe5f8;
+  --line:#dbe4f5;
+  --code-bg:#060c18;
+  --code-head:#101d3a;
+  --spine-w:16px;
+}
+
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, #e2eafa 0%, transparent 60%),
+    #dbe4f4;
+  color:var(--ink);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size:11.4pt;
+  line-height:1.78;
+  -webkit-font-smoothing:antialiased;
+  padding: 30px 0 80px;
+}
+
+/* ============================================================
+   BOOK SHELL
+   ============================================================ */
+.book-wrap{
+  position: relative;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 22px;
+}
+.book-wrap::after{
+  content:"";
+  position:absolute;
+  left:44px; right:44px; bottom:-26px;
+  height:48px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(10,25,70,.24), transparent 70%);
+  border-radius: 50%;
+  filter: blur(7px);
+  z-index: -1;
+}
+.book{
+  position: relative;
+  background: var(--paper);
+  border-radius: 3px 8px 8px 3px;
+  padding: 0 74px 92px;
+  box-shadow:
+    2px 0 0 var(--paper-edge),
+    4px 0 0 var(--paper-edge-2),
+    6px 0 0 var(--paper-edge),
+    8px 0 0 var(--paper-edge-2),
+    10px 0 0 var(--paper-edge),
+    12px 0 0 var(--paper-edge-2),
+    -3px 0 0 rgba(10,25,70,.10),
+    -6px 0 0 rgba(10,25,70,.06),
+    0 22px 55px rgba(10,25,70,.18),
+    0 8px 18px rgba(10,25,70,.10);
+}
+.book::before{
+  content:"";
+  position:absolute;
+  top:0; bottom:0; left:0;
+  width: var(--spine-w);
+  background: linear-gradient(90deg,
+    rgba(10,25,70,.14) 0%,
+    rgba(10,25,70,.07) 40%,
+    rgba(10,25,70,.02) 75%,
+    transparent 100%);
+  border-radius: 3px 0 0 3px;
+  pointer-events:none;
+}
+.book::after{
+  content:"";
+  position:absolute;
+  top:0; right:0;
+  width:32px; height:32px;
+  background: linear-gradient(225deg,
+    transparent 45%,
+    rgba(10,25,70,.08) 50%,
+    rgba(10,25,70,.14) 100%);
+  border-bottom-left-radius: 8px;
+  pointer-events:none;
+}
+
+/* ============================================================
+   COVER
+   ============================================================ */
+.cover{
+  position:relative;
+  margin: 0 -74px 62px;
+  padding: 86px 78px 76px;
+  background:
+    radial-gradient(1100px 600px at 12% -10%, #1e40af 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 110%, #020817 0%, transparent 60%),
+    linear-gradient(150deg,#020817 0%, #0b1b4d 42%, #1e40af 78%, #0e7490 100%);
+  color:#fff;
+  overflow:hidden;
+  border-radius: 3px 8px 0 0;
+  box-shadow: 0 22px 42px rgba(5,15,40,.30);
+}
+.cover::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(ellipse at 70% 20%, #000 0%, transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse at 70% 20%, #000 0%, transparent 78%);
+  pointer-events:none;
+}
+.cover::after{
+  content:"";
+  position:absolute;
+  width:580px; height:580px; right:-170px; bottom:-230px;
+  background:radial-gradient(circle, rgba(245,158,11,.30) 0%, transparent 68%);
+  border-radius:50%;
+  pointer-events:none;
+}
+.cover-spine{
+  position:absolute;
+  top:0; bottom:0; left:0;
+  width:28px;
+  background:
+    linear-gradient(90deg,
+      rgba(0,0,0,.32) 0%,
+      rgba(0,0,0,.18) 30%,
+      rgba(255,255,255,.07) 55%,
+      rgba(0,0,0,.12) 75%,
+      rgba(0,0,0,.24) 100%);
+  pointer-events:none;
+  z-index:3;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+.cover-inner{ position:relative; z-index:2; }
+
+.phase-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  font-size:10pt;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  font-weight:800;
+  color:#ffd479;
+  border:1.5px solid rgba(255,212,121,.55);
+  background:rgba(255,212,121,.10);
+  padding:9px 20px;
+  border-radius:100px;
+  margin-bottom:34px;
+  backdrop-filter:blur(4px);
+}
+.phase-badge .dot-pulse{
+  width:8px; height:8px; border-radius:50%; background:#ffd479;
+  box-shadow:0 0 0 4px rgba(255,212,121,.25);
+}
+.cover h1{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size:52pt;
+  line-height:1.02;
+  margin:0 0 6px;
+  letter-spacing:-.025em;
+  font-weight:700;
+}
+.cover h1 .grad{
+  background:linear-gradient(100deg,#67e8f9 0%, #ffd479 55%, #fb7185 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.cover .sub{
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size:18pt;
+  color:#bfd0ff;
+  margin:16px 0 0;
+  font-weight:400;
+  letter-spacing:.005em;
+}
+.cover .rule{
+  width:110px; height:5px; border-radius:6px;
+  background:linear-gradient(90deg,#ffd479,#fb7185);
+  margin:32px 0 30px;
+}
+.cover .lede{
+  max-width:660px;
+  font-size:12.3pt;
+  line-height:1.85;
+  color:#dbe5ff;
+  margin:0 0 42px;
+}
+.cover-chips{ display:flex; flex-wrap:wrap; gap:10px; }
+.chip{
+  font-size:9.6pt;
+  font-weight:600;
+  letter-spacing:.02em;
+  padding:8px 15px;
+  border-radius:9px;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.18);
+  color:#eef2ff;
+  backdrop-filter:blur(4px);
+}
+.cover-foot{
+  margin-top:58px;
+  padding-top:24px;
+  border-top:1px solid rgba(255,255,255,.16);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  flex-wrap:wrap;
+  font-size:10pt;
+  color:#a0b4e8;
+}
+.cover-foot strong{ color:#fff; font-weight:700; letter-spacing:.02em; }
+
+/* ============================================================
+   TOC / PANELS
+   ============================================================ */
+.toc{
+  background: linear-gradient(180deg,#f5f8ff 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:44px 46px;
+  margin: 0 0 62px;
+  position: relative;
+  box-shadow: 0 2px 0 rgba(10,25,70,.03);
+}
+.toc h2{
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size:24pt;
+  margin:0 0 6px;
+  color:var(--brand-2);
+  letter-spacing:-.01em;
+}
+.toc .toc-sub{ color:var(--muted); font-size:10.4pt; margin:0 0 30px; }
+.toc ol{ list-style:none; margin:0; padding:0; counter-reset:toc; }
+.toc li{
+  counter-increment:toc;
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  padding:10px 0;
+  border-bottom:1px dashed #dbe4f5;
+  font-size:11.2pt;
+}
+.toc li:last-child{ border-bottom:none; }
+.toc li .n{
+  flex:0 0 34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(140deg,#0b1b4d,#1e40af);
+  color:#fff;
+  font-size:10pt;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transform:translateY(6px);
+}
+.toc li .t{ font-weight:600; color:var(--ink); }
+.toc li .t small{ display:block; font-weight:400; color:var(--muted); font-size:9.6pt; }
+
+/* ============================================================
+   CHAPTER TABS
+   ============================================================ */
+.topic{
+  position: relative;
+  margin: 0 0 62px;
+}
+.chapter-tab{
+  position: absolute;
+  right: -74px;
+  top: 34px;
+  width: 54px;
+  height: 66px;
+  border-radius: 0 8px 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: Georgia, serif;
+  font-weight: 700;
+  font-size: 9.6pt;
+  letter-spacing: .05em;
+  box-shadow: 4px 4px 8px rgba(10,25,70,.14);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding: 6px 0;
+  z-index: 1;
+}
+.chapter-tab::before{
+  content:"";
+  position: absolute;
+  left: -3px; top: 0; bottom: 0;
+  width: 3px;
+  background: rgba(0,0,0,.14);
+  border-radius: 2px 0 0 2px;
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1,h2,h3,h4{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  color:var(--brand-2);
+  line-height:1.25;
+  letter-spacing:-.005em;
+}
+
+.topic-head{
+  margin:0 0 34px;
+  padding:34px 42px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#020817 0%, #0b1b4d 58%, #1e40af 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 8px 22px rgba(5,15,40,.18);
+}
+.topic-head::after{
+  content:"";
+  position:absolute; width:320px; height:320px; right:-100px; top:-150px;
+  background:radial-gradient(circle, rgba(245,158,11,.34), transparent 70%);
+  border-radius:50%;
+}
+.topic-head .kicker{
+  position:relative; z-index:2;
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#ffd479; font-weight:700; margin-bottom:12px;
+}
+.topic-head h2{
+  position:relative; z-index:2;
+  color:#fff; font-size:25pt; margin:0; letter-spacing:-.015em;
+}
+.topic-head p{
+  position:relative; z-index:2;
+  margin:12px 0 0; color:#bfd0ff; font-size:10.6pt; max-width:640px;
+}
+
+h3{
+  font-size:15.5pt;
+  margin:40px 0 12px;
+  padding-left:16px;
+  border-left:5px solid var(--accent);
+  color:#0b1b4d;
+}
+h4{
+  font-size:12.6pt;
+  margin:26px 0 8px;
+  color:var(--brand-2);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-weight:700;
+  letter-spacing:0;
+}
+p{ margin:0 0 15px; color:var(--ink-soft); }
+strong{ color:var(--ink); font-weight:700; }
+ul,ol{ margin:0 0 16px; padding-left:24px; color:var(--ink-soft); }
+li{ margin-bottom:7px; }
+a{ color:var(--brand-2); text-decoration:none; border-bottom:1px solid var(--brand-3); }
+
+code{
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size:.87em;
+  background:#eef2ff;
+  color:#1b3a91;
+  padding:2px 6px;
+  border-radius:5px;
+  border:1px solid #dde5fa;
+  white-space:nowrap;
+}
+
+/* ============================================================
+   CODE CARDS
+   ============================================================ */
+.code-card{
+  margin:22px 0 26px;
+  border-radius:13px;
+  overflow:hidden;
+  background:var(--code-bg);
+  box-shadow:0 10px 30px rgba(6,12,24,.28), 0 2px 6px rgba(6,12,24,.16);
+  border:1px solid #1a2b52;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.code-head{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  background:linear-gradient(180deg,#101d3a 0%, #0b1730 100%);
+  border-bottom:1px solid #1c2e57;
+}
+.dot{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+.dot.r{ background:#ff5f57; } .dot.y{ background:#febc2e; } .dot.g{ background:#28c840; }
+.code-title{
+  margin-left:12px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.2pt;
+  color:#8fa4d4;
+  letter-spacing:.03em;
+}
+.code-lang{
+  margin-left:auto;
+  font-size:8pt;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#5f7099;
+  font-weight:700;
+}
+.code-card pre{
+  margin:0;
+  padding:20px 22px;
+  overflow-x:auto;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px) 0 0 / 46px 100%,
+    var(--code-bg);
+}
+.code-card pre code{
+  display:block;
+  background:none;
+  border:none;
+  padding:0;
+  color:#dbe4ff;
+  font-family:"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size:9.6pt;
+  line-height:1.72;
+  white-space:pre;
+  tab-size:2;
+}
+.tok-com{ color:#5f7099; font-style:italic; }
+.tok-str{ color:#7ee2a8; }
+.tok-kw { color:#c792ea; font-weight:600; }
+.tok-num{ color:#ffb86c; }
+.tok-tag{ color:#5cc8ff; }
+.tok-tagp{ color:#8fa4d4; }
+.tok-attr{ color:#ffd479; }
+
+/* Terminal blocks */
+.term{
+  margin:18px 0 24px;
+  border-radius:11px;
+  overflow:hidden;
+  border:1px solid #d8dff0;
+  background:#060c18;
+  break-inside:avoid;
+}
+.term .term-head{
+  background:#101d3a; color:#8fa4d4;
+  font-size:8.6pt; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:700; padding:8px 16px;
+  border-bottom:1px solid #1c2e57;
+}
+.term pre{
+  margin:0; padding:16px 20px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.6pt; line-height:1.7; color:#a7f3d0; white-space:pre-wrap;
+}
+.term.out pre{ color:#ffe9a8; }
+
+/* ============================================================
+   OUTPUT PREVIEW — rendered UI mockups
+   ============================================================ */
+.output-preview{
+  margin: 20px 0 26px;
+  border-radius: 13px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1.5px solid #c7d2fe;
+  box-shadow: 0 8px 24px rgba(10,25,70,.10), 0 2px 4px rgba(10,25,70,.06);
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.output-head{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: linear-gradient(180deg, #eef2ff 0%, #dbe5ff 100%);
+  border-bottom: 1px solid #c7d2fe;
+}
+.output-title{
+  margin-left: 12px;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 8.8pt;
+  color: #1e3a8a;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.output-badge{
+  margin-left: auto;
+  font-size: 7.6pt;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #b45309;
+  font-weight: 700;
+  border: 1px solid #f6c667;
+  background: #fef3e2;
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+.output-body{
+  padding: 26px 28px;
+  background: #f7faff;
+  color: #0a1424;
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 11pt;
+  line-height: 1.65;
+}
+.output-body > *:first-child{ margin-top: 0; }
+.output-body > *:last-child{ margin-bottom: 0; }
+
+.o-btn{
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border: none; border-radius: 8px;
+  background: #4f46e5; color: #fff;
+  font-weight: 600; font-size: 10.5pt; cursor: pointer;
+}
+.o-btn.outline{ background: transparent; border: 1px solid #cbd5e1; color: #1f2937; }
+.o-btn.danger{ background: #dc2626; }
+.o-btn.amber{ background: #d97706; }
+.o-btn.sm{ padding: 5px 11px; font-size: 9.5pt; }
+
+.o-card{
+  border: 1px solid #e5e7eb; border-radius: 10px;
+  padding: 14px 16px; background: #fff; margin-bottom: 10px;
+}
+.o-card h4{ margin: 0 0 4px; color: #111827; font-family: ui-sans-serif, sans-serif; font-size: 10.8pt; font-weight: 700; }
+.o-card p{ margin: 0; color: #6b7280; font-size: 10pt; }
+
+.o-input{
+  display: block; width: 100%; padding: 10px 12px;
+  border: 1px solid #cbd5e1; border-radius: 8px;
+  font-size: 10.5pt; background: #fff; color: #111827; margin-bottom: 8px;
+}
+.o-error{ color: #b91c1c; font-size: 10pt; margin: 6px 0 0; }
+.o-row{ display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.o-muted{ color: #6b7280; font-size: 10pt; }
+.o-badge{
+  display: inline-block; padding: 2px 10px; border-radius: 100px;
+  font-size: 9pt; font-weight: 700;
+}
+.o-badge.green{ background: #dcfce7; color: #166534; }
+.o-badge.amber{ background: #fef3c7; color: #92400e; }
+.o-badge.rose { background: #fee2e2; color: #991b1b; }
+.o-badge.blue { background: #dbeafe; color: #1e40af; }
+
+/* ============================================================
+   PHOTO FIGURE — Google-sourced real images for analogies
+   ============================================================ */
+.photo-figure{
+  position: relative;
+  margin: 26px 0;
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  break-inside: avoid;
+  page-break-inside: avoid;
+  box-shadow: 0 6px 20px rgba(10,25,70,.10);
+}
+.photo-figure img{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.photo-figure .photo-badge{
+  position: absolute;
+  top: 14px; left: 14px;
+  background: rgba(2,8,23,.78);
+  color: #ffd479;
+  border: 1px solid rgba(255,212,121,.5);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 8.6pt;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 100px;
+  backdrop-filter: blur(4px);
+}
+.photo-figure .photo-caption{
+  padding: 14px 20px;
+  background: #020817;
+  color: #dbe5ff;
+  font-family: Georgia, serif;
+  font-size: 9.8pt;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.55;
+}
+.photo-figure .photo-caption b{
+  color: #ffd479;
+  font-style: normal;
+  font-weight: 700;
+}
+
+/* ============================================================
+   CALLOUTS
+   ============================================================ */
+.callout{
+  border-radius:13px;
+  padding:20px 24px 18px;
+  margin:24px 0;
+  border:1px solid;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.callout .ct{
+  font-weight:800;
+  font-size:10pt;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:10px;
+  display:flex; align-items:center; gap:9px;
+}
+.callout p:last-child{ margin-bottom:0; }
+.callout.remember{
+  background:linear-gradient(135deg,#eef4ff 0%, #f8fbff 100%);
+  border-color:#c9d8ff;
+}
+.callout.remember .ct{ color:#1e3a8a; }
+.callout.analogy{
+  background:linear-gradient(135deg,#fff8ec 0%, #fffdf8 100%);
+  border-color:#ffdfae;
+}
+.callout.analogy .ct{ color:#b45309; }
+.callout.warn{
+  background:linear-gradient(135deg,#fff1f2 0%, #fff8f8 100%);
+  border-color:#ffd0d5;
+}
+.callout.warn .ct{ color:#be123c; }
+.callout.info{
+  background:linear-gradient(135deg,#eefbf6 0%, #f7fffc 100%);
+  border-color:#b8ecd8;
+}
+.callout.info .ct{ color:#047857; }
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  margin:24px 0;
+  font-size:10.2pt;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+thead th{
+  background:linear-gradient(135deg,#0b1b4d,#1e40af);
+  color:#fff;
+  text-align:left;
+  padding:11px 14px;
+  font-weight:700;
+  font-size:9.6pt;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+tbody td{
+  padding:10px 14px;
+  border-top:1px solid var(--line);
+  color:var(--ink-soft);
+  vertical-align:top;
+}
+tbody tr:nth-child(even){ background:#f7faff; }
+tbody td:first-child{ font-weight:600; color:var(--ink); }
+
+/* ============================================================
+   FIGURES (custom SVG)
+   ============================================================ */
+figure{
+  margin:28px 0;
+  padding:22px 22px 14px;
+  background:linear-gradient(180deg,#f7faff 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  border-radius:16px;
+  break-inside:avoid;
+  page-break-inside:avoid;
+  box-shadow: 0 2px 0 rgba(10,25,70,.03);
+}
+figure svg{ width:100%; height:auto; display:block; }
+figcaption{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px dashed #dbe4f5;
+  font-size:9.6pt;
+  color:var(--muted);
+  text-align:center;
+  font-style:italic;
+}
+figcaption b{ color:var(--brand-2); font-style:normal; }
+
+/* ============================================================
+   FILE TREE
+   ============================================================ */
+.tree{
+  background:#060c18;
+  color:#cbd6f5;
+  border-radius:12px;
+  padding:20px 24px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.6pt;
+  line-height:1.75;
+  white-space:pre;
+  margin:22px 0;
+  border:1px solid #1a2b52;
+  overflow-x:auto;
+  break-inside:avoid;
+}
+.tree .dir{ color:#5cc8ff; font-weight:600; }
+.tree .file{ color:#dbe4ff; }
+
+/* ============================================================
+   STEPS / PAGE FOOTER
+   ============================================================ */
+.steps{ counter-reset:st; list-style:none; padding:0; margin:24px 0; }
+.steps li{
+  counter-increment:st;
+  position:relative;
+  padding:14px 0 14px 58px;
+  border-bottom:1px dashed #dbe4f5;
+  margin:0;
+}
+.steps li:last-child{ border-bottom:none; }
+.steps li::before{
+  content:counter(st);
+  position:absolute; left:0; top:13px;
+  width:34px; height:34px; border-radius:10px;
+  background:linear-gradient(140deg,#0b1b4d,#1e40af);
+  color:#fff; font-weight:800; font-size:10.5pt;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.page-footer{
+  margin-top: 40px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: Georgia, serif;
+  font-size: 9.5pt;
+  font-style: italic;
+  color: var(--muted);
+}
+
+/* ============================================================
+   CAPSTONE
+   ============================================================ */
+.capstone{
+  position: relative;
+  margin: 0 0 62px;
+}
+.capstone-head{
+  margin:0 0 34px;
+  padding:38px 44px;
+  border-radius:14px;
+  background:
+    radial-gradient(700px 320px at 100% 0%, rgba(16,185,129,.28), transparent 65%),
+    linear-gradient(135deg,#020817 0%, #0b1b4d 55%, #0e7490 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 10px 26px rgba(5,15,40,.22);
+}
+.capstone-head::after{
+  content:"★";
+  position:absolute;
+  right:34px; top:22px;
+  font-size:64pt;
+  color:rgba(255,212,121,.16);
+  font-family:Georgia, serif;
+  line-height:1;
+}
+.capstone-head .kicker{
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#6ee7b7; font-weight:700; margin-bottom:12px;
+}
+.capstone-head h2{
+  color:#fff; font-size:25pt; margin:0; letter-spacing:-.015em;
+}
+.capstone-head p{
+  margin:12px 0 0; color:#bfd0ff; font-size:10.8pt; max-width:660px;
+}
+
+.checklist{
+  list-style:none;
+  padding:0;
+  margin:22px 0;
+  display:grid;
+  gap:10px;
+}
+.checklist li{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding:13px 16px;
+  border-radius:11px;
+  background:linear-gradient(135deg,#f7faff 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  font-size:10.6pt;
+  color:var(--ink-soft);
+}
+.checklist li::before{
+  content:"✓";
+  flex:0 0 24px;
+  height:24px;
+  border-radius:7px;
+  background:linear-gradient(140deg,#047857,#10b981);
+  color:#fff;
+  font-weight:800;
+  font-size:10pt;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transform:translateY(1px);
+}
+
+/* ============================================================
+   INTERVIEW QUESTIONS
+   ============================================================ */
+.qa-section{
+  margin:0 0 62px;
+}
+.qa-head{
+  margin:0 0 30px;
+  padding:34px 42px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#020817 0%, #0b1b4d 58%, #4f46e5 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+}
+.qa-head::after{
+  content:"?";
+  position:absolute;
+  right:40px; top:14px;
+  font-family:Georgia, serif;
+  font-size:72pt;
+  color:rgba(199,210,254,.14);
+  line-height:1;
+}
+.qa-head .kicker{
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#c7d2fe; font-weight:700; margin-bottom:12px;
+}
+.qa-head h2{
+  color:#fff; font-size:25pt; margin:0; letter-spacing:-.015em;
+}
+.qa-head p{
+  margin:12px 0 0; color:#bfd0ff; font-size:10.6pt; max-width:620px;
+}
+
+.qa-level{
+  margin:26px 0 10px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:7px 16px;
+  border-radius:100px;
+  font-size:9.4pt;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.qa-level.beginner{ background:#dcfce7; color:#166534; }
+.qa-level.intermediate{ background:#fef3c7; color:#92400e; }
+.qa-level.advanced{ background:#fee2e2; color:#991b1b; }
+
+ol.qa-list{
+  margin:6px 0 22px;
+  padding-left:24px;
+  color:var(--ink-soft);
+}
+ol.qa-list li{
+  margin-bottom:9px;
+  font-size:10.8pt;
+  line-height:1.7;
+}
+
+/* ============================================================
+   RESOURCES
+   ============================================================ */
+.resources{
+  margin:0 0 62px;
+}
+.resources-head{
+  margin:0 0 26px;
+  padding:30px 38px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#020817 0%, #0b1b4d 60%, #0e7490 100%);
+  color:#fff;
+}
+.resources-head h2{ color:#fff; font-size:23pt; margin:0; }
+.resources-head p{ color:#bfd0ff; margin:10px 0 0; font-size:10.6pt; }
+
+ol.res-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  counter-reset:res;
+}
+ol.res-list li{
+  counter-increment:res;
+  position:relative;
+  padding:13px 0 13px 52px;
+  border-bottom:1px dashed #dbe4f5;
+  font-size:10.6pt;
+}
+ol.res-list li:last-child{ border-bottom:none; }
+ol.res-list li::before{
+  content:counter(res);
+  position:absolute; left:0; top:13px;
+  width:32px; height:32px;
+  border-radius:9px;
+  background:linear-gradient(140deg,#0b1b4d,#1e40af);
+  color:#fff; font-weight:800; font-size:10pt;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* ============================================================
+   FINAL / BACK COVER
+   ============================================================ */
+.final-section{
+  margin:0 0 62px;
+}
+.final-card{
+  padding:44px 48px;
+  border-radius:18px;
+  background:
+    radial-gradient(800px 400px at 0% 0%, rgba(245,158,11,.22), transparent 60%),
+    linear-gradient(135deg,#020817 0%, #0b1b4d 55%, #1e40af 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 16px 36px rgba(5,15,40,.26);
+}
+.final-card::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(ellipse at 80% 0%, #000 0%, transparent 70%);
+  -webkit-mask-image:radial-gradient(ellipse at 80% 0%, #000 0%, transparent 70%);
+  pointer-events:none;
+}
+.final-card .fc-kicker{
+  position:relative; z-index:2;
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#ffd479; font-weight:700; margin-bottom:14px;
+}
+.final-card h2{
+  position:relative; z-index:2;
+  color:#fff; font-size:24pt; margin:0 0 16px; letter-spacing:-.015em;
+}
+.final-card p{
+  position:relative; z-index:2;
+  color:#dbe5ff; font-size:11.4pt; max-width:680px;
+}
+.final-card .key-principle{
+  position:relative; z-index:2;
+  margin-top:26px;
+  padding:20px 24px;
+  border-radius:12px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,212,121,.4);
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size:12pt;
+  color:#fff;
+  line-height:1.7;
+}
+.final-card .key-principle b{
+  color:#ffd479;
+  font-style: normal;
+}
+
+.back-cover{
+  margin: 0 -74px -92px;
+  padding: 74px 78px 80px;
+  background:
+    radial-gradient(900px 500px at 100% 0%, #1e40af 0%, transparent 55%),
+    radial-gradient(700px 400px at 0% 100%, #0e7490 0%, transparent 60%),
+    linear-gradient(160deg,#020817 0%, #0b1b4d 50%, #1e40af 100%);
+  color:#fff;
+  border-radius: 0 0 8px 3px;
+  position:relative;
+  overflow:hidden;
+}
+.back-cover::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse at 50% 30%, #000 0%, transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 30%, #000 0%, transparent 78%);
+  pointer-events:none;
+}
+.back-cover-inner{ position:relative; z-index:2; }
+.back-cover .bc-badge{
+  display:inline-block;
+  font-size:9pt; letter-spacing:.28em; text-transform:uppercase;
+  font-weight:800; color:#ffd479;
+  border:1.5px solid rgba(255,212,121,.5);
+  background:rgba(255,212,121,.1);
+  padding:8px 18px; border-radius:100px; margin-bottom:26px;
+}
+.back-cover h2{
+  font-family: Georgia, serif;
+  color:#fff; font-size:32pt; line-height:1.1; margin:0 0 18px;
+  letter-spacing:-.02em;
+}
+.back-cover p{
+  color:#bfd0ff; font-size:11.4pt; max-width:680px; line-height:1.85;
+}
+.back-cover .bc-rule{
+  width:90px; height:4px; border-radius:6px;
+  background:linear-gradient(90deg,#ffd479,#fb7185);
+  margin:30px 0;
+}
+.back-cover .bc-foot{
+  margin-top:40px;
+  padding-top:22px;
+  border-top:1px solid rgba(255,255,255,.16);
+  display:flex; justify-content:space-between; align-items:flex-end;
+  gap:20px; flex-wrap:wrap;
+  font-size:10pt; color:#a0b4e8;
+}
+.back-cover .bc-foot strong{ color:#fff; }
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+@media print{
+  @page{ size:A4; margin:14mm 12mm 16mm; }
+  @page:first{ margin:0; }
+  body{
+    background:#fff;
+    font-size:10.4pt;
+    line-height:1.68;
+    padding:0;
+  }
+  .book-wrap{ max-width:none; margin:0; padding:0; }
+  .book-wrap::after{ display:none; }
+  .book{
+    max-width:none; margin:0; padding: 0 14mm 10mm;
+    box-shadow: none; border-radius: 0; background: #fff;
+  }
+  .book::before, .book::after{ display:none; }
+  .cover{
+    margin:0; height:297mm; padding:80px 60px 60px;
+    border-radius:0; display:flex; align-items:center;
+    break-after:page; page-break-after:always; box-shadow: none;
+  }
+  .cover-inner{ width:100%; }
+  .cover-spine{ display:none; }
+  .toc{ break-after:page; page-break-after:always; }
+  .topic, .capstone, .qa-section, .resources, .final-section{
+    break-before:page; page-break-before:always;
+  }
+  .chapter-tab{ display: none; }
+  h1,h2,h3,h4{ break-after:avoid; page-break-after:avoid; }
+  p, li{ orphans:2; widows:2; }
+  .code-card, figure, table, .callout, .term, .photo-figure, .output-preview, .final-card{
+    break-inside:avoid; page-break-inside:avoid;
+  }
+  a{ color:var(--brand-2); border-bottom:none; }
+  a[href^="http"]::after{
+    content:" (" attr(href) ")";
+    font-size:7.4pt;
+    color:#8794b5;
+    word-break:break-all;
+  }
+  .page-footer{ display: none; }
+  .back-cover{ margin:0; border-radius:0; break-before:page; page-break-before:always; }
+}
+@media screen{ .topic{ margin-top:0; } }
+</style>
+</head>
+<body>
+<div class="book-wrap">
+<div class="book">
+
+<!-- ============================================================
+     COVER
+     ============================================================ -->
+<section class="cover">
+  <div class="cover-spine"></div>
+  <div class="cover-inner">
+    <span class="phase-badge"><span class="dot-pulse"></span>Phase 13 · Security &amp; Production Readiness</span>
+
+    <h1>React&nbsp;JS<br><span class="grad">Security and<br>Production Readiness</span></h1>
+
+    <p class="sub">Auth · Sessions · XSS · CORS · Env · CI · Monitoring</p>
+
+    <div class="rule"></div>
+
+    <p class="lede">
+      A complete, practical guide to shipping a React application that is safe
+      for real users. Learn how to separate authentication from authorization,
+      handle session cookies correctly (including the <code style="background:rgba(255,255,255,.12);color:#ffd479;border-color:rgba(255,212,121,.3)">__Host-</code> prefix),
+      prevent XSS, secure API integration, configure CORS, keep secrets out of
+      the frontend bundle, deploy reliably, and diagnose production issues
+      without exposing sensitive data.
+    </p>
+
+    <div class="cover-chips">
+      <span class="chip">Authentication</span>
+      <span class="chip">Authorization</span>
+      <span class="chip">Session Cookies</span>
+      <span class="chip">XSS &amp; Sanitization</span>
+      <span class="chip">Secure APIs</span>
+      <span class="chip">CORS</span>
+      <span class="chip">Environment Variables</span>
+      <span class="chip">Error Reporting</span>
+      <span class="chip">Build &amp; Deploy</span>
+      <span class="chip">SPA Fallback</span>
+      <span class="chip">CI Checks</span>
+      <span class="chip">Production Monitoring</span>
+    </div>
+
+    <div class="cover-foot">
+      <div>
+        <strong>Learning Track</strong><br>
+        Frontend Development · React Series
+      </div>
+      <div style="text-align:right">
+        <strong>Module</strong><br>
+        Phase 13 of the React Curriculum
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     LEARNING OBJECTIVE
+     ============================================================ -->
+<section class="toc" style="break-after:page;">
+  <h2>Learning objective</h2>
+  <p class="toc-sub">From working prototype to production-ready application.</p>
+
+  <p>Imagine you have built a Full Stack Training LMS with student accounts, administrator access, course materials, attendance records, and enrollment payments.</p>
+  <p>The application looks good and all its React components work. But before real students use it, you must answer important questions:</p>
+  <ul>
+    <li>Can a student open an administrator-only API endpoint?</li>
+    <li>Are session credentials protected?</li>
+    <li>Can malicious text execute as JavaScript?</li>
+    <li>Are private backend credentials exposed in the frontend build?</li>
+    <li>Does the application handle API failures safely?</li>
+    <li>Does refreshing a nested route produce a 404?</li>
+    <li>Do tests run automatically before a change is deployed?</li>
+    <li>Can you investigate a production error without exposing sensitive data?</li>
+  </ul>
+  <p>This phase covers the frontend's role in those responsibilities and explains what must be enforced by the backend, hosting platform, and deployment pipeline.</p>
+
+  <div class="callout warn">
+    <div class="ct">▲ Important principle</div>
+    <p>A React application runs in the user's browser, so users can inspect its JavaScript and manipulate its state. Anything enforced only by frontend code can be bypassed. Sensitive access control must be enforced by a trusted server or service.</p>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The browser is untrusted; the server enforces security">
+      <defs>
+        <linearGradient id="introA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f43f5e"/><stop offset="100%" stop-color="#be123c"/>
+        </linearGradient>
+        <linearGradient id="introB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0b1b4d"/><stop offset="100%" stop-color="#1e40af"/>
+        </linearGradient>
+        <linearGradient id="introC" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Browser (untrusted) -->
+      <rect x="20" y="40" width="220" height="160" rx="14" fill="url(#introA)"/>
+      <text x="130" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Browser</text>
+      <text x="130" y="92" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#ffe4e6">user can inspect code</text>
+      <text x="130" y="112" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#ffe4e6">user can change state</text>
+      <text x="130" y="132" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#ffe4e6">user can call APIs directly</text>
+      <text x="130" y="168" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#ffe4e6">⚠ not a trust boundary</text>
+
+      <path d="M252 120 H 296" stroke="#c7d2fe" stroke-width="2.5"/>
+      <polygon points="296,112 312,120 296,128" fill="#1e40af"/>
+      <text x="272" y="106" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" font-weight="700" fill="#1e40af">request</text>
+
+      <!-- Server (trust) -->
+      <rect x="324" y="40" width="200" height="160" rx="14" fill="url(#introB)"/>
+      <text x="424" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Backend</text>
+      <text x="424" y="92" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#c7d2fe">authenticates</text>
+      <text x="424" y="112" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#c7d2fe">authorizes</text>
+      <text x="424" y="132" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10.5" fill="#c7d2fe">validates input</text>
+      <text x="424" y="168" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" font-style="italic" fill="#c7d2fe">✓ the trust boundary</text>
+
+      <path d="M536 120 H 580" stroke="#a7f3d0" stroke-width="2.5"/>
+      <polygon points="580,112 596,120 580,128" fill="#10b981"/>
+
+      <!-- Response -->
+      <rect x="612" y="60" width="124" height="120" rx="12" fill="url(#introC)"/>
+      <text x="674" y="88" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#fff">Response</text>
+      <text x="674" y="112" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#04322e">only data the</text>
+      <text x="674" y="128" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#04322e">user is allowed</text>
+      <text x="674" y="144" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="10" fill="#04322e">to see</text>
+
+      <text x="380" y="228" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#5b6b89">The browser improves experience. The server enforces guarantees.</text>
+    </svg>
+    <figcaption><b>Figure 0.1</b> — The browser is untrusted. All security guarantees must be enforced by the backend, host, and pipeline.</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================
+     TABLE OF CONTENTS
+     ============================================================ -->
+<section class="toc">
+  <h2>Table of Contents</h2>
+  <p class="toc-sub">Eleven topics, a capstone, and a full revision set.</p>
+
+  <ol>
+    <li><span class="n">1</span><span class="t">Authentication Versus Authorization<small>Identity · permissions · resource checks</small></span></li>
+    <li><span class="n">2</span><span class="t">Safe Token and Session Handling<small>Session cookies · __Host- · CSRF</small></span></li>
+    <li><span class="n">3</span><span class="t">XSS Risks and dangerouslySetInnerHTML<small>Escaping · DOMPurify · rich text</small></span></li>
+    <li><span class="n">4</span><span class="t">Secure API Integration<small>Central client · methods · safe errors</small></span></li>
+    <li><span class="n">5</span><span class="t">CORS Fundamentals<small>Origins · headers · not authorization</small></span></li>
+    <li><span class="n">6</span><span class="t">Environment Configuration<small>VITE_ · public vs private · .env.example</small></span></li>
+    <li><span class="n">7</span><span class="t">Frontend Error Reporting and Logging<small>Error Boundaries · safe fields · Sentry</small></span></li>
+    <li><span class="n">8</span><span class="t">Build and Deployment Workflows<small>npm ci · checks · rollback</small></span></li>
+    <li><span class="n">9</span><span class="t">Hosting and Routing Fallback Configuration<small>SPA deep links · missing assets</small></span></li>
+    <li><span class="n">10</span><span class="t">CI Checks and Automated Tests<small>GitHub Actions · lint · test · build</small></span></li>
+    <li><span class="n">11</span><span class="t">Production Debugging and Monitoring<small>Releases · source maps · correlation</small></span></li>
+    <li><span class="n">★</span><span class="t">Capstone: Production-Ready LMS<small>Apply everything you have learned</small></span></li>
+    <li><span class="n">↺</span><span class="t">Interview Questions &amp; Completion Checklist<small>Review and self-assessment</small></span></li>
+  </ol>
+</section>
+
+<!-- ============================================================
+     TOPIC 1 — AUTHENTICATION VS AUTHORIZATION
+     ============================================================ -->
+<section class="topic" id="t1">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0b1b4d,#1e40af);">AUTH</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 1</div>
+    <h2>Authentication Versus Authorization</h2>
+    <p>Who you are is not the same as what you may do.</p>
+  </div>
+
+  <h3>1.1 What is authentication?</h3>
+  <p>Authentication verifies <strong>who a user is</strong>.</p>
+  <p>For example, when a student signs in to your LMS, the authentication system verifies the user's credentials or identity-provider response and establishes an authenticated session.</p>
+  <p>Typical authentication features include:</p>
+  <ul>
+    <li>Sign-in</li>
+    <li>Sign-out</li>
+    <li>Password reset</li>
+    <li>Multi-factor authentication</li>
+    <li>Session expiration</li>
+    <li>Identity-provider integration</li>
+  </ul>
+  <p>Imagine a student enters their email and password. The backend verifies the credentials and establishes the user's authenticated session.</p>
+
+  <h3>1.2 What is authorization?</h3>
+  <p>Authorization determines <strong>what an authenticated user is allowed to do</strong>.</p>
+  <p>For example, a student might be permitted to read released course materials but not to release books to other students.</p>
+  <p>An administrator might be allowed to publish books, manage enrollment, and update course access.</p>
+
+  <table>
+    <thead><tr><th>Question</th><th>Authentication</th><th>Authorization</th></tr></thead>
+    <tbody>
+      <tr><td>What does it determine?</td><td>Who is the user?</td><td>What may the user do?</td></tr>
+      <tr><td>Example</td><td>Student signs in</td><td>Student can read an assigned book</td></tr>
+      <tr><td>Another example</td><td>Administrator signs in</td><td>Administrator can release a book</td></tr>
+      <tr><td>Typical enforcement</td><td>Identity provider and session verification</td><td>Backend permission and resource checks</td></tr>
+    </tbody>
+  </table>
+
+  <p>The two systems work together, but they solve different problems. An authenticated user is not automatically authorized to access every feature or record. See the <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html">OWASP Authorization Cheat Sheet</a>.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=1200&q=80&auto=format&fit=crop"
+      alt="A hotel reception desk with keys on a rack"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · Front desk vs. the key rack</div>
+    <div class="photo-caption">
+      <b>Authentication checks your ID at the desk. Authorization decides which rooms your key opens.</b> A guest whose face matches the booking (authentication) still cannot enter every room (authorization). Every protected door must have its own lock.
+    </div>
+  </div>
+
+  <h3>1.3 A frontend permission check</h3>
+  <p>Imagine that only administrators should see a button for releasing a book.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">BookActions.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">interface User {
+  id: string;
+  name: string;
+  role: "student" | "admin";
+}
+
+interface BookActionsProps {
+  user: User;
+  bookId: string;
+}
+
+function BookActions({ user, bookId }: BookActionsProps) {
+  function releaseBook() {
+    // Call the backend release endpoint here.
+    console.log("Request release for:", bookId);
+  }
+
+  return (
+    &lt;div&gt;
+      {user.role === "admin" &amp;&amp; (
+        &lt;button
+          type="button"
+          onClick={releaseBook}
+          className="rounded-lg bg-indigo-600 px-4 py-2 text-white"
+        &gt;
+          Release Book
+        &lt;/button&gt;
+      )}
+    &lt;/div&gt;
+  );
+}</code></pre>
+  </div>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">BookActions — two roles</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div class="o-card" style="border-color:#c7d2fe;">
+        <p style="margin:0 0 4px; font-size:10pt;"><strong>Admin sees:</strong></p>
+        <button class="o-btn" style="background:#4f46e5;">Release Book</button>
+      </div>
+      <div class="o-card">
+        <p style="margin:0 0 4px; font-size:10pt;"><strong>Student sees:</strong></p>
+        <p class="o-muted" style="margin:0;">(nothing — action hidden)</p>
+      </div>
+      <p class="o-muted" style="margin-top:10px;">Hiding the button improves the UI, but the backend must still reject unauthorized release requests.</p>
+    </div>
+  </div>
+
+  <p>This improves the user interface because students do not see an action they cannot use.</p>
+  <p>However, it is <strong>not security enforcement</strong>. A student could manipulate frontend state, modify JavaScript, or call the backend endpoint independently.</p>
+  <p>The backend must verify that the authenticated account has administrator permissions.</p>
+
+  <h3>1.4 Enforce permissions on the backend</h3>
+  <p>The following Express-style example illustrates the backend responsibility:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">server.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">app.post(
+  "/api/admin/books/:bookId/release",
+  requireAuthenticatedUser,
+  requireAdmin,
+  async (req, res) =&gt; {
+    const { bookId } = req.params;
+
+    await releaseBook(bookId);
+
+    res.status(200).json({
+      success: true,
+    });
+  }
+);</code></pre>
+  </div>
+
+  <p>Here, <code>requireAuthenticatedUser</code>, <code>requireAdmin</code>, and <code>releaseBook</code> represent server-side functionality you must implement using your authentication system, authorization model, and data layer.</p>
+  <p>The backend must verify the user's permission on each protected request. It should also check whether the user is allowed to access the specific resource being requested.</p>
+  <p>For example, even if a student is authenticated, they should not be able to download another student's private documents merely by changing a student ID in the URL.</p>
+
+  <h3>1.5 Real-life LMS example</h3>
+  <p>Consider three roles:</p>
+  <ul>
+    <li><strong>Student:</strong> Reads books released to that student.</li>
+    <li><strong>Trainer:</strong> Manages permitted course materials.</li>
+    <li><strong>Administrator:</strong> Manages student accounts and book-release permissions.</li>
+  </ul>
+  <p>Create a permission model that describes actions, not just the visible navigation:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">permissions.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">type Role = "student" | "trainer" | "admin";
+
+type Permission =
+  | "book:read"
+  | "book:release"
+  | "student:manage"
+  | "attendance:manage";
+
+const rolePermissions: Record&lt;Role, Permission[]&gt; = {
+  student: ["book:read"],
+  trainer: ["book:read", "attendance:manage"],
+  admin: [
+    "book:read",
+    "book:release",
+    "student:manage",
+    "attendance:manage",
+  ],
+};</code></pre>
+  </div>
+
+  <p>This is useful for expressing a frontend permission model, but do not treat the frontend object as the authoritative access-control system. The backend must enforce the corresponding rules independently.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 1.1 — Build role-aware navigation</h4>
+  <p>Create a React sidebar that shows different menu items for students, trainers, and administrators.</p>
+  <p>Requirements:</p>
+  <ol>
+    <li>Define TypeScript types for the roles.</li>
+    <li>Display permitted navigation items.</li>
+    <li>Hide inappropriate actions from the interface.</li>
+    <li>Explain why hiding an item does not secure its API endpoint.</li>
+  </ol>
+
+  <h4>Exercise 1.2 — Test authorization</h4>
+  <p>Design a test plan for the book-release endpoint.</p>
+  <p>Verify that:</p>
+  <ul>
+    <li>A signed-out request is rejected.</li>
+    <li>A student cannot release a book.</li>
+    <li>A trainer can only perform actions permitted for their role.</li>
+    <li>An administrator can release a book.</li>
+    <li>A user cannot change a URL or request body to gain unauthorized access.</li>
+  </ul>
+  <p>Perform these tests against a backend you own or have permission to test.</p>
+
+  <h4>Challenge</h4>
+  <p>Implement resource-level authorization for a student's book collection. A student should be able to read a book only if the database records show that it has been released to them.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can distinguish identity, frontend visibility, backend permission enforcement, and resource-level authorization.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">§ 1 · Auth vs. Authz</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 2 — SAFE TOKEN AND SESSION HANDLING
+     ============================================================ -->
+<section class="topic" id="t2">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0e7490,#0891b2);">SESS</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 2</div>
+    <h2>Safe Token and Session Handling</h2>
+    <p>Where credentials live determines how easily they can be stolen.</p>
+  </div>
+
+  <h3>2.1 What is a session?</h3>
+  <p>A session allows the application to recognize a user across multiple requests without requiring them to sign in again for every interaction.</p>
+  <p>Real-life example: after signing in to the LMS, a student opens their course page, checks attendance, and reads course material. The application must recognize the authenticated user during these requests.</p>
+  <p>Common mechanisms include:</p>
+  <ul>
+    <li>Server-managed sessions identified by cookies</li>
+    <li>Access tokens used with an authentication system</li>
+    <li>OAuth 2.0 and OpenID Connect flows</li>
+    <li>A Backend-for-Frontend (BFF) that manages credentials on behalf of the browser</li>
+  </ul>
+  <p>The correct design depends on the authentication architecture.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=1200&q=80&auto=format&fit=crop"
+      alt="A lock and key on a wooden surface"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · Keys you never hand out</div>
+    <div class="photo-caption">
+      <b>A session cookie is a key the browser keeps but the page cannot copy.</b> With <code>HttpOnly</code>, JavaScript never sees the value — so even an XSS attacker cannot read it out of <code>document.cookie</code>.
+    </div>
+  </div>
+
+  <h3>2.2 Why token storage matters</h3>
+  <p>A common mistake is storing access tokens or refresh tokens in <code>localStorage</code> because it is easy to access from React.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Avoid</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">// Avoid storing authentication credentials this way.
+localStorage.setItem("accessToken", token);</code></pre>
+  </div>
+
+  <p>JavaScript executing within the same origin can read <code>localStorage</code>. If a cross-site scripting vulnerability allows an attacker to execute injected JavaScript, tokens stored there may be exposed.</p>
+  <p>OWASP advises against storing session identifiers, access tokens, refresh tokens, and other credentials in browser storage accessible to JavaScript. See the <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html">OWASP Session Management Cheat Sheet</a>.</p>
+
+  <h3>2.3 A common web-application pattern: secure session cookies</h3>
+  <p>For a browser application backed by your own server, an HTTP-only session cookie is often a strong starting point.</p>
+  <p>A production session cookie might have attributes such as:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Set-Cookie</span><span class="code-lang">HTTP</span></div>
+    <pre><code class="lang-http">Set-Cookie: __Host-session=&lt;RANDOM_OPAQUE_SESSION_ID&gt;; Path=/; Secure; HttpOnly; SameSite=Lax</code></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="ct">◆ Corrected example</div>
+    <p>The previous example was largely valid; this version uses a clearer placeholder and a lowercase cookie-name suffix. The <code>__Host-</code> prefix requirements are satisfied.</p>
+  </div>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?w=1200&q=80&auto=format&fit=crop"
+      alt="An envelope sealed with wax — a secure container for credentials"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The sealed envelope</div>
+    <div class="photo-caption">
+      <b>A session cookie is a sealed envelope with a wax stamp.</b> <code>HttpOnly</code> keeps JavaScript from opening it. <code>Secure</code> ensures it only travels over an encrypted channel. The <code>__Host-</code> prefix binds it to a single origin so no subdomain can quietly read it.
+    </div>
+  </div>
+
+  <p>The placeholder is not a real session credential. Your backend should generate and validate session identifiers using a secure implementation.</p>
+  <p>Understand the attributes:</p>
+
+  <table>
+    <thead><tr><th>Attribute</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>Secure</code></td><td>Sends the cookie over HTTPS connections only</td></tr>
+      <tr><td><code>HttpOnly</code></td><td>Prevents JavaScript from reading the cookie</td></tr>
+      <tr><td><code>SameSite=Lax</code></td><td>Limits many cross-site cookie-sending scenarios</td></tr>
+      <tr><td><code>Path=/</code></td><td>Makes the cookie available across the site's paths</td></tr>
+      <tr><td><code>__Host-</code> prefix</td><td>Requires important host-only cookie restrictions, including <code>Secure</code>, <code>Path=/</code>, and no <code>Domain</code> attribute</td></tr>
+    </tbody>
+  </table>
+
+  <p>The exact <code>SameSite</code> setting depends on the application's cross-site requirements. A cross-site cookie may require <code>SameSite=None; Secure</code> and stronger CSRF protections. These flags are not substitutes for server-side authorization or all XSS/CSRF defenses.</p>
+
+  <h4>What each attribute does</h4>
+  <ul>
+    <li><strong><code>__Host-session</code>:</strong> Restricts the cookie to the host that sets it.</li>
+    <li><strong><code>&lt;RANDOM_OPAQUE_SESSION_ID&gt;</code>:</strong> A placeholder for a securely generated session identifier—not a literal value to copy.</li>
+    <li><strong><code>Path=/</code>:</strong> Makes the cookie available across paths on that host.</li>
+    <li><strong><code>Secure</code>:</strong> Sends the cookie only over HTTPS, except for browser localhost exceptions.</li>
+    <li><strong><code>HttpOnly</code>:</strong> Prevents JavaScript from reading the cookie.</li>
+    <li><strong><code>SameSite=Lax</code>:</strong> Provides some protection against cross-site request forgery (CSRF).</li>
+  </ul>
+
+  <div class="callout warn">
+    <div class="ct">▲ Important</div>
+    <p>Do not include a <code>Domain</code> attribute with a <code>__Host-</code> cookie. The prefix requires <code>Secure</code>, <code>Path=/</code>, and no <code>Domain</code> attribute. See <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie">MDN documentation</a>.</p>
+  </div>
+
+  <p>For additional protection, <code>SameSite=Strict</code> may be appropriate if your authentication and navigation flows support it. Whichever policy you choose, enforce session expiration and invalidate the server-side session on logout; cookie attributes alone are not sufficient. See <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html">OWASP session management guidance</a>.</p>
+
+  <h3>2.4 What happens after a user signs in?</h3>
+  <p>A typical session-based flow looks like this:</p>
+  <ol class="steps">
+    <li>The user submits sign-in credentials over HTTPS.</li>
+    <li>The server verifies the credentials.</li>
+    <li>The server creates a session.</li>
+    <li>The server sends a session cookie using appropriate security attributes.</li>
+    <li>The browser attaches the cookie to eligible requests.</li>
+    <li>The server verifies the session and checks the user's permissions.</li>
+    <li>The server invalidates the session during logout or other required termination events.</li>
+  </ol>
+  <p>React does not need to read an HTTP-only session cookie.</p>
+  <p>For example, the frontend can request the user's current session:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">session.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">interface SessionUser {
+  id: string;
+  name: string;
+  role: "student" | "trainer" | "admin";
+}
+
+async function getCurrentUser(): Promise&lt;SessionUser | null&gt; {
+  const response = await fetch("/api/session", {
+    credentials: "same-origin",
+  });
+
+  if (response.status === 401) {
+    return null;
+  }
+
+  if (!response.ok) {
+    throw new Error("Could not check the current session.");
+  }
+
+  // Validate the response before trusting it in production.
+  return response.json() as Promise&lt;SessionUser&gt;;
+}</code></pre>
+  </div>
+
+  <p>This code illustrates the frontend flow. In production, validate the returned JSON at runtime instead of blindly trusting the type assertion.</p>
+  <p>The session endpoint must return only appropriate user information and must verify the session on the server.</p>
+
+  <h3>2.5 What if the application uses OAuth or access tokens?</h3>
+  <p>Token-based authentication is also common, especially with identity providers and APIs.</p>
+  <p>The important considerations are:</p>
+  <ul>
+    <li>Use a supported authentication flow.</li>
+    <li>Protect access and refresh tokens appropriately.</li>
+    <li>Validate tokens on the server or resource API.</li>
+    <li>Use TLS.</li>
+    <li>Handle expiration and revocation appropriately.</li>
+    <li>Do not assume a decoded token is automatically authentic.</li>
+    <li>Do not expose confidential client secrets in browser code.</li>
+  </ul>
+  <p>A BFF pattern can keep long-lived credentials on the server while the browser interacts with the application through a session cookie.</p>
+  <p>The safest approach is the one that correctly fits your identity provider, application type, backend architecture, and threat model.</p>
+
+  <h3>2.6 CSRF still matters</h3>
+  <p>HTTP-only cookies help protect the cookie from being read by JavaScript, but the browser can still attach the cookie to requests.</p>
+  <p>For cookie-authenticated applications, evaluate cross-site request forgery (CSRF) risk.</p>
+  <p>Depending on the architecture, safeguards may include:</p>
+  <ul>
+    <li>Appropriate <code>SameSite</code> cookie policy</li>
+    <li>Anti-CSRF tokens</li>
+    <li>Origin or Referer validation</li>
+    <li>Correct use of HTTP methods</li>
+    <li>Backend validation on every state-changing endpoint</li>
+  </ul>
+  <p><code>SameSite</code> is useful defense in depth, but it is not a universal replacement for a proper CSRF defense. See the <a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html">OWASP CSRF Prevention Cheat Sheet</a>.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 2.1 — Review token handling</h4>
+  <p>Inspect an application you own and find where authentication credentials are stored.</p>
+  <p>Record:</p>
+  <ol>
+    <li>Whether credentials are kept in browser storage or cookies.</li>
+    <li>Which code can read them.</li>
+    <li>How the backend verifies them.</li>
+    <li>What happens when a session expires.</li>
+    <li>Whether logout invalidates the server-side session.</li>
+  </ol>
+  <p>Do not print or share real credential values during this exercise.</p>
+
+  <h4>Exercise 2.2 — Test session expiration</h4>
+  <p>Using a development authentication environment, simulate an expired session.</p>
+  <p>Verify that the application:</p>
+  <ul>
+    <li>Handles a <code>401 Unauthorized</code> response.</li>
+    <li>Stops displaying authenticated-only data as if the session were valid.</li>
+    <li>Gives the user a clear path to sign in again.</li>
+    <li>Does not loop endlessly between redirects and failed API requests.</li>
+  </ul>
+
+  <h4>Challenge</h4>
+  <p>Document a session lifecycle for your LMS: sign-in, session establishment, protected API requests, expiration, logout, and revocation.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can explain where credentials are kept, how the server verifies sessions, and what your application does when a session becomes invalid.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">§ 2 · Sessions &amp; Tokens</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 3 — XSS & dangerouslySetInnerHTML
+     ============================================================ -->
+<section class="topic" id="t3">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#be123c,#e11d48);">XSS</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 3</div>
+    <h2>XSS Risks and <code style="background:rgba(255,255,255,.12);color:#ffd479;border-color:rgba(255,212,121,.35)">dangerouslySetInnerHTML</code></h2>
+    <p>When text becomes code, every input becomes a potential attack surface.</p>
+  </div>
+
+  <h3>3.1 What is XSS?</h3>
+  <p>Cross-site scripting (XSS) is a vulnerability in which attacker-controlled content is interpreted as executable or otherwise dangerous browser content.</p>
+  <p>Real-life example: your LMS allows trainers to create course descriptions. If a student can submit a description containing malicious HTML and the application inserts it into a page unsafely, that content may execute in another user's browser.</p>
+  <p>Depending on the vulnerability, an attacker might manipulate the page, impersonate actions in the user's session, or access data available to page scripts.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1200&q=80&auto=format&fit=crop"
+      alt="A close-up of a lock on a laptop keyboard"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The uninvited guest</div>
+    <div class="photo-caption">
+      <b>XSS is a guest who smuggles a script into your living room.</b> React normally locks the door — it treats text as text. But when you call <code>dangerouslySetInnerHTML</code>, you are handing out keys. Sanitize every guest before letting them in.
+    </div>
+  </div>
+
+  <h3>3.2 React normally escapes text</h3>
+  <p>This is the normal and safer way to display user-provided text:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentComment.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">function StudentComment({ comment }: { comment: string }) {
+  return &lt;p&gt;{comment}&lt;/p&gt;;
+}</code></pre>
+  </div>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">StudentComment — HTML in the string</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <p style="margin:0; color:#111827;">Hello &lt;script&gt;alert("XSS")&lt;/script&gt; world</p>
+      <p class="o-muted" style="margin-top:10px;">React displays the tags as <em>text</em>, not as executable markup.</p>
+    </div>
+  </div>
+
+  <p>React treats the string as text rather than parsing it as HTML.</p>
+  <p>For example, a string containing HTML-like tags is displayed as text in the paragraph rather than automatically becoming executable markup.</p>
+  <p>This protection applies to ordinary text rendering. It does not mean every way of passing data to the DOM is safe.</p>
+
+  <h3>3.3 What is <code>dangerouslySetInnerHTML</code>?</h3>
+  <p>React provides <code>dangerouslySetInnerHTML</code> for cases where the application intentionally inserts an HTML string.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">CourseDescription.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">function CourseDescription({ html }: { html: string }) {
+  return (
+    &lt;div dangerouslySetInnerHTML={{ __html: html }} /&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p>The problem is that untrusted HTML may contain malicious elements, event handlers, or other dangerous content.</p>
+  <p>Do not pass arbitrary user-generated HTML into this property.</p>
+  <p>React's official documentation warns that untrusted input passed to <code>dangerouslySetInnerHTML</code> can introduce XSS vulnerabilities: <a href="https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html">React common DOM components</a>.</p>
+
+  <h3>3.4 Sanitize HTML before inserting it</h3>
+  <p>Sometimes you genuinely need formatted content, such as a rich-text course description.</p>
+  <p>One option is to use a maintained HTML sanitization library.</p>
+  <p>Install DOMPurify:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm install dompurify</code></pre>
+  </div>
+
+  <p>For a browser-based React application:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">CourseDescription.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import DOMPurify from "dompurify";
+
+function CourseDescription({ html }: { html: string }) {
+  const sanitizedHtml = DOMPurify.sanitize(html);
+
+  return (
+    &lt;article
+      className="prose max-w-none"
+      dangerouslySetInnerHTML={{
+        __html: sanitizedHtml,
+      }}
+    /&gt;
+  );
+}</code></pre>
+  </div>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">CourseDescription — sanitized</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <h3 style="margin:0 0 8px; color:#0b1b4d; font-family:Georgia, serif; font-size:14pt;">React Fundamentals</h3>
+      <p style="margin:0 0 8px; color:#374151;">Learn components, props, state, and hooks with <strong>practical projects</strong>.</p>
+      <p style="margin:0; color:#374151;"><em>Duration:</em> 8 weeks · <em>Level:</em> Beginner</p>
+      <p class="o-muted" style="margin-top:10px;">Script and event-handler attributes removed — safe markup preserved.</p>
+    </div>
+  </div>
+
+  <p>DOMPurify removes many dangerous constructs according to its sanitization rules. Its default configuration is a useful starting point for typical HTML sanitization, but you should configure it to match the allowed content you need and keep it updated.</p>
+  <p>If you do not need rich HTML, rendering the content as ordinary text is simpler and safer.</p>
+  <p>Also validate URL schemes and use safe handling for links, embedded content, and external resources. HTML sanitization is one defense, not a guarantee that every related issue has been solved.</p>
+
+  <h3>3.5 Other sources of XSS risk</h3>
+  <p>Review these areas:</p>
+  <ul>
+    <li>Rich-text editors</li>
+    <li>Markdown-to-HTML conversion</li>
+    <li>HTML imported from other systems</li>
+    <li>Direct use of DOM APIs</li>
+    <li>Third-party widgets</li>
+    <li>User-controlled URLs</li>
+    <li>Unsafe template processing</li>
+  </ul>
+  <p>Avoid treating a value as trusted merely because it comes from your database. Stored user input can still be malicious.</p>
+
+  <p>Useful references:</p>
+  <ul>
+    <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html">OWASP Cross Site Scripting Prevention</a></li>
+    <li><a href="https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html">React DOM security guidance</a></li>
+  </ul>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 3.1 — Review user-generated content</h4>
+  <p>Create a development page that displays student comments and course descriptions.</p>
+  <p>Add test inputs containing ordinary text and HTML-like strings.</p>
+  <p>Verify that ordinary React text rendering displays the content as text.</p>
+  <p>Do not use production accounts or real user data for security testing.</p>
+
+  <h4>Exercise 3.2 — Secure rich-text output</h4>
+  <p>Build a rich-text description preview.</p>
+  <p>Requirements:</p>
+  <ol>
+    <li>Use a maintained sanitizer.</li>
+    <li>Permit only the formatting elements your feature requires.</li>
+    <li>Verify that allowed formatting still works.</li>
+    <li>Confirm that dangerous HTML constructs do not become executable content.</li>
+    <li>Review the sanitizer's configuration and update policy.</li>
+  </ol>
+
+  <h4>Challenge</h4>
+  <p>Create a security review checklist for every location in your application where content is converted from a string into HTML or inserted directly into the DOM.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You know when ordinary React rendering is sufficient and why untrusted HTML requires special care.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">§ 3 · XSS</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 4 — SECURE API INTEGRATION
+     ============================================================ -->
+<section class="topic" id="t4">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0e7490,#0891b2);">API</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 4</div>
+    <h2>Secure API Integration</h2>
+    <p>A consistent client, correct methods, and errors that never leak internals.</p>
+  </div>
+
+  <h3>4.1 Why is API security important?</h3>
+  <p>A frontend communicates with the backend through requests and responses. Those requests may retrieve student records, upload files, modify permissions, or create accounts.</p>
+  <p>The frontend is not a trusted enforcement boundary. A user can modify the browser code or call an API independently.</p>
+  <p>Therefore, security-critical checks must occur on the server, and the frontend should handle the response safely.</p>
+  <p>See the <a href="https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html">OWASP REST Security Cheat Sheet</a>.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&q=80&auto=format&fit=crop"
+      alt="Network cables plugged into a labelled switch"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The labelled patch panel</div>
+    <div class="photo-caption">
+      <b>A secure API is a well-labelled patch panel.</b> Every cable is labelled with what it carries and who may unplug it. The frontend requests a specific port; the backend verifies the request, performs the operation, and responds with only what is allowed.
+    </div>
+  </div>
+
+  <h3>4.2 Create a central API helper</h3>
+  <p>A central helper makes it easier to implement consistent error handling.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">client.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+export async function apiGet&lt;T&gt;(path: string): Promise&lt;T&gt; {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (response.status === 401) {
+    throw new Error("Please sign in to continue.");
+  }
+
+  if (!response.ok) {
+    throw new Error("The request could not be completed.");
+  }
+
+  return response.json() as Promise&lt;T&gt;;
+}</code></pre>
+  </div>
+
+  <p>This example assumes that the application uses a browser cookie session and a configured API URL.</p>
+  <p>The <code>T</code> type is a compile-time expectation, not runtime validation. The response should be validated before the application trusts it, especially when the payload contains important business data.</p>
+  <p>The helper also needs architectural adjustments if your API uses a different base URL, authorization flow, CSRF mechanism, or response format.</p>
+
+  <h3>4.3 Use the appropriate HTTP method</h3>
+  <p>Use HTTP methods according to the API's intended operations.</p>
+
+  <table>
+    <thead><tr><th>Method</th><th>Common use</th></tr></thead>
+    <tbody>
+      <tr><td><code>GET</code></td><td>Retrieve data</td></tr>
+      <tr><td><code>POST</code></td><td>Create a resource or execute an operation</td></tr>
+      <tr><td><code>PUT</code></td><td>Replace a resource</td></tr>
+      <tr><td><code>PATCH</code></td><td>Update part of a resource</td></tr>
+      <tr><td><code>DELETE</code></td><td>Delete a resource</td></tr>
+    </tbody>
+  </table>
+
+  <p>The backend must still validate the request body, enforce permissions, and ensure that the operation is allowed.</p>
+  <p>Do not assume that a hidden frontend button or disabled input protects an endpoint.</p>
+
+  <h3>4.4 Example: Send an update request</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">updateStudent.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">interface UpdateStudentInput {
+  name: string;
+  courseId: string;
+}
+
+export async function updateStudent(
+  studentId: string,
+  input: UpdateStudentInput
+): Promise&lt;void&gt; {
+  const response = await fetch(
+    `${API_BASE_URL}/students/${encodeURIComponent(studentId)}`,
+    {
+      method: "PATCH",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(input),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Unable to update the student.");
+  }
+}</code></pre>
+  </div>
+
+  <p>This example shows request construction, but the server must still verify the session, resource permissions, business rules, and input validity.</p>
+  <p>If a cookie-based cross-site setup requires CSRF tokens, include the correctly issued token according to the backend's expected mechanism. Do not invent a client-generated value and assume that it provides CSRF protection.</p>
+
+  <h3>4.5 Avoid exposing sensitive information in responses</h3>
+  <p>The backend should return only data appropriate for the requesting user.</p>
+  <p>For example, a public course list generally should not include private student records, password hashes, internal administrative notes, or unnecessary authentication metadata.</p>
+  <p>The frontend should not depend on hiding sensitive fields after they have already been sent to the browser.</p>
+
+  <h3>4.6 Handle errors without leaking internals</h3>
+  <p>Avoid returning raw stack traces or database errors to users.</p>
+  <p>A frontend can show a safe, general message while logging a diagnostic event for developers:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">handler.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">try {
+  await updateStudent(studentId, input);
+  setMessage("Student updated successfully.");
+} catch {
+  setMessage("Unable to update the student. Please try again.");
+}</code></pre>
+  </div>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">Update result — safe messages</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div class="o-card" style="border-color:#86efac; background:#f0fdf4;">
+        <p style="margin:0; color:#166534;"><strong>✓ Success</strong> — Student updated successfully.</p>
+      </div>
+      <div class="o-card" style="border-color:#fca5a5; background:#fef2f2;">
+        <p style="margin:0; color:#991b1b;"><strong>✕ Error</strong> — Unable to update the student. Please try again.</p>
+      </div>
+      <p class="o-muted" style="margin-top:10px;">Stack traces, SQL errors, and internal details are never shown to the user.</p>
+    </div>
+  </div>
+
+  <p>Your monitoring system can capture relevant diagnostic information, with sensitive data removed.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 4.1 — Review API requests</h4>
+  <p>Inspect the student, book-release, and attendance APIs in a development environment.</p>
+  <p>For each endpoint, document:</p>
+  <ul>
+    <li>HTTP method and expected input.</li>
+    <li>Authentication requirement.</li>
+    <li>Authorization rules.</li>
+    <li>Request validation.</li>
+    <li>Error responses.</li>
+    <li>Sensitive information that must not be returned.</li>
+  </ul>
+
+  <h4>Exercise 4.2 — Handle failed requests</h4>
+  <p>Build an update form that distinguishes a successful update from an unsuccessful request.</p>
+  <p>Test:</p>
+  <ul>
+    <li>Unauthorized requests.</li>
+    <li>Forbidden requests.</li>
+    <li>Validation errors.</li>
+    <li>Server errors.</li>
+    <li>Network failures.</li>
+  </ul>
+  <p>Display useful messages without exposing stack traces or confidential server details.</p>
+
+  <h4>Challenge</h4>
+  <p>Create a shared API client that supports consistent error handling, typed responses, session credentials, and runtime validation for important response data.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You understand that a secure frontend API client supports good behavior but does not replace backend security checks.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">§ 4 · API Integration</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 5 — CORS
+     ============================================================ -->
+<section class="topic" id="t5">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#4f46e5,#7c3aed);">CORS</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 5</div>
+    <h2>CORS Fundamentals</h2>
+    <p>A browser gate — not a security boundary on the server.</p>
+  </div>
+
+  <h3>5.1 What is CORS?</h3>
+  <p>CORS stands for Cross-Origin Resource Sharing.</p>
+  <p>A browser uses the same-origin policy to restrict certain cross-origin requests. CORS is a mechanism through which a server indicates which origins may access its responses through browser APIs such as <code>fetch()</code>.</p>
+  <p>An origin consists of the scheme, hostname, and port.</p>
+  <p>For example:</p>
+  <ul>
+    <li><code>http://localhost:5173</code></li>
+    <li><code>http://localhost:3000</code></li>
+  </ul>
+  <p>These are different origins because their ports differ.</p>
+  <p>Imagine your React frontend runs on one origin while the backend API runs on another. The browser may block JavaScript from reading the API response unless the backend's CORS policy permits the frontend origin.</p>
+  <p>Reference: <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/CORS">MDN CORS</a>.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?w=1200&q=80&auto=format&fit=crop"
+      alt="A bouncer at a door checking a guest list"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The guest list at the door</div>
+    <div class="photo-caption">
+      <b>CORS is a guest list enforced by the browser.</b> The browser checks whether the origin is allowed to read the response. The bouncer (browser) only enforces the list — the venue (server) must still verify who you are and what you may do.
+    </div>
+  </div>
+
+  <h3>5.2 What does a CORS error mean?</h3>
+  <p>Suppose the frontend executes:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">fetch</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">fetch("https://api.example.com/students");</code></pre>
+  </div>
+
+  <p>If the API doesn't return the required CORS headers for the frontend's origin, the browser may refuse to expose the response to JavaScript.</p>
+  <p>This does not automatically mean that the API server itself is unreachable or that authentication is incorrect. Inspect the browser's Console and Network panels to diagnose the actual problem.</p>
+
+  <h3>5.3 Configure CORS on the backend</h3>
+  <p>For an Express backend, the <code>cors</code> middleware is commonly used.</p>
+  <p>Install it in the backend project:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm install cors
+npm install -D @types/cors</code></pre>
+  </div>
+
+  <p>Example configuration:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">server.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">import cors from "cors";
+
+app.use(
+  cors({
+    origin: ["https://lms.example.com"],
+    credentials: true,
+  })
+);</code></pre>
+  </div>
+
+  <p>This example permits the specified frontend origin and enables credentialed CORS handling.</p>
+  <p>The frontend origin must match the deployed application's actual origin. Keep the allowlist as narrow as your requirements allow.</p>
+  <p>When cookie credentials are included in cross-origin requests, the server must use an explicitly allowed origin rather than <code>*</code>, and the response must have the appropriate credentials header. The browser's cookie policy and the application's session and CSRF design must also be correct.</p>
+
+  <h3>5.4 Send credentials only when appropriate</h3>
+  <p>For a cross-origin cookie-based session, the frontend may need:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">fetch</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">fetch("https://api.example.com/students", {
+  credentials: "include",
+});</code></pre>
+  </div>
+
+  <p>This tells the browser to include eligible credentials in the request.</p>
+  <p>For a same-origin cookie-based request, <code>credentials: "same-origin"</code> is commonly sufficient and is the default fetch credentials mode.</p>
+  <p>The correct setting depends on where the API lives and how authentication is configured.</p>
+
+  <h3>5.5 CORS is not authorization</h3>
+  <p>This is one of the most important concepts in this phase.</p>
+  <p>CORS does not prove that the person making a request has permission to access the data. It is primarily a browser mechanism controlling whether frontend scripts can read cross-origin responses.</p>
+  <p>An attacker can use non-browser clients to call an API directly. Therefore, your API still needs proper authentication, authorization, request validation, and other security controls.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 5.1 — Diagnose a CORS issue</h4>
+  <p>Run a React frontend and an API on different local ports.</p>
+  <p>Configure the API to permit the correct development frontend origin, then inspect the successful request in the browser Network panel.</p>
+  <p>Temporarily test an origin that is not on the allowlist and record what the browser reports.</p>
+
+  <h4>Exercise 5.2 — Configure production origins</h4>
+  <p>Document the exact frontend origins for development, staging, and production.</p>
+  <p>Configure the backend allowlist appropriately.</p>
+  <p>Verify that credentialed requests use explicit allowed origins rather than <code>*</code>.</p>
+
+  <h4>Challenge</h4>
+  <p>Explain how a valid CORS configuration differs from authentication and authorization. Demonstrate why an API must still reject unauthorized operations even when a request originates from the permitted frontend.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can troubleshoot CORS correctly without treating it as the application's security boundary.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">§ 5 · CORS</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 6 — ENVIRONMENT CONFIGURATION
+     ============================================================ -->
+<section class="topic" id="t6">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#d97706,#f59e0b);">ENV</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 6</div>
+    <h2>Environment Configuration</h2>
+    <p>Public configuration is not the same as a private secret.</p>
+  </div>
+
+  <h3>6.1 What is environment configuration?</h3>
+  <p>Applications commonly need different settings for development, staging, and production.</p>
+  <p>Examples include:</p>
+  <ul>
+    <li>API base URL</li>
+    <li>Public application title</li>
+    <li>Public feature flags</li>
+    <li>Analytics configuration</li>
+    <li>Backend service endpoints</li>
+  </ul>
+  <p>Different environments should use appropriate configuration instead of changing source code manually before every deployment.</p>
+
+  <h3>6.2 Configure Vite environment variables</h3>
+  <p>Vite exposes frontend variables through <code>import.meta.env</code>.</p>
+  <p>Example <code>.env.development</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">.env.development</span><span class="code-lang">ENV</span></div>
+    <pre><code class="lang-env">VITE_API_BASE_URL=http://localhost:3000/api
+VITE_APP_TITLE=Training LMS Development</code></pre>
+  </div>
+
+  <p>Example <code>.env.production</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">.env.production</span><span class="code-lang">ENV</span></div>
+    <pre><code class="lang-env">VITE_API_BASE_URL=https://api.example.com/api
+VITE_APP_TITLE=Training LMS</code></pre>
+  </div>
+
+  <p>Usage in React:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">env.ts</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+const appTitle = import.meta.env.VITE_APP_TITLE;</code></pre>
+  </div>
+
+  <p>Vite embeds <code>VITE_</code>-prefixed values into the client-side build. <strong>They are not secrets.</strong> Anyone who can access the deployed application can inspect those values.</p>
+  <p>See <a href="https://vite.dev/guide/env-and-mode">Vite environment variables and modes</a>.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1582139329536-e7284fece509?w=1200&q=80&auto=format&fit=crop"
+      alt="A set of labelled keys on a keyring"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The labelled keyring</div>
+    <div class="photo-caption">
+      <b>Environment configuration is a labelled keyring.</b> The development key opens the development door; the production key opens the production door. A key that opens every door is not a key — it's a secret. Public configuration is a key label. Private credentials belong on the server.
+    </div>
+  </div>
+
+  <h3>6.3 Never put backend secrets in frontend variables</h3>
+  <p>Do not put these in a frontend-exposed environment variable:</p>
+  <ul>
+    <li>Database passwords</li>
+    <li>Private API credentials</li>
+    <li>Secret signing keys</li>
+    <li>Private OAuth client secrets</li>
+    <li>Long-lived service tokens</li>
+    <li>Credentials that grant privileged backend access</li>
+  </ul>
+  <p>For example, this is unsafe:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Unsafe</span><span class="code-lang">ENV</span></div>
+    <pre><code class="lang-env">VITE_DATABASE_PASSWORD=some-secret</code></pre>
+  </div>
+
+  <p>The prefix tells Vite to expose the value to the client-side bundle.</p>
+  <p>Instead, keep private values in backend environment variables or a proper secret-management system.</p>
+
+  <h3>6.4 An environment variable is not a secret simply because it is in <code>.env</code></h3>
+  <p>A <code>.env</code> file is a configuration file; it does not provide encryption or security by itself.</p>
+  <p>Keep private environment files out of version control, use a safe <code>.gitignore</code>, and commit only a template such as <code>.env.example</code>.</p>
+  <p>Example <code>.env.example</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">.env.example</span><span class="code-lang">ENV</span></div>
+    <pre><code class="lang-env">VITE_API_BASE_URL=
+VITE_APP_TITLE=Training LMS</code></pre>
+  </div>
+
+  <p>This template contains placeholders rather than real credentials.</p>
+  <p>Vite's environment variables are loaded during startup or build. Restart the development server after changing environment files.</p>
+
+  <h3>6.5 Type the frontend environment</h3>
+  <p>You can declare expected public environment variables in a <code>vite-env.d.ts</code> file:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">vite-env.d.ts</span><span class="code-lang">TS</span></div>
+    <pre><code class="lang-ts">interface ImportMetaEnv {
+  readonly VITE_API_BASE_URL: string;
+  readonly VITE_APP_TITLE: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}</code></pre>
+  </div>
+
+  <p>This provides editor support and documents the expected configuration. It does not validate that the values are present or correct at runtime, so important configuration should also be validated during startup or build as appropriate.</p>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">Two environments — same code, different configuration</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div class="o-card" style="border-color:#c7d2fe;">
+        <p style="margin:0 0 6px; font-size:10pt;"><strong>.env.development</strong></p>
+        <p style="margin:0; font-family:Consolas, monospace; font-size:9.5pt; color:#1e40af;">VITE_API_BASE_URL=http://localhost:3000/api</p>
+        <p style="margin:0; font-family:Consolas, monospace; font-size:9.5pt; color:#1e40af;">VITE_APP_TITLE=Training LMS Development</p>
+      </div>
+      <div class="o-card" style="border-color:#86efac;">
+        <p style="margin:0 0 6px; font-size:10pt;"><strong>.env.production</strong></p>
+        <p style="margin:0; font-family:Consolas, monospace; font-size:9.5pt; color:#166534;">VITE_API_BASE_URL=https://api.example.com/api</p>
+        <p style="margin:0; font-family:Consolas, monospace; font-size:9.5pt; color:#166534;">VITE_APP_TITLE=Training LMS</p>
+      </div>
+      <p class="o-muted" style="margin-top:10px;">Both files are committed as <code>.env.example</code> with empty values. Real values stay out of version control.</p>
+    </div>
+  </div>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 6.1 — Separate environments</h4>
+  <p>Configure development and production API URLs using separate Vite environment files.</p>
+  <p>Verify that:</p>
+  <ul>
+    <li>Development points to the development API.</li>
+    <li>The production build points to the production API.</li>
+    <li>The correct application title is displayed.</li>
+    <li>The environment files are handled appropriately in version control.</li>
+  </ul>
+
+  <h4>Exercise 6.2 — Audit for leaked secrets</h4>
+  <p>Search the frontend source, environment files, and generated build output for any private keys or credentials you control.</p>
+  <p>Remove exposed secrets from the frontend and move them to an appropriate server-side secret store.</p>
+  <p>If a real secret has already been committed, copied, or deployed, deleting it from the current source is not enough. Rotate or revoke the exposed credential and investigate its use.</p>
+
+  <h4>Challenge</h4>
+  <p>Create a documented configuration plan for development, staging, and production, identifying which settings are public and which must remain private.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can configure a frontend for multiple environments without confusing public configuration with confidential credentials.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">§ 6 · Environment</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 7 — FRONTEND ERROR REPORTING & LOGGING
+     ============================================================ -->
+<section class="topic" id="t7">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#be123c,#e11d48);">LOG</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 7</div>
+    <h2>Frontend Error Reporting and Logging</h2>
+    <p>Collect enough information to fix the bug — and none to betray the user.</p>
+  </div>
+
+  <h3>7.1 Why does production logging matter?</h3>
+  <p>A development console can help you debug a local problem, but a deployed application has users and devices you cannot directly inspect.</p>
+  <p>Imagine that the LMS reports that a course page went blank for some students. A production error-reporting system can help you identify the failing component, application release, browser environment, and stack trace.</p>
+  <p>Error monitoring is not only about collecting errors. It is about collecting enough information to investigate them safely.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=80&auto=format&fit=crop"
+      alt="Electronic circuit board — signals travelling through a system"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The flight recorder</div>
+    <div class="photo-caption">
+      <b>An aircraft's black box records what mattered, not everything.</b> Error monitoring should capture the flight path — release, route, error type, correlation ID — without recording the passengers' private conversations.
+    </div>
+  </div>
+
+  <h3>7.2 Use Error Boundaries for rendering failures</h3>
+  <p>React Error Boundaries can catch certain errors thrown by descendant components during rendering and display a fallback.</p>
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">ErrorBoundary.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { Component, type ReactNode } from "react";
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+}
+
+interface ErrorBoundaryProps {
+  children: ReactNode;
+}
+
+class ErrorBoundary extends Component&lt;
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+&gt; {
+  state: ErrorBoundaryState = {
+    hasError: false,
+  };
+
+  static getDerivedStateFromError(): ErrorBoundaryState {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error) {
+    // Send a sanitized diagnostic event to your monitoring service.
+    console.error("Dashboard section failed", error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        &lt;div role="alert" className="rounded-xl border p-5"&gt;
+          This section could not be displayed. Try again later.
+        &lt;/div&gt;
+      );
+    }
+
+    return this.props.children;
+  }
+}</code></pre>
+  </div>
+
+  <p>Use it around a part of the application:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Dashboard.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">&lt;ErrorBoundary&gt;
+  &lt;AnalyticsDashboard /&gt;
+&lt;/ErrorBoundary&gt;</code></pre>
+  </div>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">ErrorBoundary — fallback UI</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div style="border:1px solid #fca5a5; background:#fef2f2; border-radius:10px; padding:16px 18px; color:#991b1b;" role="alert">
+        <strong>⚠ This section could not be displayed.</strong><br>
+        <span style="font-size:10pt;">Try again later.</span>
+      </div>
+      <p class="o-muted" style="margin-top:10px;">Rest of the dashboard stays usable — only the failing panel was replaced.</p>
+    </div>
+  </div>
+
+  <p>The fallback keeps the user-facing experience more controlled when a descendant's rendering fails.</p>
+  <p>However, Error Boundaries do not catch every asynchronous or event-handler failure. Handle network requests, click handlers, timers, and other asynchronous operations appropriately in their own code.</p>
+
+  <h3>7.3 Log useful information, not sensitive information</h3>
+  <p>Useful information can include:</p>
+  <ul>
+    <li>Error type and sanitized message</li>
+    <li>Application version</li>
+    <li>Route or feature name</li>
+    <li>Browser category</li>
+    <li>Release or build identifier</li>
+    <li>A correlation ID, where available</li>
+  </ul>
+  <p>Avoid logging:</p>
+  <ul>
+    <li>Passwords</li>
+    <li>Session cookies</li>
+    <li>Access tokens</li>
+    <li>Full payment credentials</li>
+    <li>Unnecessary student personal information</li>
+    <li>Sensitive request bodies</li>
+    <li>Entire server responses that may contain private data</li>
+  </ul>
+  <p>Treat diagnostic events as potentially sensitive data. Apply access controls, retention policies, redaction, and sampling as appropriate.</p>
+
+  <h3>7.4 Add a production error-reporting service</h3>
+  <p>A service such as Sentry can collect frontend errors, provide stack traces, associate events with releases, and support source-map integration.</p>
+  <p>Follow the current official setup guide for your chosen monitoring provider.</p>
+  <p>For example, the core idea is to initialize an SDK once with appropriate configuration and report errors through its supported APIs. Do not add real credentials or expose private ingestion configuration beyond what your provider intentionally allows in a frontend SDK.</p>
+  <p>Source maps can help translate a minified production stack trace into useful original source locations. Treat source-map publication and access as part of your production security design.</p>
+  <p>Reference: <a href="https://docs.sentry.io/platforms/javascript/guides/react/">Sentry React documentation</a>.</p>
+
+  <h3>7.5 Test the monitoring design</h3>
+  <p>Build an intentional error path in development and verify that:</p>
+  <ol>
+    <li>A safe fallback appears.</li>
+    <li>The error is recorded by the expected monitoring system.</li>
+    <li>The event includes the correct release information.</li>
+    <li>No sensitive values appear in the recorded payload.</li>
+    <li>A user-facing message does not expose internal stack traces.</li>
+  </ol>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 7.1 — Add an application error boundary</h4>
+  <p>Wrap an independent dashboard section in an Error Boundary.</p>
+  <p>In development, deliberately throw an error from a test-only component and verify that the fallback appears instead of the entire section becoming unusable.</p>
+  <p>Do not leave the intentional error in production code.</p>
+
+  <h4>Exercise 7.2 — Define a safe logging policy</h4>
+  <p>Create a small logging policy for your application.</p>
+  <p>List the fields that may be logged, fields that must be removed, who can view the logs, and how long the logs will be retained.</p>
+
+  <h4>Challenge</h4>
+  <p>Configure an error-reporting service in a test environment. Trigger a controlled error, locate the corresponding event, and inspect the reported release and stack trace while verifying that sensitive values are absent.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can diagnose production failures without turning monitoring into another source of sensitive-data exposure.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">§ 7 · Logging</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 8 — BUILD & DEPLOYMENT
+     ============================================================ -->
+<section class="topic" id="t8">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0b1b4d,#1e40af);">BUILD</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 8</div>
+    <h2>Build and Deployment Workflows</h2>
+    <p>Reproducible builds, verified checks, reversible releases.</p>
+  </div>
+
+  <h3>8.1 What happens during a production build?</h3>
+  <p>A typical React production build transforms the project's source code into deployable assets.</p>
+  <p>In a Vite project, the command is usually:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm run build</code></pre>
+  </div>
+
+  <p>The output is generally placed in the <code>dist</code> directory.</p>
+  <p>The deployed files may include HTML, JavaScript chunks, CSS, fonts, and images.</p>
+  <p>The production deployment should use a reproducible build process and a controlled source of configuration.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=1200&q=80&auto=format&fit=crop"
+      alt="Parcels ready for shipment — a batch of deliveries"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The shipment</div>
+    <div class="photo-caption">
+      <b>A release is a shipment, not a handoff.</b> Every package is inspected before it leaves (lint, tests, type check, build). If something is wrong, the whole shipment is held — not just the one item.
+    </div>
+  </div>
+
+  <h3>8.2 Separate development from production</h3>
+  <p>Development mode supports fast iteration and debugging.</p>
+  <p>Production mode generally provides optimized assets and should be configured for a real deployment environment.</p>
+  <p>Before shipping the application, run the checks that your project supports:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm ci
+npm run lint
+npm run test:run
+npx tsc -b
+npm run build</code></pre>
+  </div>
+
+  <p>These commands assume your project has corresponding scripts and a Vite TypeScript setup. If one is missing, configure it rather than assuming it has already run.</p>
+  <p><code>npm ci</code> installs from the lockfile and is appropriate for reproducible CI installations.</p>
+  <p>The test, lint, type-check, and build stages catch different classes of errors. A build alone does not necessarily mean that all tests have run.</p>
+
+  <h3>8.3 Treat deployment configuration as part of the application</h3>
+  <p>Before deployment, verify:</p>
+  <ul>
+    <li>Production API URLs are correct.</li>
+    <li>No private credentials are embedded in the frontend.</li>
+    <li>API access is appropriately configured.</li>
+    <li>The hosting platform serves the built <code>dist</code> directory.</li>
+    <li>Browser routes work after direct navigation and page refresh.</li>
+    <li>HTTPS is enabled.</li>
+    <li>Error monitoring is configured and tested.</li>
+    <li>The previous release can be restored if a deployment fails.</li>
+  </ul>
+
+  <h3>8.4 Keep deploy credentials out of source code</h3>
+  <p>Automated deployment commonly requires an access token or hosting credential.</p>
+  <p>Keep that credential in the platform's protected secret store or an approved identity-based deployment mechanism. Limit its scope and permissions to what the deployment process requires.</p>
+  <p>Do not commit credentials to Git or put them in frontend-exposed configuration.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 8.1 — Prepare a production build</h4>
+  <p>Run the build process for your React application.</p>
+  <p>Inspect the generated output and verify that the main application assets are present.</p>
+  <p>Check that:</p>
+  <ol>
+    <li>The build completes successfully.</li>
+    <li>Types are checked as part of the configured workflow.</li>
+    <li>Unit tests pass.</li>
+    <li>Linting passes.</li>
+    <li>No private credentials are included in the output.</li>
+  </ol>
+
+  <h4>Exercise 8.2 — Deploy to a staging environment</h4>
+  <p>Deploy to a staging environment before production.</p>
+  <p>Verify:</p>
+  <ul>
+    <li>API connectivity</li>
+    <li>Login and logout</li>
+    <li>Student and course loading</li>
+    <li>File or asset loading</li>
+    <li>Direct route navigation</li>
+    <li>Error handling</li>
+    <li>Monitoring</li>
+    <li>HTTPS</li>
+  </ul>
+
+  <h4>Challenge</h4>
+  <p>Write a deployment checklist that specifies the required checks before release and the steps to roll back an unsuccessful deployment.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can create repeatable production builds, validate them, and deploy without copying secrets into frontend code.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">§ 8 · Build &amp; Deploy</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 9 — HOSTING & SPA FALLBACK
+     ============================================================ -->
+<section class="topic" id="t9">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0e7490,#0891b2);">HOST</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 9</div>
+    <h2>Hosting and Routing Fallback Configuration</h2>
+    <p>Clicking works. Refreshing gives a 404. The router is fine — the host isn't.</p>
+  </div>
+
+  <h3>9.1 Why can a React route work after clicking but fail on refresh?</h3>
+  <p>A typical React application uses client-side routing.</p>
+  <p>Imagine the user navigates to:</p>
+  <p><code>https://lms.example.com/students/STU-101</code></p>
+  <p>The React router recognizes the path and renders the student profile.</p>
+  <p>But if the user refreshes the page, the browser makes a request directly to the hosting server for <code>/students/STU-101</code>.</p>
+  <p>If the host searches for a physical file at that path and cannot find one, it may return <code>404 Not Found</code>.</p>
+  <p>This is a hosting-routing problem, not necessarily a React component bug.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?w=1200&q=80&auto=format&fit=crop"
+      alt="A road sign pointing to multiple destinations"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The signpost at the door</div>
+    <div class="photo-caption">
+      <b>The host needs to know every route leads to the same front door.</b> Without an SPA fallback, refreshing a deep link asks for a file that doesn't exist — and the host returns a 404 instead of <code>index.html</code>.
+    </div>
+  </div>
+
+  <h3>9.2 What is an SPA fallback?</h3>
+  <p>A single-page application (SPA) commonly serves the same HTML entry point for application routes.</p>
+  <p>When a request comes in for a route such as <code>/students/STU-101</code>, the host can return <code>index.html</code>, allowing the React router to handle the URL.</p>
+  <p>However, the fallback must be configured carefully. It should not turn missing JavaScript files or API requests into an HTML page.</p>
+
+  <h3>9.3 Hosting rule: route fallback versus missing assets</h3>
+  <p>A conceptual rule might be:</p>
+
+  <div class="term out">
+    <div class="term-head">Routing rule</div>
+    <pre>Application document routes → index.html
+Existing JavaScript/CSS/images → corresponding assets
+Missing JavaScript/CSS/images → real 404
+API requests → backend/API handling</pre>
+  </div>
+
+  <p>The exact syntax depends on your hosting platform. Some hosts have explicit SPA options; others require redirects or rewrite rules.</p>
+  <p>For Vite, the production output normally needs to be hosted from <code>dist</code>, and the deployment configuration must account for the application being a single-page app. See <a href="https://vite.dev/guide/static-deploy.html">Vite static deployment</a>.</p>
+
+  <h3>9.4 What about nested paths?</h3>
+  <p>Imagine your LMS uses the following routes:</p>
+
+  <div class="term out">
+    <div class="term-head">Routes</div>
+    <pre>/
+ /login
+ /dashboard
+ /students
+ /students/STU-101
+ /courses/react
+ /admin/books</pre>
+  </div>
+
+  <p>Test each route by entering its URL directly into the address bar, not only by clicking the internal navigation links.</p>
+  <p>Also check that assets load correctly from nested routes.</p>
+  <p>If your application is hosted below a path such as <code>/training/</code>, you may need to configure Vite's <code>base</code> option and the router's base path appropriately.</p>
+
+  <h3>9.5 A deployment debugging workflow</h3>
+  <p>If refreshing a route produces a 404:</p>
+  <ol class="steps">
+    <li>Check whether the main document request returned 404.</li>
+    <li>Confirm the built files were deployed to the correct directory.</li>
+    <li>Review the hosting platform's rewrite or fallback rules.</li>
+    <li>Confirm application routes return the frontend entry point.</li>
+    <li>Verify that missing assets still return an error rather than <code>index.html</code>.</li>
+    <li>Inspect the console and network requests for incorrect asset URLs.</li>
+  </ol>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 9.1 — Test deep links</h4>
+  <p>Deploy a staging build of your LMS.</p>
+  <p>Directly open and refresh:</p>
+  <ul>
+    <li><code>/dashboard</code></li>
+    <li><code>/students</code></li>
+    <li><code>/students/STU-101</code></li>
+    <li><code>/courses/react</code></li>
+  </ul>
+  <p>Check that each route works, including after copying the URL into a new browser tab.</p>
+
+  <h4>Exercise 9.2 — Verify missing assets</h4>
+  <p>Request a JavaScript or image file that does not exist.</p>
+  <p>Verify that the host returns a proper missing-asset response instead of returning the application's <code>index.html</code>.</p>
+
+  <h4>Challenge</h4>
+  <p>Write and test hosting fallback rules for your deployment platform. Keep static assets, API requests, and document routes separated.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can distinguish a client-side router problem from a hosting configuration problem.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">§ 9 · Hosting</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 10 — CI CHECKS
+     ============================================================ -->
+<section class="topic" id="t10">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#4f46e5,#7c3aed);">CI</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 10</div>
+    <h2>CI Checks and Automated Tests</h2>
+    <p>Every pull request passes the same gate before it can ship.</p>
+  </div>
+
+  <h3>10.1 What is CI?</h3>
+  <p>Continuous Integration (CI) is the practice of automatically checking changes as they are submitted to a project.</p>
+  <p>Imagine that several developers contribute to your LMS. One developer modifies the enrollment form, another changes the course list, and another updates the API client.</p>
+  <p>Without shared automated checks, a change might accidentally break the production build or an important workflow.</p>
+  <p>CI can run:</p>
+  <ul>
+    <li>Lint checks</li>
+    <li>Type checking</li>
+    <li>Unit and component tests</li>
+    <li>Production builds</li>
+    <li>Additional security and integration checks</li>
+  </ul>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1565043666747-69f6646db940?w=1200&q=80&auto=format&fit=crop"
+      alt="A factory production line with quality control"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The quality gate</div>
+    <div class="photo-caption">
+      <b>CI is a quality gate on the assembly line.</b> Every pull request is inspected — lint, tests, types, build — before it can merge. A failed check stops the line; nothing ships unverified.
+    </div>
+  </div>
+
+  <h3>10.2 Create a GitHub Actions workflow</h3>
+  <p>For a repository hosted on GitHub, create <code>.github/workflows/ci.yml</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">.github/workflows/ci.yml</span><span class="code-lang">YAML</span></div>
+    <pre><code class="lang-yaml">name: React CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run tests
+        run: npm run test:run
+
+      - name: Check TypeScript
+        run: npx tsc -b
+
+      - name: Build for production
+        run: npm run build</code></pre>
+  </div>
+
+  <p>This is an illustrative workflow. Use current, approved action versions in your organization and confirm that Node.js 22 is supported by your project's dependency stack.</p>
+  <p>The workflow also assumes that the project provides <code>lint</code>, <code>test:run</code>, and TypeScript build scripts or compatible commands.</p>
+  <p>Official reference: <a href="https://docs.github.com/en/actions/tutorials/build-and-test-code/nodejs">GitHub Actions — Building and testing Node.js</a>.</p>
+
+  <h3>10.3 What does the workflow do?</h3>
+  <ol class="steps">
+    <li>It checks out the source code.</li>
+    <li>It installs Node.js.</li>
+    <li>It installs dependencies from the lockfile.</li>
+    <li>It runs linting.</li>
+    <li>It runs the automated test suite.</li>
+    <li>It checks TypeScript.</li>
+    <li>It produces a production build.</li>
+  </ol>
+  <p>When one of the required commands fails, the job fails. That gives the team an early warning before the change proceeds through the release process.</p>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">CI checks — pull request #482</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <p class="o-muted" style="margin-bottom:12px;">All required checks passed.</p>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; align-items:center; gap:10px;"><span class="o-badge green">✓ passed</span><span>Install dependencies (npm ci)</span></div>
+        <div style="display:flex; align-items:center; gap:10px;"><span class="o-badge green">✓ passed</span><span>Lint</span></div>
+        <div style="display:flex; align-items:center; gap:10px;"><span class="o-badge green">✓ passed</span><span>Tests</span></div>
+        <div style="display:flex; align-items:center; gap:10px;"><span class="o-badge green">✓ passed</span><span>TypeScript</span></div>
+        <div style="display:flex; align-items:center; gap:10px;"><span class="o-badge green">✓ passed</span><span>Build</span></div>
+      </div>
+      <p class="o-muted" style="margin-top:12px;">A failed step would block merge and notify the author.</p>
+    </div>
+  </div>
+
+  <h3>10.4 Add security checks carefully</h3>
+  <p>A production workflow may also include:</p>
+  <ul>
+    <li>Dependency vulnerability review</li>
+    <li>Secret scanning</li>
+    <li>Static analysis</li>
+    <li>License review</li>
+    <li>End-to-end tests</li>
+    <li>Deployment validation</li>
+  </ul>
+  <p>A command such as <code>npm audit</code> can help identify known dependency advisories, but every finding requires investigation. Do not blindly apply all automated fixes to a production project without reviewing compatibility and breaking changes.</p>
+  <p>For production deployments, keep credentials in the CI platform's secret store and grant the job only the permissions it requires.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 10.1 — Create a CI pipeline</h4>
+  <p>Add a workflow to a test repository containing your React application.</p>
+  <p>Make the pipeline run:</p>
+  <ol>
+    <li>Dependency installation</li>
+    <li>Linting</li>
+    <li>Type checking</li>
+    <li>Unit tests</li>
+    <li>Production build</li>
+  </ol>
+  <p>Open a pull request and verify that the workflow runs.</p>
+
+  <h4>Exercise 10.2 — Prove that failures are detected</h4>
+  <p>Intentionally add a small test failure on a temporary branch.</p>
+  <p>Verify that the CI run fails, then correct the test and confirm that the pipeline passes again.</p>
+  <p>Do not merge the intentional failure into your main branch.</p>
+
+  <h4>Challenge</h4>
+  <p>Extend the workflow with an end-to-end testing job and appropriate dependency or secret scanning.</p>
+  <p>Document which checks must pass before a pull request can be merged.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>Your application has repeatable automated checks rather than relying entirely on developers to remember each manual command.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">§ 10 · CI</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 11 — PRODUCTION MONITORING (COMPLETED)
+     ============================================================ -->
+<section class="topic" id="t11">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0b1b4d,#1e40af);">MON</div>
+  <div class="topic-head">
+    <div class="kicker">Topic 11</div>
+    <h2>Production Debugging and Monitoring</h2>
+    <p>See what real users experience — from the frontend to the release.</p>
+  </div>
+
+  <h3>11.1 Why is production monitoring different from development debugging?</h3>
+  <p>In development, you can directly inspect the application and reproduce a problem.</p>
+  <p>In production, a failure might happen on a user's phone, on an unusual browser version, under poor network conditions, or only with a specific sequence of actions.</p>
+  <p>Monitoring helps you understand what happened without accessing the user's computer directly.</p>
+  <p>It can include:</p>
+  <ul>
+    <li>Frontend JavaScript errors</li>
+    <li>Backend errors</li>
+    <li>Failed HTTP requests</li>
+    <li>Response times</li>
+    <li>Application version and release information</li>
+    <li>Availability and health checks</li>
+    <li>Security-relevant events</li>
+    <li>Web Vitals and user experience metrics</li>
+  </ul>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80&auto=format&fit=crop"
+      alt="A control room with monitors showing dashboards and metrics"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The control room</div>
+    <div class="photo-caption">
+      <b>Operations watches the whole system at once.</b> Monitoring connects the user's error to the release that caused it, the request that failed, and the backend metric that spiked — without ever opening the user's laptop.
+    </div>
+  </div>
+
+  <h3>11.2 Use a consistent release identifier</h3>
+  <p>Suppose users report that the enrollment form stopped working immediately after a deployment.</p>
+  <p>Knowing the application release helps you correlate the error with the deployed code.</p>
+  <p>A release identifier might be based on a commit SHA or build number. Attach it to frontend error reports and correlate it with backend deployments when your monitoring system supports that integration.</p>
+  <p>Do not store private information in the release identifier.</p>
+
+  <h3>11.3 Understand production source maps</h3>
+  <p>Production JavaScript is often minified and transformed by the build process.</p>
+  <p>As a result, a stack trace may point to a compacted file and a confusing line number.</p>
+  <p>Source maps allow monitoring tools to relate generated code back to original source files. This can make production debugging substantially easier.</p>
+  <p>Source maps themselves need careful handling. They can reveal original source structure and may expose embedded source content, depending on the build configuration.</p>
+  <p>Choose whether to publish or privately upload source maps according to your application's security requirements, and restrict access to the monitoring system.</p>
+  <p>Reference: <a href="https://docs.sentry.io/platforms/javascript/guides/react/sourcemaps/">Sentry source maps and React monitoring</a>.</p>
+
+  <h3>11.4 Monitor frontend and backend errors together</h3>
+  <p>A React application may display “Unable to load students,” but the cause could be:</p>
+  <ul>
+    <li>A frontend exception</li>
+    <li>A network failure</li>
+    <li>An unavailable backend</li>
+    <li>A permission failure</li>
+    <li>Invalid data</li>
+    <li>An API contract change</li>
+  </ul>
+  <p>The frontend monitoring event alone may not explain the root cause.</p>
+  <p>Correlate frontend and backend events using suitable request or correlation IDs, where available. Avoid using private personal information as a correlation identifier.</p>
+
+  <h3>11.5 Safe production logging</h3>
+  <p>A log message should give developers useful diagnostic information without exposing sensitive information.</p>
+  <p>Good examples might include:</p>
+  <ul>
+    <li>Request failed with status code 500.</li>
+    <li>Feature: student-directory.</li>
+    <li>Release: deployment-2026-10-18.</li>
+    <li>Correlation ID: a non-sensitive request identifier.</li>
+  </ul>
+  <p>Avoid recording:</p>
+  <ul>
+    <li>Passwords</li>
+    <li>Session IDs</li>
+    <li>Access or refresh tokens</li>
+    <li>Full authorization headers</li>
+    <li>Unnecessary personally identifiable information</li>
+    <li>Sensitive request bodies</li>
+  </ul>
+  <p>A monitoring platform should have appropriate permissions, retention limits, and redaction settings.</p>
+
+  <h3>11.6 Establish practical alerting</h3>
+  <p>For an LMS, alerts could focus on:</p>
+  <ul>
+    <li>A spike in server errors</li>
+    <li>Increased failure rates for enrollment</li>
+    <li>Authentication service unavailability</li>
+    <li>Excessive response times</li>
+    <li>A rise in client-side errors after a release</li>
+    <li>A decline in availability</li>
+  </ul>
+  <p>Avoid creating alerts for every individual error. Set thresholds around issues that affect users or important business workflows.</p>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">Monitoring dashboard — release correlation</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="o-card" style="border-color:#fca5a5; background:#fef2f2;">
+          <p style="margin:0 0 4px; font-size:10pt; color:#991b1b;"><strong>⚠ Error spike</strong></p>
+          <p style="margin:0; font-size:10pt; color:#374151;">GET /api/students → 500</p>
+          <p style="margin:0; font-size:9pt; color:#6b7280;">Release: deployment-2026-10-18</p>
+        </div>
+        <div class="o-card" style="border-color:#bfdbfe; background:#eff6ff;">
+          <p style="margin:0 0 4px; font-size:10pt; color:#1e40af;"><strong>ℹ Correlation</strong></p>
+          <p style="margin:0; font-size:10pt; color:#374151;">Correlation ID: req-7f3a…</p>
+          <p style="margin:0; font-size:9pt; color:#6b7280;">Frontend &amp; backend linked</p>
+        </div>
+      </div>
+      <p class="o-muted" style="margin-top:10px;">Sensitive fields removed before storage. Alerts route to on-call engineers.</p>
+    </div>
+  </div>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 11.1 — Create a monitoring plan</h4>
+  <p>Write a monitoring plan for your LMS.</p>
+  <p>Include:</p>
+  <ol>
+    <li>Which frontend errors to record.</li>
+    <li>Which backend metrics to monitor.</li>
+    <li>Which sensitive fields must be redacted.</li>
+    <li>How releases are identified.</li>
+    <li>What failures should trigger alerts.</li>
+    <li>Who should receive alerts.</li>
+  </ol>
+
+  <h4>Exercise 11.2 — Diagnose a simulated production failure</h4>
+  <p>Simulate an API returning a 500 status in a staging environment.</p>
+  <p>Use the browser Network panel and your logging or monitoring system to trace the request.</p>
+  <p>Explain:</p>
+  <ul>
+    <li>What the user saw.</li>
+    <li>What the frontend recorded.</li>
+    <li>What the backend recorded.</li>
+    <li>How you correlated the events.</li>
+    <li>How the root cause would be verified.</li>
+  </ul>
+
+  <h4>Challenge</h4>
+  <p>Create a release verification checklist that includes monitoring and rollback procedures.</p>
+  <p>After a staging deployment, verify the important user workflows and ensure that failures are reported with useful diagnostic context but no sensitive data.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can investigate production problems systematically and connect frontend behavior to backend and release information.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">§ 11 · Monitoring</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     CAPSTONE PROJECT
+     ============================================================ -->
+<section class="capstone" id="capstone">
+  <div class="capstone-head">
+    <div class="kicker">★ Capstone Project</div>
+    <h2>Production-Ready LMS</h2>
+    <p>Now combine the 11 topics into a production-readiness exercise.</p>
+  </div>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1200&q=80&auto=format&fit=crop"
+      alt="A finished modern building ready for occupancy"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · Ready for occupancy</div>
+    <div class="photo-caption">
+      <b>A production-ready LMS is like a finished building with its keys handed over.</b> The structure stands (backend enforces auth), the doors lock (sessions and CSRF), the wiring is safe (XSS sanitization), the fire alarms are live (monitoring), and the maintenance plan is signed (CI, rollback, secrets). Only then do students move in.
+    </div>
+  </div>
+
+  <h3>Project objective</h3>
+  <p>Prepare a React + TypeScript LMS for deployment with clear authentication boundaries, safe frontend handling, reliable builds, and operational monitoring.</p>
+
+  <h3>Required features</h3>
+
+  <h4>Security</h4>
+  <ul class="checklist">
+    <li>Authentication and authorization are clearly separated.</li>
+    <li>Backend endpoints enforce role and resource permissions.</li>
+    <li>Session handling follows the chosen architecture.</li>
+    <li>HTML content is rendered safely.</li>
+    <li>API requests handle unsuccessful responses.</li>
+    <li>CORS is configured for the intended origins.</li>
+    <li>Frontend environment variables contain only public configuration.</li>
+  </ul>
+
+  <h4>Production readiness</h4>
+  <ul class="checklist">
+    <li>Error reporting is configured.</li>
+    <li>Logs exclude sensitive credentials and unnecessary personal information.</li>
+    <li>Production builds complete successfully.</li>
+    <li>Deep links work after refresh.</li>
+    <li>Automated tests run in CI.</li>
+    <li>Dependency and secret checks are included where appropriate.</li>
+    <li>Production failures can be investigated through monitoring and release information.</li>
+  </ul>
+
+  <h3>Suggested project structure</h3>
+
+  <div class="tree"><span class="dir">src/</span>
+├── <span class="dir">api/</span>
+│   └── <span class="file">client.ts</span>
+├── <span class="dir">auth/</span>
+│   ├── <span class="file">AuthProvider.tsx</span>
+│   └── <span class="file">ProtectedRoute.tsx</span>
+├── <span class="dir">components/</span>
+│   ├── <span class="file">ErrorBoundary.tsx</span>
+│   └── <span class="file">StudentDirectory.tsx</span>
+├── <span class="dir">config/</span>
+│   └── <span class="file">env.ts</span>
+├── <span class="file">App.tsx</span>
+└── <span class="file">main.tsx</span>
+
+<span class="dir">.github/</span>
+└── <span class="dir">workflows/</span>
+    └── <span class="file">ci.yml</span></div>
+
+  <p>This is only an organizational suggestion. Authentication middleware, CORS rules, secret storage, and backend authorization must be implemented in the backend or appropriate infrastructure layer—not merely in the frontend folders.</p>
+
+  <h3>Final acceptance checklist</h3>
+
+  <ul class="checklist">
+    <li>No backend secrets appear in the frontend bundle.</li>
+    <li>Protected API requests are authorized on the backend.</li>
+    <li>Session expiration and logout work correctly.</li>
+    <li>User-generated rich HTML is sanitized before insertion.</li>
+    <li>API errors are handled predictably.</li>
+    <li>CORS uses an explicit, appropriate origin policy.</li>
+    <li>Development and production configurations are separated.</li>
+    <li>Error reporting excludes sensitive values.</li>
+    <li>The production build succeeds.</li>
+    <li>Deep links work on the deployed SPA.</li>
+    <li>CI checks run automatically.</li>
+    <li>The application has a tested production debugging and monitoring plan.</li>
+  </ul>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">★ Capstone</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     INTERVIEW QUESTIONS
+     ============================================================ -->
+<section class="qa-section" id="questions">
+  <div class="qa-head">
+    <div class="kicker">↺ Review</div>
+    <h2>Phase 13 Interview Questions</h2>
+    <p>Three levels of questions to test your understanding — from vocabulary to architecture.</p>
+  </div>
+
+  <h3>Beginner</h3>
+  <span class="qa-level beginner">Level 1</span>
+  <ol class="qa-list">
+    <li>What is the difference between authentication and authorization?</li>
+    <li>Why is frontend role checking not sufficient to secure an API?</li>
+    <li>What are session cookies?</li>
+    <li>What does <code>HttpOnly</code> do?</li>
+    <li>What is cross-site scripting?</li>
+    <li>Why is <code>dangerouslySetInnerHTML</code> risky?</li>
+    <li>What is CORS?</li>
+    <li>Why should Vite's <code>VITE_</code> variables not contain private credentials?</li>
+    <li>What is a production build?</li>
+    <li>What is continuous integration?</li>
+  </ol>
+
+  <h3>Intermediate</h3>
+  <span class="qa-level intermediate">Level 2</span>
+  <ol class="qa-list">
+    <li>How would you prevent students from releasing books through the API?</li>
+    <li>How do <code>Secure</code>, <code>HttpOnly</code>, and <code>SameSite</code> differ?</li>
+    <li>Why does XSS prevention require careful handling of HTML and URLs?</li>
+    <li>How would you design a shared API client with consistent error handling?</li>
+    <li>How would you debug a CORS error?</li>
+    <li>How would you configure development and production environment variables?</li>
+    <li>How do Error Boundaries differ from handling failed network requests?</li>
+    <li>Why can a React SPA return a 404 on a nested route?</li>
+    <li>How would you create a CI workflow for linting, type checks, tests, and builds?</li>
+    <li>How can source maps help with production debugging?</li>
+  </ol>
+
+  <h3>Advanced</h3>
+  <span class="qa-level advanced">Level 3</span>
+  <ol class="qa-list">
+    <li>How would you design a secure session lifecycle for an LMS?</li>
+    <li>How would you enforce resource-level authorization for student-specific data?</li>
+    <li>How do XSS and CSRF risks differ?</li>
+    <li>How would you configure cross-origin cookie authentication securely?</li>
+    <li>What are the risks of embedding private configuration in a frontend build?</li>
+    <li>How would you manage secrets in CI and deployment infrastructure?</li>
+    <li>How should frontend and backend logs be correlated without exposing sensitive information?</li>
+    <li>How would you structure deployment rollback and release verification?</li>
+    <li>How would you investigate a production failure affecting only one browser or application release?</li>
+    <li>How would you design a production-readiness review for a full-stack React application?</li>
+  </ol>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">↺ Interview Questions</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMPLETION CHECKLIST
+     ============================================================ -->
+<section class="qa-section" id="checklist">
+  <div class="qa-head" style="background:linear-gradient(135deg,#020817 0%, #0b1b4d 58%, #0e7490 100%);">
+    <div class="kicker">✓ Self-Assessment</div>
+    <h2>Phase 13 Completion Checklist</h2>
+    <p>Tick every item before you consider this phase complete.</p>
+  </div>
+
+  <ul class="checklist">
+    <li>I can explain authentication versus authorization.</li>
+    <li>I understand safe session and token-handling principles.</li>
+    <li>I can identify XSS risks and handle rich HTML carefully.</li>
+    <li>I can integrate frontend APIs with consistent error handling.</li>
+    <li>I can explain and configure CORS.</li>
+    <li>I can separate public frontend configuration from private backend secrets.</li>
+    <li>I can implement safe frontend error reporting and logging.</li>
+    <li>I can build and deploy a production React application.</li>
+    <li>I can configure SPA routing fallbacks correctly.</li>
+    <li>I can automate type checks, tests, linting, and builds in CI.</li>
+    <li>I understand production monitoring, source maps, and release debugging.</li>
+  </ul>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">✓ Completion Checklist</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     OFFICIAL LEARNING RESOURCES
+     ============================================================ -->
+<section class="resources" id="resources">
+  <div class="resources-head">
+    <h2>Official learning resources</h2>
+    <p>Keep these references handy throughout your career.</p>
+  </div>
+
+  <ol class="res-list">
+    <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html">OWASP — Authentication Cheat Sheet</a></li>
+    <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html">OWASP — Authorization Cheat Sheet</a></li>
+    <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html">OWASP — Session Management</a></li>
+    <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html">OWASP — Cross-Site Scripting Prevention</a></li>
+    <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html">OWASP — REST Security</a></li>
+    <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html">OWASP — CSRF Prevention</a></li>
+    <li><a href="https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/CORS">MDN — CORS</a></li>
+    <li><a href="https://vite.dev/guide/env-and-mode">Vite — Environment Variables and Modes</a></li>
+    <li><a href="https://vite.dev/guide/static-deploy.html">Vite — Static Deployment</a></li>
+    <li><a href="https://docs.github.com/en/actions/tutorials/build-and-test-code/nodejs">GitHub Actions — Building and Testing Node.js</a></li>
+    <li><a href="https://react.dev/reference/react-dom/components/common">React — Common DOM Components and HTML Insertion</a></li>
+    <li><a href="https://docs.sentry.io/platforms/javascript/guides/react/">Sentry — React Monitoring</a></li>
+  </ol>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">Resources</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     FINAL GOAL
+     ============================================================ -->
+<section class="final-section" id="final-goal">
+  <div class="final-card">
+    <div class="fc-kicker">Final Goal · Phase 13</div>
+    <h2>Ship software that real users can trust</h2>
+    <p>Prepare your LMS for real-world use by enforcing access control at the correct boundary, handling data and credentials safely, deploying repeatable builds, and monitoring errors without exposing sensitive information.</p>
+    <div class="key-principle">
+      <b>The key principle:</b> The frontend improves user experience, but the backend and deployment infrastructure must enforce the security and operational guarantees that users depend on.
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 13 · Security &amp; Production Readiness</span>
+    <span class="pg">Final Goal</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     BACK COVER
+     ============================================================ -->
+<section class="back-cover">
+  <div class="back-cover-inner">
+    <span class="bc-badge">End of Phase 13</span>
+    <h2>Security is a habit,<br>not a checkbox.</h2>
+    <p>You have built a full-stack Training LMS. You have seen how the browser can be manipulated, how credentials can leak, and how a single missing check can expose private data. You have also learned the tools to defend against these risks: explicit role checks on the server, secure session cookies with <code style="background:rgba(255,255,255,.12);color:#ffd479;border-color:rgba(255,212,121,.3)">__Host-</code>, sanitized rich text, CORS without confusion, public-only environment variables, automated CI, and monitoring that never spies on users.</p>
+
+    <div class="bc-rule"></div>
+
+    <p>The frontend improves experience. The backend enforces guarantees. The deployment pipeline keeps them honest. Master all three and your LMS is ready for real students — and real attackers.</p>
+
+    <div class="bc-foot">
+      <div>
+        <strong>React JS Learning Track</strong><br>
+        Frontend Development · Phase 13 of the React Curriculum
+      </div>
+      <div style="text-align:right">
+        <strong>Next up</strong><br>
+        Phase 14 — Advanced Patterns &amp; Architecture
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- .book -->
+</div><!-- .book-wrap -->
+</body>
+</html>

@@ -17,7 +17,7 @@ beforeEach(async () => {
 });
 
 describe('Study Materials API — Admin Catalogue & Publishing', () => {
-  it('allows admin to list all 3 books and 27 modules in catalogue', async () => {
+  it('allows admin to list all 3 books and 34 modules in catalogue', async () => {
     const res = await api(app)
       .get('/api/v1/study-materials/admin/catalogue')
       .set('Origin', ORIGIN)
@@ -29,6 +29,8 @@ describe('Study Materials API — Admin Catalogue & Publishing', () => {
     const dsa = res.body.data.find((b) => b.slug === 'dsa-javascript');
     expect(dsa.modules).toHaveLength(9);
     expect(dsa.publishedModules).toBe(9);
+    const react = res.body.data.find((b) => b.slug === 'react-js');
+    expect(react.modules).toHaveLength(17);
   });
 
   it('forbids students from accessing admin catalogue', async () => {

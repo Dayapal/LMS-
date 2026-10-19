@@ -1,0 +1,3713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React JS — Phase 15: Projects, Revision and Interview Preparation</title>
+<style>
+/* ============================================================
+   PREMIUM REACT PHASE 15 BOOK — PRINT / PDF STYLESHEET
+   Thick-book spine · page edges · chapter tabs · graduation emerald
+   ============================================================ */
+
+:root{
+  --ink:#04140e;
+  --ink-soft:#1c332b;
+  --muted:#5b7268;
+  --brand:#052e1c;
+  --brand-2:#047857;
+  --brand-3:#a7f3d0;
+  --accent:#f59e0b;
+  --accent-2:#fb923c;
+  --emerald:#10b981;
+  --rose:#e11d48;
+  --indigo:#4f46e5;
+  --violet:#7c3aed;
+  --teal:#0d9488;
+  --gold:#d97706;
+  --paper:#ffffff;
+  --paper-edge:#e6f6ee;
+  --paper-edge-2:#d1eedd;
+  --line:#d1eedd;
+  --code-bg:#04140c;
+  --code-head:#0c2a1c;
+  --spine-w:16px;
+}
+
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, #d4f3e2 0%, transparent 60%),
+    #c4e6d4;
+  color:var(--ink);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size:11.4pt;
+  line-height:1.78;
+  -webkit-font-smoothing:antialiased;
+  padding: 30px 0 80px;
+}
+
+/* ============================================================
+   BOOK SHELL
+   ============================================================ */
+.book-wrap{
+  position: relative;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 22px;
+}
+.book-wrap::after{
+  content:"";
+  position:absolute;
+  left:44px; right:44px; bottom:-26px;
+  height:48px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(5,46,28,.24), transparent 70%);
+  border-radius: 50%;
+  filter: blur(7px);
+  z-index: -1;
+}
+.book{
+  position: relative;
+  background: var(--paper);
+  border-radius: 3px 8px 8px 3px;
+  padding: 0 74px 92px;
+  box-shadow:
+    2px 0 0 var(--paper-edge),
+    4px 0 0 var(--paper-edge-2),
+    6px 0 0 var(--paper-edge),
+    8px 0 0 var(--paper-edge-2),
+    10px 0 0 var(--paper-edge),
+    12px 0 0 var(--paper-edge-2),
+    -3px 0 0 rgba(5,46,28,.10),
+    -6px 0 0 rgba(5,46,28,.06),
+    0 22px 55px rgba(5,46,28,.18),
+    0 8px 18px rgba(5,46,28,.10);
+}
+.book::before{
+  content:"";
+  position:absolute;
+  top:0; bottom:0; left:0;
+  width: var(--spine-w);
+  background: linear-gradient(90deg,
+    rgba(5,46,28,.16) 0%,
+    rgba(5,46,28,.08) 40%,
+    rgba(5,46,28,.02) 75%,
+    transparent 100%);
+  border-radius: 3px 0 0 3px;
+  pointer-events:none;
+}
+.book::after{
+  content:"";
+  position:absolute;
+  top:0; right:0;
+  width:32px; height:32px;
+  background: linear-gradient(225deg,
+    transparent 45%,
+    rgba(5,46,28,.08) 50%,
+    rgba(5,46,28,.14) 100%);
+  border-bottom-left-radius: 8px;
+  pointer-events:none;
+}
+
+/* ============================================================
+   COVER
+   ============================================================ */
+.cover{
+  position:relative;
+  margin: 0 -74px 62px;
+  padding: 86px 78px 76px;
+  background:
+    radial-gradient(1100px 600px at 12% -10%, #059669 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 110%, #022c22 0%, transparent 60%),
+    linear-gradient(150deg,#022c22 0%, #052e1c 42%, #047857 78%, #d97706 100%);
+  color:#fff;
+  overflow:hidden;
+  border-radius: 3px 8px 0 0;
+  box-shadow: 0 22px 42px rgba(2,30,20,.32);
+}
+.cover::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(ellipse at 70% 20%, #000 0%, transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse at 70% 20%, #000 0%, transparent 78%);
+  pointer-events:none;
+}
+.cover::after{
+  content:"";
+  position:absolute;
+  width:580px; height:580px; right:-170px; bottom:-230px;
+  background:radial-gradient(circle, rgba(245,158,11,.34) 0%, transparent 68%);
+  border-radius:50%;
+  pointer-events:none;
+}
+.cover-spine{
+  position:absolute;
+  top:0; bottom:0; left:0;
+  width:28px;
+  background:
+    linear-gradient(90deg,
+      rgba(0,0,0,.32) 0%,
+      rgba(0,0,0,.18) 30%,
+      rgba(255,255,255,.07) 55%,
+      rgba(0,0,0,.12) 75%,
+      rgba(0,0,0,.24) 100%);
+  pointer-events:none;
+  z-index:3;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+.cover-inner{ position:relative; z-index:2; }
+
+.phase-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  font-size:10pt;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  font-weight:800;
+  color:#fde68a;
+  border:1.5px solid rgba(253,230,138,.55);
+  background:rgba(253,230,138,.10);
+  padding:9px 20px;
+  border-radius:100px;
+  margin-bottom:34px;
+  backdrop-filter:blur(4px);
+}
+.phase-badge .dot-pulse{
+  width:8px; height:8px; border-radius:50%; background:#fde68a;
+  box-shadow:0 0 0 4px rgba(253,230,138,.25);
+}
+.cover h1{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size:52pt;
+  line-height:1.02;
+  margin:0 0 6px;
+  letter-spacing:-.025em;
+  font-weight:700;
+}
+.cover h1 .grad{
+  background:linear-gradient(100deg,#6ee7b7 0%, #fde68a 55%, #fbbf24 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.cover .sub{
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size:18pt;
+  color:#bff2d9;
+  margin:16px 0 0;
+  font-weight:400;
+  letter-spacing:.005em;
+}
+.cover .rule{
+  width:110px; height:5px; border-radius:6px;
+  background:linear-gradient(90deg,#fde68a,#6ee7b7);
+  margin:32px 0 30px;
+}
+.cover .lede{
+  max-width:660px;
+  font-size:12.3pt;
+  line-height:1.85;
+  color:#d4fce8;
+  margin:0 0 42px;
+}
+.cover-chips{ display:flex; flex-wrap:wrap; gap:10px; }
+.chip{
+  font-size:9.6pt;
+  font-weight:600;
+  letter-spacing:.02em;
+  padding:8px 15px;
+  border-radius:9px;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.18);
+  color:#e7fff0;
+  backdrop-filter:blur(4px);
+}
+.cover-foot{
+  margin-top:58px;
+  padding-top:24px;
+  border-top:1px solid rgba(255,255,255,.16);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  flex-wrap:wrap;
+  font-size:10pt;
+  color:#a7d9bb;
+}
+.cover-foot strong{ color:#fff; font-weight:700; letter-spacing:.02em; }
+
+/* ============================================================
+   TOC / PANELS
+   ============================================================ */
+.toc{
+  background: linear-gradient(180deg,#f2fdf8 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:44px 46px;
+  margin: 0 0 62px;
+  position: relative;
+  box-shadow: 0 2px 0 rgba(5,46,28,.03);
+}
+.toc h2{
+  font-family: Georgia, "Iowan Old Style", serif;
+  font-size:24pt;
+  margin:0 0 6px;
+  color:var(--brand-2);
+  letter-spacing:-.01em;
+}
+.toc .toc-sub{ color:var(--muted); font-size:10.4pt; margin:0 0 30px; }
+.toc ol{ list-style:none; margin:0; padding:0; counter-reset:toc; }
+.toc li{
+  counter-increment:toc;
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  padding:10px 0;
+  border-bottom:1px dashed #d1eedd;
+  font-size:11.2pt;
+}
+.toc li:last-child{ border-bottom:none; }
+.toc li .n{
+  flex:0 0 34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(140deg,#052e1c,#047857);
+  color:#fff;
+  font-size:10pt;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transform:translateY(6px);
+}
+.toc li .t{ font-weight:600; color:var(--ink); }
+.toc li .t small{ display:block; font-weight:400; color:var(--muted); font-size:9.6pt; }
+
+/* ============================================================
+   CHAPTER TABS
+   ============================================================ */
+.topic{
+  position: relative;
+  margin: 0 0 62px;
+}
+.chapter-tab{
+  position: absolute;
+  right: -74px;
+  top: 34px;
+  width: 54px;
+  height: 66px;
+  border-radius: 0 8px 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: Georgia, serif;
+  font-weight: 700;
+  font-size: 9.6pt;
+  letter-spacing: .05em;
+  box-shadow: 4px 4px 8px rgba(5,46,28,.14);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding: 6px 0;
+  z-index: 1;
+}
+.chapter-tab::before{
+  content:"";
+  position: absolute;
+  left: -3px; top: 0; bottom: 0;
+  width: 3px;
+  background: rgba(0,0,0,.14);
+  border-radius: 2px 0 0 2px;
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1,h2,h3,h4{
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  color:var(--brand-2);
+  line-height:1.25;
+  letter-spacing:-.005em;
+}
+
+.topic-head{
+  margin:0 0 34px;
+  padding:34px 42px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#022c22 0%, #052e1c 58%, #047857 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 8px 22px rgba(2,30,20,.20);
+}
+.topic-head::after{
+  content:"";
+  position:absolute; width:320px; height:320px; right:-100px; top:-150px;
+  background:radial-gradient(circle, rgba(245,158,11,.36), transparent 70%);
+  border-radius:50%;
+}
+.topic-head .kicker{
+  position:relative; z-index:2;
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#fde68a; font-weight:700; margin-bottom:12px;
+}
+.topic-head h2{
+  position:relative; z-index:2;
+  color:#fff; font-size:25pt; margin:0; letter-spacing:-.015em;
+}
+.topic-head p{
+  position:relative; z-index:2;
+  margin:12px 0 0; color:#bff2d9; font-size:10.6pt; max-width:640px;
+}
+
+h3{
+  font-size:15.5pt;
+  margin:40px 0 12px;
+  padding-left:16px;
+  border-left:5px solid var(--accent);
+  color:#052e1c;
+}
+h4{
+  font-size:12.6pt;
+  margin:26px 0 8px;
+  color:var(--brand-2);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-weight:700;
+  letter-spacing:0;
+}
+p{ margin:0 0 15px; color:var(--ink-soft); }
+strong{ color:var(--ink); font-weight:700; }
+ul,ol{ margin:0 0 16px; padding-left:24px; color:var(--ink-soft); }
+li{ margin-bottom:7px; }
+a{ color:var(--brand-2); text-decoration:none; border-bottom:1px solid var(--brand-3); }
+
+code{
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size:.87em;
+  background:#e8fbf1;
+  color:#065f46;
+  padding:2px 6px;
+  border-radius:5px;
+  border:1px solid #c8f0d9;
+  white-space:nowrap;
+}
+
+/* ============================================================
+   CODE CARDS
+   ============================================================ */
+.code-card{
+  margin:22px 0 26px;
+  border-radius:13px;
+  overflow:hidden;
+  background:var(--code-bg);
+  box-shadow:0 10px 30px rgba(4,20,12,.28), 0 2px 6px rgba(4,20,12,.16);
+  border:1px solid #0f3524;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.code-head{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  background:linear-gradient(180deg,#0c2a1c 0%, #082018 100%);
+  border-bottom:1px solid #134030;
+}
+.dot{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+.dot.r{ background:#ff5f57; } .dot.y{ background:#febc2e; } .dot.g{ background:#28c840; }
+.code-title{
+  margin-left:12px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.2pt;
+  color:#7fc9a4;
+  letter-spacing:.03em;
+}
+.code-lang{
+  margin-left:auto;
+  font-size:8pt;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#4a8a68;
+  font-weight:700;
+}
+.code-card pre{
+  margin:0;
+  padding:20px 22px;
+  overflow-x:auto;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px) 0 0 / 46px 100%,
+    var(--code-bg);
+}
+.code-card pre code{
+  display:block;
+  background:none;
+  border:none;
+  padding:0;
+  color:#d7f7e4;
+  font-family:"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size:9.6pt;
+  line-height:1.72;
+  white-space:pre;
+  tab-size:2;
+}
+
+/* Terminal blocks */
+.term{
+  margin:18px 0 24px;
+  border-radius:11px;
+  overflow:hidden;
+  border:1px solid #ccefdc;
+  background:#04140c;
+  break-inside:avoid;
+}
+.term .term-head{
+  background:#0c2a1c; color:#7fc9a4;
+  font-size:8.6pt; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:700; padding:8px 16px;
+  border-bottom:1px solid #134030;
+}
+.term pre{
+  margin:0; padding:16px 20px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.6pt; line-height:1.7; color:#a7f3d0; white-space:pre-wrap;
+}
+.term.out pre{ color:#fde68a; }
+
+/* ============================================================
+   OUTPUT PREVIEW — rendered UI mockups
+   ============================================================ */
+.output-preview{
+  margin: 20px 0 26px;
+  border-radius: 13px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1.5px solid #a7f3d0;
+  box-shadow: 0 8px 24px rgba(5,46,28,.10), 0 2px 4px rgba(5,46,28,.06);
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.output-head{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
+  border-bottom: 1px solid #a7f3d0;
+}
+.output-title{
+  margin-left: 12px;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 8.8pt;
+  color: #065f46;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.output-badge{
+  margin-left: auto;
+  font-size: 7.6pt;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #b45309;
+  font-weight: 700;
+  border: 1px solid #f6c667;
+  background: #fef3e2;
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+.output-body{
+  padding: 26px 28px;
+  background: #f6fef9;
+  color: #04140e;
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 11pt;
+  line-height: 1.65;
+}
+.output-body > *:first-child{ margin-top: 0; }
+.output-body > *:last-child{ margin-bottom: 0; }
+
+.o-btn{
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border: none; border-radius: 8px;
+  background: #4f46e5; color: #fff;
+  font-weight: 600; font-size: 10.5pt; cursor: pointer;
+}
+.o-btn.outline{ background: transparent; border: 1px solid #cbd5e1; color: #1f2937; }
+.o-btn.danger{ background: #dc2626; }
+.o-btn.amber{ background: #d97706; }
+.o-btn.sm{ padding: 5px 11px; font-size: 9.5pt; }
+.o-btn.emerald{ background: #047857; }
+.o-btn.gold{ background: #d97706; }
+
+.o-card{
+  border: 1px solid #e5e7eb; border-radius: 10px;
+  padding: 14px 16px; background: #fff; margin-bottom: 10px;
+}
+.o-card h4{ margin: 0 0 4px; color: #111827; font-family: ui-sans-serif, sans-serif; font-size: 10.8pt; font-weight: 700; }
+.o-card p{ margin: 0; color: #6b7280; font-size: 10pt; }
+
+.o-input{
+  display: block; width: 100%; padding: 10px 12px;
+  border: 1px solid #cbd5e1; border-radius: 8px;
+  font-size: 10.5pt; background: #fff; color: #111827; margin-bottom: 8px;
+}
+.o-error{ color: #b91c1c; font-size: 10pt; margin: 6px 0 0; }
+.o-row{ display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.o-muted{ color: #6b7280; font-size: 10pt; }
+.o-badge{
+  display: inline-block; padding: 2px 10px; border-radius: 100px;
+  font-size: 9pt; font-weight: 700;
+}
+.o-badge.green{ background: #dcfce7; color: #166534; }
+.o-badge.amber{ background: #fef3c7; color: #92400e; }
+.o-badge.rose { background: #fee2e2; color: #991b1b; }
+.o-badge.blue { background: #dbeafe; color: #1e40af; }
+.o-badge.violet { background: #ede9fe; color: #5b21b6; }
+.o-badge.emerald { background: #d1fae5; color: #065f46; }
+
+.o-task{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; background:#fff;
+  margin-bottom:8px;
+}
+.o-task .o-check{
+  width:18px; height:18px; border-radius:5px;
+  border:1.5px solid #cbd5e1; flex:0 0 18px;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:11px; color:#fff;
+}
+.o-task .o-check.done{ background:#10b981; border-color:#10b981; }
+.o-task .o-label{ flex:1; color:#111827; font-size:10.5pt; }
+.o-task .o-label.done{ color:#6b7280; text-decoration:line-through; }
+
+.o-product{
+  border:1px solid #e5e7eb; border-radius:12px; padding:14px 16px; background:#fff;
+  margin-bottom:10px;
+}
+.o-product h5{ margin:0 0 4px; color:#111827; font-size:11pt; }
+.o-product .o-cat{ color:#6b7280; font-size:9.5pt; margin-bottom:6px; }
+.o-product .o-price{ font-size:12pt; font-weight:700; color:#052e1c; }
+.o-product .o-stock{ font-size:10pt; margin-top:6px; }
+
+.o-weather{
+  background: linear-gradient(160deg, #0ea5e9 0%, #0369a1 100%);
+  color: #fff;
+  border-radius: 14px;
+  padding: 22px 24px;
+}
+.o-weather h3{ margin:0 0 4px; color:#fff; font-size:18pt; font-family:Georgia, serif; }
+.o-weather .o-temp{ font-size:32pt; font-weight:700; margin:10px 0 4px; }
+.o-weather .o-desc{ font-size:12pt; opacity:.9; }
+.o-weather .o-weather-grid{ display:flex; gap:24px; margin-top:16px; }
+.o-weather .o-weather-grid div{ font-size:10.5pt; }
+.o-weather .o-weather-grid b{ display:block; font-size:12pt; }
+
+.o-nav{
+  border-right:1px solid #e5e7eb;
+  padding:14px 16px;
+  background:#f9fafb;
+  border-radius:10px 0 0 10px;
+  min-width:150px;
+}
+.o-nav h5{ margin:0 0 10px; font-size:11pt; color:#052e1c; }
+.o-nav a{
+  display:block;
+  padding:6px 10px;
+  border-radius:6px;
+  font-size:10pt;
+  color:#374151;
+  margin-bottom:2px;
+  border-bottom:none;
+}
+.o-nav a.active{ background:#d1fae5; color:#065f46; font-weight:700; }
+
+.o-flow{
+  display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:8px;
+}
+.o-flow .node{
+  padding:6px 12px; border-radius:100px; font-size:10pt; font-weight:600;
+}
+.o-flow .arrow{ color:#9ca3af; font-size:12pt; }
+
+/* ============================================================
+   PHOTO FIGURE — Google-sourced real images for analogies
+   ============================================================ */
+.photo-figure{
+  position: relative;
+  margin: 26px 0;
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  break-inside: avoid;
+  page-break-inside: avoid;
+  box-shadow: 0 6px 20px rgba(5,46,28,.10);
+}
+.photo-figure img{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.photo-figure .photo-badge{
+  position: absolute;
+  top: 14px; left: 14px;
+  background: rgba(4,20,12,.80);
+  color: #fde68a;
+  border: 1px solid rgba(253,230,138,.5);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 8.6pt;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 100px;
+  backdrop-filter: blur(4px);
+}
+.photo-figure .photo-caption{
+  padding: 14px 20px;
+  background: #04140c;
+  color: #d7f7e4;
+  font-family: Georgia, serif;
+  font-size: 9.8pt;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.55;
+}
+.photo-figure .photo-caption b{
+  color: #fde68a;
+  font-style: normal;
+  font-weight: 700;
+}
+
+/* ============================================================
+   CALLOUTS
+   ============================================================ */
+.callout{
+  border-radius:13px;
+  padding:20px 24px 18px;
+  margin:24px 0;
+  border:1px solid;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.callout .ct{
+  font-weight:800;
+  font-size:10pt;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:10px;
+  display:flex; align-items:center; gap:9px;
+}
+.callout p:last-child{ margin-bottom:0; }
+.callout.remember{
+  background:linear-gradient(135deg,#ecfdf5 0%, #f6fef9 100%);
+  border-color:#a7f3d0;
+}
+.callout.remember .ct{ color:#065f46; }
+.callout.analogy{
+  background:linear-gradient(135deg,#fff8ec 0%, #fffdf8 100%);
+  border-color:#ffdfae;
+}
+.callout.analogy .ct{ color:#b45309; }
+.callout.warn{
+  background:linear-gradient(135deg,#fff1f2 0%, #fff8f8 100%);
+  border-color:#ffd0d5;
+}
+.callout.warn .ct{ color:#be123c; }
+.callout.info{
+  background:linear-gradient(135deg,#eefbf6 0%, #f7fffc 100%);
+  border-color:#b8ecd8;
+}
+.callout.info .ct{ color:#047857; }
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  margin:24px 0;
+  font-size:10.2pt;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+thead th{
+  background:linear-gradient(135deg,#052e1c,#047857);
+  color:#fff;
+  text-align:left;
+  padding:11px 14px;
+  font-weight:700;
+  font-size:9.6pt;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+tbody td{
+  padding:10px 14px;
+  border-top:1px solid var(--line);
+  color:var(--ink-soft);
+  vertical-align:top;
+}
+tbody tr:nth-child(even){ background:#f6fef9; }
+tbody td:first-child{ font-weight:600; color:var(--ink); }
+
+/* ============================================================
+   FIGURES (custom SVG)
+   ============================================================ */
+figure{
+  margin:28px 0;
+  padding:22px 22px 14px;
+  background:linear-gradient(180deg,#f6fef9 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  border-radius:16px;
+  break-inside:avoid;
+  page-break-inside:avoid;
+  box-shadow: 0 2px 0 rgba(5,46,28,.03);
+}
+figure svg{ width:100%; height:auto; display:block; }
+figcaption{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px dashed #d1eedd;
+  font-size:9.6pt;
+  color:var(--muted);
+  text-align:center;
+  font-style:italic;
+}
+figcaption b{ color:var(--brand-2); font-style:normal; }
+
+/* ============================================================
+   FILE TREE
+   ============================================================ */
+.tree{
+  background:#04140c;
+  color:#c4e8d4;
+  border-radius:12px;
+  padding:20px 24px;
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace;
+  font-size:9.6pt;
+  line-height:1.75;
+  white-space:pre;
+  margin:22px 0;
+  border:1px solid #0f3524;
+  overflow-x:auto;
+  break-inside:avoid;
+}
+.tree .dir{ color:#6ee7b7; font-weight:600; }
+.tree .file{ color:#d7f7e4; }
+
+/* ============================================================
+   STEPS / PAGE FOOTER
+   ============================================================ */
+.steps{ counter-reset:st; list-style:none; padding:0; margin:24px 0; }
+.steps li{
+  counter-increment:st;
+  position:relative;
+  padding:14px 0 14px 58px;
+  border-bottom:1px dashed #d1eedd;
+  margin:0;
+}
+.steps li:last-child{ border-bottom:none; }
+.steps li::before{
+  content:counter(st);
+  position:absolute; left:0; top:13px;
+  width:34px; height:34px; border-radius:10px;
+  background:linear-gradient(140deg,#052e1c,#047857);
+  color:#fff; font-weight:800; font-size:10.5pt;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.page-footer{
+  margin-top: 40px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: Georgia, serif;
+  font-size: 9.5pt;
+  font-style: italic;
+  color: var(--muted);
+}
+
+/* ============================================================
+   CAPSTONE
+   ============================================================ */
+.capstone{
+  position: relative;
+  margin: 0 0 62px;
+}
+.capstone-head{
+  margin:0 0 34px;
+  padding:38px 44px;
+  border-radius:14px;
+  background:
+    radial-gradient(700px 320px at 100% 0%, rgba(245,158,11,.32), transparent 65%),
+    linear-gradient(135deg,#022c22 0%, #052e1c 55%, #d97706 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 10px 26px rgba(2,30,20,.24);
+}
+.capstone-head::after{
+  content:"🎓";
+  position:absolute;
+  right:34px; top:22px;
+  font-size:64pt;
+  color:rgba(253,230,138,.20);
+  line-height:1;
+}
+.capstone-head .kicker{
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#fde68a; font-weight:700; margin-bottom:12px;
+}
+.capstone-head h2{
+  color:#fff; font-size:25pt; margin:0; letter-spacing:-.015em;
+}
+.capstone-head p{
+  margin:12px 0 0; color:#bff2d9; font-size:10.8pt; max-width:660px;
+}
+
+.checklist{
+  list-style:none;
+  padding:0;
+  margin:22px 0;
+  display:grid;
+  gap:10px;
+}
+.checklist li{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding:13px 16px;
+  border-radius:11px;
+  background:linear-gradient(135deg,#f6fef9 0%, #ffffff 100%);
+  border:1px solid var(--line);
+  font-size:10.6pt;
+  color:var(--ink-soft);
+}
+.checklist li::before{
+  content:"✓";
+  flex:0 0 24px;
+  height:24px;
+  border-radius:7px;
+  background:linear-gradient(140deg,#047857,#10b981);
+  color:#fff;
+  font-weight:800;
+  font-size:10pt;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transform:translateY(1px);
+}
+
+/* ============================================================
+   INTERVIEW QUESTIONS
+   ============================================================ */
+.qa-section{
+  margin:0 0 62px;
+}
+.qa-head{
+  margin:0 0 30px;
+  padding:34px 42px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#022c22 0%, #052e1c 58%, #4f46e5 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+}
+.qa-head::after{
+  content:"?";
+  position:absolute;
+  right:40px; top:14px;
+  font-family:Georgia, serif;
+  font-size:72pt;
+  color:rgba(167,243,208,.16);
+  line-height:1;
+}
+.qa-head .kicker{
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#a7f3d0; font-weight:700; margin-bottom:12px;
+}
+.qa-head h2{
+  color:#fff; font-size:25pt; margin:0; letter-spacing:-.015em;
+}
+.qa-head p{
+  margin:12px 0 0; color:#bff2d9; font-size:10.6pt; max-width:620px;
+}
+
+/* ============================================================
+   RESOURCES
+   ============================================================ */
+.resources{
+  margin:0 0 62px;
+}
+.resources-head{
+  margin:0 0 26px;
+  padding:30px 38px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#022c22 0%, #052e1c 60%, #047857 100%);
+  color:#fff;
+}
+.resources-head h2{ color:#fff; font-size:23pt; margin:0; }
+.resources-head p{ color:#bff2d9; margin:10px 0 0; font-size:10.6pt; }
+
+ol.res-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  counter-reset:res;
+}
+ol.res-list li{
+  counter-increment:res;
+  position:relative;
+  padding:13px 0 13px 52px;
+  border-bottom:1px dashed #d1eedd;
+  font-size:10.6pt;
+}
+ol.res-list li:last-child{ border-bottom:none; }
+ol.res-list li::before{
+  content:counter(res);
+  position:absolute; left:0; top:13px;
+  width:32px; height:32px;
+  border-radius:9px;
+  background:linear-gradient(140deg,#052e1c,#047857);
+  color:#fff; font-weight:800; font-size:10pt;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* ============================================================
+   FINAL / BACK COVER
+   ============================================================ */
+.final-section{
+  margin:0 0 62px;
+}
+.final-card{
+  padding:44px 48px;
+  border-radius:18px;
+  background:
+    radial-gradient(800px 400px at 0% 0%, rgba(245,158,11,.26), transparent 60%),
+    linear-gradient(135deg,#022c22 0%, #052e1c 55%, #047857 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 16px 36px rgba(2,30,20,.28);
+}
+.final-card::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(ellipse at 80% 0%, #000 0%, transparent 70%);
+  -webkit-mask-image:radial-gradient(ellipse at 80% 0%, #000 0%, transparent 70%);
+  pointer-events:none;
+}
+.final-card .fc-kicker{
+  position:relative; z-index:2;
+  font-size:9pt; letter-spacing:.3em; text-transform:uppercase;
+  color:#fde68a; font-weight:700; margin-bottom:14px;
+}
+.final-card h2{
+  position:relative; z-index:2;
+  color:#fff; font-size:24pt; margin:0 0 16px; letter-spacing:-.015em;
+}
+.final-card p{
+  position:relative; z-index:2;
+  color:#d4fce8; font-size:11.4pt; max-width:680px;
+}
+.final-card .key-principle{
+  position:relative; z-index:2;
+  margin-top:26px;
+  padding:20px 24px;
+  border-radius:12px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(253,230,138,.4);
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size:12pt;
+  color:#fff;
+  line-height:1.7;
+}
+.final-card .key-principle b{
+  color:#fde68a;
+  font-style: normal;
+}
+
+.back-cover{
+  margin: 0 -74px -92px;
+  padding: 74px 78px 80px;
+  background:
+    radial-gradient(900px 500px at 100% 0%, #047857 0%, transparent 55%),
+    radial-gradient(700px 400px at 0% 100%, #d97706 0%, transparent 60%),
+    linear-gradient(160deg,#022c22 0%, #052e1c 50%, #047857 100%);
+  color:#fff;
+  border-radius: 0 0 8px 3px;
+  position:relative;
+  overflow:hidden;
+}
+.back-cover::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse at 50% 30%, #000 0%, transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 30%, #000 0%, transparent 78%);
+  pointer-events:none;
+}
+.back-cover-inner{ position:relative; z-index:2; }
+.back-cover .bc-badge{
+  display:inline-block;
+  font-size:9pt; letter-spacing:.28em; text-transform:uppercase;
+  font-weight:800; color:#fde68a;
+  border:1.5px solid rgba(253,230,138,.5);
+  background:rgba(253,230,138,.1);
+  padding:8px 18px; border-radius:100px; margin-bottom:26px;
+}
+.back-cover h2{
+  font-family: Georgia, serif;
+  color:#fff; font-size:32pt; line-height:1.1; margin:0 0 18px;
+  letter-spacing:-.02em;
+}
+.back-cover p{
+  color:#bff2d9; font-size:11.4pt; max-width:680px; line-height:1.85;
+}
+.back-cover .bc-rule{
+  width:90px; height:4px; border-radius:6px;
+  background:linear-gradient(90deg,#fde68a,#6ee7b7);
+  margin:30px 0;
+}
+.back-cover .bc-foot{
+  margin-top:40px;
+  padding-top:22px;
+  border-top:1px solid rgba(255,255,255,.16);
+  display:flex; justify-content:space-between; align-items:flex-end;
+  gap:20px; flex-wrap:wrap;
+  font-size:10pt; color:#a7d9bb;
+}
+.back-cover .bc-foot strong{ color:#fff; }
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+@media print{
+  @page{ size:A4; margin:14mm 12mm 16mm; }
+  @page:first{ margin:0; }
+  body{
+    background:#fff;
+    font-size:10.4pt;
+    line-height:1.68;
+    padding:0;
+  }
+  .book-wrap{ max-width:none; margin:0; padding:0; }
+  .book-wrap::after{ display:none; }
+  .book{
+    max-width:none; margin:0; padding: 0 14mm 10mm;
+    box-shadow: none; border-radius: 0; background: #fff;
+  }
+  .book::before, .book::after{ display:none; }
+  .cover{
+    margin:0; height:297mm; padding:80px 60px 60px;
+    border-radius:0; display:flex; align-items:center;
+    break-after:page; page-break-after:always; box-shadow: none;
+  }
+  .cover-inner{ width:100%; }
+  .cover-spine{ display:none; }
+  .toc{ break-after:page; page-break-after:always; }
+  .topic, .capstone, .qa-section, .resources, .final-section{
+    break-before:page; page-break-before:always;
+  }
+  .chapter-tab{ display: none; }
+  h1,h2,h3,h4{ break-after:avoid; page-break-after:avoid; }
+  p, li{ orphans:2; widows:2; }
+  .code-card, figure, table, .callout, .term, .photo-figure, .output-preview, .final-card{
+    break-inside:avoid; page-break-inside:avoid;
+  }
+  a{ color:var(--brand-2); border-bottom:none; }
+  a[href^="http"]::after{
+    content:" (" attr(href) ")";
+    font-size:7.4pt;
+    color:#7a9a8a;
+    word-break:break-all;
+  }
+  .page-footer{ display: none; }
+  .back-cover{ margin:0; border-radius:0; break-before:page; page-break-before:always; }
+}
+@media screen{ .topic{ margin-top:0; } }
+</style>
+</head>
+<body>
+<div class="book-wrap">
+<div class="book">
+
+<!-- ============================================================
+     COVER
+     ============================================================ -->
+<section class="cover">
+  <div class="cover-spine"></div>
+  <div class="cover-inner">
+    <span class="phase-badge"><span class="dot-pulse"></span>Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+
+    <h1>React&nbsp;JS<br><span class="grad">Projects, Revision and<br>Interview Preparation</span></h1>
+
+    <p class="sub">CRUD · APIs · Auth · Routing · MERN · Testing · Deploy · Debug · Trade-offs</p>
+
+    <div class="rule"></div>
+
+    <p class="lede">
+      A practical graduation phase. Build eleven projects that move from a simple
+      CRUD task manager to a full-stack MERN frontend, deployment, debugging,
+      and architecture discussions. Revise Hooks, rendering, state, performance,
+      testing, accessibility, and technical trade-offs. Then prepare for the
+      interview with a structured revision plan and decision records.
+    </p>
+
+    <div class="cover-chips">
+      <span class="chip">Task Manager CRUD</span>
+      <span class="chip">Weather API</span>
+      <span class="chip">Product Catalogue</span>
+      <span class="chip">Auth Dashboard</span>
+      <span class="chip">Multi-Page Admin</span>
+      <span class="chip">MERN Frontend</span>
+      <span class="chip">Testing</span>
+      <span class="chip">Accessibility</span>
+      <span class="chip">Deploy &amp; Document</span>
+      <span class="chip">Debugging</span>
+      <span class="chip">Hooks &amp; Performance</span>
+      <span class="chip">Trade-offs</span>
+      <span class="chip">Interview Prep</span>
+    </div>
+
+    <div class="cover-foot">
+      <div>
+        <strong>Learning Track</strong><br>
+        Frontend Development · React Series
+      </div>
+      <div style="text-align:right">
+        <strong>Module</strong><br>
+        Phase 15 of the React Curriculum
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     HOW TO USE THIS PHASE
+     ============================================================ -->
+<section class="toc" style="break-after:page;">
+  <h2>How to use this phase</h2>
+  <p class="toc-sub">Your practical React graduation phase.</p>
+
+  <p>Treat this phase as your practical React graduation phase.</p>
+  <p>You will complete 11 projects or exercises, starting with a simple CRUD application and progressing toward a full-stack frontend, deployment, debugging, and architecture discussions.</p>
+
+  <p>For each project:</p>
+  <ol class="steps">
+    <li>Understand the real-world problem.</li>
+    <li>Design the data model and component structure.</li>
+    <li>Build the simplest working version.</li>
+    <li>Add error handling, responsiveness, and accessibility.</li>
+    <li>Test important behavior.</li>
+    <li>Explain why you chose your implementation.</li>
+  </ol>
+
+  <p>Use React with TypeScript and Tailwind CSS for the examples. If a project uses a backend, keep authentication, authorization, database access, and private secrets on the server.</p>
+
+  <div class="callout warn">
+    <div class="ct">▲ Important principle</div>
+    <p>Being a strong React developer means more than knowing Hooks and JSX. It means you can turn requirements into maintainable components, integrate real data, diagnose failures, protect users, test important behavior, and justify your architectural decisions.</p>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A learning path from a CRUD app to a full-stack frontend and interview preparation">
+      <defs>
+        <linearGradient id="introA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#047857"/>
+        </linearGradient>
+        <linearGradient id="introB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#b45309"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Step 1 -->
+      <rect x="20" y="60" width="150" height="120" rx="12" fill="url(#introA)"/>
+      <text x="95" y="88" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-weight="700" fill="#fff">CRUD</text>
+      <text x="95" y="110" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#d1fae5">Task Manager</text>
+      <text x="95" y="130" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#d1fae5">state · forms · lists</text>
+
+      <path d="M182 120 H 212" stroke="#a7f3d0" stroke-width="2.5"/>
+      <polygon points="212,112 226,120 212,128" fill="#047857"/>
+
+      <!-- Step 2 -->
+      <rect x="238" y="60" width="150" height="120" rx="12" fill="url(#introA)"/>
+      <text x="313" y="88" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-weight="700" fill="#fff">APIs</text>
+      <text x="313" y="110" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#d1fae5">Weather · Catalogue</text>
+      <text x="313" y="130" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#d1fae5">fetch · loading · errors</text>
+
+      <path d="M400 120 H 430" stroke="#a7f3d0" stroke-width="2.5"/>
+      <polygon points="430,112 444,120 430,128" fill="#047857"/>
+
+      <!-- Step 3 -->
+      <rect x="456" y="60" width="150" height="120" rx="12" fill="url(#introA)"/>
+      <text x="531" y="88" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-weight="700" fill="#fff">Full-Stack</text>
+      <text x="531" y="110" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#d1fae5">Auth · routing · MERN</text>
+      <text x="531" y="130" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#d1fae5">server enforces rules</text>
+
+      <!-- Step 4 -->
+      <rect x="620" y="60" width="120" height="120" rx="12" fill="url(#introB)"/>
+      <text x="680" y="88" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-weight="700" fill="#fff">Graduate</text>
+      <text x="680" y="110" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#fef3c7">test · deploy</text>
+      <text x="680" y="130" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="9.5" fill="#fef3c7">interview · trade-offs</text>
+
+      <text x="380" y="214" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#5b7268">Eleven projects. One graduation cap. Build, test, deploy, explain.</text>
+    </svg>
+    <figcaption><b>Figure 0.1</b> — Phase 15 moves from a single-file CRUD app to a deployed, tested, explainable full-stack frontend.</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================
+     TABLE OF CONTENTS
+     ============================================================ -->
+<section class="toc">
+  <h2>Table of Contents</h2>
+  <p class="toc-sub">Eleven projects, a capstone, revision, and interview preparation.</p>
+
+  <ol>
+    <li><span class="n">1</span><span class="t">Build a Task Manager with CRUD<small>Create · read · update · delete</small></span></li>
+    <li><span class="n">2</span><span class="t">Build a Weather App Using an API<small>Geocoding · forecast · loading · errors</small></span></li>
+    <li><span class="n">3</span><span class="t">Build a Searchable Product Catalogue<small>Filters · derived data · decomposition</small></span></li>
+    <li><span class="n">4</span><span class="t">Build an Authentication-Based Dashboard<small>Session · routes · roles · backend</small></span></li>
+    <li><span class="n">5</span><span class="t">Build a Multi-Page Admin Application<small>Layouts · nested routes · lazy loading</small></span></li>
+    <li><span class="n">6</span><span class="t">Build a Full-Stack MERN Application Frontend<small>Typed API · useEffect lifecycle</small></span></li>
+    <li><span class="n">7</span><span class="t">Add Testing and Accessibility to a Project<small>Vitest · Testing Library · keyboard audit</small></span></li>
+    <li><span class="n">8</span><span class="t">Deploy and Document a Portfolio Project<small>Build · README · case study</small></span></li>
+    <li><span class="n">9</span><span class="t">Practice React Output and Debugging Questions<small>Snapshots · keys · effects · auth · tokens</small></span></li>
+    <li><span class="n">10</span><span class="t">Explain Hooks, Rendering, State and Performance<small>Revision checkpoint</small></span></li>
+    <li><span class="n">11</span><span class="t">Review Trade-offs and Architecture Decisions<small>Comparison table · decision records</small></span></li>
+    <li><span class="n">★</span><span class="t">Final Capstone: React Developer Graduation Project<small>Build a substantial application</small></span></li>
+    <li><span class="n">↺</span><span class="t">Interview Plan, Checklist &amp; Resources<small>Prepare and self-assess</small></span></li>
+  </ol>
+</section>
+
+<!-- ============================================================
+     TOPIC 1 — TASK MANAGER CRUD
+     ============================================================ -->
+<section class="topic" id="t1">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#052e1c,#047857);">CRUD</div>
+  <div class="topic-head">
+    <div class="kicker">Project 1</div>
+    <h2>Build a Task Manager with CRUD</h2>
+    <p>Create, read, update, and delete — the foundation of every data-driven UI.</p>
+  </div>
+
+  <h3>Real-life analogy: A digital notebook</h3>
+  <p>Imagine maintaining a notebook of daily tasks. You write new tasks, read your list, edit details, and cross out completed tasks.</p>
+  <p>A task manager is the same idea implemented in React.</p>
+  <p>CRUD means:</p>
+  <ul>
+    <li><strong>Create:</strong> Add a new task.</li>
+    <li><strong>Read:</strong> Display the tasks.</li>
+    <li><strong>Update:</strong> Edit a task or mark it complete.</li>
+    <li><strong>Delete:</strong> Remove a task.</li>
+  </ul>
+  <p>This project revises React state, event handling, forms, list rendering, conditional UI, and TypeScript.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1517842645767-c639042777db?w=1200&q=80&auto=format&fit=crop"
+      alt="A notebook, pen, and sticky notes on a desk"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The digital notebook</div>
+    <div class="photo-caption">
+      <b>A task manager is a notebook you can rewrite with one tap.</b> Create is a new line. Read is flipping the page. Update is an eraser. Delete is a tear. React state holds the current page; the DOM repaints the whole notebook cleanly.
+    </div>
+  </div>
+
+  <h3>1.1 Define the task model</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">TaskManager.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">// TaskManager.tsx
+
+interface Task {
+  id: string;
+  title: string;
+  completed: boolean;
+}</code></pre>
+  </div>
+
+  <p>The <code>Task</code> interface specifies the structure of one task. Using this type helps ensure that every task has an identifier, title, and completion status.</p>
+
+  <h3>1.2 Build the complete CRUD application</h3>
+  <p>Create <code>TaskManager.tsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">TaskManager.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useMemo, useState } from "react";
+import type { FormEvent } from "react";
+
+interface Task {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
+type Filter = "all" | "active" | "completed";
+
+export default function TaskManager() {
+  const [tasks, setTasks] = useState&lt;Task[]&gt;([]);
+  const [title, setTitle] = useState("");
+  const [editingId, setEditingId] = useState&lt;string | null&gt;(null);
+  const [filter, setFilter] = useState&lt;Filter&gt;("all");
+  const [error, setError] = useState("");
+
+  function handleSubmit(event: FormEvent&lt;HTMLFormElement&gt;) {
+    event.preventDefault();
+
+    const cleanedTitle = title.trim();
+
+    if (!cleanedTitle) {
+      setError("Enter a task title.");
+      return;
+    }
+
+    setError("");
+
+    if (editingId !== null) {
+      setTasks((previous) =&gt;
+        previous.map((task) =&gt;
+          task.id === editingId
+            ? { ...task, title: cleanedTitle }
+            : task
+        )
+      );
+
+      setEditingId(null);
+    } else {
+      const newTask: Task = {
+        id: crypto.randomUUID(),
+        title: cleanedTitle,
+        completed: false,
+      };
+
+      setTasks((previous) =&gt; [...previous, newTask]);
+    }
+
+    setTitle("");
+  }
+
+  function startEditing(task: Task) {
+    setEditingId(task.id);
+    setTitle(task.title);
+    setError("");
+  }
+
+  function toggleTask(taskId: string) {
+    setTasks((previous) =&gt;
+      previous.map((task) =&gt;
+        task.id === taskId
+          ? { ...task, completed: !task.completed }
+          : task
+      )
+    );
+  }
+
+  function deleteTask(taskId: string) {
+    setTasks((previous) =&gt;
+      previous.filter((task) =&gt; task.id !== taskId)
+    );
+
+    if (editingId === taskId) {
+      setEditingId(null);
+      setTitle("");
+    }
+  }
+
+  const visibleTasks = useMemo(() =&gt; {
+    return tasks.filter((task) =&gt; {
+      if (filter === "active") return !task.completed;
+      if (filter === "completed") return task.completed;
+      return true;
+    });
+  }, [tasks, filter]);
+
+  const completedCount = tasks.filter(
+    (task) =&gt; task.completed
+  ).length;
+
+  return (
+    &lt;main className="mx-auto max-w-2xl space-y-6 p-6"&gt;
+      &lt;header&gt;
+        &lt;h1 className="text-3xl font-bold"&gt;Task Manager&lt;/h1&gt;
+        &lt;p className="mt-2 text-slate-600"&gt;
+          Organize your daily work.
+        &lt;/p&gt;
+      &lt;/header&gt;
+
+      &lt;section className="rounded-xl border p-5"&gt;
+        &lt;form onSubmit={handleSubmit} className="space-y-3"&gt;
+          &lt;label
+            htmlFor="task-title"
+            className="block font-medium"
+          &gt;
+            Task title
+          &lt;/label&gt;
+
+          &lt;div className="flex flex-col gap-3 sm:flex-row"&gt;
+            &lt;input
+              id="task-title"
+              value={title}
+              onChange={(event) =&gt; setTitle(event.currentTarget.value)}
+              placeholder="Enter a task..."
+              className="min-w-0 flex-1 rounded-lg border p-3"
+            /&gt;
+
+            &lt;button
+              type="submit"
+              className="rounded-lg bg-indigo-600 px-4 py-3 text-white"
+            &gt;
+              {editingId !== null ? "Update Task" : "Add Task"}
+            &lt;/button&gt;
+          &lt;/div&gt;
+
+          {error &amp;&amp; (
+            &lt;p role="alert" className="text-sm text-red-700"&gt;
+              {error}
+            &lt;/p&gt;
+          )}
+
+          {editingId !== null &amp;&amp; (
+            &lt;button
+              type="button"
+              onClick={() =&gt; {
+                setEditingId(null);
+                setTitle("");
+                setError("");
+              }}
+              className="text-sm underline"
+            &gt;
+              Cancel editing
+            &lt;/button&gt;
+          )}
+        &lt;/form&gt;
+      &lt;/section&gt;
+
+      &lt;section className="flex flex-wrap items-center justify-between gap-3"&gt;
+        &lt;p&gt;
+          Total: {tasks.length} · Completed: {completedCount}
+        &lt;/p&gt;
+
+        &lt;label className="flex items-center gap-2"&gt;
+          &lt;span&gt;Filter&lt;/span&gt;
+
+          &lt;select
+            value={filter}
+            onChange={(event) =&gt;
+              setFilter(event.currentTarget.value as Filter)
+            }
+            className="rounded-lg border p-2"
+          &gt;
+            &lt;option value="all"&gt;All&lt;/option&gt;
+            &lt;option value="active"&gt;Active&lt;/option&gt;
+            &lt;option value="completed"&gt;Completed&lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/label&gt;
+      &lt;/section&gt;
+
+      &lt;ul className="space-y-3"&gt;
+        {visibleTasks.map((task) =&gt; (
+          &lt;li
+            key={task.id}
+            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4"
+          &gt;
+            &lt;label className="flex min-w-0 flex-1 items-center gap-3"&gt;
+              &lt;input
+                type="checkbox"
+                checked={task.completed}
+                onChange={() =&gt; toggleTask(task.id)}
+              /&gt;
+
+              &lt;span
+                className={
+                  task.completed
+                    ? "break-words text-slate-500 line-through"
+                    : "break-words"
+                }
+              &gt;
+                {task.title}
+              &lt;/span&gt;
+            &lt;/label&gt;
+
+            &lt;div className="flex gap-2"&gt;
+              &lt;button
+                type="button"
+                onClick={() =&gt; startEditing(task)}
+                className="rounded-lg border px-3 py-2"
+              &gt;
+                Edit
+              &lt;/button&gt;
+
+              &lt;button
+                type="button"
+                onClick={() =&gt; deleteTask(task.id)}
+                className="rounded-lg border border-red-300 px-3 py-2 text-red-700"
+              &gt;
+                Delete
+              &lt;/button&gt;
+            &lt;/div&gt;
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+
+      {visibleTasks.length === 0 &amp;&amp; (
+        &lt;p role="status" className="text-center text-slate-500"&gt;
+          No tasks to display.
+        &lt;/p&gt;
+      )}
+    &lt;/main&gt;
+  );
+}</code></pre>
+  </div>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">TaskManager — rendered view</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <h3 style="margin:0 0 4px; color:#052e1c; font-family:Georgia, serif; font-size:18pt;">Task Manager</h3>
+      <p class="o-muted" style="margin-bottom:14px;">Organize your daily work.</p>
+
+      <div style="border:1px solid #e5e7eb; border-radius:10px; padding:14px 16px; background:#fff; margin-bottom:14px;">
+        <label style="display:block; font-size:10pt; font-weight:600; color:#374151; margin-bottom:6px;">Task title</label>
+        <input class="o-input" placeholder="Enter a task..." />
+        <button class="o-btn emerald" style="width:100%;">Add Task</button>
+      </div>
+
+      <p style="font-size:10pt; color:#374151; margin:6px 0 12px;">Total: 3 · Completed: 1</p>
+
+      <div class="o-task"><span class="o-check done">✓</span><span class="o-label done">Complete React project</span><button class="o-btn sm outline">Edit</button><button class="o-btn sm" style="background:#fee2e2; color:#991b1b; border:1px solid #fca5a5;">Delete</button></div>
+      <div class="o-task"><span class="o-check"></span><span class="o-label">Review pull request</span><button class="o-btn sm outline">Edit</button><button class="o-btn sm" style="background:#fee2e2; color:#991b1b; border:1px solid #fca5a5;">Delete</button></div>
+      <div class="o-task"><span class="o-check"></span><span class="o-label">Write deployment notes</span><button class="o-btn sm outline">Edit</button><button class="o-btn sm" style="background:#fee2e2; color:#991b1b; border:1px solid #fca5a5;">Delete</button></div>
+    </div>
+  </div>
+
+  <h3>Understand the important decisions</h3>
+
+  <h4>Creating a task</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Create</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">setTasks((previous) =&gt; [...previous, newTask]);</code></pre>
+  </div>
+
+  <p>The new task is added without mutating the existing array. The functional updater is useful because it works with the latest queued state.</p>
+
+  <h4>Updating a task</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Update</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">previous.map((task) =&gt;
+  task.id === editingId
+    ? { ...task, title: cleanedTitle }
+    : task
+)</code></pre>
+  </div>
+
+  <p>Only the matching task is replaced. The other task objects are preserved.</p>
+
+  <h4>Deleting a task</h4>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Delete</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">previous.filter((task) =&gt; task.id !== taskId)</code></pre>
+  </div>
+
+  <p>The filter returns an array without the deleted task.</p>
+
+  <h4>Filtering</h4>
+  <p><code>visibleTasks</code> is calculated from the original tasks and selected filter. It is not kept in a separate state variable because it is derived data.</p>
+  <p>The <code>useMemo</code> in this example is not necessary for a small task list. It is included to let you practice Phase 9 concepts; profile the application before deciding whether you would keep it in a small production component.</p>
+  <p>This application stores data in memory, so refreshing the page clears the task list. Persistent storage and backend synchronization are optional extensions.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 1.1 — Add task priorities</h4>
+  <p>Extend <code>Task</code> with:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Priority</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">type Priority = "low" | "medium" | "high";</code></pre>
+  </div>
+
+  <p>Add a priority selector and display a suitable badge for each task.</p>
+
+  <h4>Exercise 1.2 — Add persistence</h4>
+  <p>Save the task list to <code>localStorage</code>, load it at initialization, and handle malformed stored data gracefully.</p>
+  <p>Remember that local storage is appropriate for a small local task demo, but a shared or multi-user production task manager should normally use a backend as the authoritative source of data.</p>
+
+  <h4>Challenge — Build a complete task dashboard</h4>
+  <p>Add due dates, task categories, sorting, and validation. Write automated tests for create, update, delete, and complete operations.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can build a full CRUD interface with immutable state updates, derived data, controlled forms, and accessible error handling.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">Project 1 · CRUD</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 2 — WEATHER APP
+     ============================================================ -->
+<section class="topic" id="t2">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0c4a6e,#0284c7);">API</div>
+  <div class="topic-head">
+    <div class="kicker">Project 2</div>
+    <h2>Build a Weather App Using an API</h2>
+    <p>Two requests, one user experience: geocoding, forecast, loading, errors.</p>
+  </div>
+
+  <h3>Real-life analogy: A weather station</h3>
+  <p>Imagine a weather station observes the current temperature, wind, and humidity at a location. A weather app requests those observations from a weather service and presents them in a user-friendly format.</p>
+  <p>This project revises asynchronous JavaScript, API integration, controlled forms, loading states, errors, and data validation.</p>
+  <p>For this learning example, use <a href="https://open-meteo.com/en/docs">Open-Meteo</a>. It provides a geocoding API for looking up coordinates from a place name and a forecast API for requesting weather data. Check its <a href="https://open-meteo.com/en/docs">API documentation and usage terms</a> before using it in a commercial product.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=1200&q=80&auto=format&fit=crop"
+      alt="A weather station in a field with instruments"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The weather station</div>
+    <div class="photo-caption">
+      <b>A weather app is a two-step conversation with the sky.</b> First you ask where (geocoding). Then you ask what (forecast). Each request can fail, take time, or return unexpected data — so the app must show every state clearly.
+    </div>
+  </div>
+
+  <h3>2.1 How the API flow works</h3>
+  <p>The app needs two requests:</p>
+  <ol>
+    <li>Search for a city and retrieve its latitude and longitude.</li>
+    <li>Request weather information for those coordinates.</li>
+  </ol>
+  <p>The endpoints used in this example are:</p>
+
+  <div class="term out">
+    <div class="term-head">Endpoints</div>
+    <pre>https://geocoding-api.open-meteo.com/v1/search
+https://api.open-meteo.com/v1/forecast</pre>
+  </div>
+
+  <p>The geocoding endpoint accepts a place name, while the forecast endpoint accepts coordinates and the requested weather variables. See the <a href="https://open-meteo.com/en/docs/geocoding-api">Open-Meteo geocoding documentation</a>.</p>
+
+  <h3>2.2 Build the weather app</h3>
+  <p>Create <code>WeatherApp.tsx</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">WeatherApp.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useState } from "react";
+import type { FormEvent } from "react";
+
+interface LocationResult {
+  id: number;
+  name: string;
+  country?: string;
+  latitude: number;
+  longitude: number;
+}
+
+interface GeocodingResponse {
+  results?: LocationResult[];
+}
+
+interface CurrentWeather {
+  temperature_2m: number;
+  relative_humidity_2m: number;
+  weather_code: number;
+  wind_speed_10m: number;
+}
+
+interface ForecastResponse {
+  current?: CurrentWeather;
+  current_units?: {
+    temperature_2m?: string;
+    wind_speed_10m?: string;
+  };
+}
+
+interface WeatherData {
+  location: LocationResult;
+  current: CurrentWeather;
+  temperatureUnit: string;
+  windSpeedUnit: string;
+}
+
+function weatherDescription(code: number): string {
+  const descriptions: Record&lt;number, string&gt; = {
+    0: "Clear sky",
+    1: "Mainly clear",
+    2: "Partly cloudy",
+    3: "Overcast",
+    45: "Fog",
+    48: "Depositing rime fog",
+    51: "Light drizzle",
+    53: "Moderate drizzle",
+    55: "Dense drizzle",
+    61: "Slight rain",
+    63: "Moderate rain",
+    65: "Heavy rain",
+    71: "Slight snowfall",
+    73: "Moderate snowfall",
+    75: "Heavy snowfall",
+    95: "Thunderstorm",
+  };
+
+  return descriptions[code] ?? `Weather code ${code}`;
+}
+
+export default function WeatherApp() {
+  const [city, setCity] = useState("");
+  const [weather, setWeather] = useState&lt;WeatherData | null&gt;(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSearch(event: FormEvent&lt;HTMLFormElement&gt;) {
+    event.preventDefault();
+
+    const query = city.trim();
+
+    if (!query) {
+      setError("Enter a city name.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setWeather(null);
+
+    try {
+      const geocodingUrl =
+        "https://geocoding-api.open-meteo.com/v1/search?" +
+        new URLSearchParams({
+          name: query,
+          count: "1",
+          language: "en",
+          format: "json",
+        });
+
+      const geocodingResponse = await fetch(geocodingUrl);
+
+      if (!geocodingResponse.ok) {
+        throw new Error("Unable to search for this location.");
+      }
+
+      // The assertion describes the expected shape. For production,
+      // validate external JSON at runtime before trusting it.
+      const geocodingData =
+        (await geocodingResponse.json()) as GeocodingResponse;
+
+      const location = geocodingData.results?.[0];
+
+      if (!location) {
+        throw new Error("No matching city was found.");
+      }
+
+      const forecastUrl =
+        "https://api.open-meteo.com/v1/forecast?" +
+        new URLSearchParams({
+          latitude: String(location.latitude),
+          longitude: String(location.longitude),
+          current:
+            "temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m",
+          timezone: "auto",
+        });
+
+      const forecastResponse = await fetch(forecastUrl);
+
+      if (!forecastResponse.ok) {
+        throw new Error("Unable to load the weather forecast.");
+      }
+
+      const forecastData =
+        (await forecastResponse.json()) as ForecastResponse;
+
+      if (!forecastData.current) {
+        throw new Error("Weather data is unavailable.");
+      }
+
+      setWeather({
+        location,
+        current: forecastData.current,
+        temperatureUnit:
+          forecastData.current_units?.temperature_2m ?? "°C",
+        windSpeedUnit:
+          forecastData.current_units?.wind_speed_10m ?? "km/h",
+      });
+    } catch (error: unknown) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    &lt;main className="mx-auto max-w-xl space-y-6 p-6"&gt;
+      &lt;header&gt;
+        &lt;h1 className="text-3xl font-bold"&gt;Weather App&lt;/h1&gt;
+        &lt;p className="mt-2 text-slate-600"&gt;
+          Search for a city to see its current weather.
+        &lt;/p&gt;
+      &lt;/header&gt;
+
+      &lt;form onSubmit={handleSearch} className="flex gap-3"&gt;
+        &lt;label htmlFor="city" className="sr-only"&gt;
+          City name
+        &lt;/label&gt;
+
+        &lt;input
+          id="city"
+          value={city}
+          onChange={(event) =&gt; setCity(event.currentTarget.value)}
+          placeholder="For example, Jaipur"
+          className="min-w-0 flex-1 rounded-lg border p-3"
+        /&gt;
+
+        &lt;button
+          type="submit"
+          disabled={loading}
+          className="rounded-lg bg-indigo-600 px-4 py-3 text-white disabled:opacity-50"
+        &gt;
+          {loading ? "Searching..." : "Search"}
+        &lt;/button&gt;
+      &lt;/form&gt;
+
+      {error &amp;&amp; &lt;p role="alert"&gt;{error}&lt;/p&gt;}
+
+      {loading &amp;&amp; &lt;p role="status"&gt;Loading weather...&lt;/p&gt;}
+
+      {weather &amp;&amp; (
+        &lt;section className="rounded-2xl border p-6 shadow-sm"&gt;
+          &lt;h2 className="text-2xl font-bold"&gt;
+            {weather.location.name}
+            {weather.location.country
+              ? `, ${weather.location.country}`
+              : ""}
+          &lt;/h2&gt;
+
+          &lt;p className="mt-3 text-4xl font-bold"&gt;
+            {weather.current.temperature_2m}
+            {weather.temperatureUnit}
+          &lt;/p&gt;
+
+          &lt;p className="mt-2 text-lg"&gt;
+            {weatherDescription(weather.current.weather_code)}
+          &lt;/p&gt;
+
+          &lt;div className="mt-5 grid grid-cols-2 gap-4"&gt;
+            &lt;div&gt;
+              &lt;p className="text-sm text-slate-500"&gt;Humidity&lt;/p&gt;
+              &lt;p className="text-xl font-semibold"&gt;
+                {weather.current.relative_humidity_2m}%
+              &lt;/p&gt;
+            &lt;/div&gt;
+
+            &lt;div&gt;
+              &lt;p className="text-sm text-slate-500"&gt;Wind speed&lt;/p&gt;
+              &lt;p className="text-xl font-semibold"&gt;
+                {weather.current.wind_speed_10m}{" "}
+                {weather.windSpeedUnit}
+              &lt;/p&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/section&gt;
+      )}
+    &lt;/main&gt;
+  );
+}</code></pre>
+  </div>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">WeatherApp — successful search</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <h3 style="margin:0 0 4px; color:#052e1c; font-family:Georgia, serif; font-size:18pt;">Weather App</h3>
+      <p class="o-muted" style="margin-bottom:14px;">Search for a city to see its current weather.</p>
+      <div style="display:flex; gap:8px; margin-bottom:14px;">
+        <input class="o-input" placeholder="For example, Jaipur" style="margin-bottom:0;" value="Jaipur" />
+        <button class="o-btn emerald">Search</button>
+      </div>
+      <div class="o-weather">
+        <h3>Jaipur, India</h3>
+        <p class="o-temp">32°C</p>
+        <p class="o-desc">Partly cloudy</p>
+        <div class="o-weather-grid">
+          <div><b>38%</b>Humidity</div>
+          <div><b>12 km/h</b>Wind speed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Understand the implementation</h3>
+  <p><strong>The first request finds the city.</strong> The app uses the location search response to obtain coordinates.</p>
+  <p><strong>The second request retrieves the current conditions.</strong> The coordinates identify the location for which the forecast data is requested.</p>
+  <p><strong>Loading and error states are explicit.</strong> The user can distinguish a pending request from a failed request.</p>
+  <p><strong>The response types document expected fields.</strong> However, TypeScript assertions do not validate external JSON. A production app should validate the actual response schema, handle cancellations and stale requests, and display units supplied by the API.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 2.1 — Add a five-day forecast</h4>
+  <p>Request daily maximum and minimum temperatures, weather codes, and appropriate daily time settings from the forecast API.</p>
+  <p>Display one card per day.</p>
+
+  <h4>Exercise 2.2 — Improve location search</h4>
+  <p>Allow the user to choose between multiple matching cities rather than always selecting the first result.</p>
+  <p>Display enough location information to distinguish cities with the same name.</p>
+
+  <h4>Challenge — Make weather results robust</h4>
+  <p>Add request cancellation, validation for external response data, retry behavior, and tests for loading, no matching city, and API failure.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can implement a two-step API flow with typed data, loading and error states, and a plan for runtime validation.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">Project 2 · Weather API</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 3 — PRODUCT CATALOGUE
+     ============================================================ -->
+<section class="topic" id="t3">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#7c2d12,#c2410c);">CAT</div>
+  <div class="topic-head">
+    <div class="kicker">Project 3</div>
+    <h2>Build a Searchable Product Catalogue</h2>
+    <p>Filters, derived data, and component decomposition.</p>
+  </div>
+
+  <h3>Real-life analogy: An online shop</h3>
+  <p>Imagine an online shop with hundreds of products. Customers can type a product name, select a category, and limit the results to items that are in stock.</p>
+  <p>This project revises props, state, filtering, controlled inputs, derived data, and component decomposition.</p>
+  <p>The official React tutorial <a href="https://react.dev/learn/thinking-in-react">Thinking in React</a> uses a searchable product table to explain how to identify components and choose where state should live.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80&auto=format&fit=crop"
+      alt="A retail store with products on shelves"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The online shop</div>
+    <div class="photo-caption">
+      <b>A searchable catalogue is a shop assistant who can filter every shelf at once.</b> Type a name, pick a category, tick "in stock only" — the assistant instantly narrows the list. The data stays in memory; the filters are derived, not duplicated.
+    </div>
+  </div>
+
+  <h3>3.1 Define the product data</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">products.ts</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">interface Product {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  inStock: boolean;
+}
+
+const products: Product[] = [
+  {
+    id: "P-101",
+    name: "Wireless Mouse",
+    category: "Accessories",
+    price: 799,
+    inStock: true,
+  },
+  {
+    id: "P-102",
+    name: "Mechanical Keyboard",
+    category: "Accessories",
+    price: 2499,
+    inStock: true,
+  },
+  {
+    id: "P-103",
+    name: "USB-C Hub",
+    category: "Adapters",
+    price: 1299,
+    inStock: false,
+  },
+];</code></pre>
+  </div>
+
+  <h3>3.2 Build the catalogue</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">ProductCatalogue.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useMemo, useState } from "react";
+
+export default function ProductCatalogue() {
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("all");
+  const [inStockOnly, setInStockOnly] = useState(false);
+
+  const categories = [
+    "all",
+    ...new Set(products.map((product) =&gt; product.category)),
+  ];
+
+  const filteredProducts = useMemo(() =&gt; {
+    return products.filter((product) =&gt; {
+      const matchesName = product.name
+        .toLowerCase()
+        .includes(query.toLowerCase());
+
+      const matchesCategory =
+        category === "all" || product.category === category;
+
+      const matchesStock =
+        !inStockOnly || product.inStock;
+
+      return matchesName &amp;&amp; matchesCategory &amp;&amp; matchesStock;
+    });
+  }, [query, category, inStockOnly]);
+
+  return (
+    &lt;main className="mx-auto max-w-6xl space-y-6 p-6"&gt;
+      &lt;header&gt;
+        &lt;h1 className="text-3xl font-bold"&gt;Product Catalogue&lt;/h1&gt;
+        &lt;p className="mt-2 text-slate-600"&gt;
+          Find products and compare prices.
+        &lt;/p&gt;
+      &lt;/header&gt;
+
+      &lt;section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"&gt;
+        &lt;div&gt;
+          &lt;label htmlFor="product-search" className="mb-1 block"&gt;
+            Search products
+          &lt;/label&gt;
+          &lt;input
+            id="product-search"
+            value={query}
+            onChange={(event) =&gt; setQuery(event.currentTarget.value)}
+            className="w-full rounded-lg border p-3"
+          /&gt;
+        &lt;/div&gt;
+
+        &lt;div&gt;
+          &lt;label htmlFor="category" className="mb-1 block"&gt;
+            Category
+          &lt;/label&gt;
+          &lt;select
+            id="category"
+            value={category}
+            onChange={(event) =&gt; setCategory(event.currentTarget.value)}
+            className="w-full rounded-lg border p-3"
+          &gt;
+            {categories.map((item) =&gt; (
+              &lt;option key={item} value={item}&gt;
+                {item === "all" ? "All categories" : item}
+              &lt;/option&gt;
+            ))}
+          &lt;/select&gt;
+        &lt;/div&gt;
+
+        &lt;label className="flex items-center gap-3"&gt;
+          &lt;input
+            type="checkbox"
+            checked={inStockOnly}
+            onChange={(event) =&gt;
+              setInStockOnly(event.currentTarget.checked)
+            }
+          /&gt;
+          In-stock products only
+        &lt;/label&gt;
+      &lt;/section&gt;
+
+      &lt;p role="status"&gt;
+        Found {filteredProducts.length} products
+      &lt;/p&gt;
+
+      {filteredProducts.length === 0 ? (
+        &lt;p&gt;No products match your filters.&lt;/p&gt;
+      ) : (
+        &lt;div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"&gt;
+          {filteredProducts.map((product) =&gt; (
+            &lt;article key={product.id} className="rounded-xl border p-5"&gt;
+              &lt;h2 className="text-lg font-semibold"&gt;
+                {product.name}
+              &lt;/h2&gt;
+
+              &lt;p className="mt-1 text-sm text-slate-500"&gt;
+                {product.category}
+              &lt;/p&gt;
+
+              &lt;p className="mt-4 text-xl font-bold"&gt;
+                {new Intl.NumberFormat("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                  maximumFractionDigits: 0,
+                }).format(product.price)}
+              &lt;/p&gt;
+
+              &lt;p className={product.inStock
+                ? "mt-2 text-emerald-700"
+                : "mt-2 text-red-700"
+              }&gt;
+                {product.inStock ? "In stock" : "Out of stock"}
+              &lt;/p&gt;
+            &lt;/article&gt;
+          ))}
+        &lt;/div&gt;
+      )}
+    &lt;/main&gt;
+  );
+}</code></pre>
+  </div>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">ProductCatalogue — filtered view</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <h3 style="margin:0 0 4px; color:#052e1c; font-family:Georgia, serif; font-size:18pt;">Product Catalogue</h3>
+      <p class="o-muted" style="margin-bottom:14px;">Find products and compare prices.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
+        <div>
+          <label style="display:block; font-size:9.5pt; color:#374151; margin-bottom:4px;">Search products</label>
+          <input class="o-input" placeholder="Search…" style="margin-bottom:0;" />
+        </div>
+        <div>
+          <label style="display:block; font-size:9.5pt; color:#374151; margin-bottom:4px;">Category</label>
+          <select class="o-input" style="margin-bottom:0;"><option>All categories</option><option>Accessories</option><option>Adapters</option></select>
+        </div>
+      </div>
+      <p style="font-size:10pt; color:#374151; margin:6px 0 12px;">Found 2 products</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div class="o-product">
+          <h5>Wireless Mouse</h5>
+          <div class="o-cat">Accessories</div>
+          <div class="o-price">₹799</div>
+          <div class="o-stock" style="color:#047857;">In stock</div>
+        </div>
+        <div class="o-product">
+          <h5>Mechanical Keyboard</h5>
+          <div class="o-cat">Accessories</div>
+          <div class="o-price">₹2,499</div>
+          <div class="o-stock" style="color:#047857;">In stock</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p>This example uses an in-memory array. The product filter is derived from the state, and the category choices are derived from the data.</p>
+  <p><code>useMemo</code> is included for practice, but it may be unnecessary for a small catalogue. Use a measured optimization strategy for larger datasets.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 3.1 — Add sorting</h4>
+  <p>Let users sort products by name, price ascending, and price descending.</p>
+
+  <h4>Exercise 3.2 — Add a product details dialog</h4>
+  <p>Click a product to open a dialog containing its description, availability, and price.</p>
+
+  <h4>Challenge — Make it scalable</h4>
+  <p>Replace the static array with API data, add pagination, and decide whether server-side filtering is needed. Test combinations of search, category, stock, and sorting without creating duplicated state.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can derive a filtered list from state without duplicating it, and you can decompose a searchable UI into clear components.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">Project 3 · Catalogue</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 4 — AUTH DASHBOARD
+     ============================================================ -->
+<section class="topic" id="t4">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#4c1d95,#7c3aed);">AUTH</div>
+  <div class="topic-head">
+    <div class="kicker">Project 4</div>
+    <h2>Build an Authentication-Based Dashboard</h2>
+    <p>Identity, roles, and the limits of frontend guards.</p>
+  </div>
+
+  <h3>Real-life analogy: An office building</h3>
+  <p>A security guard checks who may enter the building, while a separate access-control system determines which rooms each employee can enter.</p>
+  <p>Similarly, authentication establishes the user’s identity, and authorization determines the data or operations they may access.</p>
+  <p>This project combines protected UI routes, session status, role-aware navigation, and backend permissions.</p>
+
+  <div class="callout warn">
+    <div class="ct">▲ Security rule</div>
+    <p>A frontend route guard improves navigation and user experience. It does not secure an API or replace backend authorization.</p>
+  </div>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80&auto=format&fit=crop"
+      alt="A modern office building entrance with security"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The office building</div>
+    <div class="photo-caption">
+      <b>The lobby is a frontend route guard. The locks on each floor are the backend.</b> The guard at the door (route guard) can point you toward the right elevator, but only the keycard reader on each floor (server authorization) decides whether the door opens.
+    </div>
+  </div>
+
+  <h3>4.1 Model the user and session</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">auth.ts</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">type Role = "student" | "trainer" | "admin";
+
+interface User {
+  id: string;
+  name: string;
+  role: Role;
+}</code></pre>
+  </div>
+
+  <p>Your application also needs to represent an unresolved session check, not just "signed in" or "signed out."</p>
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">AuthState</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">type AuthState =
+  | { status: "loading" }
+  | { status: "anonymous" }
+  | { status: "authenticated"; user: User }
+  | { status: "error"; message: string };</code></pre>
+  </div>
+
+  <p>These states help prevent the dashboard from briefly showing the wrong screen while the session is still being checked.</p>
+
+  <h3>4.2 Protect frontend routes</h3>
+  <p>The following example demonstrates a frontend route guard using React Router's declarative routing APIs.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">RequireAuth.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { Navigate, Outlet } from "react-router";
+
+interface User {
+  id: string;
+  name: string;
+  role: "student" | "trainer" | "admin";
+}
+
+type AuthState =
+  | { status: "loading" }
+  | { status: "anonymous" }
+  | { status: "authenticated"; user: User };
+
+function RequireAuth({
+  auth,
+}: {
+  auth: AuthState;
+}) {
+  if (auth.status === "loading") {
+    return &lt;p role="status"&gt;Checking session...&lt;/p&gt;;
+  }
+
+  if (auth.status === "anonymous") {
+    return &lt;Navigate to="/login" replace /&gt;;
+  }
+
+  return &lt;Outlet /&gt;;
+}</code></pre>
+  </div>
+
+  <p>For a role-specific UI section:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">RequireRole.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import type { ReactNode } from "react";
+
+function RequireRole({
+  user,
+  allowedRoles,
+  children,
+}: {
+  user: User;
+  allowedRoles: User["role"][];
+  children: ReactNode;
+}) {
+  if (!allowedRoles.includes(user.role)) {
+    return &lt;p&gt;You do not have access to this section.&lt;/p&gt;;
+  }
+
+  return children;
+}</code></pre>
+  </div>
+
+  <p>These examples illustrate client-side presentation and routing decisions. The authenticated user information must be obtained from a trustworthy session mechanism, and every protected backend operation must enforce the user's permissions independently.</p>
+
+  <h3>4.3 Build the dashboard interface</h3>
+  <p>A production dashboard usually includes:</p>
+  <ul>
+    <li>An initial session-loading state</li>
+    <li>A sign-in route</li>
+    <li>Authenticated routes</li>
+    <li>Role-aware navigation</li>
+    <li>A signed-out experience</li>
+    <li>Clear API error handling</li>
+    <li>A logout operation that invalidates the server-side session</li>
+  </ul>
+  <p>Avoid storing passwords or privileged tokens in React state or browser storage as a way to simulate security.</p>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">RequireAuth — three states</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div class="o-card" style="border-color:#fde68a; background:#fffbeb;">
+        <p style="margin:0 0 6px; font-size:10pt; color:#92400e;"><strong>status: "loading"</strong></p>
+        <p style="margin:0; font-size:10.5pt; color:#374151;">Checking session…</p>
+      </div>
+      <div class="o-card" style="border-color:#fca5a5; background:#fef2f2;">
+        <p style="margin:0 0 6px; font-size:10pt; color:#991b1b;"><strong>status: "anonymous"</strong></p>
+        <p style="margin:0; font-size:10.5pt; color:#374151;">→ redirected to <code>/login</code></p>
+      </div>
+      <div class="o-card" style="border-color:#86efac; background:#f0fdf4;">
+        <p style="margin:0 0 6px; font-size:10pt; color:#166534;"><strong>status: "authenticated"</strong></p>
+        <p style="margin:0; font-size:10.5pt; color:#374151;">→ renders <code>&lt;Outlet /&gt;</code> and the protected child route</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 4.1 — Build a role-aware dashboard</h4>
+  <p>Create three role menus for students, trainers, and administrators.</p>
+  <p>Test that the interface changes when the session user changes.</p>
+
+  <h4>Exercise 4.2 — Handle session expiry</h4>
+  <p>Simulate a protected API returning <code>401 Unauthorized</code>.</p>
+  <p>The application should stop treating the user as authenticated and provide a clear sign-in path.</p>
+
+  <h4>Challenge — Audit authorization</h4>
+  <p>Create a backend test plan proving that unauthorized users cannot access administrative endpoints by manually changing URLs, request bodies, or browser state.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can build role-aware navigation and session-aware routes while keeping the real security guarantees on the backend.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">Project 4 · Auth Dashboard</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 5 — MULTI-PAGE ADMIN
+     ============================================================ -->
+<section class="topic" id="t5">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#1e3a8a,#3b82f6);">ROUTE</div>
+  <div class="topic-head">
+    <div class="kicker">Project 5</div>
+    <h2>Build a Multi-Page Admin Application</h2>
+    <p>Routing, layout composition, nested UI, and lazy loading.</p>
+  </div>
+
+  <h3>Real-life analogy: A company control centre</h3>
+  <p>A company has separate work areas for employee management, inventory, reports, and settings.</p>
+  <p>An admin application organizes these areas into routes so the user can open, bookmark, and navigate between them independently.</p>
+  <p>This project revises routing, page layout composition, reusable components, and nested UI.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1200&q=80&auto=format&fit=crop"
+      alt="A modern control centre with multiple workstations"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The control centre</div>
+    <div class="photo-caption">
+      <b>The admin layout is the shared corridor; each route is a doorway.</b> Every room keeps its own contents, but the corridor, signage, and navigation stay the same. Nested routes are doors inside rooms.
+    </div>
+  </div>
+
+  <h3>5.1 Set up routing</h3>
+  <p>For a modern React Router declarative-mode application, install React Router according to its current setup guide. Current documentation uses APIs from the <code>react-router</code> package.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm install react-router</code></pre>
+  </div>
+
+  <p>Documentation: <a href="https://reactrouter.com/start/declarative/routing">React Router routing</a>.</p>
+
+  <h3>5.2 Create the admin layout</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">App.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import {
+  BrowserRouter,
+  NavLink,
+  Outlet,
+  Route,
+  Routes,
+} from "react-router";
+
+function AdminLayout() {
+  return (
+    &lt;div className="min-h-screen md:flex"&gt;
+      &lt;aside className="border-b p-4 md:w-64 md:border-b-0 md:border-r"&gt;
+        &lt;h1 className="text-xl font-bold"&gt;Admin Portal&lt;/h1&gt;
+
+        &lt;nav aria-label="Admin navigation" className="mt-6 space-y-2"&gt;
+          &lt;NavLink to="/dashboard" className="block rounded-lg p-2"&gt;
+            Dashboard
+          &lt;/NavLink&gt;
+
+          &lt;NavLink to="/students" className="block rounded-lg p-2"&gt;
+            Students
+          &lt;/NavLink&gt;
+
+          &lt;NavLink to="/courses" className="block rounded-lg p-2"&gt;
+            Courses
+          &lt;/NavLink&gt;
+
+          &lt;NavLink to="/settings" className="block rounded-lg p-2"&gt;
+            Settings
+          &lt;/NavLink&gt;
+        &lt;/nav&gt;
+      &lt;/aside&gt;
+
+      &lt;main className="min-w-0 flex-1 p-6"&gt;
+        &lt;Outlet /&gt;
+      &lt;/main&gt;
+    &lt;/div&gt;
+  );
+}
+
+function DashboardPage() {
+  return &lt;h2 className="text-2xl font-bold"&gt;Dashboard&lt;/h2&gt;;
+}
+
+function StudentsPage() {
+  return &lt;h2 className="text-2xl font-bold"&gt;Students&lt;/h2&gt;;
+}
+
+function CoursesPage() {
+  return &lt;h2 className="text-2xl font-bold"&gt;Courses&lt;/h2&gt;;
+}
+
+function SettingsPage() {
+  return &lt;h2 className="text-2xl font-bold"&gt;Settings&lt;/h2&gt;;
+}
+
+export default function App() {
+  return (
+    &lt;BrowserRouter&gt;
+      &lt;Routes&gt;
+        &lt;Route element={&lt;AdminLayout /&gt;}&gt;
+          &lt;Route path="/dashboard" element={&lt;DashboardPage /&gt;} /&gt;
+          &lt;Route path="/students" element={&lt;StudentsPage /&gt;} /&gt;
+          &lt;Route path="/courses" element={&lt;CoursesPage /&gt;} /&gt;
+          &lt;Route path="/settings" element={&lt;SettingsPage /&gt;} /&gt;
+        &lt;/Route&gt;
+      &lt;/Routes&gt;
+    &lt;/BrowserRouter&gt;
+  );
+}</code></pre>
+  </div>
+
+  <p><code>Outlet</code> provides the location where the matched child route renders. The admin layout remains shared across pages.</p>
+  <p>This example demonstrates the layout only. Add a suitable index route or root redirect for the application's initial URL, and verify that your hosting platform supports the SPA fallback for nested routes.</p>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">AdminLayout — Students selected</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div style="display:flex; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;">
+        <div class="o-nav">
+          <h5>Admin Portal</h5>
+          <a href="#">Dashboard</a>
+          <a href="#" class="active">Students</a>
+          <a href="#">Courses</a>
+          <a href="#">Settings</a>
+        </div>
+        <div style="flex:1; padding:20px;">
+          <h3 style="margin:0; color:#052e1c; font-family:Georgia, serif; font-size:18pt;">Students</h3>
+          <p class="o-muted" style="margin-top:8px;">The shared admin layout stays in place. Only the outlet content changed.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 5.1 — Complete the admin routes</h4>
+  <p>Add:</p>
+  <ul>
+    <li>A student detail page with a dynamic ID</li>
+    <li>A course detail page</li>
+    <li>A not-found page</li>
+    <li>A consistent active navigation style</li>
+  </ul>
+
+  <h4>Exercise 5.2 — Lazy-load a route</h4>
+  <p>Load the analytics page on demand and display an appropriate loading fallback.</p>
+
+  <h4>Challenge — Build a nested admin workflow</h4>
+  <p>Create a student-details page with tabs for Profile, Attendance, and Courses. Preserve the admin layout while switching among sections.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can compose a shared layout with nested routes, add dynamic params, and lazy-load a heavier page without breaking navigation.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">Project 5 · Admin App</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 6 — MERN FRONTEND
+     ============================================================ -->
+<section class="topic" id="t6">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#0c4a6e,#0891b2);">MERN</div>
+  <div class="topic-head">
+    <div class="kicker">Project 6</div>
+    <h2>Build a Full-Stack MERN Application Frontend</h2>
+    <p>The dining area; the kitchen stays on the server.</p>
+  </div>
+
+  <h3>Real-life analogy: A restaurant</h3>
+  <p>The frontend is like the dining area where customers browse the menu and place orders. The backend is like the service counter that processes requests, checks the kitchen's records, and confirms what can actually be served.</p>
+  <p>The browser should not directly access the production MongoDB database. It communicates with the Express API, which handles the database work on the server.</p>
+  <p>MERN stands for:</p>
+  <ul>
+    <li>MongoDB</li>
+    <li>Express</li>
+    <li>React</li>
+    <li>Node.js</li>
+  </ul>
+  <p>This project focuses on React's role in a full-stack application.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80&auto=format&fit=crop"
+      alt="A restaurant dining area with a service counter"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The restaurant</div>
+    <div class="photo-caption">
+      <b>The dining area is React; the kitchen is Express + MongoDB.</b> Customers never walk into the kitchen and touch the stove. They order through the service counter (the API), which decides what can be served, how, and to whom.
+    </div>
+  </div>
+
+  <h3>6.1 Suggested architecture</h3>
+
+  <div class="term out">
+    <div class="term-head">Architecture</div>
+    <pre>React + TypeScript frontend
+          |
+          | HTTP requests
+          v
+Express API on Node.js
+          |
+          | Database operations
+          v
+MongoDB</pre>
+  </div>
+
+  <p>The API is responsible for authentication, authorization, validation, business logic, and database operations.</p>
+  <p>The React frontend is responsible for presenting information, capturing user input, and communicating with the API.</p>
+
+  <h3>6.2 Create a typed API module</h3>
+  <p>Create <code>src/api/students.ts</code>:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">src/api/students.ts</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">export interface Student {
+  id: string;
+  name: string;
+  email: string;
+  course: string;
+}
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+export async function getStudents(): Promise&lt;Student[]&gt; {
+  const response = await fetch(`${API_BASE_URL}/students`, {
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to load students.");
+  }
+
+  // Validate the actual API response in a production implementation.
+  return response.json() as Promise&lt;Student[]&gt;;
+}</code></pre>
+  </div>
+
+  <p>The code illustrates an API contract and a centralized request function. The TypeScript assertion doesn't validate the response received over the network.</p>
+  <p>Use runtime validation for untrusted data and a consistent error-handling strategy for important API calls.</p>
+
+  <h3>6.3 Consume the API in a component</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">StudentList.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { useEffect, useState } from "react";
+import { getStudents } from "./api/students";
+import type { Student } from "./api/students";
+
+function StudentList() {
+  const [students, setStudents] = useState&lt;Student[]&gt;([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() =&gt; {
+    let active = true;
+
+    getStudents()
+      .then((data) =&gt; {
+        if (active) setStudents(data);
+      })
+      .catch(() =&gt; {
+        if (active) setError("Could not load students.");
+      })
+      .finally(() =&gt; {
+        if (active) setLoading(false);
+      });
+
+    return () =&gt; {
+      active = false;
+    };
+  }, []);
+
+  if (loading) return &lt;p role="status"&gt;Loading students...&lt;/p&gt;;
+  if (error) return &lt;p role="alert"&gt;{error}&lt;/p&gt;;
+
+  return (
+    &lt;ul className="space-y-3"&gt;
+      {students.map((student) =&gt; (
+        &lt;li key={student.id} className="rounded-lg border p-4"&gt;
+          &lt;h2 className="font-semibold"&gt;{student.name}&lt;/h2&gt;
+          &lt;p&gt;{student.email}&lt;/p&gt;
+          &lt;p className="text-sm text-slate-500"&gt;{student.course}&lt;/p&gt;
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+
+export default StudentList;</code></pre>
+  </div>
+
+  <p>This example handles a basic request lifecycle. For production, add runtime response validation, cancellation where appropriate, retry behavior if needed, and a robust data-fetching strategy. A library such as TanStack Query or RTK Query can help manage caching and request state.</p>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">StudentList — loaded</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <div class="o-card" style="border-color:#a7f3d0; background:#f0fdf4;">
+        <p style="margin:0 0 4px; font-size:10pt; color:#065f46;"><strong>status: loaded</strong></p>
+        <p style="margin:0; font-family:Consolas, monospace; font-size:9.5pt; color:#374151;">GET {API_BASE_URL}/students → 200 OK</p>
+      </div>
+      <div style="display:grid; gap:8px; margin-top:10px;">
+        <div class="o-card">
+          <p style="margin:0; font-weight:700; color:#111827; font-size:10.5pt;">Aarav Patel</p>
+          <p style="margin:2px 0; color:#374151; font-size:10pt;">aarav@example.com</p>
+          <p style="margin:0; color:#6b7280; font-size:9.5pt;">React Fundamentals</p>
+        </div>
+        <div class="o-card">
+          <p style="margin:0; font-weight:700; color:#111827; font-size:10.5pt;">Diya Sharma</p>
+          <p style="margin:2px 0; color:#374151; font-size:10pt;">diya@example.com</p>
+          <p style="margin:0; color:#6b7280; font-size:9.5pt;">TypeScript Deep Dive</p>
+        </div>
+      </div>
+      <p class="o-muted" style="margin-top:10px;">Loading and error states replace this list when the request is pending or fails.</p>
+    </div>
+  </div>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 6.1 — Connect student CRUD</h4>
+  <p>Connect the React task or student management interface to a backend that implements list, create, update, and delete endpoints.</p>
+
+  <h4>Exercise 6.2 — Handle the API contract</h4>
+  <p>Test loading, empty data, request failure, invalid data, and successful CRUD operations.</p>
+
+  <h4>Challenge — Complete the MERN frontend</h4>
+  <p>Add authentication-aware UI, route navigation, typed API methods, responsive layouts, and API error handling. Verify that the server—not React—enforces access rules and input validation.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can build a typed API layer and a component that consumes it with loading, error, and empty states.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">Project 6 · MERN Frontend</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 7 — TESTING & ACCESSIBILITY
+     ============================================================ -->
+<section class="topic" id="t7">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#7c2d12,#ea580c);">TEST</div>
+  <div class="topic-head">
+    <div class="kicker">Project 7</div>
+    <h2>Add Testing and Accessibility to a Project</h2>
+    <p>Test the user-visible behaviour. Audit for keyboard and screen readers.</p>
+  </div>
+
+  <h3>Real-life analogy: Quality inspection</h3>
+  <p>Before a product leaves a factory, it goes through checks to verify that it works and is safe to use.</p>
+  <p>Testing and accessibility checks play a similar role before a React application is released.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1565043666747-69f6646db940?w=1200&q=80&auto=format&fit=crop"
+      alt="A quality inspection line with workers checking products"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The quality gate</div>
+    <div class="photo-caption">
+      <b>Tests are the quality gate every change must pass.</b> A component that works with a mouse but not a keyboard is a product with a handle on only one side. Accessibility checks are the second inspector.
+    </div>
+  </div>
+
+  <h3>7.1 Test user-visible behavior</h3>
+  <p>For a React + Vite project, common tools include Vitest and React Testing Library.</p>
+  <p>Install the testing packages:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm install -D vitest jsdom @testing-library/react @testing-library/dom @testing-library/user-event @testing-library/jest-dom</code></pre>
+  </div>
+
+  <p>Configure Vitest with the JSDOM environment and setup file using the current <a href="https://vitest.dev/guide/">Vitest documentation</a>.</p>
+
+  <h3>7.2 Example: Test the task manager</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">TaskManager.test.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { expect, it } from "vitest";
+import TaskManager from "./TaskManager";
+
+it("allows the user to add a task", async () => {
+  const user = userEvent.setup();
+
+  render(&lt;TaskManager /&gt;);
+
+  await user.type(
+    screen.getByRole("textbox", { name: /task title/i }),
+    "Complete React project"
+  );
+
+  await user.click(
+    screen.getByRole("button", { name: /add task/i })
+  );
+
+  expect(
+    screen.getByText("Complete React project")
+  ).toBeInTheDocument();
+});</code></pre>
+  </div>
+
+  <p>This test interacts with the UI and verifies the visible result.</p>
+  <p>Other useful tests cover task editing, deleting, completion status, filtering, and invalid empty input.</p>
+
+  <div class="output-preview">
+    <div class="output-head">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="output-title">Vitest — test run</span>
+      <span class="output-badge">Output</span>
+    </div>
+    <div class="output-body">
+      <p style="margin:0; font-family:Consolas, monospace; font-size:9.5pt; color:#047857;">✓ TaskManager.test.tsx (6 tests)</p>
+      <p style="margin:4px 0 0; font-family:Consolas, monospace; font-size:9.5pt; color:#047857;">✓ allows the user to add a task</p>
+      <p style="margin:2px 0 0; font-family:Consolas, monospace; font-size:9.5pt; color:#047857;">✓ edits and saves a task</p>
+      <p style="margin:2px 0 0; font-family:Consolas, monospace; font-size:9.5pt; color:#047857;">✓ deletes a task</p>
+      <p style="margin:2px 0 0; font-family:Consolas, monospace; font-size:9.5pt; color:#047857;">✓ shows validation when the title is empty</p>
+      <p style="margin:10px 0 0; font-family:Consolas, monospace; font-size:9.5pt; color:#374151;">Test Files  1 passed · Tests  6 passed · Duration 1.2s</p>
+    </div>
+  </div>
+
+  <h3>7.3 Check accessibility</h3>
+  <p>For each important workflow, verify:</p>
+  <ul>
+    <li>Inputs have associated labels.</li>
+    <li>Interactive controls can be used with a keyboard.</li>
+    <li>Focus is visible.</li>
+    <li>Errors are communicated properly.</li>
+    <li>Dialogs handle focus and keyboard interactions.</li>
+    <li>Status is not communicated through color alone.</li>
+  </ul>
+  <p>Automated accessibility scans can identify many common violations but cannot establish complete accessibility on their own.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 7.1 — Write component tests</h4>
+  <p>Test adding, editing, completing, and deleting a task. Include an empty task title validation test.</p>
+
+  <h4>Exercise 7.2 — Keyboard audit</h4>
+  <p>Complete the core task-manager workflow without using a mouse.</p>
+  <p>Fix any issue preventing the workflow from being completed with a keyboard.</p>
+
+  <h4>Challenge — Combine automated testing and accessibility</h4>
+  <p>Run the component tests and an automated accessibility scan. Document what the tools found and which issues still require manual evaluation.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can test user-visible behaviour and audit a workflow for keyboard and assistive-technology access.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">Project 7 · Testing &amp; A11y</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 8 — DEPLOY & DOCUMENT
+     ============================================================ -->
+<section class="topic" id="t8">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#052e1c,#047857);">DEPLOY</div>
+  <div class="topic-head">
+    <div class="kicker">Project 8</div>
+    <h2>Deploy and Document a Portfolio Project</h2>
+    <p>Build, publish, and make it reproducible for another developer.</p>
+  </div>
+
+  <h3>Real-life analogy: Publishing a finished book</h3>
+  <p>Building a React application is like writing a book. Deployment publishes it so readers can use it, while documentation explains how the application works, how to run it, and how it is maintained.</p>
+  <p>A portfolio project should not stop at “it runs on my computer.” It should be reproducible, accessible, and understandable to another developer.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1200&q=80&auto=format&fit=crop"
+      alt="A published book with a bookmark on a desk"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The published book</div>
+    <div class="photo-caption">
+      <b>Deployment is publishing; documentation is the back cover.</b> A finished book has a title, an index, and a clear table of contents. So does a portfolio project — a README with setup steps, an architecture overview, and known limitations.
+    </div>
+  </div>
+
+  <h3>8.1 Prepare a production build</h3>
+  <p>For a Vite application:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm run build</code></pre>
+  </div>
+
+  <p>Vite produces an optimized build, normally in the <code>dist</code> directory.</p>
+  <p>You can preview the built site locally:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">terminal</span><span class="code-lang">Bash</span></div>
+    <pre><code class="lang-bash">npm run preview</code></pre>
+  </div>
+
+  <p><code>vite preview</code> is for previewing the production build locally; it is not intended to be the production server itself. See <a href="https://vite.dev/guide/static-deploy.html">Vite static deployment</a>.</p>
+  <p>Before deploying, verify the production API URL, route fallback behavior, and any necessary server-side configuration.</p>
+
+  <h3>8.2 Document your project</h3>
+  <p>A useful <code>README.md</code> should include:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">README.md</span><span class="code-lang">MD</span></div>
+    <pre><code class="lang-md"># Student Management Dashboard
+
+## Overview
+
+A responsive React and TypeScript application for managing students.
+
+## Features
+
+- Student search and filtering
+- Create, update, and delete operations
+- API integration
+- Loading and error states
+- Responsive interface
+- Automated tests
+
+## Tech Stack
+
+- React
+- TypeScript
+- Tailwind CSS
+- React Router
+- Vitest
+- React Testing Library
+
+## Installation
+
+npm install
+npm run dev
+
+## Production Build
+
+npm run build
+npm run preview
+
+## Environment Configuration
+
+Describe the public environment variables the app needs.
+Do not include real credentials.
+
+## API Requirements
+
+Document required endpoints and expected response formats.
+
+## Testing
+
+npm run test:run
+
+## Known Limitations
+
+Describe features that are not implemented yet.</code></pre>
+  </div>
+
+  <p>Your actual README should reflect the packages, scripts, and features in your repository. Do not claim a feature works unless you've implemented and tested it.</p>
+
+  <h3>8.3 Prepare a professional portfolio presentation</h3>
+  <p>Include:</p>
+  <ul>
+    <li>A brief problem statement</li>
+    <li>Screenshots of the application</li>
+    <li>A deployed demo where practical</li>
+    <li>The repository link</li>
+    <li>The tech stack</li>
+    <li>The major technical decisions</li>
+    <li>Tests and accessibility work</li>
+    <li>Setup instructions</li>
+    <li>Known limitations</li>
+  </ul>
+  <p>If the app depends on a backend, document how to run or access it and how configuration is managed without publishing credentials.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 8.1 — Deploy the project</h4>
+  <p>Deploy one completed React project to a static hosting platform or the appropriate hosting environment for its architecture.</p>
+  <p>Test the deployed application on mobile and desktop.</p>
+
+  <h4>Exercise 8.2 — Reproduce the setup</h4>
+  <p>Clone the repository into a clean directory and follow your own README instructions.</p>
+  <p>Confirm that another developer could install, configure, test, and build the application.</p>
+
+  <h4>Challenge — Publish a case study</h4>
+  <p>Write a short portfolio case study explaining the problem, component architecture, state-management approach, tests, performance considerations, and trade-offs.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can deploy a production build and write a README that another developer can follow end to end.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">Project 8 · Deploy &amp; Document</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 9 — DEBUGGING QUESTIONS
+     ============================================================ -->
+<section class="topic" id="t9">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#7f1d1d,#dc2626);">DEBUG</div>
+  <div class="topic-head">
+    <div class="kicker">Project 9</div>
+    <h2>Practice React Output and Debugging Questions</h2>
+    <p>Reason about the code — not just recall the definition.</p>
+  </div>
+
+  <p>This topic tests your ability to reason about React code rather than only memorize definitions.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=1200&q=80&auto=format&fit=crop"
+      alt="A detective examining clues with a magnifying glass"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The detective</div>
+    <div class="photo-caption">
+      <b>Debugging is detective work, not guessing.</b> Reproduce the bug, inspect the evidence, identify the root cause, fix it, and write a regression test so the same case cannot slip through twice.
+    </div>
+  </div>
+
+  <h3>Question 1 — State snapshot behavior</h3>
+  <p>What happens when the user clicks this button?</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Counter.tsx</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">function Counter() {
+  const [count, setCount] = useState(0);
+
+  function handleClick() {
+    setCount(count + 1);
+    setCount(count + 1);
+    setCount(count + 1);
+  }
+
+  return &lt;button onClick={handleClick}&gt;{count}&lt;/button&gt;;
+}</code></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="ct">◆ Answer</div>
+    <p>The count increases by one, not three.</p>
+  </div>
+
+  <p>All three expressions use the state snapshot from the current render.</p>
+  <p>To increment by three:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Functional updaters</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">setCount((value) =&gt; value + 1);
+setCount((value) =&gt; value + 1);
+setCount((value) =&gt; value + 1);</code></pre>
+  </div>
+
+  <p>Functional updater functions allow React to process each update using the previous queued result.</p>
+
+  <h3>Question 2 — Why does the list render incorrectly?</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Index keys</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">{students.map((student, index) =&gt; (
+  &lt;StudentRow key={index} student={student} /&gt;
+))}</code></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="ct">◆ Answer</div>
+    <p>Index keys can cause incorrect component identity when items are reordered, inserted, or deleted.</p>
+  </div>
+
+  <p>Use a stable identifier:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Stable key</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">{students.map((student) =&gt; (
+  &lt;StudentRow key={student.id} student={student} /&gt;
+))}</code></pre>
+  </div>
+
+  <h3>Question 3 — Why does this effect run repeatedly?</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Unstable dependency</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const options = { courseId };
+
+useEffect(() =&gt; {
+  loadStudents(options);
+}, [options]);</code></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="ct">◆ Answer</div>
+    <p>If <code>options</code> is a new object on each render, its reference changes. The effect may rerun even when <code>courseId</code> is unchanged.</p>
+  </div>
+
+  <p>A simpler approach is:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Stable dependency</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">useEffect(() =&gt; {
+  loadStudents({ courseId });
+}, [courseId]);</code></pre>
+  </div>
+
+  <p>This assumes <code>loadStudents</code> is safely referenced within the effect or is otherwise stable. If it is a reactive value defined in the component, handle its dependency correctly rather than suppressing dependency checks.</p>
+
+  <h3>Question 4 — Why is this authorization check unsafe?</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Frontend-only check</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">if (user.role === "admin") {
+  await fetch("/api/admin/books/release", {
+    method: "POST",
+  });
+}</code></pre>
+  </div>
+
+  <div class="callout warn">
+    <div class="ct">▲ Answer</div>
+    <p>The check only restricts normal UI behavior. A user can call the API independently.</p>
+  </div>
+
+  <p>The backend must verify the session and administrator permission on every protected request.</p>
+
+  <h3>Question 5 — Why is this API request dangerous?</h3>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">✕ Token in localStorage</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const token = localStorage.getItem("token");
+
+await fetch("/api/profile", {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});</code></pre>
+  </div>
+
+  <div class="callout warn">
+    <div class="ct">▲ Answer</div>
+    <p>The code is not automatically vulnerable simply because it sends a bearer token, but storing sensitive authentication tokens in JavaScript-readable browser storage increases their exposure if XSS occurs.</p>
+  </div>
+
+  <p>The correct design depends on your authentication architecture. Consider an appropriate secure session-cookie or BFF-based design where suitable, and avoid assuming that <code>localStorage</code> protects credentials.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 9.1 — Predict the output</h4>
+  <p>Write at least 15 questions involving:</p>
+  <ul>
+    <li>State updates</li>
+    <li>Hooks and dependencies</li>
+    <li>Props and rendering</li>
+    <li>List keys</li>
+    <li>Context</li>
+    <li>Memoization</li>
+    <li>Controlled inputs</li>
+    <li>Asynchronous APIs</li>
+    <li>Suspense</li>
+    <li>TypeScript narrowing</li>
+  </ul>
+  <p>Answer each question before running the code.</p>
+
+  <h4>Exercise 9.2 — Debug without guessing</h4>
+  <p>Take three deliberately broken React components.</p>
+  <p>For each one, reproduce the error, inspect the relevant values, identify the root cause, fix it, and add a regression test.</p>
+
+  <h4>Challenge — React interview simulation</h4>
+  <p>Explain five code snippets aloud in under two minutes each. Focus on what happens, why it happens, and how you'd improve it.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can reason about state snapshots, keys, effect dependencies, and frontend security without running the code first.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">Project 9 · Debugging</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 10 — HOOKS, RENDERING, STATE, PERFORMANCE
+     ============================================================ -->
+<section class="topic" id="t10">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#4c1d95,#7c3aed);">HOOKS</div>
+  <div class="topic-head">
+    <div class="kicker">Project 10</div>
+    <h2>Explain Hooks, Rendering, State and Performance</h2>
+    <p>A revision checkpoint for the most important concepts from the React roadmap.</p>
+  </div>
+
+  <p>This is a revision checkpoint for the most important concepts from the React roadmap.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80&auto=format&fit=crop"
+      alt="A view of the Earth from space with connected continents"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The system map</div>
+    <div class="photo-caption">
+      <b>Being able to explain Hooks, rendering, state, and performance is like reading the system map.</b> You know where each part lives, how the pieces connect, and where the bottlenecks are likely to appear. The interview tests the map, not the destination.
+    </div>
+  </div>
+
+  <h3>10.1 Explain React Hooks</h3>
+  <p>A Hook lets a function component use React features or reuse stateful logic.</p>
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">useState</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const [count, setCount] = useState(0);</code></pre>
+  </div>
+
+  <p>This state persists across renders of the component.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">useRef</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const inputRef = useRef&lt;HTMLInputElement | null&gt;(null);</code></pre>
+  </div>
+
+  <p>This ref persists a mutable reference without triggering a render when <code>.current</code> changes.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">useMemo</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const filteredStudents = useMemo(() =&gt; {
+  return filterStudents(students, query);
+}, [students, query]);</code></pre>
+  </div>
+
+  <p>This memoizes a calculation while its dependencies remain unchanged.</p>
+  <p>You should be able to explain the purpose of each Hook, when to use it, and its limitations.</p>
+
+  <h3>10.2 Explain rendering</h3>
+  <p>React rendering is the process of calculating the UI from a component's current props, state, and context.</p>
+  <p>A render does not necessarily change the DOM. React compares the new result with the previous output and commits the required changes.</p>
+  <p>In an interview, explain why:</p>
+  <ul>
+    <li>A parent update may cause child components to render.</li>
+    <li>Context changes can cause consumers to render.</li>
+    <li>Rendering should be pure.</li>
+    <li>Memoization can reduce some work but is not needed everywhere.</li>
+  </ul>
+
+  <h3>10.3 Explain state management</h3>
+  <p>State represents the information React must remember across renders because it changes over time.</p>
+  <p>For example:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Selected state</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const [selectedStudentId, setSelectedStudentId] =
+  useState&lt;string | null&gt;(null);</code></pre>
+  </div>
+
+  <p>Do not store duplicate derived values without a reason.</p>
+  <p>If your application needs to display the number of selected students:</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">Derived value</span><span class="code-lang">TSX</span></div>
+    <pre><code class="lang-tsx">const selectedCount = selectedStudents.length;</code></pre>
+  </div>
+
+  <p>The count is derived from the array rather than maintained as separate state that could become inconsistent.</p>
+  <p>You should know when to use local state, context, reducers, Redux Toolkit, or a server-state library based on the problem's complexity and sharing requirements.</p>
+
+  <h3>10.4 Explain performance optimization</h3>
+  <p>Use an evidence-based sequence:</p>
+  <ol class="steps">
+    <li>Identify the slow interaction.</li>
+    <li>Measure the relevant work.</li>
+    <li>Find the underlying bottleneck.</li>
+    <li>Choose an appropriate optimization.</li>
+    <li>Test correctness.</li>
+    <li>Measure again.</li>
+  </ol>
+  <p>The optimization might be state localization, reduced computation, memoization, virtualization, pagination, image optimization, or code splitting. Each technique solves a different problem.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 10.1 — Explain your own code</h4>
+  <p>Select one project from this phase and explain:</p>
+  <ul>
+    <li>Its component tree</li>
+    <li>Where the state lives</li>
+    <li>How data flows</li>
+    <li>Which effects are used and why</li>
+    <li>How API requests are handled</li>
+    <li>Which performance decisions you made</li>
+  </ul>
+
+  <h4>Exercise 10.2 — Refactor for clarity</h4>
+  <p>Find a component with multiple responsibilities. Extract a useful Hook, API helper, or child component while preserving behavior.</p>
+
+  <h4>Challenge — Ten-minute code review</h4>
+  <p>Review a small React application. Identify correctness problems, accessibility issues, security weaknesses, and performance risks. Prioritize fixes by their impact rather than attempting to change everything at once.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can explain Hooks, rendering, state, and performance in your own words and with the code in front of you.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">Project 10 · Hooks &amp; Performance</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOPIC 11 — TRADE-OFFS
+     ============================================================ -->
+<section class="topic" id="t11">
+  <div class="chapter-tab" style="background:linear-gradient(140deg,#052e1c,#d97706);">TRADE</div>
+  <div class="topic-head">
+    <div class="kicker">Project 11</div>
+    <h2>Review Trade-offs and Real-World Architecture Decisions</h2>
+    <p>Choose the solution — not merely name the tool.</p>
+  </div>
+
+  <p>A strong React developer knows how to choose a solution, not merely how to name available tools.</p>
+  <p>Real projects involve trade-offs. The right choice depends on the scale, requirements, team, data flow, operational constraints, and expected lifespan of the application.</p>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1502085671122-2d218cd434e6?w=1200&q=80&auto=format&fit=crop"
+      alt="A fork in a quiet road with signs"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The fork in the road</div>
+    <div class="photo-caption">
+      <b>Every architecture decision is a fork in the road.</b> Neither path is wrong — but you must know why you chose the one you did, and what you would have to give up to take the other.
+    </div>
+  </div>
+
+  <h3>11.1 Compare common architecture choices</h3>
+
+  <table>
+    <thead><tr><th>Decision</th><th>Prefer this when...</th><th>Watch out for...</th></tr></thead>
+    <tbody>
+      <tr><td>Local <code>useState</code> vs Context</td><td>Local state belongs to one component; Context helps distribute shared values</td><td>Context isn't automatically an ideal store for all application state</td></tr>
+      <tr><td><code>useReducer</code> vs multiple state setters</td><td>State transitions have related logic or many actions</td><td>Reducers can be excessive for tiny components</td></tr>
+      <tr><td>Redux Toolkit vs Context</td><td>Shared client state or workflows benefit from a dedicated store</td><td>Don't duplicate server-query data unnecessarily</td></tr>
+      <tr><td>CSS Modules vs Tailwind</td><td>Isolated stylesheet control vs rapid utility composition</td><td>Mixed conventions can confuse contributors</td></tr>
+      <tr><td>Vite SPA vs Next.js</td><td>Client-side application vs a need for framework rendering and routing capabilities</td><td>Framework complexity and operational needs</td></tr>
+      <tr><td>Client-side filtering vs server-side search</td><td>Small datasets vs very large or permission-sensitive datasets</td><td>Sending all records to the browser may be inappropriate</td></tr>
+      <tr><td>Pagination vs virtualization</td><td>Server-driven pages vs long local lists</td><td>Virtualization alone does not reduce downloaded data</td></tr>
+      <tr><td>Optimistic update vs wait for server</td><td>Immediate feedback is valuable and rollback is manageable</td><td>Failed writes require reconciliation</td></tr>
+      <tr><td>Monolith vs feature modules</td><td>Small, cohesive project vs a growing application</td><td>Too many abstractions can create unnecessary complexity</td></tr>
+    </tbody>
+  </table>
+
+  <h3>11.2 Real-life scenario: Should you use Redux?</h3>
+  <p>Imagine a dashboard with three filters and one modal.</p>
+  <p>A component with <code>useState</code> may be enough.</p>
+  <p>Now imagine an LMS where student records, course enrollment, assignments, notifications, and admin actions share complex client-side state across many parts of the application.</p>
+  <p>A state-management library may provide better organization and debugging capabilities.</p>
+  <p>There is no universal rule that every professional React app needs Redux. Your decision should reflect the actual state-sharing and workflow requirements.</p>
+
+  <h3>11.3 Real-life scenario: Should you use Next.js?</h3>
+  <p>Imagine an internal dashboard used by authenticated employees that consumes an existing backend API.</p>
+  <p>React + Vite may be sufficient.</p>
+  <p>If the same product also needs public course pages, server rendering, server-side data access, framework-level routing, and streaming, Next.js may provide useful built-in features.</p>
+  <p>Neither option is always superior. Evaluate the requirements and operational trade-offs.</p>
+
+  <h3>11.4 Write a decision record</h3>
+  <p>A simple technical decision record can prevent architecture decisions from being forgotten or repeatedly debated.</p>
+
+  <div class="code-card">
+    <div class="code-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-title">decision-001-search.md</span><span class="code-lang">MD</span></div>
+    <pre><code class="lang-md"># Decision: Client-side versus server-side product search
+
+## Context
+The catalogue contains a large number of products.
+
+## Options
+1. Filter every downloaded product in React.
+2. Fetch search results from the backend.
+3. Download pages of data and virtualize the list.
+
+## Decision
+Use server-side search and pagination.
+
+## Reason
+The dataset is large, server-side permissions matter, and downloading all
+records to the browser is unnecessary.
+
+## Consequences
+The API must support search and pagination.
+The frontend must handle loading, empty, and error states.</code></pre>
+  </div>
+
+  <p>This makes the reasoning visible to future contributors.</p>
+
+  <h3>Hands-on exercises</h3>
+
+  <h4>Exercise 11.1 — Choose a state-management approach</h4>
+  <p>For each scenario, decide whether you would use local state, Context, <code>useReducer</code>, Redux Toolkit, or a server-state library.</p>
+  <p>Explain the requirements that influence each decision.</p>
+
+  <h4>Exercise 11.2 — Choose a rendering architecture</h4>
+  <p>Evaluate a public course catalogue and an internal admin dashboard.</p>
+  <p>Decide whether to use a React SPA, Next.js, or a combination of frontend architectures across different products. Justify your choice based on routing, rendering, APIs, hosting, and developer experience.</p>
+
+  <h4>Challenge — Architecture review</h4>
+  <p>Write three decision records for your final portfolio project:</p>
+  <ol>
+    <li>State management</li>
+    <li>Routing and rendering</li>
+    <li>Data fetching and caching</li>
+  </ol>
+  <p>For each, document alternatives, rationale, risks, and when you would revisit the decision.</p>
+
+  <div class="callout remember">
+    <div class="ct">◆ Completion goal</div>
+    <p>You can compare architecture choices honestly and document the rationale behind your own decisions.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">Project 11 · Trade-offs</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     CAPSTONE
+     ============================================================ -->
+<section class="capstone" id="capstone">
+  <div class="capstone-head">
+    <div class="kicker">🎓 Final Capstone</div>
+    <h2>React Developer Graduation Project</h2>
+    <p>Build one substantial application that combines the most important React concepts.</p>
+  </div>
+
+  <div class="photo-figure">
+    <img
+      src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80&auto=format&fit=crop"
+      alt="A graduation cap and diploma on a table"
+      loading="lazy"
+    />
+    <div class="photo-badge">Analogy · The graduation project</div>
+    <div class="photo-caption">
+      <b>The capstone is the graduation project: one substantial application that proves the whole curriculum.</b> It has authentication, routing, state, APIs, testing, accessibility, deployment, and documentation. Every piece is real.
+    </div>
+  </div>
+
+  <h3>Recommended project: Full Stack Training LMS frontend</h3>
+
+  <h4>Core modules</h4>
+  <ul>
+    <li>Authentication-aware dashboard</li>
+    <li>Student management</li>
+    <li>Course catalogue</li>
+    <li>Book-release interface</li>
+    <li>Attendance</li>
+    <li>Search and filters</li>
+    <li>Forms and validation</li>
+    <li>Loading, error, and empty states</li>
+    <li>Responsive UI and dark mode</li>
+    <li>Testing and accessibility</li>
+    <li>Production build and deployment</li>
+  </ul>
+
+  <h4>Suggested frontend architecture</h4>
+
+  <div class="tree"><span class="dir">src/</span>
+├── <span class="dir">app/</span>
+│   ├── <span class="file">App.tsx</span>
+│   ├── <span class="file">router.tsx</span>
+│   └── <span class="file">providers.tsx</span>
+├── <span class="dir">features/</span>
+│   ├── <span class="dir">auth/</span>
+│   ├── <span class="dir">students/</span>
+│   ├── <span class="dir">courses/</span>
+│   ├── <span class="dir">books/</span>
+│   ├── <span class="dir">attendance/</span>
+│   └── <span class="dir">analytics/</span>
+├── <span class="dir">shared/</span>
+│   ├── <span class="dir">components/</span>
+│   ├── <span class="dir">hooks/</span>
+│   └── <span class="dir">utilities/</span>
+├── <span class="dir">api/</span>
+├── <span class="dir">types/</span>
+└── <span class="dir">styles/</span></div>
+
+  <p>This is an example structure, not a requirement to use every folder. Organize around actual features and maintain clear dependencies.</p>
+
+  <h4>Final acceptance criteria</h4>
+
+  <ul class="checklist">
+    <li>Components have clear responsibilities and typed APIs.</li>
+    <li>State is placed intentionally and derived data is not duplicated unnecessarily.</li>
+    <li>Search and filtering behave correctly.</li>
+    <li>API requests handle success, loading, errors, and empty responses.</li>
+    <li>Protected operations are authorized by the backend.</li>
+    <li>Inputs and dialogs are keyboard accessible.</li>
+    <li>Unit and component tests cover core workflows.</li>
+    <li>At least one critical end-to-end workflow is automated.</li>
+    <li>Performance optimizations are based on measurements.</li>
+    <li>The application builds and deploys successfully.</li>
+    <li>The README documents setup, architecture, and known limitations.</li>
+    <li>You can explain the trade-offs behind the important technical decisions.</li>
+  </ul>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">🎓 Capstone</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     INTERVIEW PREPARATION PLAN
+     ============================================================ -->
+<section class="qa-section" id="interview-plan">
+  <div class="qa-head">
+    <div class="kicker">↺ Interview</div>
+    <h2>Final React Interview Preparation Plan</h2>
+    <p>What to be able to explain — clearly, with examples, without notes.</p>
+  </div>
+
+  <h3>React fundamentals</h3>
+  <p>Be able to explain props, state, conditional rendering, list keys, component composition, controlled inputs, forms, and effects.</p>
+
+  <h3>Hooks and state management</h3>
+  <p>Understand <code>useState</code>, <code>useEffect</code>, <code>useRef</code>, <code>useContext</code>, <code>useReducer</code>, <code>useMemo</code>, <code>useCallback</code>, transitions, and when shared state needs a dedicated store.</p>
+
+  <h3>TypeScript</h3>
+  <p>Be able to type props, events, state, children, generic components, API responses, and discriminated unions. Understand why types do not replace runtime validation.</p>
+
+  <h3>Routing and architecture</h3>
+  <p>Explain route layouts, dynamic routes, feature boundaries, Context, reducers, dependency injection, and the trade-offs between a standalone React SPA and a React framework such as Next.js.</p>
+
+  <h3>Performance and accessibility</h3>
+  <p>Explain profiling, memoization, virtualization, code splitting, Web Vitals, semantic HTML, keyboard navigation, ARIA, and focus management.</p>
+
+  <h3>Testing and production readiness</h3>
+  <p>Understand component tests, E2E testing, API mocking, error reporting, environment configuration, secure sessions, CI checks, deployment, and production debugging.</p>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">↺ Interview Plan</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     REVISION CHECKLIST
+     ============================================================ -->
+<section class="qa-section" id="revision-checklist">
+  <div class="qa-head" style="background:linear-gradient(135deg,#022c22 0%, #052e1c 58%, #d97706 100%);">
+    <div class="kicker">✓ Self-Assessment</div>
+    <h2>Final practical revision checklist</h2>
+    <p>Before considering your React roadmap complete, build and explain these skills without depending entirely on copied examples.</p>
+  </div>
+
+  <ul class="checklist">
+    <li>CRUD with controlled forms and immutable state updates</li>
+    <li>API integration with typed data and correct error handling</li>
+    <li>Searchable and filterable data tables</li>
+    <li>Authentication-aware navigation</li>
+    <li>Multi-page React application</li>
+    <li>Full-stack API integration</li>
+    <li>Component tests and user interactions</li>
+    <li>Keyboard accessibility and accessible forms</li>
+    <li>Measured performance optimization</li>
+    <li>Production builds, deployment, and documentation</li>
+    <li>Clear technical explanations and architecture decisions</li>
+  </ul>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">✓ Revision Checklist</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     RESOURCES
+     ============================================================ -->
+<section class="resources" id="resources">
+  <div class="resources-head">
+    <h2>Recommended official resources</h2>
+    <p>Keep these references handy throughout your career.</p>
+  </div>
+
+  <ol class="res-list">
+    <li><a href="https://react.dev/learn/thinking-in-react">React — Thinking in React</a></li>
+    <li><a href="https://react.dev/learn">React — Learn React</a></li>
+    <li><a href="https://react.dev/learn/typescript">React — TypeScript</a></li>
+    <li><a href="https://reactrouter.com/start/declarative/routing">React Router — Routing</a></li>
+    <li><a href="https://testing-library.com/docs/react-testing-library/intro/">React Testing Library</a></li>
+    <li><a href="https://playwright.dev/docs/running-tests">Playwright — Running and debugging tests</a></li>
+    <li><a href="https://vite.dev/guide/build">Vite — Production build</a></li>
+    <li><a href="https://vite.dev/guide/static-deploy">Vite — Deployment</a></li>
+    <li><a href="https://open-meteo.com/en/docs">Open-Meteo API documentation</a></li>
+    <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html">OWASP Authorization guidance</a></li>
+  </ol>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">Resources</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     FINAL GOAL
+     ============================================================ -->
+<section class="final-section" id="final-goal">
+  <div class="final-card">
+    <div class="fc-kicker">Final Goal · Phase 15</div>
+    <h2>Build real applications that you can explain</h2>
+    <p>Build real applications, demonstrate that they work through tests, deploy at least one project, and explain why your implementation choices are appropriate.</p>
+    <div class="key-principle">
+      <b>The key principle:</b> Being a strong React developer means more than knowing Hooks and JSX. It means you can turn requirements into maintainable components, integrate real data, diagnose failures, protect users, test important behavior, and justify your architectural decisions.
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>React JS — Phase 15 · Projects, Revision &amp; Interview Preparation</span>
+    <span class="pg">Final Goal</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     BACK COVER
+     ============================================================ -->
+<section class="back-cover">
+  <div class="back-cover-inner">
+    <span class="bc-badge">End of Phase 15 · React Roadmap Complete</span>
+    <h2>You are not done learning.<br>You are ready to build.</h2>
+    <p>You have built a CRUD task manager, a weather app, a searchable catalogue, an authentication dashboard, a multi-page admin application, and a full-stack MERN frontend. You have tested behaviour, audited accessibility, deployed a production build, debugged state snapshots, and documented architectural trade-offs. You have prepared for the interview with hooks, rendering, state, performance, and decision records.</p>
+
+    <div class="bc-rule"></div>
+
+    <p>The React roadmap ends here. The real work begins now: build applications that solve real problems, protect real users, and survive real change. Keep testing. Keep explaining. Keep choosing the simplest pattern that solves the problem.</p>
+
+    <div class="bc-foot">
+      <div>
+        <strong>React JS Learning Track</strong><br>
+        Frontend Development · Phase 15 of the React Curriculum
+      </div>
+      <div style="text-align:right">
+        <strong>What comes next</strong><br>
+        Build. Ship. Learn. Repeat.
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- .book -->
+</div><!-- .book-wrap -->
+</body>
+</html>
