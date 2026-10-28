@@ -21,6 +21,8 @@ const activitySchema = new mongoose.Schema(
     type: { type: String, enum: Object.values(ACTIVITY_TYPES), required: true },
     course: { type: ObjectId, ref: 'Course', default: null },
     lesson: { type: ObjectId, ref: 'Lesson', default: null },
+    studyBook: { type: ObjectId, ref: 'StudyBook', default: null },
+    studyModule: { type: ObjectId, ref: 'StudyModule', default: null },
     assignment: { type: ObjectId, ref: 'Assignment', default: null },
     submission: { type: ObjectId, ref: 'Submission', default: null },
     attempt: { type: Number, min: 1, default: null },

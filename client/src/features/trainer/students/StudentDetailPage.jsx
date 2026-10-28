@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
 import { coursesApi, useCourseMutation, useCourses } from '../../courses/api.js';
+import { StudentBooksAccessPanel } from './StudentBooksAccessPanel.jsx';
 import { formatDateTime, formatMarks, relativeTime } from '../../assignments/format.js';
 import { LateBadge, SubmissionStateBadge } from '../../assignments/components/AssignmentParts.jsx';
 import { Badge } from '../../../components/ui/Badge.jsx';
@@ -351,6 +352,7 @@ export function StudentDetailPage() {
   const location = useLocation();
   const detail = useStudentDetail(studentId);
   const report = useStudentReport(studentId);
+  const [activeTab, setActiveTab] = useState('courses'); // 'courses' | 'books'
 
   if (detail.isPending) {
     return (
@@ -410,34 +412,64 @@ export function StudentDetailPage() {
         <StatTile label="Overdue assignments" value={summary.assignments.overdue} tone="danger" />
       </dl>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-        <div className="space-y-6">
-          <EnrollmentsCard detail={detail.data} />
-          {report.data && <ModuleProgress courses={report.data.courses} />}
-        </div>
-        <div className="space-y-6">
-          {report.isPending ? (
-            <Skeleton className="h-64" />
-          ) : report.isError ? (
-            <ErrorState message={getErrorMessage(report.error)} onRetry={report.refetch} />
-          ) : (
-            <>
-              <AssignmentsCard assignments={report.data.assignments} />
-              <SubmissionsCard
-                submissions={report.data.submissions}
-                marks={report.data.marks}
-                from={from}
-              />
-              <Card aria-label="Recent activity">
-                <CardHeader title="Recent activity" />
-                <CardBody>
-                  <ActivityList items={report.data.activity} showStudent={false} />
-                </CardBody>
-              </Card>
-            </>
-          )}
-        </div>
+      {/* Workspace Tabs: Courses vs Books & Learning Access */}
+      <div className="flex border-b border-slate-200/80 dark:border-white/10 gap-2">
+        <button
+          type="button"
+          onClick={() => setActiveTab('courses')}
+          className={`flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-semibold transition-all ${
+            activeTab === 'courses'
+              ? 'border-brand-600 text-brand-700 dark:border-cyan-400 dark:text-cyan-300'
+              : 'border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+          }`}
+        >
+          <span>🎓 Course Enrollments & Activity</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('books')}
+          className={`flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-semibold transition-all ${
+            activeTab === 'books'
+              ? 'border-brand-600 text-brand-700 dark:border-cyan-400 dark:text-cyan-300'
+              : 'border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+          }`}
+        >
+          <span>📚 Books & Learning Access</span>
+        </button>
       </div>
+
+      {activeTab === 'courses' ? (
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+          <div className="space-y-6">
+            <EnrollmentsCard detail={detail.data} />
+            {report.data && <ModuleProgress courses={report.data.courses} />}
+          </div>
+          <div className="space-y-6">
+            {report.isPending ? (
+              <Skeleton className="h-64" />
+            ) : report.isError ? (
+              <ErrorState message={getErrorMessage(report.error)} onRetry={report.refetch} />
+            ) : (
+              <>
+                <AssignmentsCard assignments={report.data.assignments} />
+                <SubmissionsCard
+                  submissions={report.data.submissions}
+                  marks={report.data.marks}
+                  from={from}
+                />
+                <Card aria-label="Recent activity">
+                  <CardHeader title="Recent activity" />
+                  <CardBody>
+                    <ActivityList items={report.data.activity} showStudent={false} />
+                  </CardBody>
+                </Card>
+              </>
+            )}
+          </div>
+        </div>
+      ) : (
+        <StudentBooksAccessPanel studentId={student.id} studentName={student.name} />
+      )}
     </div>
   );
 }

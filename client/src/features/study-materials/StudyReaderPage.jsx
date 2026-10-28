@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router';
 import {
   useAdminStudyPreview,
+  useStudentStudyBookDetail,
   useStudentStudyModuleContent,
   useToggleModuleCompletion,
 } from './api.js';
@@ -33,6 +34,7 @@ export function StudyReaderPage({ mode = 'student' }) {
   const navigate = useNavigate();
   const containerRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Fetch data depending on mode
   const previewQuery = useAdminStudyPreview(mode === 'preview' ? moduleId : null);
@@ -40,6 +42,7 @@ export function StudyReaderPage({ mode = 'student' }) {
     mode === 'student' ? bookSlug : null,
     mode === 'student' ? moduleSlug : null,
   );
+  const bookDetailQuery = useStudentStudyBookDetail(mode === 'student' ? bookSlug : null);
 
   const query = mode === 'preview' ? previewQuery : studentQuery;
   const { data, isLoading, error } = query;
@@ -263,6 +266,22 @@ export function StudyReaderPage({ mode = 'student' }) {
 
           <div className="h-5 w-px bg-slate-700" />
 
+          {/* Syllabus Sidebar Toggle */}
+          <button
+            type="button"
+            onClick={() => setIsSidebarOpen((prev) => !prev)}
+            className={`flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+              isSidebarOpen
+                ? 'border-cyan-500/50 bg-cyan-500/20 text-cyan-300'
+                : 'border-slate-700/60 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+            }`}
+            title="Toggle Phase & Module Navigation Sidebar"
+            aria-label="Toggle Syllabus Sidebar"
+          >
+            <span>📑</span>
+            <span className="hidden md:inline">Syllabus</span>
+          </button>
+
           {/* Fullscreen toggle */}
           <button
             type="button"
@@ -288,16 +307,108 @@ export function StudyReaderPage({ mode = 'student' }) {
         </div>
       </header>
 
-      {/* Sandboxed iframe container */}
-      <main className="relative flex-1 overflow-hidden bg-white">
-        <iframe
-          key={module.id || module.slug}
-          sandbox="allow-scripts"
-          srcDoc={content}
-          title={module.title}
-          className="h-full w-full border-0 bg-white"
-        />
-      </main>
+      {/* Content Area: Sidebar + Sandboxed Iframe */}
+      <div className="relative flex flex-1 overflow-hidden">
+        {/* Phase/Module Navigation Sidebar */}
+        {isSidebarOpen && mode === 'student' && (
+          <aside className="w-72 shrink-0 border-r border-slate-700/60 bg-slate-900/95 flex flex-col backdrop-blur-xl z-20 overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-700/60 p-3.5">
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-cyan-400">
+                  {activeBook?.title || 'Course Syllabus'}
+                </h3>
+                {bookDetailQuery.data && (
+                  <p className="text-[11px] text-slate-400">
+                    {bookDetailQuery.data.completedCount} of {bookDetailQuery.data.releasedCount} completed
+                  </p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsSidebarOpen(false)}
+                className="rounded-lg p-1 text-slate-400 hover:bg-white/10 hover:text-white"
+                aria-label="Close sidebar"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-2 space-y-1">
+              {(bookDetailQuery.data?.modules || []).map((m) => {
+                const isActive = m.slug === module.slug;
+                const isDone = m.readingProgress?.isCompleted;
+                const inProg = !isDone && m.readingProgress?.totalReadingSeconds > 0;
+
+                if (!m.isReleased) {
+                  return (
+                    <div
+                      key={m.id}
+                      className="flex items-center justify-between rounded-xl p-2.5 text-xs text-slate-500 opacity-60"
+                      title="Locked by trainer"
+                    >
+                      <div className="min-w-0 pr-2">
+                        {m.phaseLabel && (
+                          <span className="text-[10px] font-bold text-slate-500 block">
+                            {m.phaseLabel}
+                          </span>
+                        )}
+                        <span className="truncate block font-medium">{m.title}</span>
+                      </div>
+                      <span className="text-xs">🔒</span>
+                    </div>
+                  );
+                }
+
+                return (
+                  <Link
+                    key={m.id}
+                    to={`/app/study-materials/${activeBook.slug}/modules/${m.slug}`}
+                    onClick={() => {
+                      if (window.innerWidth < 768) setIsSidebarOpen(false);
+                    }}
+                    className={`flex items-center justify-between rounded-xl p-2.5 text-xs transition-colors ${
+                      isActive
+                        ? 'bg-cyan-500/20 text-cyan-200 border border-cyan-500/40 font-semibold'
+                        : isDone
+                          ? 'text-slate-300 hover:bg-emerald-500/10'
+                          : inProg
+                            ? 'text-slate-300 hover:bg-amber-500/10'
+                            : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    <div className="min-w-0 pr-2">
+                      {m.phaseLabel && (
+                        <span
+                          className={`text-[10px] font-bold block ${
+                            isActive ? 'text-cyan-300' : 'text-slate-400'
+                          }`}
+                        >
+                          {m.phaseLabel}
+                        </span>
+                      )}
+                      <span className="truncate block">{m.title}</span>
+                    </div>
+                    <span className="shrink-0 text-xs">
+                      {isDone ? '✓' : inProg ? '⏱️' : '○'}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </aside>
+        )}
+
+        {/* Sandboxed iframe container */}
+        <main className="relative flex-1 overflow-hidden bg-white">
+          <iframe
+            key={module.id || module.slug}
+            sandbox="allow-scripts"
+            srcDoc={content}
+            title={module.title}
+            className="h-full w-full border-0 bg-white"
+          />
+        </main>
+      </div>
 
       {/* Associated Assignment Banner (if linked) */}
       {module.linkedAssignment && (

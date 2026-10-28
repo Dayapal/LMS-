@@ -10,6 +10,7 @@ import {
   StudyBook,
   StudyModule,
   StudyProgress,
+  Submission,
   User,
 } from '../models/index.js';
 import { recordActivity } from './activity.service.js';
@@ -540,11 +541,37 @@ export async function getAdminStudentAccessDetail(studentId) {
     throw ApiError.notFound('Student not found');
   }
 
-  const books = await StudyBook.find().sort({ order: 1 });
-  const modules = await StudyModule.find().sort({ order: 1 });
-  const accesses = await StudyAccess.find({ student: student._id });
+  const [books, modules, accesses, progresses] = await Promise.all([
+    StudyBook.find().sort({ order: 1 }),
+    StudyModule.find()
+      .sort({ order: 1 })
+      .populate('linkedAssignment', 'title dueAt maxMarks instructions'),
+    StudyAccess.find({ student: student._id }).populate('grantedBy', 'name email'),
+    StudyProgress.find({ student: student._id }),
+  ]);
+
+  const assignmentIds = modules
+    .map((m) => m.linkedAssignment?._id)
+    .filter(Boolean);
+
+  const submissions =
+    assignmentIds.length > 0
+      ? await Submission.find({ student: student._id, assignment: { $in: assignmentIds } }).sort({
+          attempt: -1,
+        })
+      : [];
+
+  const submissionByAssignment = new Map();
+  for (const sub of submissions) {
+    const key = sub.assignment.toString();
+    if (!submissionByAssignment.has(key)) {
+      submissionByAssignment.set(key, sub);
+    }
+  }
 
   const accessByBook = new Map(accesses.map((a) => [a.book.toString(), a]));
+  const progressByModule = new Map(progresses.map((p) => [p.module.toString(), p]));
+
   const modulesByBook = new Map();
   for (const mod of modules) {
     const key = mod.book.toString();
@@ -558,22 +585,97 @@ export async function getAdminStudentAccessDetail(studentId) {
     const bookModules = modulesByBook.get(bookId) || [];
     const releasedSet = new Set((acc?.releasedModules || []).map((id) => id.toString()));
 
+    const releasedModules = bookModules.filter((m) => releasedSet.has(m._id.toString()));
+    const completedModules = releasedModules.filter(
+      (m) => progressByModule.get(m._id.toString())?.isCompleted,
+    );
+    const totalReadingSecs = bookModules.reduce(
+      (sum, m) => sum + (progressByModule.get(m._id.toString())?.totalReadingSeconds || 0),
+      0,
+    );
+    const percent =
+      releasedModules.length > 0
+        ? Math.round((completedModules.length / releasedModules.length) * 100)
+        : 0;
+
+    const nextUnreleased = bookModules.find(
+      (m) => m.status === CONTENT_STATUS.PUBLISHED && !releasedSet.has(m._id.toString()),
+    );
+
     return {
       bookId,
       slug: book.slug,
       title: book.title,
       category: book.category,
+      gradient: book.gradient,
       isAssigned: Boolean(acc?.isBookAssigned),
-      canViewReport: acc ? acc.canViewReport : true,
-      modules: bookModules.map((m) => ({
-        id: m._id.toString(),
-        slug: m.slug,
-        title: m.title,
-        phaseLabel: m.phaseLabel,
-        order: m.order,
-        status: m.status,
-        isReleased: releasedSet.has(m._id.toString()),
-      })),
+      canViewReport: acc ? acc.canViewReport : false,
+      grantedAt: acc?.grantedAt || null,
+      grantedBy: acc?.grantedBy
+        ? {
+            id: acc.grantedBy._id.toString(),
+            name: acc.grantedBy.name,
+            email: acc.grantedBy.email,
+          }
+        : null,
+      progress: {
+        releasedCount: releasedModules.length,
+        completedCount: completedModules.length,
+        totalModules: bookModules.length,
+        percent,
+        totalReadingSeconds: totalReadingSecs,
+      },
+      nextUnreleasedModule: nextUnreleased
+        ? {
+            id: nextUnreleased._id.toString(),
+            slug: nextUnreleased.slug,
+            title: nextUnreleased.title,
+            phaseLabel: nextUnreleased.phaseLabel,
+            order: nextUnreleased.order,
+          }
+        : null,
+      modules: bookModules.map((m) => {
+        const prog = progressByModule.get(m._id.toString());
+        const sub = m.linkedAssignment
+          ? submissionByAssignment.get(m.linkedAssignment._id.toString())
+          : null;
+
+        return {
+          id: m._id.toString(),
+          slug: m.slug,
+          title: m.title,
+          phaseLabel: m.phaseLabel,
+          order: m.order,
+          status: m.status,
+          estimatedMinutes: m.estimatedMinutes,
+          isReleased: releasedSet.has(m._id.toString()),
+          readingProgress: {
+            isCompleted: Boolean(prog?.isCompleted),
+            completedAt: prog?.completedAt || null,
+            totalReadingSeconds: prog?.totalReadingSeconds || 0,
+            lastScrollPosition: prog?.lastScrollPosition || 0,
+            lastAccessedAt: prog?.lastAccessedAt || null,
+          },
+          linkedAssignment: m.linkedAssignment
+            ? {
+                id: m.linkedAssignment._id.toString(),
+                title: m.linkedAssignment.title,
+                dueAt: m.linkedAssignment.dueAt,
+                maxMarks: m.linkedAssignment.maxMarks,
+                submission: sub
+                  ? {
+                      id: sub._id.toString(),
+                      status: sub.status,
+                      attempt: sub.attempt,
+                      submittedAt: sub.submittedAt,
+                      marks: sub.review?.finalMarks ?? null,
+                      isLate: Boolean(sub.isLate),
+                    }
+                  : null,
+              }
+            : null,
+        };
+      }),
     };
   });
 
@@ -589,8 +691,13 @@ export async function getAdminStudentAccessDetail(studentId) {
 
 /**
  * Admin: Update access for an individual student on a specific book.
+ * Supports action: 'release_next' | 'release_all' | 'revoke_all'
  */
-export async function updateAdminStudentAccess(studentId, { bookId, isBookAssigned, releasedModuleIds, canViewReport }, adminUser) {
+export async function updateAdminStudentAccess(
+  studentId,
+  { bookId, isBookAssigned, releasedModuleIds, canViewReport, action },
+  adminUser,
+) {
   const student = await User.findById(studentId);
   if (!student || student.role !== 'student') throw ApiError.notFound('Student not found');
 
@@ -602,15 +709,42 @@ export async function updateAdminStudentAccess(studentId, { bookId, isBookAssign
     access = new StudyAccess({
       student: student._id,
       book: book._id,
-      grantedBy: adminUser._id,
+      grantedBy: adminUser?._id,
       grantedAt: new Date(),
+      canViewReport: false,
     });
+  }
+
+  if (adminUser?._id) {
+    access.grantedBy = adminUser._id;
+    access.grantedAt = new Date();
+  }
+
+  if (action === 'release_next') {
+    const publishedModules = await StudyModule.find({
+      book: book._id,
+      status: CONTENT_STATUS.PUBLISHED,
+    }).sort({ order: 1 });
+    const currentReleased = new Set((access.releasedModules || []).map((id) => id.toString()));
+    const nextMod = publishedModules.find((m) => !currentReleased.has(m._id.toString()));
+    if (nextMod) {
+      access.releasedModules.push(nextMod._id);
+      access.isBookAssigned = true;
+    }
+  } else if (action === 'release_all') {
+    const allPublished = await StudyModule.find({
+      book: book._id,
+      status: CONTENT_STATUS.PUBLISHED,
+    }).select('_id');
+    access.releasedModules = allPublished.map((m) => m._id);
+    access.isBookAssigned = true;
+  } else if (action === 'revoke_all') {
+    access.releasedModules = [];
   }
 
   if (isBookAssigned !== undefined) access.isBookAssigned = Boolean(isBookAssigned);
   if (canViewReport !== undefined) access.canViewReport = Boolean(canViewReport);
   if (Array.isArray(releasedModuleIds)) {
-    // Validate module ids belong to this book
     const validModules = await StudyModule.find({
       book: book._id,
       _id: { $in: releasedModuleIds.map((id) => new mongoose.Types.ObjectId(id)) },
@@ -619,6 +753,20 @@ export async function updateAdminStudentAccess(studentId, { bookId, isBookAssign
   }
 
   await access.save();
+
+  if (adminUser?._id) {
+    try {
+      await recordActivity({
+        user: student._id,
+        actor: adminUser._id,
+        type: ACTIVITY_TYPES.STUDY_ACCESS_UPDATED,
+        studyBook: book._id,
+      });
+    } catch {
+      // Activity recording should not fail the main access update
+    }
+  }
+
   return access;
 }
 
@@ -958,7 +1106,7 @@ export async function exportAdminStudyReportsCsv({ subject } = {}) {
  */
 export async function getStudentProgressReport(user) {
   const accesses = await StudyAccess.find({ student: user._id, isBookAssigned: true });
-  const hasHiddenReport = accesses.some((a) => a.canViewReport === false);
+  const hasHiddenReport = accesses.length > 0 && accesses.some((a) => a.canViewReport === false);
 
   if (hasHiddenReport) {
     throw ApiError.forbidden('Progress report visibility is currently disabled by your trainer');

@@ -119,6 +119,8 @@ describe('Activity log', () => {
         'course',
         'createdAt',
         'lesson',
+        'studyBook',
+        'studyModule',
         'submission',
         'type',
         'user',

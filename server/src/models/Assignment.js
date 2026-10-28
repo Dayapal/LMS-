@@ -14,6 +14,8 @@ const assignmentSchema = new mongoose.Schema(
     course: { type: ObjectId, ref: 'Course', required: true },
     module: { type: ObjectId, ref: 'Module', default: null },
     lesson: { type: ObjectId, ref: 'Lesson', default: null },
+    studyBook: { type: ObjectId, ref: 'StudyBook', default: null },
+    studyModule: { type: ObjectId, ref: 'StudyModule', default: null },
     title: { type: String, required: true, trim: true, maxlength: 140 },
     instructions: { type: String, trim: true, maxlength: 20_000, default: '' },
     objectives: { type: [{ type: String, trim: true, maxlength: 200 }], default: [] },
@@ -46,6 +48,8 @@ assignmentSchema.index({ course: 1, status: 1, dueAt: 1 });
 assignmentSchema.index({ status: 1, dueAt: 1 });
 assignmentSchema.index({ module: 1 });
 assignmentSchema.index({ lesson: 1 });
+assignmentSchema.index({ studyBook: 1 });
+assignmentSchema.index({ studyModule: 1 });
 assignmentSchema.index({ attachments: 1 });
 
 export const Assignment = mongoose.model('Assignment', assignmentSchema);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import {
   useAdminStudyCatalogue,
@@ -7,10 +7,65 @@ import {
   useAdminStudentAccessDetail,
   useUpdateStudentAccess,
 } from '../api.js';
+import { useAssignments } from '../../assignments/api.js';
 import { Spinner } from '../../../components/ui/Spinner.jsx';
+import { Button } from '../../../components/ui/Button.jsx';
 import { Badge, StatusBadge } from '../../../components/ui/Badge.jsx';
 import { Modal } from '../../../components/ui/Modal.jsx';
 import { Icon } from '../../../components/Icon.jsx';
+
+function LinkAssignmentModal({ moduleDoc, open, onClose }) {
+  const { data: assignmentsData } = useAssignments({ limit: 100 }, { enabled: open });
+  const updateModule = useUpdateStudyModule();
+  const [selectedId, setSelectedId] = useState(moduleDoc?.linkedAssignment?.id || '');
+
+  useEffect(() => {
+    setSelectedId(moduleDoc?.linkedAssignment?.id || '');
+  }, [moduleDoc]);
+
+  const handleSave = async () => {
+    await updateModule.mutateAsync({
+      id: moduleDoc.id,
+      body: { linkedAssignment: selectedId || null },
+    });
+    onClose();
+  };
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={`Link Assignment: ${moduleDoc?.title || ''}`}
+      description="Associate an LMS assignment with this study phase/module."
+    >
+      <div className="space-y-4">
+        <label className="flex flex-col gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
+          <span>Choose Existing Assignment</span>
+          <select
+            value={selectedId}
+            onChange={(e) => setSelectedId(e.target.value)}
+            className="rounded-xl border border-slate-300 bg-white p-2.5 text-sm dark:border-white/10 dark:bg-slate-900 dark:text-white"
+          >
+            <option value="">(No Assignment Linked)</option>
+            {assignmentsData?.items?.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.title} ({a.course?.title || 'Course'})
+              </option>
+            ))}
+          </select>
+        </label>
+        <div className="flex justify-end gap-2 pt-2">
+          <Button variant="secondary" size="sm" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button size="sm" onClick={handleSave} loading={updateModule.isPending}>
+            Save Association
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
 
 function StudentAccessModal({ studentId, open, onClose }) {
   const { data, isLoading } = useAdminStudentAccessDetail(open ? studentId : null);
@@ -41,11 +96,33 @@ function StudentAccessModal({ studentId, open, onClose }) {
 
   const handleToggleBook = (assigned) => {
     if (!currentBook) return;
-    const allModuleIds = currentBook.modules.map((m) => m.id);
     updateMutation.mutate({
       bookId: currentBook.bookId,
       isBookAssigned: !assigned,
-      releasedModuleIds: !assigned ? allModuleIds : [],
+    });
+  };
+
+  const handleReleaseNext = () => {
+    if (!currentBook) return;
+    updateMutation.mutate({
+      bookId: currentBook.bookId,
+      action: 'release_next',
+    });
+  };
+
+  const handleReleaseAll = () => {
+    if (!currentBook) return;
+    updateMutation.mutate({
+      bookId: currentBook.bookId,
+      action: 'release_all',
+    });
+  };
+
+  const handleLockAll = () => {
+    if (!currentBook) return;
+    updateMutation.mutate({
+      bookId: currentBook.bookId,
+      action: 'revoke_all',
     });
   };
 
@@ -108,7 +185,7 @@ function StudentAccessModal({ studentId, open, onClose }) {
                       : 'Book is currently locked for this student.'}
                   </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
                     onClick={() => handleToggleBook(currentBook.isAssigned)}
@@ -119,8 +196,39 @@ function StudentAccessModal({ studentId, open, onClose }) {
                         : 'border border-cyan-500/40 bg-cyan-500/20 text-cyan-700 hover:bg-cyan-500/30 dark:text-cyan-300'
                     }`}
                   >
-                    {currentBook.isAssigned ? 'Revoke Entire Book' : 'Assign & Unlock All'}
+                    {currentBook.isAssigned ? 'Revoke Entire Book' : 'Grant Book Access'}
                   </button>
+
+                  {currentBook.isAssigned && (
+                    <>
+                      {currentBook.nextUnreleasedModule && (
+                        <button
+                          type="button"
+                          onClick={handleReleaseNext}
+                          disabled={updateMutation.isPending}
+                          className="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-xs transition-opacity hover:opacity-95"
+                        >
+                          Release Next: {currentBook.nextUnreleasedModule.phaseLabel || currentBook.nextUnreleasedModule.title}
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={handleReleaseAll}
+                        disabled={updateMutation.isPending}
+                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
+                      >
+                        Release All
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleLockAll}
+                        disabled={updateMutation.isPending}
+                        className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
+                      >
+                        Lock All
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -203,6 +311,7 @@ export function AdminStudyMaterialsPage() {
   const [activeTab, setActiveTab] = useState('books'); // 'books' | 'access'
   const [selectedBookSlug, setSelectedBookSlug] = useState('dsa-javascript');
   const [managingStudentId, setManagingStudentId] = useState(null);
+  const [linkingModule, setLinkingModule] = useState(null);
 
   const { data: catalogue, isLoading: isCatalogueLoading } = useAdminStudyCatalogue();
   const { data: studentsAccess, isLoading: isAccessLoading } = useAdminStudentsAccess();
@@ -363,10 +472,18 @@ export function AdminStudyMaterialsPage() {
                         <span>{(m.fileBytes / 1024).toFixed(0)} KB</span>
                         <span>•</span>
                         <span>~{m.estimatedMinutes} mins</span>
+                        {m.linkedAssignment && (
+                          <>
+                            <span>•</span>
+                            <span className="font-semibold text-cyan-600 dark:text-cyan-400">
+                              📝 Linked: {m.linkedAssignment.title}
+                            </span>
+                          </>
+                        )}
                       </div>
                     </div>
 
-                    {/* Actions: Preview & Publish toggle */}
+                    {/* Actions: Preview, Link Assignment, & Publish toggle */}
                     <div className="flex items-center gap-2.5 shrink-0">
                       <Link
                         to={`/admin/study-materials/preview/${m.id}`}
@@ -375,6 +492,15 @@ export function AdminStudyMaterialsPage() {
                       >
                         <span>👁️ Preview</span>
                       </Link>
+
+                      <button
+                        type="button"
+                        onClick={() => setLinkingModule(m)}
+                        className="rounded-xl border border-slate-300/80 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-white/15 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10 dark:hover:text-white"
+                        title="Associate an LMS assignment with this module"
+                      >
+                        <span>🔗 Assignment</span>
+                      </button>
 
                       <button
                         type="button"
@@ -467,6 +593,13 @@ export function AdminStudyMaterialsPage() {
         studentId={managingStudentId}
         open={Boolean(managingStudentId)}
         onClose={() => setManagingStudentId(null)}
+      />
+
+      {/* Link Assignment Modal */}
+      <LinkAssignmentModal
+        moduleDoc={linkingModule}
+        open={Boolean(linkingModule)}
+        onClose={() => setLinkingModule(null)}
       />
     </div>
   );

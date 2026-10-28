@@ -12,6 +12,8 @@ import {
   Material,
   MATERIAL_TYPES,
   ROLES,
+  StudyAccess,
+  StudyModule,
   Submission,
 } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
@@ -112,18 +114,44 @@ async function studentAssignmentAccess(user, assignment) {
     (isArchived(assignment) &&
       Boolean(await Submission.exists({ assignment: assignment._id, student: user._id })));
   if (!readable) return null;
-  const [course, enrollment, module, lesson] = await Promise.all([
-    Course.findById(assignment.course),
-    getActiveEnrollment(user._id, assignment.course),
-    assignment.module ? CourseModule.findById(assignment.module) : null,
-    assignment.lesson ? Lesson.findById(assignment.lesson) : null,
-  ]);
-  const visible =
-    isPublished(course) &&
-    Boolean(enrollment) &&
-    (!assignment.module || isPublished(module)) &&
-    (!assignment.lesson || isPublished(lesson));
-  return visible ? { course, enrollment } : null;
+
+  if (assignment.course) {
+    const [course, enrollment, module, lesson] = await Promise.all([
+      Course.findById(assignment.course),
+      getActiveEnrollment(user._id, assignment.course),
+      assignment.module ? CourseModule.findById(assignment.module) : null,
+      assignment.lesson ? Lesson.findById(assignment.lesson) : null,
+    ]);
+    const visible =
+      isPublished(course) &&
+      Boolean(enrollment) &&
+      (!assignment.module || isPublished(module)) &&
+      (!assignment.lesson || isPublished(lesson));
+    if (visible) return { course, enrollment };
+  }
+
+  // Phase 9: Allow access if assignment is linked to a released StudyModule
+  const linkedStudyModule = await StudyModule.findOne({
+    $or: [{ linkedAssignment: assignment._id }, { _id: assignment.studyModule }],
+    status: CONTENT_STATUS.PUBLISHED,
+  }).populate('book');
+
+  if (linkedStudyModule && isPublished(linkedStudyModule.book)) {
+    const studyAccess = await StudyAccess.findOne({
+      student: user._id,
+      book: linkedStudyModule.book._id,
+      isBookAssigned: true,
+    });
+    const isReleased = studyAccess?.releasedModules?.some(
+      (mId) => mId.toString() === linkedStudyModule._id.toString(),
+    );
+    if (isReleased) {
+      const course = assignment.course ? await Course.findById(assignment.course) : null;
+      return { course, studyModule: linkedStudyModule, studyBook: linkedStudyModule.book };
+    }
+  }
+
+  return null;
 }
 
 /** An assignment and its course when `user` may see it, otherwise 404. */
@@ -140,7 +168,7 @@ export async function getAssignmentForViewer(user, assignmentId) {
  * Mongo filter limiting assignments to the ones `user` may list. For students:
  * assignments of published courses they are actively enrolled in, whose module
  * and lesson (when set) are published, and which are published, or archived
- * with work from this student.
+ * with work from this student. Also includes assignments linked to released study modules.
  */
 export async function assignmentsVisibleTo(user) {
   if (isAdmin(user)) return {};
@@ -152,11 +180,23 @@ export async function assignmentsVisibleTo(user) {
     _id: trusted({ $in: enrolled }),
     status: CONTENT_STATUS.PUBLISHED,
   });
-  const [placement, submittedTo] = await Promise.all([
+  const [placement, submittedTo, studyAccesses] = await Promise.all([
     publishedPlacement(courses),
     Submission.distinct('assignment', { student: user._id }),
+    StudyAccess.find({ student: user._id, isBookAssigned: true }).select('releasedModules'),
   ]);
-  return {
+
+  const releasedModuleIds = studyAccesses.flatMap((a) => a.releasedModules || []);
+  const bookLinkedAssignmentIds =
+    releasedModuleIds.length > 0
+      ? await StudyModule.distinct('linkedAssignment', {
+          _id: trusted({ $in: releasedModuleIds }),
+          status: CONTENT_STATUS.PUBLISHED,
+          linkedAssignment: { $ne: null },
+        })
+      : [];
+
+  const courseQuery = {
     course: trusted({ $in: courses }),
     $and: [
       {
@@ -166,6 +206,23 @@ export async function assignmentsVisibleTo(user) {
         ],
       },
       ...placement,
+    ],
+  };
+
+  if (bookLinkedAssignmentIds.length === 0) {
+    return courseQuery;
+  }
+
+  return {
+    $or: [
+      courseQuery,
+      {
+        _id: trusted({ $in: bookLinkedAssignmentIds }),
+        $or: [
+          { status: CONTENT_STATUS.PUBLISHED },
+          { status: CONTENT_STATUS.ARCHIVED, _id: trusted({ $in: submittedTo }) },
+        ],
+      },
     ],
   };
 }

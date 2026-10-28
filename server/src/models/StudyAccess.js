@@ -8,7 +8,7 @@ const studyAccessSchema = new mongoose.Schema(
     releasedModules: [
       { type: mongoose.Schema.Types.ObjectId, ref: 'StudyModule' },
     ],
-    canViewReport: { type: Boolean, default: true },
+    canViewReport: { type: Boolean, default: false },
     grantedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     grantedAt: { type: Date, default: Date.now },
   },

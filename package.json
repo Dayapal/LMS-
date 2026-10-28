@@ -22,6 +22,7 @@
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install chromium firefox webkit",
     "seed": "npm run seed -w server --",
+    "import-books": "npm run import-books -w server --",
     "files": "npm run files -w server --"
   },
   "devDependencies": {

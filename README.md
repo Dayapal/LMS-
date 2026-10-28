@@ -17,6 +17,7 @@ The design and the phase plan are in [docs/superpowers/specs/2026-10-14-training
 | 6     | Review queue, student management, analytics | ✅ Approved ([report](docs/phase-reports/phase-6.md))                                     |
 | 7     | Notifications, performance, accessibility   | ✅ Approved ([report](docs/phase-reports/phase-7.md))                                     |
 | 8     | Production readiness, deployment, E2E tests | ✅ Approved locally; production release pending ([report](docs/phase-reports/phase-8.md)) |
+| 9     | Books Library, individual access & learning progress | ✅ Implemented & verified ([report](docs/phase-reports/phase-9.md)) |
 
 ## Requirements
 
@@ -57,6 +58,7 @@ Students create their own accounts at `/register`. There is no public sign-up fo
 | `npm run build`                              | Builds the client for production into `client/dist`                                                                                                                                                    |
 | `npm run seed`                               | Creates the trainer account, the 3 starter courses with their study materials and assignments, and (optionally) demo students with sample progress. Existing records are never changed                 |
 | `npm run seed -- --reset`                    | Development only: deletes all courses, materials, assignments, submissions, uploaded files, enrollments, progress and demo students, then seeds again                                                  |
+| `npm run import-books`                       | Imports HTML study books and archives (`content/study-materials`) idempotently with `--dry-run` and collision checks                                                                                  |
 | `npm run test:e2e`                           | Playwright end-to-end tests against a production build in Chromium, Firefox and WebKit, with a throwaway `lms_e2e` database (see [e2e/README.md](e2e/README.md)). First run `npm run test:e2e:install` |
 | `npm run files -- check`                     | Writes, reads and deletes one temporary object in the configured storage                                                                                                                               |
 | `npm run files -- cleanup [--apply]`         | Reports (with `--apply`, removes) uploads that were never attached and stored bytes without a record, older than 24 hours                                                                              |
@@ -82,6 +84,15 @@ The full design is in §11a of the spec.
 - Uploads are trainer-only. The file's extension, its declared type and its actual content (magic bytes) must all agree; the stored name is a random key.
 - Files are never public. `GET /api/v1/files/:id` checks access on every request, and the app fetches files with the signed-in user's token.
 - The starter notes and code live in `server/src/seeds/content/`, one Markdown file per course. `npm run seed` adds them to starter lessons that have no materials yet, so it is safe to rerun.
+
+## Study books library, individual access & phase releases (Phase 9)
+
+- **Books Library:** Multi-phase study curricula (DSA with JavaScript, JavaScript Mastery, React JS Complete) served as sandboxed, immutable HTML books preserving original CSS, JS examples, and diagrams byte-for-byte.
+- **Sandboxed Reader:** Isolated `iframe` with `sandbox="allow-scripts"` (strictly omitting `allow-same-origin`) to prevent DOM manipulation or credential exposure, with active engaged reading telemetry, idle timeout detection, and completion toggles.
+- **Collapsible Syllabus Navigation:** In-reader phase sidebar displaying real-time completion state, active module position, and locked badges.
+- **Individual Student Book & Phase Access:** Trainers manage book access per student under **Books & Learning Access** in the student detail view (`/admin/students/:id`). Supports 1-click **Release Next Phase**, granular phase release checkboxes, full cohort release/lock, and student progress report visibility toggles (`canViewReport`, disabled by default).
+- **Linked Homework & Enrollment-Independent Access:** Assignments linked to study phases are automatically accessible to granted students without requiring a course enrollment.
+- **Multi-Student Reporting:** Trainers inspect cohort-wide reading duration, phase completion rates, and export RFC 4180-compliant CSV reports filtered by curriculum subject.
 
 ## Assignments and submissions
 
