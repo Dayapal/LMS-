@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { cleanup, screen, waitFor } from '@testing-library/react';
+import { cleanup, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StudentBooksAccessPanel } from './StudentBooksAccessPanel.jsx';
 import { studyMaterialsApi } from '../../study-materials/api.js';
@@ -21,10 +21,12 @@ const mockBooksData = {
       category: 'dsa',
       gradient: 'linear-gradient(135deg, #0ea5e9, #3b82f6)',
       status: 'published',
+      accessStatus: 'partially_released',
       totalModulesCount: 2,
       isAssigned: true,
       grantedAt: '2026-10-20T10:00:00.000Z',
       grantedBy: { id: 'u1', name: 'Admin Instructor' },
+      lastAccessedAt: '2026-10-21T10:00:00.000Z',
       canViewReport: false,
       nextUnreleasedModule: {
         id: 'm2',
@@ -56,6 +58,7 @@ const mockBooksData = {
             completedAt: '2026-10-21T10:00:00.000Z',
             totalReadingSeconds: 420,
             lastHeartbeatAt: '2026-10-21T10:00:00.000Z',
+            lastAccessedAt: '2026-10-21T10:00:00.000Z',
           },
           linkedAssignment: {
             id: 'a1',
@@ -83,6 +86,7 @@ const mockBooksData = {
             isCompleted: false,
             completedAt: null,
             totalReadingSeconds: 0,
+            lastAccessedAt: null,
           },
           linkedAssignment: null,
         },
@@ -95,10 +99,12 @@ const mockBooksData = {
       category: 'javascript',
       gradient: 'linear-gradient(135deg, #f59e0b, #d97706)',
       status: 'published',
+      accessStatus: 'not_granted',
       totalModulesCount: 7,
       isAssigned: false,
       grantedAt: null,
       grantedBy: null,
+      lastAccessedAt: null,
       canViewReport: false,
       nextUnreleasedModule: null,
       progress: {
@@ -109,7 +115,17 @@ const mockBooksData = {
         assignmentsTotal: 0,
         assignmentsSubmitted: 0,
       },
-      modules: [],
+      modules: [
+        {
+          id: 'm201',
+          title: 'JS Phase 1: Engine & Execution Context',
+          slug: 'js-phase-1',
+          phaseLabel: 'Phase 1',
+          order: 1,
+          estimatedMinutes: 40,
+          isReleased: false,
+        },
+      ],
     },
   ],
 };
@@ -125,7 +141,7 @@ function renderPanel() {
 }
 
 describe('StudentBooksAccessPanel', () => {
-  it('renders KPI stats and book syllabus tabs', async () => {
+  it('renders KPI stats, book tabs, search input and status filter', async () => {
     vi.spyOn(studyMaterialsApi, 'getStudentAccessDetail').mockResolvedValue(mockBooksData);
     renderPanel();
 
@@ -134,7 +150,11 @@ describe('StudentBooksAccessPanel', () => {
     expect(screen.getByText('Active Reading Time')).toBeInTheDocument();
     expect(screen.getByText('Report Visibility')).toBeInTheDocument();
     expect(screen.getAllByText(/DSA with JavaScript/).length).toBeGreaterThan(0);
-    expect(screen.getByText(/JavaScript Mastery/)).toBeInTheDocument();
+    expect(screen.getAllByText(/JavaScript Mastery/).length).toBeGreaterThan(0);
+
+    // Search input and status filter
+    expect(screen.getByPlaceholderText(/Search books by title or category/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Status:/i)).toBeInTheDocument();
 
     // Module 1 is released
     expect(screen.getByText('Module 1: Complexity Analysis & Big-O')).toBeInTheDocument();
@@ -194,13 +214,11 @@ describe('StudentBooksAccessPanel', () => {
     renderPanel();
 
     await screen.findByText('Module 2: Arrays');
-    const checkboxes = screen.getAllByRole('checkbox');
-    // Module 2 checkbox (order 2, unchecked)
-    const module2Checkbox = checkboxes[1];
-    expect(module2Checkbox).toBeInTheDocument();
-    expect(module2Checkbox.checked).toBe(false);
+    const module2ReleaseCheckbox = screen.getByTitle('Click to release phase');
+    expect(module2ReleaseCheckbox).toBeInTheDocument();
+    expect(module2ReleaseCheckbox.checked).toBe(false);
 
-    await user.click(module2Checkbox);
+    await user.click(module2ReleaseCheckbox);
     await waitFor(() => {
       expect(updateSpy).toHaveBeenCalledWith('s1', {
         bookId: 'b1',
@@ -230,38 +248,62 @@ describe('StudentBooksAccessPanel', () => {
     });
   });
 
-  it('grants and revokes book access', async () => {
+  it('opens Grant Access Modal and confirms granting book access', async () => {
     vi.spyOn(studyMaterialsApi, 'getStudentAccessDetail').mockResolvedValue(mockBooksData);
     const updateSpy = vi.spyOn(studyMaterialsApi, 'updateStudentAccess').mockResolvedValue({});
     const user = userEvent.setup();
     renderPanel();
 
-    // Switch to second unassigned book tab
-    const jsBookTab = await screen.findByRole('button', { name: /JavaScript Mastery/i });
-    await user.click(jsBookTab);
-
-    // Grant access button
-    const grantBtn = await screen.findByRole('button', { name: /Grant Book Access/i });
+    // Click "Grant Access" on the unassigned book in the cards grid
+    const grantBtn = await screen.findByRole('button', { name: /Grant Access/i });
     await user.click(grantBtn);
+
+    // Modal opens
+    const modal = await screen.findByRole('dialog', { name: /Grant Book Access/i });
+    expect(modal).toBeInTheDocument();
+    expect(modal).toHaveTextContent(/Configure access scope and release permissions for Asha Rao/i);
+
+    // Confirm button in modal
+    const confirmGrantBtn = screen.getByRole('button', { name: /Confirm & Grant Access/i });
+    await user.click(confirmGrantBtn);
+
     await waitFor(() => {
       expect(updateSpy).toHaveBeenCalledWith('s1', {
         bookId: 'b2',
         isBookAssigned: true,
+        scope: 'all',
+        canViewReport: false,
       });
     });
+  });
 
-    // Switch back to assigned book
-    const dsaBookTab = screen.getByRole('button', { name: /DSA with JavaScript/i });
-    await user.click(dsaBookTab);
+  it('revokes and restores book access with confirmation dialogs', async () => {
+    const revokedData = {
+      ...mockBooksData,
+      books: [
+        {
+          ...mockBooksData.books[0],
+          isAssigned: false,
+          accessStatus: 'revoked',
+          revokedAt: '2026-10-28T12:00:00.000Z',
+        },
+        mockBooksData.books[1],
+      ],
+    };
+
+    vi.spyOn(studyMaterialsApi, 'getStudentAccessDetail').mockResolvedValue(mockBooksData);
+    const updateSpy = vi.spyOn(studyMaterialsApi, 'updateStudentAccess').mockResolvedValue({});
+    const user = userEvent.setup();
+    renderPanel();
 
     // Revoke book button triggers confirmation dialog
     const revokeBtn = await screen.findByRole('button', { name: /Revoke Book/i });
     await user.click(revokeBtn);
 
-    const dialog = await screen.findByRole('dialog', { name: /Revoke book access\?/i });
-    expect(dialog).toBeInTheDocument();
+    const revokeDialog = await screen.findByRole('dialog', { name: /Revoke book access\?/i });
+    expect(revokeDialog).toBeInTheDocument();
 
-    const confirmRevokeBtn = screen.getByRole('button', { name: 'Revoke Access' });
+    const confirmRevokeBtn = within(revokeDialog).getByRole('button', { name: 'Revoke Access' });
     await user.click(confirmRevokeBtn);
 
     await waitFor(() => {
@@ -270,5 +312,51 @@ describe('StudentBooksAccessPanel', () => {
         isBookAssigned: false,
       });
     });
+
+    cleanup();
+
+    // Now test restoring when book is in revoked state
+    vi.spyOn(studyMaterialsApi, 'getStudentAccessDetail').mockResolvedValue(revokedData);
+    renderPanel();
+
+    const restoreBtn = await screen.findByRole('button', { name: /Restore Access/i });
+    await user.click(restoreBtn);
+
+    const restoreDialog = await screen.findByRole('dialog', { name: /Restore book access\?/i });
+    expect(restoreDialog).toBeInTheDocument();
+
+    const confirmRestoreBtn = within(restoreDialog).getByRole('button', { name: 'Restore Access' });
+    await user.click(confirmRestoreBtn);
+
+    await waitFor(() => {
+      expect(updateSpy).toHaveBeenCalledWith('s1', {
+        bookId: 'b1',
+        action: 'restore',
+      });
+    });
+  });
+
+  it('filters books by search query and status selector', async () => {
+    vi.spyOn(studyMaterialsApi, 'getStudentAccessDetail').mockResolvedValue(mockBooksData);
+    const user = userEvent.setup();
+    renderPanel();
+
+    const searchInput = await screen.findByPlaceholderText(/Search books by title or category/i);
+    await user.type(searchInput, 'DSA');
+
+    // DSA card remains, JS card is filtered out
+    expect(screen.getAllByText(/DSA with JavaScript/).length).toBeGreaterThan(0);
+    expect(screen.queryByRole('heading', { name: 'JavaScript Mastery' })).not.toBeInTheDocument();
+
+    // Clear search
+    await user.clear(searchInput);
+
+    // Filter by status "Not Granted"
+    const statusSelect = screen.getByLabelText(/Status:/i);
+    await user.selectOptions(statusSelect, 'not_granted');
+
+    // Only JavaScript Mastery (not_granted) is visible in the grid
+    expect(screen.getByRole('heading', { name: 'JavaScript Mastery' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'DSA with JavaScript' })).not.toBeInTheDocument();
   });
 });

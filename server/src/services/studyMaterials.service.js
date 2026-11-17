@@ -17,6 +17,8 @@ import { recordActivity } from './activity.service.js';
 import { ApiError } from '../utils/ApiError.js';
 import { logger } from '../utils/logger.js';
 
+const { trusted } = mongoose;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const MATERIALS_ROOT = path.resolve(__dirname, '../../../content/study-materials');
@@ -546,7 +548,9 @@ export async function getAdminStudentAccessDetail(studentId) {
     StudyModule.find()
       .sort({ order: 1 })
       .populate('linkedAssignment', 'title dueAt maxMarks instructions'),
-    StudyAccess.find({ student: student._id }).populate('grantedBy', 'name email'),
+    StudyAccess.find({ student: student._id })
+      .populate('grantedBy', 'name email')
+      .populate('revokedBy', 'name email'),
     StudyProgress.find({ student: student._id }),
   ]);
 
@@ -556,7 +560,7 @@ export async function getAdminStudentAccessDetail(studentId) {
 
   const submissions =
     assignmentIds.length > 0
-      ? await Submission.find({ student: student._id, assignment: { $in: assignmentIds } }).sort({
+      ? await Submission.find({ student: student._id, assignment: trusted({ $in: assignmentIds }) }).sort({
           attempt: -1,
         })
       : [];
@@ -602,6 +606,26 @@ export async function getAdminStudentAccessDetail(studentId) {
       (m) => m.status === CONTENT_STATUS.PUBLISHED && !releasedSet.has(m._id.toString()),
     );
 
+    let accessStatus = 'not_granted';
+    if (acc) {
+      if (!acc.isBookAssigned) {
+        accessStatus = 'revoked';
+      } else if (releasedModules.length === 0) {
+        accessStatus = 'partially_released';
+      } else if (releasedModules.length >= bookModules.length && bookModules.length > 0) {
+        accessStatus = 'active';
+      } else {
+        accessStatus = 'partially_released';
+      }
+    }
+
+    const bookProgresses = progresses.filter((p) => p.book.toString() === bookId);
+    const lastAccessedAt = bookProgresses.reduce((latest, p) => {
+      if (!p.lastAccessedAt) return latest;
+      if (!latest || new Date(p.lastAccessedAt) > new Date(latest)) return p.lastAccessedAt;
+      return latest;
+    }, null);
+
     return {
       bookId,
       slug: book.slug,
@@ -609,6 +633,8 @@ export async function getAdminStudentAccessDetail(studentId) {
       category: book.category,
       gradient: book.gradient,
       isAssigned: Boolean(acc?.isBookAssigned),
+      accessStatus,
+      lastAccessedAt,
       canViewReport: acc ? acc.canViewReport : false,
       grantedAt: acc?.grantedAt || null,
       grantedBy: acc?.grantedBy
@@ -616,6 +642,14 @@ export async function getAdminStudentAccessDetail(studentId) {
             id: acc.grantedBy._id.toString(),
             name: acc.grantedBy.name,
             email: acc.grantedBy.email,
+          }
+        : null,
+      revokedAt: acc?.revokedAt || null,
+      revokedBy: acc?.revokedBy
+        ? {
+            id: acc.revokedBy._id.toString(),
+            name: acc.revokedBy.name,
+            email: acc.revokedBy.email,
           }
         : null,
       progress: {
@@ -695,7 +729,7 @@ export async function getAdminStudentAccessDetail(studentId) {
  */
 export async function updateAdminStudentAccess(
   studentId,
-  { bookId, isBookAssigned, releasedModuleIds, canViewReport, action },
+  { bookId, isBookAssigned, releasedModuleIds, canViewReport, action, scope },
   adminUser,
 ) {
   const student = await User.findById(studentId);
@@ -715,11 +749,6 @@ export async function updateAdminStudentAccess(
     });
   }
 
-  if (adminUser?._id) {
-    access.grantedBy = adminUser._id;
-    access.grantedAt = new Date();
-  }
-
   if (action === 'release_next') {
     const publishedModules = await StudyModule.find({
       book: book._id,
@@ -730,6 +759,8 @@ export async function updateAdminStudentAccess(
     if (nextMod) {
       access.releasedModules.push(nextMod._id);
       access.isBookAssigned = true;
+      access.revokedAt = null;
+      access.revokedBy = null;
     }
   } else if (action === 'release_all') {
     const allPublished = await StudyModule.find({
@@ -738,18 +769,73 @@ export async function updateAdminStudentAccess(
     }).select('_id');
     access.releasedModules = allPublished.map((m) => m._id);
     access.isBookAssigned = true;
+    access.revokedAt = null;
+    access.revokedBy = null;
   } else if (action === 'revoke_all') {
     access.releasedModules = [];
+  } else if (action === 'restore') {
+    access.isBookAssigned = true;
+    access.revokedAt = null;
+    access.revokedBy = null;
+    if (adminUser?._id) {
+      access.grantedBy = adminUser._id;
+      access.grantedAt = new Date();
+    }
   }
 
-  if (isBookAssigned !== undefined) access.isBookAssigned = Boolean(isBookAssigned);
-  if (canViewReport !== undefined) access.canViewReport = Boolean(canViewReport);
-  if (Array.isArray(releasedModuleIds)) {
+  if (scope === 'all') {
+    const allPublished = await StudyModule.find({
+      book: book._id,
+      status: CONTENT_STATUS.PUBLISHED,
+    }).select('_id');
+    access.releasedModules = allPublished.map((m) => m._id);
+    access.isBookAssigned = true;
+    access.revokedAt = null;
+    access.revokedBy = null;
+  } else if (scope === 'none') {
+    access.releasedModules = [];
+    access.isBookAssigned = true;
+    access.revokedAt = null;
+    access.revokedBy = null;
+  } else if (scope === 'selected' && Array.isArray(releasedModuleIds)) {
     const validModules = await StudyModule.find({
       book: book._id,
-      _id: { $in: releasedModuleIds.map((id) => new mongoose.Types.ObjectId(id)) },
+      _id: trusted({ $in: releasedModuleIds.map((id) => new mongoose.Types.ObjectId(id)) }),
     }).select('_id');
     access.releasedModules = validModules.map((m) => m._id);
+    access.isBookAssigned = true;
+    access.revokedAt = null;
+    access.revokedBy = null;
+  }
+
+  if (isBookAssigned !== undefined) {
+    access.isBookAssigned = Boolean(isBookAssigned);
+    if (!access.isBookAssigned) {
+      access.revokedAt = new Date();
+      access.revokedBy = adminUser?._id || null;
+    } else {
+      access.revokedAt = null;
+      access.revokedBy = null;
+      if (adminUser?._id) {
+        access.grantedBy = adminUser._id;
+        access.grantedAt = new Date();
+      }
+    }
+  }
+
+  if (canViewReport !== undefined) access.canViewReport = Boolean(canViewReport);
+
+  if (Array.isArray(releasedModuleIds) && scope !== 'selected') {
+    const validModules = await StudyModule.find({
+      book: book._id,
+      _id: trusted({ $in: releasedModuleIds.map((id) => new mongoose.Types.ObjectId(id)) }),
+    }).select('_id');
+    access.releasedModules = validModules.map((m) => m._id);
+  }
+
+  if (adminUser?._id && access.isBookAssigned && !access.grantedBy) {
+    access.grantedBy = adminUser._id;
+    access.grantedAt = new Date();
   }
 
   await access.save();

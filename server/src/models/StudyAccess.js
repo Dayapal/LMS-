@@ -11,6 +11,8 @@ const studyAccessSchema = new mongoose.Schema(
     canViewReport: { type: Boolean, default: false },
     grantedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     grantedAt: { type: Date, default: Date.now },
+    revokedAt: { type: Date, default: null },
+    revokedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   },
   { timestamps: true },
 );

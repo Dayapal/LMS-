@@ -321,9 +321,179 @@ describe('Phase 9: Individual Student Access & Phase Release Rules', () => {
     expect(res.body.data.student.id).toBe(studentA._id.toString());
     const dsa = res.body.data.books.find((b) => b.slug === 'dsa-javascript');
     expect(dsa.isAssigned).toBe(true);
+    expect(dsa.accessStatus).toBe('partially_released');
     expect(dsa.canViewReport).toBe(false);
     expect(dsa.grantedBy.name).toBe(admin.name);
     expect(dsa.progress.releasedCount).toBe(1);
     expect(dsa.nextUnreleasedModule.order).toBe(2);
+  });
+
+  it('allows granting with scope: "selected" to release only specific phases', async () => {
+    const dsaBook = await StudyBook.findOne({ slug: 'dsa-javascript' });
+    const mod1 = await StudyModule.findOne({ book: dsaBook._id, order: 1 });
+    const mod2 = await StudyModule.findOne({ book: dsaBook._id, order: 2 });
+    const mod3 = await StudyModule.findOne({ book: dsaBook._id, order: 3 });
+
+    // Grant Student A only modules 1 and 3
+    const res = await api(app)
+      .put(`/api/v1/study-materials/admin/access/${studentA._id}`)
+      .set('Origin', ORIGIN)
+      .set(bearer(admin))
+      .send({
+        bookId: dsaBook._id.toString(),
+        scope: 'selected',
+        releasedModuleIds: [mod1._id.toString(), mod3._id.toString()],
+        canViewReport: true,
+      });
+
+    expect(res.status).toBe(200);
+
+    // Module 1 is accessible
+    const m1Res = await api(app)
+      .get(`/api/v1/study-materials/dsa-javascript/modules/${mod1.slug}/content`)
+      .set('Origin', ORIGIN)
+      .set(bearer(studentA));
+    expect(m1Res.status).toBe(200);
+
+    // Module 2 is NOT accessible (404)
+    const m2Res = await api(app)
+      .get(`/api/v1/study-materials/dsa-javascript/modules/${mod2.slug}/content`)
+      .set('Origin', ORIGIN)
+      .set(bearer(studentA));
+    expect(m2Res.status).toBe(404);
+
+    // Module 3 is accessible
+    const m3Res = await api(app)
+      .get(`/api/v1/study-materials/dsa-javascript/modules/${mod3.slug}/content`)
+      .set('Origin', ORIGIN)
+      .set(bearer(studentA));
+    expect(m3Res.status).toBe(200);
+  });
+
+  it('revoking book access blocks content immediately and restoring preserves earlier progress', async () => {
+    const dsaBook = await StudyBook.findOne({ slug: 'dsa-javascript' });
+    const mod1 = await StudyModule.findOne({ book: dsaBook._id, order: 1 });
+
+    // Grant access
+    await api(app)
+      .put(`/api/v1/study-materials/admin/access/${studentA._id}`)
+      .set('Origin', ORIGIN)
+      .set(bearer(admin))
+      .send({
+        bookId: dsaBook._id.toString(),
+        scope: 'selected',
+        releasedModuleIds: [mod1._id.toString()],
+      });
+
+    // Record reading progress and mark complete
+    await StudyProgress.create({
+      student: studentA._id,
+      book: dsaBook._id,
+      module: mod1._id,
+      isCompleted: true,
+      totalReadingSeconds: 650,
+      completedAt: new Date(),
+    });
+
+    // Student can open content
+    const preRevoke = await api(app)
+      .get(`/api/v1/study-materials/dsa-javascript/modules/${mod1.slug}/content`)
+      .set('Origin', ORIGIN)
+      .set(bearer(studentA));
+    expect(preRevoke.status).toBe(200);
+
+    // Trainer revokes book access
+    const revokeRes = await api(app)
+      .put(`/api/v1/study-materials/admin/access/${studentA._id}`)
+      .set('Origin', ORIGIN)
+      .set(bearer(admin))
+      .send({
+        bookId: dsaBook._id.toString(),
+        isBookAssigned: false,
+      });
+    expect(revokeRes.status).toBe(200);
+
+    // Access detail reflects status: 'revoked'
+    const detailRes = await api(app)
+      .get(`/api/v1/study-materials/admin/access/${studentA._id}`)
+      .set('Origin', ORIGIN)
+      .set(bearer(admin));
+    const dsaDetail = detailRes.body.data.books.find((b) => b.slug === 'dsa-javascript');
+    expect(dsaDetail.isAssigned).toBe(false);
+    expect(dsaDetail.accessStatus).toBe('revoked');
+    expect(dsaDetail.revokedAt).toBeTruthy();
+
+    // Content is now blocked with 404
+    const duringRevoke = await api(app)
+      .get(`/api/v1/study-materials/dsa-javascript/modules/${mod1.slug}/content`)
+      .set('Origin', ORIGIN)
+      .set(bearer(studentA));
+    expect(duringRevoke.status).toBe(404);
+
+    // Trainer restores book access
+    const restoreRes = await api(app)
+      .put(`/api/v1/study-materials/admin/access/${studentA._id}`)
+      .set('Origin', ORIGIN)
+      .set(bearer(admin))
+      .send({
+        bookId: dsaBook._id.toString(),
+        action: 'restore',
+      });
+    expect(restoreRes.status).toBe(200);
+
+    // Content is accessible again
+    const postRestore = await api(app)
+      .get(`/api/v1/study-materials/dsa-javascript/modules/${mod1.slug}/content`)
+      .set('Origin', ORIGIN)
+      .set(bearer(studentA));
+    expect(postRestore.status).toBe(200);
+
+    // Previous progress is intact!
+    const restoredDetail = await api(app)
+      .get(`/api/v1/study-materials/admin/access/${studentA._id}`)
+      .set('Origin', ORIGIN)
+      .set(bearer(admin));
+    const dsaRestored = restoredDetail.body.data.books.find((b) => b.slug === 'dsa-javascript');
+    expect(dsaRestored.isAssigned).toBe(true);
+    expect(dsaRestored.progress.completedCount).toBe(1);
+    expect(dsaRestored.progress.totalReadingSeconds).toBe(650);
+  });
+
+  it('rejects unauthorized access management and enforces uniqueness', async () => {
+    const dsaBook = await StudyBook.findOne({ slug: 'dsa-javascript' });
+
+    // Unauthenticated caller -> 401
+    const unauth = await api(app)
+      .put(`/api/v1/study-materials/admin/access/${studentA._id}`)
+      .set('Origin', ORIGIN)
+      .send({ bookId: dsaBook._id.toString(), isBookAssigned: true });
+    expect(unauth.status).toBe(401);
+
+    // Student caller attempting to modify access -> 403
+    const forbidden = await api(app)
+      .put(`/api/v1/study-materials/admin/access/${studentA._id}`)
+      .set('Origin', ORIGIN)
+      .set(bearer(studentA))
+      .send({ bookId: dsaBook._id.toString(), isBookAssigned: true });
+    expect(forbidden.status).toBe(403);
+
+    // Repeated grant calls are idempotent and never produce duplicate records
+    await api(app)
+      .put(`/api/v1/study-materials/admin/access/${studentA._id}`)
+      .set('Origin', ORIGIN)
+      .set(bearer(admin))
+      .send({ bookId: dsaBook._id.toString(), isBookAssigned: true });
+
+    await api(app)
+      .put(`/api/v1/study-materials/admin/access/${studentA._id}`)
+      .set('Origin', ORIGIN)
+      .set(bearer(admin))
+      .send({ bookId: dsaBook._id.toString(), isBookAssigned: true });
+
+    const count = await StudyAccess.countDocuments({
+      student: studentA._id,
+      book: dsaBook._id,
+    });
+    expect(count).toBe(1);
   });
 });

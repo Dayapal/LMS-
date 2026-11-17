@@ -7,11 +7,11 @@ Phase 9 extends the Full-Stack Training LMS with an enterprise-grade HTML study 
 All 34 original HTML source modules across 3 book curricula were audited, hashed with SHA-256, and preserved with 100% byte fidelity without altering a single character of original code or explanation.
 
 ### Verification Status
-- **Automated Test Suites**: 888 passing tests across both client and server:
-  - **Server Tests**: 37 test files, 653 tests passed (0 failures).
-  - **Client Tests**: 26 test files, 235 tests passed (0 failures).
+- **Automated Test Suites**: 893 passing tests across both client and server:
+  - **Server Tests**: 37 test files, 656 tests passed (0 failures).
+  - **Client Tests**: 26 test files, 237 tests passed (0 failures).
 - **Code Quality**: ESLint audit passed with 0 errors and 0 warnings.
-- **Production Build**: Vite production client build completed in 3.94s with all deploy and secret checks passing.
+- **Production Build**: Vite production client build completed in 4.46s with all deploy and secret checks passing.
 - **Source Integrity**: Working tree for `content/study-materials` verified clean (`git status` confirms 0 modifications).
 
 ---
@@ -88,6 +88,9 @@ The database schema was evolved using backward-compatible Mongoose models:
 - `canViewReport`: Boolean controlling student progress report visibility (default: `false`).
 - `grantedBy`: Reference to admin user who granted access.
 - `grantedAt`: Timestamp of grant.
+- `revokedBy`: Reference to admin user who revoked access (if revoked).
+- `revokedAt`: Timestamp of revocation (null when active or restored).
+- Compound Unique Index: `{ student: 1, book: 1 }` strictly prevents duplicate access grants.
 
 ### 4. `StudyProgress` (`server/src/models/StudyProgress.js`)
 - `student`: Reference to `User`.
@@ -129,14 +132,31 @@ flowchart TD
     AccessService -->|Logs Event| ActivityLog[(Activity Collection)]
 ```
 
-### Key Administrative Controls
+### Key Administrative Controls & Workflows
 1. **Summary KPIs**: Real-time tiles show assigned books, released modules, total reading duration, and report visibility status.
-2. **Book Syllabus Tabs**: Switch between books with release counts and lock indicators.
-3. **Sequential "Release Next Phase" Button**: Automatically discovers the student's next unreleased published phase in syllabus order and releases it in a single click (`action: 'release_next'`).
-4. **"Release All" & "Lock All" Buttons**: Instantly releases or revokes all published phases for fast cohort provisioning.
-5. **Granular Phase Checkboxes**: Toggle individual modules with indicators showing reading duration, completion state, and linked assignment grades.
-6. **Student Progress Report Visibility**: Toggle whether the student can view their progress report (`canViewReport`). Defaults to `false` until enabled by the trainer.
-7. **Audit Logging**: All access mutations log a `STUDY_ACCESS_UPDATED` activity record for trainer auditing.
+2. **Book Search & Status Filtering**: Search books by title or category and filter by access status (`all`, `active`, `partially_released`, `revoked`, `not_granted`).
+3. **Dynamic Catalogue Grid & Tab Navigation**:
+   - Each book card displays title, category, status badge, released module ratio, reading duration, last accessed timestamp, and visual progress bar.
+   - Contextual actions: **Grant Access** (opens grant scope modal), **Manage Access** (opens phase workspace), **Revoke Access** (with confirm dialog), **Restore Access** (with restore confirm dialog).
+4. **Grant Book Access Scope Modal**:
+   - Shows selected student's name and target book title.
+   - Initial access scope selector:
+     - `all`: Release entire book immediately.
+     - `selected`: Select specific phases/modules via checkboxes; remaining stay locked.
+     - `none`: Grant book only (all phases locked until released sequentially).
+   - "Allow student to view progress reports" checkbox.
+   - Dynamic confirmation callout summary before saving.
+5. **Phase Release Workspace**:
+   - **Sequential 1-Click Action**: "Release Next: {phaseLabel}" automatically calculates the next unreleased module in order.
+   - **Cohort Bulk Actions**: "Release All" and "Lock All" buttons.
+   - **Batch Selection Toolbar**: Multi-select phases to "Release Selected" or "Lock Selected".
+   - **Granular Toggles**: Per-phase release checkboxes with status badges (`Released` / `Locked`), completion state (`Completed`, `In Progress`, `Not Started`), reading duration, last accessed timestamp, and linked assignment status.
+6. **Revoke & Restore Access Lifecycle**:
+   - **Revoke**: Prompts for confirmation. Sets `isBookAssigned: false`, `revokedAt`, and `revokedBy`. The book immediately disappears from the student's active library and direct API calls return 404. Historical module reading telemetry and completions are preserved.
+   - **Restore**: Prompts for confirmation. Restores book access (`action: 'restore'`), clears `revokedAt`, and instantly re-enables all previously released modules and reading progress without data loss.
+7. **Student Progress Report Visibility**: Toggle whether the student can view their progress report (`canViewReport`). Defaults to `false` until enabled by the trainer.
+8. **Mongoose `sanitizeFilter` Compatibility**: All backend `$in` and compound query expressions utilize Mongoose's `trusted(...)` helper, ensuring strict compatibility with `sanitizeFilter: true`.
+9. **Audit Logging**: All access mutations log a `STUDY_ACCESS_UPDATED` activity record for trainer auditing.
 
 ---
 
@@ -193,7 +213,7 @@ Admin reporting in [server/src/services/studyMaterials.service.js](file:///d:/My
 
 ## 9. Verification & Automated Test Results
 
-### 1. Server Test Suite (37/37 Test Files, 653/653 Tests Passed)
+### 1. Server Test Suite (37/37 Test Files, 656/656 Tests Passed)
 ```
 ✓ tests/files.test.js (32 tests)
 ✓ tests/materials.test.js (33 tests)
@@ -205,26 +225,26 @@ Admin reporting in [server/src/services/studyMaterials.service.js](file:///d:/My
 ✓ tests/study-books-import.test.js (8 tests)
 ✓ tests/study-materials-api.test.js (12 tests)
 ✓ tests/activity.test.js (6 tests)
-✓ tests/study-materials-access-control.test.js (7 tests)
+✓ tests/study-materials-access-control.test.js (10 tests)
 ...
 Test Files  37 passed (37)
-Tests       653 passed (653)
+Tests       656 passed (656)
 ```
 
-### 2. Client Test Suite (26/26 Test Files, 235/235 Tests Passed)
+### 2. Client Test Suite (26/26 Test Files, 237/237 Tests Passed)
 ```
 ✓ src/features/auth/AuthPages.test.jsx (7 tests)
 ✓ src/features/notifications/Notifications.test.jsx (13 tests)
 ✓ src/features/trainer/students/Students.test.jsx (7 tests)
 ✓ src/features/courses/admin/AdminCourses.test.jsx (10 tests)
 ✓ src/features/study-materials/StudyReaderPage.test.jsx (6 tests)
-✓ src/features/trainer/students/StudentBooksAccessPanel.test.jsx (6 tests)
+✓ src/features/trainer/students/StudentBooksAccessPanel.test.jsx (8 tests)
 ✓ src/features/assignments/student/AssignmentPage.test.jsx (14 tests)
 ✓ src/routes/routes.test.jsx (37 tests)
 ✓ src/test/a11yConventions.test.js (2 tests)
 ...
 Test Files  26 passed (26)
-Tests       235 passed (235)
+Tests       237 passed (237)
 ```
 
 ### 3. Static Code Analysis (ESLint)
@@ -249,16 +269,36 @@ git status -- content/study-materials
 
 ## 10. Operational Runbook & Admin Verification Guide
 
-### 1. Granting Book & Phase Access to a Student
+### 1. Granting Book & Phase Access to an Individual Student
 1. Sign in as trainer at `/login`.
-2. Navigate to **Students** (`/admin/students`) and select a student.
+2. Navigate to **Students** (`/admin/students`) and select a student (e.g., *Student A*).
 3. Switch to the **Books & Learning Access** tab.
-4. Select the desired book tab (e.g. *DSA with JavaScript*).
-5. Click **Grant Book Access** to assign the book.
-6. Click **Release Next: Module 1** to release the first phase to the student.
-7. Verify that the student dashboard and library now display the released module.
+4. Locate the desired book in the Catalogue Grid or search by title/category (e.g. *DSA with JavaScript*).
+5. Click **Grant Access** on the book card:
+   - The modal displays the student's name (*Student A*) and the target book (*DSA with JavaScript*).
+   - Select the initial scope:
+     - **Release entire book**: Releases all phases immediately.
+     - **Select specific phases/modules**: Allows selecting specific phases using checkboxes (e.g., Phase 1 & 2).
+     - **Grant book only (All phases locked)**: Assigns book, all phases locked for sequential release.
+   - Choose whether to enable **Allow student to view progress reports**.
+   - Click **Confirm & Grant Access**.
+6. In the phase release workspace, click **Release Next: Phase 3** to advance the student when they are ready.
+7. To grant access to another student (e.g., *Student B* with *React JS Study Material*):
+   - Navigate to *Student B*, open **Books & Learning Access**, and grant *React JS Study Material*.
+   - Confirm that *Student A* and *Student B* maintain strictly isolated access permissions.
 
-### 2. Student Reading & Homework Workflow
+### 2. Revoking and Restoring Book Access
+1. To revoke access:
+   - On the student's **Books & Learning Access** page, click **Revoke Book** or the card's **Revoke Access** button.
+   - Confirm the action in the prompt.
+   - The book immediately disappears from the student's library, and direct requests to its content return 404. All earlier reading telemetry and completed phases are safely preserved.
+2. To restore access:
+   - Filter by status `Revoked` or locate the book marked with the `Revoked` badge.
+   - Click **Restore Access**.
+   - Confirm in the restore prompt.
+   - The book is immediately re-assigned with all prior released phases and reading progress restored intact.
+
+### 3. Student Reading & Homework Workflow
 1. Sign in as student.
 2. Navigate to **My Library** (`/app/study-materials`).
 3. Click **Continue Reading** on the assigned book.

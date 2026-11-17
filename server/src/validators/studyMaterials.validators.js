@@ -24,7 +24,8 @@ export const updateStudentAccessSchema = z.object({
   isBookAssigned: z.boolean().optional(),
   releasedModuleIds: z.array(objectId).optional(),
   canViewReport: z.boolean().optional(),
-  action: z.enum(['release_next', 'release_all', 'revoke_all']).optional(),
+  action: z.enum(['release_next', 'release_all', 'revoke_all', 'restore', 'grant']).optional(),
+  scope: z.enum(['all', 'selected', 'none']).optional(),
 });
 
 export const bulkUpdateStudentAccessSchema = z.object({
